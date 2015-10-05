@@ -11,10 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jctools.queues.MpscArrayQueue;
-import org.jctools.queues.SpscArrayQueue;
 
-import actor4j.research.BufferedQueue;
-import actor4j.research.BufferedQueue2;
 import safety4j.Method;
 import safety4j.SafetyManager;
 import safety4j.SafetyMethod;
@@ -42,11 +39,11 @@ public class ActorThread extends Thread {
 		this.system = system;
 		uuid = UUID.randomUUID();
 		
-		innerQueue    = new BufferedQueue2<>(50000);//new CircularFifoQueue<>(50000);//new LinkedList<>();
-		outerQueueL2  = new MpscArrayQueue<>(50000);//new ConcurrentLinkedQueue<>();
+		innerQueue    = new CircularFifoQueue<>(50000); //new LinkedList<>();
+		outerQueueL2  = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
 		outerQueueL1  = new CircularFifoQueue<>(10000);
-		serverQueueL2 = new ConcurrentLinkedQueue<>();
-		serverQueueL1 = new LinkedList<>();
+		serverQueueL2 = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
+		serverQueueL1 = new CircularFifoQueue<>(10000); //new LinkedList<>();
 		
 		counter = new AtomicLong(0);
 	}
