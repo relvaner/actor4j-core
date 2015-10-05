@@ -7,14 +7,14 @@ import java.text.DecimalFormat;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
-import actor4j.core.ActorSystem;
+import actor4j.function.Supplier;
 import tools4j.utils.Timer;
 import tools4j.utils.TimerListener;
 
 public class MessageThroughputMeasurement {
 	protected Timer timer;
 	
-	public MessageThroughputMeasurement(final ActorSystem system, final DescriptiveStatistics statistics, final boolean console) {
+	public MessageThroughputMeasurement(final Supplier<Long> counter, final DescriptiveStatistics statistics, final boolean console) {
 		final DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
 		
 		timer = new Timer(1000, new TimerListener() {
@@ -22,8 +22,8 @@ public class MessageThroughputMeasurement {
 			protected long lastCount;
 			@Override
 			public void task() {
-				long count = system.getExecuterService().getCount();
-				long diff = count-lastCount;
+				long count = counter.get();
+				long diff  = count-lastCount;
 				
 				if (statistics!=null && iteration>0)
 					statistics.addValue(diff);

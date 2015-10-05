@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import actor4j.core.ActorSystem;
+import actor4j.function.Supplier;
 import actor4j.utils.MessageThroughputMeasurement;
 
 public class Benchmark {
@@ -54,7 +55,12 @@ public class Benchmark {
 			}
 		});
 		
-		MessageThroughputMeasurement messageTM = new MessageThroughputMeasurement(system, statistics, true);
+		MessageThroughputMeasurement messageTM = new MessageThroughputMeasurement(new Supplier<Long>() {
+			@Override
+			public Long get() {
+				return system.getExecuterService().getCount();
+			}
+		}, statistics, true);
 		messageTM.start();
 		
 		try {
