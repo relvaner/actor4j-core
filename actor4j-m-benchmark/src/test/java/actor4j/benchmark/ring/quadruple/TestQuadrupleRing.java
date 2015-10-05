@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2015, David A. Bauer
+ */
 package actor4j.benchmark.ring.quadruple;
 
 import java.util.UUID;
