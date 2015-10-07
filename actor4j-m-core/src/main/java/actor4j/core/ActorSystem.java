@@ -31,6 +31,8 @@ public class ActorSystem {
 	protected ActorBalancingOnCreation actorBalancingOnCreation;
 	protected ActorBalancingOnRuntime actorBalancingOnRuntime;
 	
+	protected ActorStrategyOnFailure actorStrategyOnFailure;
+	
 	protected boolean serverMode;
 	protected List<String> serverURIs;
 	protected ActorClientRunnable clientRunnable;
@@ -64,6 +66,8 @@ public class ActorSystem {
 		
 		actorBalancingOnCreation = new ActorBalancingOnCreation(this);
 		actorBalancingOnRuntime = new ActorBalancingOnRuntime(this);
+		
+		actorStrategyOnFailure = new ActorStrategyOnFailure();
 		
 		serverURIs = new ArrayList<>();
 		
@@ -255,6 +259,10 @@ public class ActorSystem {
 				public void run() {
 					if (analyzeMode.get())
 						analyzerThread.start();
+					
+					/* preStart */
+					for (Actor actor : actors.values())
+						actor.preStart();
 					
 					ActorMessage<?> message = null;
 					while ((message=bufferQueue.poll())!=null)

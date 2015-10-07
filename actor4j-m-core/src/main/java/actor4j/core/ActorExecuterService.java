@@ -5,12 +5,16 @@ package actor4j.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import safety4j.ErrorHandler;
+import safety4j.SafetyManager;
 
 public class ActorExecuterService {
 	protected ActorSystem system;
@@ -39,6 +43,21 @@ public class ActorExecuterService {
 		started = new AtomicBoolean();
 		
 		maxResourceThreads = 200;
+		
+		SafetyManager.getInstance().setErrorHandler(new ErrorHandler() {
+			@Override
+			public void handle(Exception e, String message, UUID uuid) {
+				if (message.equals("actor")) {
+					Actor actor = system.actors.get(uuid);
+					ActorLogger.logger().error(
+							String.format("Safety (%s) - Exception in actor: %s", 
+									Thread.currentThread().getName(),
+									actor.getName()!=null ? actor.getName() : actor.getId().toString())
+							);
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void run(Runnable onStartup) {

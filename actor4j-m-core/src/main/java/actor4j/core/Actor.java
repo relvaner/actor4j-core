@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
+import actor4j.supervisor.SupervisorStrategy;
 
 public abstract class Actor {
 	protected ActorSystem system;
@@ -172,6 +173,22 @@ public abstract class Actor {
 		system.messagePassing.registerActor(actor);
 		
 		return actor.getId();
+	}
+	
+	protected SupervisorStrategy supervisorStrategy() {
+		return null;
+	}
+	
+	protected void preStart() {
+		// empty
+	}
+	
+	protected void preRestart() {
+		// empty
+	}
+	
+	protected void postRestart() {
+		// empty
 	}
 	
 	protected void stop() {
