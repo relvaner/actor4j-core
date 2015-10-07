@@ -191,10 +191,15 @@ public abstract class Actor {
 		// empty
 	}
 	
+	protected void postStop() {
+		// empty
+	}
+	
 	protected void stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(parent);
 		system.messagePassing.unregisterActor(this);
 		system.removeActor(id);
+		postStop();
 	}
 }
