@@ -13,6 +13,9 @@ import actor4j.function.Consumer;
 import actor4j.function.Predicate;
 import actor4j.supervisor.SupervisorStrategy;
 
+import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorUtils.actorLabel;
+
 public abstract class Actor {
 	protected ActorSystem system;
 	
@@ -160,6 +163,22 @@ public abstract class Actor {
 	protected void forward(ActorMessage<?> message, UUID dest) {
 		message.dest   = dest;
 		send(message);
+	}
+	
+	protected void unhandled(ActorMessage<?> message) {
+		if (system.debugUnhandled) {
+			Actor sourceActor = system.actors.get(message.source);
+			if (sourceActor!=null)
+				logger().warn(
+					String.format("System - actor (%s): Unhandled message (%s) from source (%s)",
+						actorLabel(this), message.toString(), actorLabel(sourceActor)
+					));
+			else
+				logger().warn(
+					String.format("System - actor (%s): Unhandled message (%s) from unavaible source (???)",
+						actorLabel(this), message.toString()
+					));
+		}
 	}
 	
 	protected void setAlias(String alias) {

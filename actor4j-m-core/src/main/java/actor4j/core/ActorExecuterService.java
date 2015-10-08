@@ -16,6 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
 
+import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorUtils.actorLabel;
+
 public class ActorExecuterService {
 	protected ActorSystem system;
 	
@@ -49,11 +52,9 @@ public class ActorExecuterService {
 			public void handle(Exception e, String message, UUID uuid) {
 				if (message.equals("actor")) {
 					Actor actor = system.actors.get(uuid);
-					ActorLogger.logger().error(
-							String.format("Safety (%s) - Exception in actor: %s", 
-									Thread.currentThread().getName(),
-									actor.getName()!=null ? actor.getName() : actor.getId().toString())
-							);
+					logger().error(
+						String.format("Safety (%s) - Exception in actor: %s", 
+							Thread.currentThread().getName(), actorLabel(actor)));
 					e.printStackTrace();
 				}
 			}

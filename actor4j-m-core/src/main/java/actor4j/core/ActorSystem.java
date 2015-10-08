@@ -25,6 +25,8 @@ public class ActorSystem {
 	protected boolean softMode; // hard, soft
 	protected long softSleep;
 	
+	protected boolean debugUnhandled;
+	
 	protected Queue<ActorMessage<?>> bufferQueue;
 	protected ActorExecuterService executerService;
 	
@@ -151,6 +153,12 @@ public class ActorSystem {
 	
 	public ActorSystem hardMode() {
 		this.softMode = false;
+		
+		return this;
+	}
+	
+	public ActorSystem setDebugUnhandled(boolean debugUnhandled) {
+		this.debugUnhandled = debugUnhandled;
 		
 		return this;
 	}

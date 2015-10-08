@@ -4,30 +4,24 @@ import actor4j.supervisor.AllForOneSupervisorStrategy;
 import actor4j.supervisor.OneForOneSupervisorStrategy;
 import actor4j.supervisor.SupervisorStrategyDirective;
 
+import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorUtils.actorLabel;
+
 public class ActorStrategyOnFailure {
 	protected void oneForOne_directive_resume(Actor actor) {
-		ActorLogger.logger().info(
-				String.format("System - actor (%s) resumed", 
-						actor.getName()!=null ? actor.getName() : actor.getId().toString())
-				); 
+		logger().info(String.format("System - actor (%s) resumed", actorLabel(actor)));
 	}
 	
 	protected void oneForOne_directive_restart(Actor actor) {
 		actor.preRestart();
 		// actor.stop(); ... with DI
 		actor.postRestart();
-		ActorLogger.logger().info(
-				String.format("System - actor (%s) restarted", 
-						actor.getName()!=null ? actor.getName() : actor.getId().toString())
-				); 
+		logger().info(String.format("System - actor (%s) restarted", actorLabel(actor))); 
 	}
 	
 	protected void oneForOne_directive_stop(Actor actor) {
 		actor.stop();
-		ActorLogger.logger().info(
-				String.format("System - actor (%s) stopped", 
-						actor.getName()!=null ? actor.getName() : actor.getId().toString())
-				); 
+		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
 	}
 	
 	protected void allForOne_directive_resume(Actor actor) {
