@@ -7,16 +7,32 @@ import actor4j.supervisor.SupervisorStrategyDirective;
 import static actor4j.core.ActorLogger.logger;
 import static actor4j.core.ActorUtils.actorLabel;
 
+import java.util.UUID;
+
 public class ActorStrategyOnFailure {
+	protected ActorSystem system;
+	
+	public ActorStrategyOnFailure(ActorSystem system) {
+		this.system = system;
+	}
+	
 	protected void oneForOne_directive_resume(Actor actor) {
 		logger().info(String.format("System - actor (%s) resumed", actorLabel(actor)));
 	}
 	
 	protected void oneForOne_directive_restart(Actor actor) {
 		actor.preRestart();
-		// actor.stop(); ... with DI
-		actor.postRestart();
-		logger().info(String.format("System - actor (%s) restarted", actorLabel(actor))); 
+		actor.postStop();
+		UUID buf = actor.getId();
+		try {
+			actor = (Actor)system.container.getInstance(buf);
+			actor.setId(buf);	
+			system.actors.put(buf, actor);
+			actor.postRestart();
+			logger().info(String.format("System - actor (%s) restarted", actorLabel(actor))); 
+		} catch (Exception e) {
+			throw new ActorInitializationException(); // never must occur
+		}
 	}
 	
 	protected void oneForOne_directive_stop(Actor actor) {
