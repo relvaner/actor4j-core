@@ -216,7 +216,7 @@ public abstract class Actor {
 		try {
 			actor = (Actor)system.container.getInstance(temp);
 			system.container.registerConstructorInjector(actor.getId(), clazz, params);
-			//container.unregister(temp);
+			system.container.unregister(temp);
 		} catch (Exception e) {
 			throw new ActorInitializationException();
 		}

@@ -203,7 +203,7 @@ public class ActorSystem {
 		try {
 			actor = (Actor)container.getInstance(temp);
 			container.registerConstructorInjector(actor.getId(), clazz, params);
-			//container.unregister(temp);
+			container.unregister(temp);
 		} catch (Exception e) {
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
