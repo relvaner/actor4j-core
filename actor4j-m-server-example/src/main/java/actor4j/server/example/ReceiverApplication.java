@@ -8,7 +8,7 @@ import java.util.UUID;
 import javax.ws.rs.ApplicationPath;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorCreator;
+import actor4j.core.ActorFactory;
 import actor4j.core.ActorSystem;
 import actor4j.server.RESTActorApplication;
 
@@ -20,7 +20,7 @@ public class ReceiverApplication extends RESTActorApplication {
 		system.setParallelismFactor(1);
 		system.softMode();
 		
-		UUID receiver = system.addActor(new ActorCreator() {
+		UUID receiver = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
 				return new Receiver();

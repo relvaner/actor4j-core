@@ -52,6 +52,10 @@ public abstract class Actor {
 		return id;
 	}
 	
+	public UUID getSelf() {
+		return id;
+	}
+	
 	public void setId(UUID id) {
 		this.id = id;
 	}
@@ -220,9 +224,9 @@ public abstract class Actor {
 		return (actor!=null) ? addChild(actor) : UUID_ZERO;
 	}
 	
-	protected UUID addChild(ActorCreator creator) {
-		Actor actor = creator.create();
-		system.container.registerFactoryInjector(actor.getId(), creator);
+	protected UUID addChild(ActorFactory factory) {
+		Actor actor = factory.create();
+		system.container.registerFactoryInjector(actor.getId(), factory);
 		
 		return addChild(actor);
 	}
@@ -249,7 +253,7 @@ public abstract class Actor {
 	
 	protected void stop() {
 		if (parent!=null)
-			system.actors.get(parent).children.remove(parent);
+			system.actors.get(parent).children.remove(getSelf());
 		system.messagePassing.unregisterActor(this);
 		system.removeActor(id);
 		postStop();

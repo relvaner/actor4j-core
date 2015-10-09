@@ -5,5 +5,5 @@ package actor4j.core;
 
 import tools4j.di.FactoryInjector;
 
-public interface ActorCreator extends FactoryInjector<Actor> {
+public interface ActorFactory extends FactoryInjector<Actor> {
 }

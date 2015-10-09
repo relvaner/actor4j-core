@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorCreator;
+import actor4j.core.ActorFactory;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.function.Consumer;
@@ -32,7 +32,7 @@ public class AwaitFeature {
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {

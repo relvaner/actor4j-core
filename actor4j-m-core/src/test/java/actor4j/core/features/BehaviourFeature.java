@@ -12,7 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorCreator;
+import actor4j.core.ActorFactory;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.function.Consumer;
@@ -30,7 +30,7 @@ public class BehaviourFeature {
 	public void test_become() {
 		final AtomicBoolean behaviour = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {
@@ -68,7 +68,7 @@ public class BehaviourFeature {
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {
@@ -116,7 +116,7 @@ public class BehaviourFeature {
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {
@@ -172,7 +172,7 @@ public class BehaviourFeature {
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {

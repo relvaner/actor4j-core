@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.Actor;
-import actor4j.core.ActorCreator;
+import actor4j.core.ActorFactory;
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
@@ -22,7 +22,7 @@ public class AnalyzeExample {
 		ActorGroup group = new ActorGroup();
 		for (int i=0; i<size; i++) {
 			final int f_i = i;
-			UUID id = system.addActor(new ActorCreator() {
+			UUID id = system.addActor(new ActorFactory() {
 				@Override
 				public Actor create() {
 					return new Actor("group-"+f_i) {
@@ -49,7 +49,7 @@ public class AnalyzeExample {
 			});
 			group.add(id);
 		}
-		UUID id = system.addActor(new ActorCreator() {
+		UUID id = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
 				return new Actor("group-"+size) {
@@ -60,7 +60,7 @@ public class AnalyzeExample {
 						if (first) {
 							for (int i=0; i<4; i++) {
 								final int f_i = i;
-								UUID childId = addChild(new ActorCreator() {
+								UUID childId = addChild(new ActorFactory() {
 									@Override
 									public Actor create() {
 										return new Actor("child-"+f_i){
@@ -81,7 +81,7 @@ public class AnalyzeExample {
 		});
 		group.add(id);
 		
-		UUID ping = system.addActor(new ActorCreator() {
+		UUID ping = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
 				return new Actor("ping") {
@@ -90,7 +90,7 @@ public class AnalyzeExample {
 					@Override
 					protected void receive(ActorMessage<?> message) {
 						if (first) {
-							pong = addChild(new ActorCreator() {
+							pong = addChild(new ActorFactory() {
 								@Override
 								public Actor create() {
 									return new Actor("pong") {

@@ -3,7 +3,7 @@ package actor4j.core.features;
 import java.util.UUID;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorCreator;
+import actor4j.core.ActorFactory;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 
@@ -16,7 +16,7 @@ public class SafetyFeature {
 	}
 	
 	public void test() {
-		UUID dest = system.addActor(new ActorCreator() { 
+		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor("SafetyFeatureActor") {

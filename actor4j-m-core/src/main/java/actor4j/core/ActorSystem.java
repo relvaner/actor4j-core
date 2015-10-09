@@ -79,7 +79,7 @@ public class ActorSystem {
 		actorBalancingOnCreation = new ActorBalancingOnCreation(this);
 		actorBalancingOnRuntime = new ActorBalancingOnRuntime(this);
 		
-		actorStrategyOnFailure = new ActorStrategyOnFailure();
+		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
 		serverURIs = new ArrayList<>();
 		
@@ -211,9 +211,9 @@ public class ActorSystem {
 		return (actor!=null) ? user_addActor(actor) : UUID_ZERO;
 	}
 	
-	public UUID addActor(ActorCreator creator) {
-		Actor actor = creator.create();
-		container.registerFactoryInjector(actor.getId(), creator);
+	public UUID addActor(ActorFactory factory) {
+		Actor actor = factory.create();
+		container.registerFactoryInjector(actor.getId(), factory);
 		
 		return user_addActor(actor);
 	}
