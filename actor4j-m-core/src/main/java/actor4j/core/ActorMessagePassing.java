@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static actor4j.core.ActorUtils.*;
+
 public class ActorMessagePassing {
 	protected ActorSystem system;
 	
@@ -17,7 +19,7 @@ public class ActorMessagePassing {
 	
 	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
 	
-	protected final UUID UUID_ALIAS = UUID.fromString("00000000-0000-0000-0000-000000000000");
+	protected final UUID UUID_ALIAS = UUID_ZERO;
 	
 	public ActorMessagePassing(ActorSystem system) {
 		super();

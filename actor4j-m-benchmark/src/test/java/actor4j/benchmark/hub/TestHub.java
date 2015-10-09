@@ -20,12 +20,12 @@ public class TestHub {
 		system.softMode();
 		
 		
-		UUID dest = system.addActor(new Destination());
+		UUID dest = system.addActor(Destination.class);
 		ActorGroup group = new ActorGroup();
 		int size = 100;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
-			id = system.addActor(new Client(dest));
+			id = system.addActor(Client.class, dest);
 			group.add(id);
 		}
 		

@@ -16,6 +16,7 @@ import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorLogger.logger;
 import static actor4j.core.ActorUtils.actorLabel;
+import static actor4j.core.ActorUtils.*;
 
 public abstract class Actor {
 	protected ActorSystem system;
@@ -193,13 +194,13 @@ public abstract class Actor {
 	private UUID addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
-		system.internal_addActor(actor);
+		system.system_addActor(actor);
 		system.messagePassing.registerActor(actor);
 		
 		return actor.getId();
 	}
 	
-	protected UUID addChild(Class<? extends Actor> clazz, Object... args) {
+	protected UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InjectorParam[] params = new InjectorParam[args.length];
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
@@ -212,12 +213,11 @@ public abstract class Actor {
 			actor = (Actor)system.container.getInstance(temp);
 			system.container.registerConstructorInjector(actor.getId(), clazz, params);
 			//container.unregister(temp);
-			addChild(actor);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new ActorInitializationException();
 		}
 		
-		return actor.getId();
+		return (actor!=null) ? addChild(actor) : UUID_ZERO;
 	}
 	
 	protected UUID addChild(ActorCreator creator) {

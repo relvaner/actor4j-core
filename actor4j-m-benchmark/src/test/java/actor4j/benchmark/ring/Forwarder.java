@@ -13,6 +13,10 @@ public class Forwarder extends Actor {
 	
 	protected long initalMessages;
 	
+	public Forwarder() {
+		super();
+	}
+	
 	public Forwarder(UUID next) {
 		super();
 		

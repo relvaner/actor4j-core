@@ -17,11 +17,11 @@ public class TestRing {
 		system.hardMode();
 		
 		int size = 100;
-		UUID next = system.addActor(new Forwarder(null));
+		UUID next = system.addActor(Forwarder.class);
 		for(int i=0; i<size-2; i++) {
-			next = system.addActor(new Forwarder(next));
+			next = system.addActor(Forwarder.class, next);
 		}
-		UUID sender = system.addActor(new Sender(next));
+		UUID sender = system.addActor(Sender.class, next);
 		
 		system.send(new ActorMessage<>(new Object(), 0, sender, sender));
 		

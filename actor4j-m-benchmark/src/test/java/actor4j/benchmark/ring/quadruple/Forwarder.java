@@ -14,6 +14,10 @@ public class Forwarder extends ActorGroupMember {
 	
 	protected long initalMessages;
 	
+	public Forwarder(ActorGroup group) {
+		super(group);
+	}
+	
 	public Forwarder(ActorGroup group, UUID next) {
 		super(group);
 		

@@ -12,8 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import safety4j.SafetyManager;
 import tools4j.di.DIContainer;
 import tools4j.di.InjectorParam;
+
+import static actor4j.core.ActorUtils.*;
 
 public class ActorSystem {
 	protected DIContainer<UUID> container;
@@ -87,13 +90,13 @@ public class ActorSystem {
 			protected void receive(ActorMessage<?> message) {
 			}
 		};
-		USER_ID = internal_addActor(user);
-		SYSTEM_ID = internal_addActor(new Actor("system") {
+		USER_ID = system_addActor(user);
+		SYSTEM_ID = system_addActor(new Actor("system") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
 			}
 		});
-		UNKNOWN_ID = internal_addActor(new Actor("unknown") {
+		UNKNOWN_ID = system_addActor(new Actor("unknown") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
 			}
@@ -176,21 +179,19 @@ public class ActorSystem {
 		return this;
 	}
 	
-	protected UUID internal_addActor(Actor actor) {
+	protected UUID system_addActor(Actor actor) {
 		actor.setSystem(this);
 		actors.put(actor.getId(), actor);
 		return actor.getId();
 	}
 	
-	protected UUID addActor(Actor actor) {
+	protected UUID user_addActor(Actor actor) {
 		actor.parent = USER_ID;
 		user.children.add(actor.getId());
-		actor.setSystem(this);
-		actors.put(actor.getId(), actor);
-		return actor.getId();
+		return system_addActor(actor);
 	}
 	
-	public UUID addActor(Class<? extends Actor> clazz, Object... args) {
+	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InjectorParam[] params = new InjectorParam[args.length];
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
@@ -203,21 +204,18 @@ public class ActorSystem {
 			actor = (Actor)container.getInstance(temp);
 			container.registerConstructorInjector(actor.getId(), clazz, params);
 			//container.unregister(temp);
-			addActor(actor);
 		} catch (Exception e) {
-			e.printStackTrace();
+			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
-		return actor.getId();
+		return (actor!=null) ? user_addActor(actor) : UUID_ZERO;
 	}
 	
 	public UUID addActor(ActorCreator creator) {
 		Actor actor = creator.create();
 		container.registerFactoryInjector(actor.getId(), creator);
 		
-		addActor(actor);
-		
-		return actor.getId();
+		return user_addActor(actor);
 	}
 	
 	protected void removeActor(UUID id) {

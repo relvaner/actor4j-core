@@ -20,12 +20,12 @@ public class TestQuadrupleRing {
 		for (int j=0; j<4; j++) {
 			ActorGroup group = new ActorGroup();
 			
-			UUID next = system.addActor(new Forwarder(group, null));
+			UUID next = system.addActor(Forwarder.class, group);
 			int size = 100;
 			for(int i=0; i<size-2; i++) {
-				next = system.addActor(new Forwarder(group, next));
+				next = system.addActor(Forwarder.class, group, next);
 			}
-			UUID sender = system.addActor(new Sender(group, next));
+			UUID sender = system.addActor(Sender.class, group, next);
 		
 			system.send(new ActorMessage<>(new Object(), 0, sender, sender));
 		}

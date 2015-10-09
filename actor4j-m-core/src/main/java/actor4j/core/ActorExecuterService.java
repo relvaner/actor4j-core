@@ -50,13 +50,26 @@ public class ActorExecuterService {
 		SafetyManager.getInstance().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Exception e, String message, UUID uuid) {
-				if (message.equals("actor")) {
-					Actor actor = system.actors.get(uuid);
-					logger().error(
-						String.format("Safety (%s) - Exception in actor: %s", 
-							Thread.currentThread().getName(), actorLabel(actor)));
-					e.printStackTrace();
+				if (message!=null) {
+					if (message.equals("initialization")) {
+						logger().error(
+							String.format("Safety (%s) - Exception in initialization of an actor", 
+								Thread.currentThread().getName()));
+					}
+					else if (message.equals("actor")) {
+						Actor actor = system.actors.get(uuid);
+							logger().error(
+								String.format("Safety (%s) - Exception in actor: %s", 
+									Thread.currentThread().getName(), actorLabel(actor)));
+					}
 				}
+				else {
+					logger().error(
+						String.format("Safety (%s) - Exception in ActorThread", 
+							Thread.currentThread().getName()));
+				}
+				
+				e.printStackTrace();
 			}
 		});
 	}
