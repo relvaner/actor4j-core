@@ -23,7 +23,7 @@ public class ActorMessageMatcher {
 		matchesAny = new LinkedList<>();
 	}
 		
-	public ActorMessageMatcher match(UUID source, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final UUID source, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple();
@@ -39,7 +39,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(int tag, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple();
@@ -55,7 +55,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(UUID source, int tag, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final UUID source, final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple();

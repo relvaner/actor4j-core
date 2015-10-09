@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import actor4j.core.Actor;
+import actor4j.core.ActorCreator;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.server.RESTActorClientRunnable;
@@ -43,15 +44,25 @@ public class SenderApplication {
 		//system.addURI("http://192.168.0.100:8080/actor4j-m-server-example/rest");
 		
 		//UUID sender = system.addActor(new Sender(UUID.fromString("490a452e-d53f-41b5-b740-7eada0ae372f")));
-		UUID sender = system.addActor(new Sender("receiver"));
+		UUID sender = system.addActor(new ActorCreator() {
+			@Override
+			public Actor create() {
+				return new Sender("receiver");
+			}
+		});
 		Payload payload = new Payload();
 		payload.data.add("Hello");
 		payload.data.add("World");
 		payload.data.add("!");
-		UUID helloWorld = system.addActor(new Actor() {
+		UUID helloWorld = system.addActor(new ActorCreator() {
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				this.send(message, "receiver");
+			public Actor create() {
+				return new Actor() {
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						this.send(message, "receiver");
+					}
+				};
 			}
 		});
 		

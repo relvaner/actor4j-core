@@ -3,6 +3,7 @@ package actor4j.core.features;
 import java.util.UUID;
 
 import actor4j.core.Actor;
+import actor4j.core.ActorCreator;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 
@@ -15,10 +16,15 @@ public class SafetyFeature {
 	}
 	
 	public void test() {
-		UUID dest = system.addActor(new Actor("SafetyFeatureActor") {
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				throw new NullPointerException();
+			public Actor create() {
+				return new Actor("SafetyFeatureActor") {
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						throw new NullPointerException();
+					}
+				};
 			}
 		});
 		

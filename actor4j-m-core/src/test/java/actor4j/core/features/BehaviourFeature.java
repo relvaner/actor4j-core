@@ -12,6 +12,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import actor4j.core.Actor;
+import actor4j.core.ActorCreator;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.function.Consumer;
@@ -27,19 +28,24 @@ public class BehaviourFeature {
 		
 	@Test
 	public void test_become() {
-		AtomicBoolean behaviour = new AtomicBoolean(false);
+		final AtomicBoolean behaviour = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new Actor() {
-			protected Consumer<ActorMessage<?>> newBehaviour = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					behaviour.set(true);
-				}
-			};
-			
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				become(newBehaviour);
+			public Actor create() {
+				return new Actor() {
+					protected Consumer<ActorMessage<?>> newBehaviour = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							behaviour.set(true);
+						}
+					};
+					
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						become(newBehaviour);
+					}
+				};
 			}
 		});
 		
@@ -58,29 +64,34 @@ public class BehaviourFeature {
 	
 	@Test
 	public void test_become_unbecome() {
-		AtomicBoolean[] behaviour = new AtomicBoolean[2];
+		final AtomicBoolean[] behaviour = new AtomicBoolean[2];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new Actor() {
-			protected Consumer<ActorMessage<?>> newBehaviour = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					behaviour[0].set(true);
-					unbecome();
-				}
-			};
-			
-			protected boolean first = true;
-			
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				if (first) {
-					become(newBehaviour);
-					first = false;
-				}
-				else
-					behaviour[1].set(true);
+			public Actor create() {
+				return new Actor() {
+					protected Consumer<ActorMessage<?>> newBehaviour = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							behaviour[0].set(true);
+							unbecome();
+						}
+					};
+					
+					protected boolean first = true;
+					
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						if (first) {
+							become(newBehaviour);
+							first = false;
+						}
+						else
+							behaviour[1].set(true);
+					}
+				};
 			}
 		});
 		
@@ -101,36 +112,41 @@ public class BehaviourFeature {
 	
 	@Test
 	public void test_stack_become_unbecome() {
-		AtomicBoolean[] behaviour = new AtomicBoolean[2];
+		final AtomicBoolean[] behaviour = new AtomicBoolean[2];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new Actor() {
-			protected Consumer<ActorMessage<?>> newBehaviour1 = new Consumer<ActorMessage<?>>() {
-				protected boolean first = true;
-				
-				@Override
-				public void accept(ActorMessage<?> t) {
-					if (first) {
-						become(newBehaviour2, false);
-						first = false;
-					}
-					else
-						behaviour[1].set(true);
-				}
-			};
-			
-			protected Consumer<ActorMessage<?>> newBehaviour2 = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					behaviour[0].set(true);
-					unbecome();
-				}
-			};
-			
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				become(newBehaviour1);
+			public Actor create() {
+				return new Actor() {
+					protected Consumer<ActorMessage<?>> newBehaviour1 = new Consumer<ActorMessage<?>>() {
+						protected boolean first = true;
+						
+						@Override
+						public void accept(ActorMessage<?> t) {
+							if (first) {
+								become(newBehaviour2, false);
+								first = false;
+							}
+							else
+								behaviour[1].set(true);
+						}
+					};
+					
+					protected Consumer<ActorMessage<?>> newBehaviour2 = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							behaviour[0].set(true);
+							unbecome();
+						}
+					};
+					
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						become(newBehaviour1);
+					}
+				};
 			}
 		});
 		
@@ -152,37 +168,42 @@ public class BehaviourFeature {
 	
 	@Test
 	public void test_stack_become_unbecomeAll() {
-		AtomicBoolean[] behaviour = new AtomicBoolean[3];
+		final AtomicBoolean[] behaviour = new AtomicBoolean[3];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new Actor() {
-			protected Consumer<ActorMessage<?>> newBehaviour1 = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					behaviour[0].set(true);
-					become(newBehaviour2, false);
-				}
-			};
-			
-			protected Consumer<ActorMessage<?>> newBehaviour2 = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					behaviour[1].set(true);
-					unbecomeAll();
-				}
-			};
-			
-			protected boolean first = true;
-			
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				if (first) {
-					become(newBehaviour1);
-					first = false;
-				}
-				else
-					behaviour[2].set(true);
+			public Actor create() {
+				return new Actor() {
+					protected Consumer<ActorMessage<?>> newBehaviour1 = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							behaviour[0].set(true);
+							become(newBehaviour2, false);
+						}
+					};
+					
+					protected Consumer<ActorMessage<?>> newBehaviour2 = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							behaviour[1].set(true);
+							unbecomeAll();
+						}
+					};
+					
+					protected boolean first = true;
+					
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						if (first) {
+							become(newBehaviour1);
+							first = false;
+						}
+						else
+							behaviour[2].set(true);
+					}
+				};
 			}
 		});
 		

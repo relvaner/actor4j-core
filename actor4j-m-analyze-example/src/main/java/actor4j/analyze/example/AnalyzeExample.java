@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.Actor;
+import actor4j.core.ActorCreator;
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
@@ -17,69 +18,98 @@ public class AnalyzeExample {
 		ActorSystem system = new ActorSystem();
 		final ActorSystem global = system;
 		
-		int size = 2;
+		final int size = 2;
 		ActorGroup group = new ActorGroup();
 		for (int i=0; i<size; i++) {
-			UUID id = system.addActor(new Actor("group-"+i) {
-				protected boolean first = true;
-				protected UUID last;
+			final int f_i = i;
+			UUID id = system.addActor(new ActorCreator() {
 				@Override
-				protected void receive(ActorMessage<?> message) {
-					if (first) {
-						UUID next = id;
-						for (int i=0; i<3; i++) {
-							UUID current = addChild(new Sender("child-"+i, next));
-							next = current;
+				public Actor create() {
+					return new Actor("group-"+f_i) {
+						protected boolean first = true;
+						protected UUID last;
+						@Override
+						protected void receive(ActorMessage<?> message) {
+							if (first) {
+								UUID next = id;
+								for (int i=0; i<3; i++) {
+									final int f_i = i;
+									final UUID f_next = next;
+									UUID current = addChild(Sender.class, "child-"+f_i, f_next);
+									next = current;
+								}
+								last = next;
+								first = false;
+							}
+							if (message.tag==1)
+								send(new ActorMessage<Object>(null, 0, getId(), last));
 						}
-						last = next;
-						first = false;
-					}
-					if (message.tag==1)
-						send(new ActorMessage<Object>(null, 0, getId(), last));
+					};
 				}
 			});
 			group.add(id);
 		}
-		UUID id = system.addActor(new Actor("group-"+size) {
-			protected HubPattern hub = new HubPattern(global);
-			protected boolean first = true;
+		UUID id = system.addActor(new ActorCreator() {
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				if (first) {
-					for (int i=0; i<4; i++) {
-						UUID childId = addChild(new Actor("child-"+i){
-							@Override
-							protected void receive(ActorMessage<?> message) {
+			public Actor create() {
+				return new Actor("group-"+size) {
+					protected HubPattern hub = new HubPattern(global);
+					protected boolean first = true;
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						if (first) {
+							for (int i=0; i<4; i++) {
+								final int f_i = i;
+								UUID childId = addChild(new ActorCreator() {
+									@Override
+									public Actor create() {
+										return new Actor("child-"+f_i){
+											@Override
+											protected void receive(ActorMessage<?> message) {
+											}
+										};
+									}
+								});
+								hub.add(childId);
 							}
-						});
-						hub.add(childId);
+							first = false;
+						}
+						hub.broadcast(new ActorMessage<Object>(null, 0, getId(), null));
 					}
-					first = false;
-				}
-				hub.broadcast(new ActorMessage<Object>(null, 0, getId(), null));
+				};
 			}
 		});
 		group.add(id);
 		
-		UUID ping = system.addActor(new Actor("ping") {
-			protected boolean first = true;
-			protected UUID pong;
+		UUID ping = system.addActor(new ActorCreator() {
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				if (first) {
-					pong = addChild(new Actor("pong") {
-						@Override
-						protected void receive(ActorMessage<?> message) {
-							UUID buffer = message.source;
-							message.source = message.dest;
-							message.dest = buffer;
-							send(message);
+			public Actor create() {
+				return new Actor("ping") {
+					protected boolean first = true;
+					protected UUID pong;
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						if (first) {
+							pong = addChild(new ActorCreator() {
+								@Override
+								public Actor create() {
+									return new Actor("pong") {
+										@Override
+										protected void receive(ActorMessage<?> message) {
+											UUID buffer = message.source;
+											message.source = message.dest;
+											message.dest = buffer;
+											send(message);
+										}
+									};
+								}
+							});
+							first = false;
 						}
-					});
-					first = false;
-				}
-				if (message.tag==1)
-					send(new ActorMessage<Object>(null, 0, getId(), pong));
+						if (message.tag==1)
+							send(new ActorMessage<Object>(null, 0, getId(), pong));
+					}
+				};
 			}
 		});
 		group.add(ping);

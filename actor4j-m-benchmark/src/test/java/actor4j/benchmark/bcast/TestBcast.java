@@ -18,13 +18,12 @@ public class TestBcast {
 		system.setParallelismMin(1);
 		system.softMode();
 		
-		
 		ActorGroup group = new ActorGroup();
 		HubPattern hub = new HubPattern(system);
 		int size = 100;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
-			id = system.addActor(new TestActor(hub));
+			id = system.addActor(TestActor.class, hub);
 			group.add(id);
 		}
 		hub.addAll(group);

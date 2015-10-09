@@ -12,7 +12,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import tools4j.di.DIContainer;
+import tools4j.di.InjectorParam;
+
 public class ActorSystem {
+	protected DIContainer<UUID> container;
+	
 	protected Map<UUID, Actor> actors; // ActorID -> Actor
 	protected Map<String, UUID> aliases; // ActorAlias -> ActorID
 	protected Map<UUID, String> hasAliases;
@@ -50,6 +55,8 @@ public class ActorSystem {
 	
 	public ActorSystem() {
 		super();
+		
+		container      = DIContainer.create();
 		
 		actors         = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
@@ -175,11 +182,41 @@ public class ActorSystem {
 		return actor.getId();
 	}
 	
-	public UUID addActor(Actor actor) {
+	protected UUID addActor(Actor actor) {
 		actor.parent = USER_ID;
 		user.children.add(actor.getId());
 		actor.setSystem(this);
 		actors.put(actor.getId(), actor);
+		return actor.getId();
+	}
+	
+	public UUID addActor(Class<? extends Actor> clazz, Object... args) {
+		InjectorParam[] params = new InjectorParam[args.length];
+		for (int i=0; i<args.length; i++)
+			params[i] = InjectorParam.createWithObj(args[i]);
+		
+		UUID temp = UUID.randomUUID();
+		container.registerConstructorInjector(temp, clazz, params);
+		
+		Actor actor = null;
+		try {
+			actor = (Actor)container.getInstance(temp);
+			container.registerConstructorInjector(actor.getId(), clazz, params);
+			//container.unregister(temp);
+			addActor(actor);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return actor.getId();
+	}
+	
+	public UUID addActor(ActorCreator creator) {
+		Actor actor = creator.create();
+		container.registerFactoryInjector(actor.getId(), creator);
+		
+		addActor(actor);
+		
 		return actor.getId();
 	}
 	

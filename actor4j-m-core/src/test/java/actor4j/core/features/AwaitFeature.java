@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.Actor;
+import actor4j.core.ActorCreator;
 import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.function.Consumer;
@@ -27,28 +28,33 @@ public class AwaitFeature {
 		
 	@Test
 	public void test_await() {
-		AtomicBoolean[] postconditions = new AtomicBoolean[2];
+		final AtomicBoolean[] postconditions = new AtomicBoolean[2];
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new Actor() {
-			protected Consumer<ActorMessage<?>> action = new Consumer<ActorMessage<?>>() {
-				@Override
-				public void accept(ActorMessage<?> t) {
-					postconditions[0].set(true);
-				}
-			};
-			
-			protected boolean first = true;
-			
+		UUID dest = system.addActor(new ActorCreator() { 
 			@Override
-			protected void receive(ActorMessage<?> message) {
-				if (first) {
-					await(1, action);
-					first = false;
-				}
-				else
-					postconditions[1].set(true);
+			public Actor create() {
+				return new Actor() {
+					protected Consumer<ActorMessage<?>> action = new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> t) {
+							postconditions[0].set(true);
+						}
+					};
+					
+					protected boolean first = true;
+					
+					@Override
+					protected void receive(ActorMessage<?> message) {
+						if (first) {
+							await(1, action);
+							first = false;
+						}
+						else
+							postconditions[1].set(true);
+					}
+				};
 			}
 		});
 		

@@ -35,7 +35,7 @@ public class ActorExecuterService {
 	
 	protected int maxResourceThreads;
 	
-	public ActorExecuterService(ActorSystem system) {
+	public ActorExecuterService(final ActorSystem system) {
 		super();
 		
 		this.system = system;

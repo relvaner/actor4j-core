@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
 import actor4j.supervisor.SupervisorStrategy;
+import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorLogger.logger;
 import static actor4j.core.ActorUtils.actorLabel;
@@ -50,6 +51,10 @@ public abstract class Actor {
 		return id;
 	}
 	
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -98,7 +103,7 @@ public abstract class Actor {
 		behaviourStack.clear();
 	}
 	
-	protected void await(UUID source, Consumer<ActorMessage<?>> action) {
+	protected void await(final UUID source, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -110,7 +115,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(int tag, Consumer<ActorMessage<?>> action) {
+	protected void await(final int tag, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -122,7 +127,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(UUID source, int tag, Consumer<ActorMessage<?>> action) {
+	protected void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -134,7 +139,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(Predicate<ActorMessage<?>> predicate, Consumer<ActorMessage<?>> action) {
+	protected void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -185,13 +190,41 @@ public abstract class Actor {
 		system.setAlias(id, alias);
 	}
 	
-	protected UUID addChild(Actor actor) {
+	private UUID addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
-		system.addActor(actor);
+		system.internal_addActor(actor);
 		system.messagePassing.registerActor(actor);
 		
 		return actor.getId();
+	}
+	
+	protected UUID addChild(Class<? extends Actor> clazz, Object... args) {
+		InjectorParam[] params = new InjectorParam[args.length];
+		for (int i=0; i<args.length; i++)
+			params[i] = InjectorParam.createWithObj(args[i]);
+		
+		UUID temp = UUID.randomUUID();
+		system.container.registerConstructorInjector(temp, clazz, params);
+		
+		Actor actor = null;
+		try {
+			actor = (Actor)system.container.getInstance(temp);
+			system.container.registerConstructorInjector(actor.getId(), clazz, params);
+			//container.unregister(temp);
+			addChild(actor);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return actor.getId();
+	}
+	
+	protected UUID addChild(ActorCreator creator) {
+		Actor actor = creator.create();
+		system.container.registerFactoryInjector(actor.getId(), creator);
+		
+		return addChild(actor);
 	}
 	
 	protected SupervisorStrategy supervisorStrategy() {
