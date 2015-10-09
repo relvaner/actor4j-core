@@ -5,12 +5,14 @@ package actor4j.core;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
+import actor4j.supervisor.DefaultSupervisiorStrategy;
 import actor4j.supervisor.SupervisorStrategy;
 import tools4j.di.InjectorParam;
 
@@ -36,7 +38,7 @@ public abstract class Actor {
 	public Actor(String name) {
 		super();
 		
-		this.id = UUID.randomUUID();
+		this.id   = UUID.randomUUID();
 		this.name = name;
 		
 		children = new ConcurrentLinkedQueue<>();
@@ -200,6 +202,8 @@ public abstract class Actor {
 		children.add(actor.getId());
 		system.system_addActor(actor);
 		system.messagePassing.registerActor(actor);
+		/* preStart */
+		actor.preStart();
 		
 		return actor.getId();
 	}
@@ -232,19 +236,25 @@ public abstract class Actor {
 	}
 	
 	protected SupervisorStrategy supervisorStrategy() {
-		return null;
+		return new DefaultSupervisiorStrategy();
 	}
 	
 	protected void preStart() {
 		// empty
 	}
 	
-	protected void preRestart() {
-		// empty
+	protected void preRestart(Exception reason) {
+		Iterator<UUID> iterator = children.iterator();
+		while (iterator.hasNext()) {
+			UUID id = iterator.next();
+			//stop
+		}
+			
+		postStop();
 	}
 	
-	protected void postRestart() {
-		// empty
+	protected void postRestart(Exception reason) {
+		preStart();
 	}
 	
 	protected void postStop() {
