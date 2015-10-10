@@ -16,7 +16,7 @@ public abstract class ActorGroupMember extends Actor {
 		super(name);
 		
 		groupId = group.getId();
-		group.add(getId());
+		group.add(getSelf());
 	}
 
 	public UUID getGroupId() {

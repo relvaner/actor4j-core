@@ -121,7 +121,7 @@ public class AnalyzeExample {
 		system.timer()
 			.schedule(new ActorMessage<Object>(null, 1, system.SYSTEM_ID, null), group, 0, 500);
 		system.timer()
-			.scheduleOnce(new ActorMessage<Object>(null, Actor.POISONPILL, system.SYSTEM_ID, null), id, 5000);
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.POISONPILL, system.SYSTEM_ID, null), id, 10000);
 		
 		try {
 			Thread.sleep(240000);
