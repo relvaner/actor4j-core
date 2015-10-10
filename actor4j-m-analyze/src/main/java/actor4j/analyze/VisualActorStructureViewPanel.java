@@ -52,8 +52,11 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
         	while (iteratorActiveCells.hasNext()) {
         		Entry<UUID, Boolean> entry = iteratorActiveCells.next();
         		if (!entry.getValue()) {
-        			graph.removeCells(graph.getChildVertices(cells.get(entry.getKey())));
+        			//graph.removeCells(graph.getChildVertices(cells.get(entry.getKey())), true);
+        			//graph.removeCells(new Object[] {cells.get(entry.getKey())}, true);
+        			graph.getModel().remove(cells.get(entry.getKey()));
         			cells.remove(entry.getKey());
+        			iteratorActiveCells.remove();
         			changed = true;
         		}		
         	}
