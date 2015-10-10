@@ -5,11 +5,11 @@ package actor4j.core;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.actor.protocols.StopProtocol;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.function.Consumer;
@@ -19,6 +19,7 @@ import tools4j.di.InjectorParam;
 import static actor4j.core.ActorLogger.logger;
 import static actor4j.core.ActorUtils.actorLabel;
 import static actor4j.core.ActorUtils.*;
+import static actor4j.core.actor.protocols.ActorProtocolTag.*;
 
 public abstract class Actor {
 	protected ActorSystem system;
@@ -32,6 +33,10 @@ public abstract class Actor {
 	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
+	
+	protected StopProtocol stopProtocol;
+	
+	public static final int TERMINATE = INTERNAL_STOP;
 			
 	public Actor() {
 		this(null);
@@ -46,6 +51,8 @@ public abstract class Actor {
 		children = new ConcurrentLinkedQueue<>();
 		
 		behaviourStack = new ArrayDeque<>();
+		
+		stopProtocol = new StopProtocol(this);
 	}
 	
 	protected void setSystem(ActorSystem system) {
@@ -85,34 +92,38 @@ public abstract class Actor {
 	}
 	
 	protected void internal_receive(ActorMessage<?> message) {
-		Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
-		if (behaviour==null)
-			receive(message);
-		else
-			behaviour.accept(message);
+		if (message.tag==INTERNAL_STOP)
+			stop();
+		else {
+			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
+			if (behaviour==null)
+				receive(message);
+			else
+				behaviour.accept(message);
+		}
 	}
 	
 	protected abstract void receive(ActorMessage<?> message);
 	
-	protected void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
+	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
 		if (replace && !behaviourStack.isEmpty())
 			behaviourStack.pop();
 		behaviourStack.push(behaviour);
 	}
 	
-	protected void become(Consumer<ActorMessage<?>> behaviour) {
+	public void become(Consumer<ActorMessage<?>> behaviour) {
 		become(behaviour, true);
 	}
 	
-	protected void unbecome() {
+	public void unbecome() {
 		behaviourStack.pop();
 	}
 	
-	protected void unbecomeAll() {
+	public void unbecomeAll() {
 		behaviourStack.clear();
 	}
 	
-	protected void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -124,7 +135,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -136,7 +147,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -148,7 +159,7 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -160,26 +171,26 @@ public abstract class Actor {
 		}, false);
 	}
 	
-	protected void send(ActorMessage<?> message) {
+	public void send(ActorMessage<?> message) {
 		system.messageDispatcher.post(message);
 	}
 	
-	protected void send(ActorMessage<?> message, String alias) {
+	public void send(ActorMessage<?> message, String alias) {
 		system.messageDispatcher.post(message, alias);
 	}
 	
-	protected void send(ActorMessage<?> message, UUID dest) {
+	public void send(ActorMessage<?> message, UUID dest) {
 		message.source = id;
 		message.dest   = dest;
 		send(message);
 	}
 	
-	protected void forward(ActorMessage<?> message, UUID dest) {
+	public void forward(ActorMessage<?> message, UUID dest) {
 		message.dest   = dest;
 		send(message);
 	}
 	
-	protected void unhandled(ActorMessage<?> message) {
+	public void unhandled(ActorMessage<?> message) {
 		if (system.debugUnhandled) {
 			Actor sourceActor = system.actors.get(message.source);
 			if (sourceActor!=null)
@@ -195,11 +206,11 @@ public abstract class Actor {
 		}
 	}
 	
-	protected void setAlias(String alias) {
+	public void setAlias(String alias) {
 		system.setAlias(id, alias);
 	}
 	
-	private UUID addChild(Actor actor) {
+	protected UUID internal_addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
 		system.system_addActor(actor);
@@ -210,7 +221,7 @@ public abstract class Actor {
 		return actor.getId();
 	}
 	
-	protected UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InjectorParam[] params = new InjectorParam[args.length];
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
@@ -227,47 +238,44 @@ public abstract class Actor {
 			throw new ActorInitializationException();
 		}
 		
-		return (actor!=null) ? addChild(actor) : UUID_ZERO;
+		return (actor!=null) ? internal_addChild(actor) : UUID_ZERO;
 	}
 	
-	protected UUID addChild(ActorFactory factory) {
+	public UUID addChild(ActorFactory factory) {
 		Actor actor = factory.create();
 		system.container.registerFactoryInjector(actor.getId(), factory);
 		
-		return addChild(actor);
+		return internal_addChild(actor);
 	}
 	
-	protected SupervisorStrategy supervisorStrategy() {
+	public SupervisorStrategy supervisorStrategy() {
 		return new DefaultSupervisiorStrategy();
 	}
 	
-	protected void preStart() {
+	public void preStart() {
 		// empty
 	}
 	
-	protected void preRestart(Exception reason) {
-		Iterator<UUID> iterator = children.iterator();
-		while (iterator.hasNext()) {
-			UUID id = iterator.next();
-			//stop
-		}
-			
-		postStop();
+	public void preRestart(Exception reason) {
+		stopProtocol.apply(false);
 	}
 	
-	protected void postRestart(Exception reason) {
+	public void postRestart(Exception reason) {
 		preStart();
 	}
 	
-	protected void postStop() {
+	public void postStop() {
 		// empty
 	}
 	
-	protected void stop() {
+	public void stop() {
+		stopProtocol.apply(true);
+	}
+	
+	public void internal_stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(getSelf());
 		system.messageDispatcher.unregisterActor(this);
 		system.removeActor(id);
-		postStop();
 	}
 }
