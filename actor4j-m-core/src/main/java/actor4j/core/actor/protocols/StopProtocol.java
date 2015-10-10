@@ -18,7 +18,7 @@ public class StopProtocol {
 		this.actor = actor;
 	}
 	
-	public void apply(final boolean complete) {
+	public void apply(final UUID client, final boolean complete) {
 		final List<UUID> waitForChildren =new ArrayList<>(actor.getChildren().size());
 		
 		Iterator<UUID> iterator = actor.getChildren().iterator();
@@ -31,16 +31,20 @@ public class StopProtocol {
 		if (waitForChildren.isEmpty()) {
 			actor.postStop();
 			if (complete) actor.internal_stop();
+			if (!client.equals(actor.getSelf()))
+				actor.send(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, actor.getSelf(), client));
 		}
 		else
 			actor.become(new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
-					if (message.tag==INTERNAL_STOP_ACK) {
+					if (message.tag==INTERNAL_STOP_SUCCESS) {
 						waitForChildren.remove(message.source);
 						if (waitForChildren.isEmpty()) {
 							actor.postStop();
 							if (complete) actor.internal_stop();
+							if (!client.equals(actor.getSelf()))
+								actor.send(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, actor.getSelf(), client));
 						}
 					}
 					actor.unhandled(message);

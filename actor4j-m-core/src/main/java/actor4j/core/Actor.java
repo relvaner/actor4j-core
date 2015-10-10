@@ -36,7 +36,8 @@ public abstract class Actor {
 	
 	protected StopProtocol stopProtocol;
 	
-	public static final int TERMINATE = INTERNAL_STOP;
+	public static final int POISONPILL = INTERNAL_STOP;
+	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
 			
 	public Actor() {
 		this(null);
@@ -93,7 +94,7 @@ public abstract class Actor {
 	
 	protected void internal_receive(ActorMessage<?> message) {
 		if (message.tag==INTERNAL_STOP)
-			stop();
+			stop(message.source);
 		else {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
@@ -257,7 +258,7 @@ public abstract class Actor {
 	}
 	
 	public void preRestart(Exception reason) {
-		stopProtocol.apply(false);
+		stopProtocol.apply(getSelf(), false);
 	}
 	
 	public void postRestart(Exception reason) {
@@ -268,8 +269,12 @@ public abstract class Actor {
 		// empty
 	}
 	
+	public void stop(UUID client) {
+		stopProtocol.apply(client, true);
+	}
+	
 	public void stop() {
-		stopProtocol.apply(true);
+		stopProtocol.apply(getSelf(), true);
 	}
 	
 	public void internal_stop() {
