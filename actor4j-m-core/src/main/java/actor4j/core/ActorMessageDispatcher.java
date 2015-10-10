@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static actor4j.core.ActorUtils.*;
 
-public class ActorMessagePassing {
+public class ActorMessageDispatcher {
 	protected ActorSystem system;
 	
 	protected Map<UUID, Long> actorsMap; // ActorID -> ThreadID
@@ -21,7 +21,7 @@ public class ActorMessagePassing {
 	
 	protected final UUID UUID_ALIAS = UUID_ZERO;
 	
-	public ActorMessagePassing(ActorSystem system) {
+	public ActorMessageDispatcher(ActorSystem system) {
 		super();
 		
 		this.system = system;

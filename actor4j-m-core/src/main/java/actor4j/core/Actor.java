@@ -161,11 +161,11 @@ public abstract class Actor {
 	}
 	
 	protected void send(ActorMessage<?> message) {
-		system.messagePassing.post(message);
+		system.messageDispatcher.post(message);
 	}
 	
 	protected void send(ActorMessage<?> message, String alias) {
-		system.messagePassing.post(message, alias);
+		system.messageDispatcher.post(message, alias);
 	}
 	
 	protected void send(ActorMessage<?> message, UUID dest) {
@@ -203,7 +203,7 @@ public abstract class Actor {
 		actor.parent = id;
 		children.add(actor.getId());
 		system.system_addActor(actor);
-		system.messagePassing.registerActor(actor);
+		system.messageDispatcher.registerActor(actor);
 		/* preStart */
 		actor.preStart();
 		
@@ -266,7 +266,7 @@ public abstract class Actor {
 	protected void stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(getSelf());
-		system.messagePassing.unregisterActor(this);
+		system.messageDispatcher.unregisterActor(this);
 		system.removeActor(id);
 		postStop();
 	}

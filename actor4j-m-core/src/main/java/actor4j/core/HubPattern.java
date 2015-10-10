@@ -37,7 +37,7 @@ public class HubPattern {
 	public void broadcast(ActorMessage<?> message) {
 		for (UUID id : ports) {
 			message.dest = id;
-			system.messagePassing.post(message);
+			system.messageDispatcher.post(message);
 		}
 	}
 }

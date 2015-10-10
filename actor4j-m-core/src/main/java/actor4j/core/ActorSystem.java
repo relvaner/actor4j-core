@@ -25,7 +25,7 @@ public class ActorSystem {
 	protected Map<String, UUID> aliases; // ActorAlias -> ActorID
 	protected Map<UUID, String> hasAliases;
 	protected Map<UUID, Boolean> resourceActors;
-	protected ActorMessagePassing messagePassing;
+	protected ActorMessageDispatcher messageDispatcher;
 	
 	protected int parallelismMin;
 	protected int parallelismFactor;
@@ -65,7 +65,7 @@ public class ActorSystem {
 		aliases        = new ConcurrentHashMap<>();
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceActors = new ConcurrentHashMap<>();
-		messagePassing = new ActorMessagePassing(this);
+		messageDispatcher = new ActorMessageDispatcher(this);
 		
 		setParallelismMin(0);
 		parallelismFactor = 1;
@@ -260,7 +260,7 @@ public class ActorSystem {
 		if (!executerService.isStarted()) 
 			bufferQueue.offer(message.clone());
 		else
-			messagePassing.postOuter(message);
+			messageDispatcher.postOuter(message);
 		
 		return this;
 	}
@@ -269,7 +269,7 @@ public class ActorSystem {
 		if (!executerService.isStarted()) 
 			bufferQueue.offer(message.clone());
 		else
-			messagePassing.postServer(message);
+			messageDispatcher.postServer(message);
 	}
 	
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group) {
@@ -281,7 +281,7 @@ public class ActorSystem {
 		else
 			for (UUID id : group) {
 				message.dest = id;
-				messagePassing.postOuter(message);
+				messageDispatcher.postOuter(message);
 			}
 		
 		return this;
@@ -309,7 +309,7 @@ public class ActorSystem {
 					
 					ActorMessage<?> message = null;
 					while ((message=bufferQueue.poll())!=null)
-						messagePassing.postOuter(message);
+						messageDispatcher.postOuter(message);
 				}
 			}, onTermination);
 	}

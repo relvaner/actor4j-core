@@ -101,7 +101,7 @@ public class ActorExecuterService {
 			actorThreads.add(t);
 		}
 		
-		system.messagePassing.beforeRun(actorThreads);
+		system.messageDispatcher.beforeRun(actorThreads);
 		for (ActorThread t : actorThreads)
 			t.start();
 		
