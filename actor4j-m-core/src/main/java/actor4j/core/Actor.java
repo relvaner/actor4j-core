@@ -30,6 +30,8 @@ public abstract class Actor {
 	protected Queue<UUID> children;
 	
 	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
+	
+	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 			
 	public Actor() {
 		this(null);
