@@ -5,6 +5,7 @@ package actor4j.core;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,6 +37,8 @@ public abstract class Actor {
 	
 	protected StopProtocol stopProtocol;
 	
+	protected Queue<UUID> deathWatcher;
+	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
 			
@@ -54,6 +57,8 @@ public abstract class Actor {
 		behaviourStack = new ArrayDeque<>();
 		
 		stopProtocol = new StopProtocol(this);
+		
+		deathWatcher =  new ConcurrentLinkedQueue<>();
 	}
 	
 	protected void setSystem(ActorSystem system) {
@@ -93,8 +98,8 @@ public abstract class Actor {
 	}
 	
 	protected void internal_receive(ActorMessage<?> message) {
-		if (message.tag==INTERNAL_STOP)
-			stop(message.source);
+		if (message.tag==POISONPILL)
+			stop();
 		else {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
@@ -258,7 +263,7 @@ public abstract class Actor {
 	}
 	
 	public void preRestart(Exception reason) {
-		stopProtocol.apply(getSelf(), false);
+		stopProtocol.apply(false);
 	}
 	
 	public void postRestart(Exception reason) {
@@ -269,12 +274,8 @@ public abstract class Actor {
 		// empty
 	}
 	
-	public void stop(UUID client) {
-		stopProtocol.apply(client, true);
-	}
-	
 	public void stop() {
-		stopProtocol.apply(getSelf(), true);
+		stopProtocol.apply(true);
 	}
 	
 	public void internal_stop() {
@@ -282,5 +283,22 @@ public abstract class Actor {
 			system.actors.get(parent).children.remove(getSelf());
 		system.messageDispatcher.unregisterActor(this);
 		system.removeActor(id);
+		Iterator<UUID> iterator = deathWatcher.iterator();
+		while (iterator.hasNext()) {
+			UUID dest = iterator.next();
+			send(new ActorMessage<>(null, TERMINATED, getSelf(), dest));
+		}
+	}
+	
+	public void watch(UUID dest) {
+		Actor actor = system.actors.get(dest);
+		if (actor!=null)
+			actor.deathWatcher.add(getSelf());
+	}
+	
+	public void unwatch(UUID dest) {
+		Actor actor = system.actors.get(dest);
+		if (actor!=null)
+			actor.deathWatcher.remove(getSelf());
 	}
 }
