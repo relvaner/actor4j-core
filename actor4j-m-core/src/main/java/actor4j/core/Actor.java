@@ -10,10 +10,10 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.supervisor.DefaultSupervisiorStrategy;
+import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
-import actor4j.supervisor.DefaultSupervisiorStrategy;
-import actor4j.supervisor.SupervisorStrategy;
 import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorLogger.logger;

@@ -1,4 +1,4 @@
-package actor4j.supervisor;
+package actor4j.core.supervisor;
 
 public abstract class SupervisorStrategy {
 	protected int retries;

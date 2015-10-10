@@ -1,14 +1,14 @@
 package actor4j.core;
 
-import actor4j.supervisor.AllForOneSupervisorStrategy;
-import actor4j.supervisor.OneForOneSupervisorStrategy;
-import actor4j.supervisor.SupervisorStrategy;
-import actor4j.supervisor.SupervisorStrategyDirective;
-
 import static actor4j.core.ActorLogger.logger;
 import static actor4j.core.ActorUtils.actorLabel;
 
 import java.util.UUID;
+
+import actor4j.core.supervisor.AllForOneSupervisorStrategy;
+import actor4j.core.supervisor.OneForOneSupervisorStrategy;
+import actor4j.core.supervisor.SupervisorStrategy;
+import actor4j.core.supervisor.SupervisorStrategyDirective;
 
 public class ActorStrategyOnFailure {
 	protected ActorSystem system;
