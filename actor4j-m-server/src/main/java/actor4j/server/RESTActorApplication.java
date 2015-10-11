@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import actor4j.core.ActorSystem;
+import static actor4j.core.ActorLogger.*;
 
 public abstract class RESTActorApplication extends ResourceConfig {
 	protected ActorSystem system;
@@ -23,7 +24,8 @@ public abstract class RESTActorApplication extends ResourceConfig {
 		configure(system);
 		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();
-		System.out.println("ActorSystem started...");
+		
+		logger().info("actor4j - System started...");
 
 		register(new AbstractBinder() {
 			protected void configure() {
@@ -41,6 +43,6 @@ public abstract class RESTActorApplication extends ResourceConfig {
 	@PreDestroy
 	public void shutdown() {
 		system.shutdown(true);
-		System.out.println("ActorSystem stopped...");
+		logger().info("actor4j - System stopped...");
 	}
 }
