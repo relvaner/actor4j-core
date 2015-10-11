@@ -64,7 +64,8 @@ public class ActorThread extends Thread {
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
 			Actor actor = system.actors.get(message.dest);
-			safetyMethod(message, actor);
+			if (actor!=null)
+				safetyMethod(message, actor);
 			counter.getAndIncrement();
 			
 			result = true;
