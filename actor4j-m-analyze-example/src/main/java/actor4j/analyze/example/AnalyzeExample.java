@@ -10,7 +10,6 @@ import actor4j.core.Actor;
 import actor4j.core.ActorFactory;
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorMessage;
-import actor4j.core.ActorProtocolTag;
 import actor4j.core.ActorSystem;
 import actor4j.core.HubPattern;
 

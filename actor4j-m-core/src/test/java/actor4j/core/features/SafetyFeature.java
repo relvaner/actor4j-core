@@ -29,9 +29,10 @@ public class SafetyFeature {
 		});
 		
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
+		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
