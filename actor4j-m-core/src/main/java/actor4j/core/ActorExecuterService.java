@@ -64,7 +64,7 @@ public class ActorExecuterService {
 					}
 				}
 				else {
-					logger().error(
+					logger().fatal(
 						String.format("Safety (%s) - Exception in ActorThread", 
 							Thread.currentThread().getName()));
 				}

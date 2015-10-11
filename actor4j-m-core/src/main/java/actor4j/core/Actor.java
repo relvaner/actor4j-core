@@ -41,6 +41,9 @@ public abstract class Actor {
 	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
+	
+	public static final int STOP       = INTERNAL_STOP;
+	public static final int RESTART    = INTERNAL_RESTART;
 			
 	public Actor() {
 		this(null);
