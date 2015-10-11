@@ -40,8 +40,8 @@ public class SenderApplication {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
-		system.addURI("http://localhost:8080/actor4j-m-server-example/rest");
-		//system.addURI("http://192.168.0.100:8080/actor4j-m-server-example/rest");
+		system.addURI("http://localhost:8080/actor4j-m-server-example/api");
+		//system.addURI("http://192.168.0.100:8080/actor4j-m-server-example/api");
 		
 		//UUID sender = system.addActor(new Sender(UUID.fromString("490a452e-d53f-41b5-b740-7eada0ae372f")));
 		UUID sender = system.addActor(new ActorFactory() {

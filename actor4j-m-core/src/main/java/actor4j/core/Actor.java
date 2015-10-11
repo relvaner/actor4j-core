@@ -283,6 +283,7 @@ public abstract class Actor {
 			system.actors.get(parent).children.remove(getSelf());
 		system.messageDispatcher.unregisterActor(this);
 		system.removeActor(id);
+		
 		Iterator<UUID> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();

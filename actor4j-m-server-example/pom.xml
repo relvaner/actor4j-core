@@ -13,6 +13,12 @@
    			<groupId>actor4j-m-server</groupId>
    			<artifactId>actor4j-m-server</artifactId>
    			<version>1.0.0</version>
-   		</dependency>
+   			<exclusions>
+   				<exclusion>
+   					<artifactId>actor4j-m-research</artifactId>
+   					<groupId>actor4j-m-research</groupId>
+   				</exclusion>
+   			</exclusions>
+  		</dependency>
   	</dependencies>
 </project>

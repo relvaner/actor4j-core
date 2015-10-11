@@ -12,7 +12,7 @@ import actor4j.core.ActorFactory;
 import actor4j.core.ActorSystem;
 import actor4j.server.RESTActorApplication;
 
-@ApplicationPath("rest")
+@ApplicationPath("api")
 public class ReceiverApplication extends RESTActorApplication {
 	@Override
 	protected void configure(ActorSystem system) {
