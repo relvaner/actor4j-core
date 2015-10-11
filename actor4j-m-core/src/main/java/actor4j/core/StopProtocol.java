@@ -1,14 +1,14 @@
-package actor4j.core.actor.protocols;
+package actor4j.core;
 
-import static actor4j.core.actor.protocols.ActorProtocolTag.*;
+import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import actor4j.core.Actor;
-import actor4j.core.ActorMessage;
 import actor4j.function.Consumer;
 
 public class StopProtocol {
@@ -18,7 +18,13 @@ public class StopProtocol {
 		this.actor = actor;
 	}
 	
-	public void apply(final boolean complete) {
+	protected void postStop() {
+		actor.postStop();
+		actor.internal_stop();
+		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
+	}
+	
+	public void apply() {
 		final List<UUID> waitForChildren =new ArrayList<>(actor.getChildren().size());
 		
 		Iterator<UUID> iterator = actor.getChildren().iterator();
@@ -29,24 +35,17 @@ public class StopProtocol {
 			actor.send(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
 		}
 		
-		if (waitForChildren.isEmpty()) {
-			actor.postStop();
-			if (complete) 
-				actor.internal_stop();
-		}
+		if (waitForChildren.isEmpty()) 
+			postStop();
 		else
 			actor.become(new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					if (message.tag==INTERNAL_STOP_SUCCESS) {
 						waitForChildren.remove(message.source);
-						if (waitForChildren.isEmpty()) {
-							actor.postStop();
-							if (complete) 
-								actor.internal_stop();
-						}
+						if (waitForChildren.isEmpty())
+							postStop();
 					}
-					actor.unhandled(message);
 				}
 			});
 	}

@@ -10,6 +10,7 @@ import actor4j.core.Actor;
 import actor4j.core.ActorFactory;
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorMessage;
+import actor4j.core.ActorProtocolTag;
 import actor4j.core.ActorSystem;
 import actor4j.core.HubPattern;
 
@@ -120,6 +121,8 @@ public class AnalyzeExample {
 		
 		system.timer()
 			.schedule(new ActorMessage<Object>(null, 1, system.SYSTEM_ID, null), group, 0, 500);
+		system.timer()
+			.scheduleOnce(new ActorMessage<Object>(null, ActorProtocolTag.INTERNAL_RESTART, system.SYSTEM_ID, null), ping, 5000);
 		system.timer()
 			.scheduleOnce(new ActorMessage<Object>(null, Actor.POISONPILL, system.SYSTEM_ID, null), id, 10000);
 		

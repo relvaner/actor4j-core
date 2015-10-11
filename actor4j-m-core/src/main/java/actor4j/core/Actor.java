@@ -10,7 +10,6 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import actor4j.core.actor.protocols.StopProtocol;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.function.Consumer;
@@ -18,9 +17,9 @@ import actor4j.function.Predicate;
 import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorProtocolTag.*;
 import static actor4j.core.ActorUtils.actorLabel;
 import static actor4j.core.ActorUtils.*;
-import static actor4j.core.actor.protocols.ActorProtocolTag.*;
 
 public abstract class Actor {
 	protected ActorSystem system;
@@ -35,6 +34,7 @@ public abstract class Actor {
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
+	protected RestartProtocol restartProtocol;
 	protected StopProtocol stopProtocol;
 	
 	protected Queue<UUID> deathWatcher;
@@ -56,11 +56,16 @@ public abstract class Actor {
 		
 		behaviourStack = new ArrayDeque<>();
 		
+		restartProtocol = new RestartProtocol(this);
 		stopProtocol = new StopProtocol(this);
 		
 		deathWatcher =  new ConcurrentLinkedQueue<>();
 	}
 	
+	public ActorSystem getSystem() {
+		return system;
+	}
+
 	protected void setSystem(ActorSystem system) {
 		this.system = system;
 	}
@@ -98,8 +103,14 @@ public abstract class Actor {
 	}
 	
 	protected void internal_receive(ActorMessage<?> message) {
-		if (message.tag==POISONPILL)
+		if (message.tag==INTERNAL_STOP)
 			stop();
+		else if (message.tag==INTERNAL_RESTART) {
+			if (message.value instanceof Exception)
+				preRestart((Exception)message.value);
+			else
+				preRestart(null);
+		}
 		else {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
@@ -263,7 +274,7 @@ public abstract class Actor {
 	}
 	
 	public void preRestart(Exception reason) {
-		stopProtocol.apply(false);
+		restartProtocol.apply(reason);
 	}
 	
 	public void postRestart(Exception reason) {
@@ -275,10 +286,10 @@ public abstract class Actor {
 	}
 	
 	public void stop() {
-		stopProtocol.apply(true);
+		stopProtocol.apply();
 	}
 	
-	public void internal_stop() {
+	protected void internal_stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(getSelf());
 		system.messageDispatcher.unregisterActor(this);

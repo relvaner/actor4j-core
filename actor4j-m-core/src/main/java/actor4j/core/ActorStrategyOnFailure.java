@@ -1,8 +1,10 @@
 package actor4j.core;
 
 import static actor4j.core.ActorLogger.logger;
+import static actor4j.core.ActorProtocolTag.*;
 import static actor4j.core.ActorUtils.actorLabel;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 import actor4j.core.supervisor.AllForOneSupervisorStrategy;
@@ -23,25 +25,48 @@ public class ActorStrategyOnFailure {
 	
 	protected void oneForOne_directive_restart(Actor actor, Exception reason) {
 		actor.preRestart(reason);
-		UUID buf = actor.getId();
-		try {
-			actor = (Actor)system.container.getInstance(buf);
-			actor.setId(buf);	
-			system.actors.put(buf, actor);
-			actor.postRestart(reason);
-			logger().info(String.format("System - actor (%s) restarted", actorLabel(actor))); 
-		} catch (Exception e) {
-			throw new ActorInitializationException(); // never must occur
-		}
 	}
 	
 	protected void oneForOne_directive_stop(Actor actor) {
 		actor.stop();
-		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
 	}
 	
 	protected void allForOne_directive_resume(Actor actor) {
 		oneForOne_directive_resume(actor);
+	}
+	
+	protected void allForOne_directive_restart(Actor actor, Exception reason) {
+		if (!actor.isRoot()) {
+			Actor parent = system.actors.get(actor.getParent());
+			if (parent!=null) {
+				Iterator<UUID> iterator = parent.getChildren().iterator();
+				while (iterator.hasNext()) {
+					UUID dest = iterator.next();
+					if (!dest.equals(actor.getId()))
+						actor.send(new ActorMessage<>(reason, INTERNAL_RESTART, parent.getId(), dest));
+				}
+				actor.preRestart(reason);
+			}
+		}
+		else 
+			actor.preRestart(reason);
+	}
+	
+	protected void allForOne_directive_stop(Actor actor) {
+		if (!actor.isRoot()) {
+			Actor parent = system.actors.get(actor.getParent());
+			if (parent!=null) {
+				Iterator<UUID> iterator = parent.getChildren().iterator();
+				while (iterator.hasNext()) {
+					UUID dest = iterator.next();
+					if (!dest.equals(actor.getId()))
+						actor.send(new ActorMessage<>(null, INTERNAL_STOP, parent.getId(), dest));
+				}
+				actor.stop();
+			}
+		}
+		else 
+			actor.stop();
 	}
 	
 	public void handle(Actor actor, Exception e) {
@@ -52,9 +77,9 @@ public class ActorStrategyOnFailure {
 			if (directive==SupervisorStrategyDirective.RESUME)
 				oneForOne_directive_resume(actor);
 			else if (directive==SupervisorStrategyDirective.RESTART)
-				; //oneForOne_directive_restart(actor, e);
+				oneForOne_directive_restart(actor, e);
 			else if (directive==SupervisorStrategyDirective.STOP)
-				; //oneForOne_directive_stop(actor);
+				oneForOne_directive_stop(actor);
 			else if (directive==SupervisorStrategyDirective.ESCALATE)
 				;
 		}
@@ -62,9 +87,9 @@ public class ActorStrategyOnFailure {
 			if (directive==SupervisorStrategyDirective.RESUME)
 				allForOne_directive_resume(actor);
 			else if (directive==SupervisorStrategyDirective.RESTART)
-				;
+				allForOne_directive_restart(actor, e);
 			else if (directive==SupervisorStrategyDirective.STOP)
-				;
+				allForOne_directive_stop(actor);
 			else if (directive==SupervisorStrategyDirective.ESCALATE)
 				;
 		}
