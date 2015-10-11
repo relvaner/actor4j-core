@@ -21,7 +21,13 @@ public class RestartProtocol {
 		this.actor = actor;
 	}
 	
-	protected void postStop(Exception reason) {
+	protected void postStop() {
+		actor.postStop();
+		actor.internal_stop();
+		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
+	}
+	
+	protected void postRestart(Exception reason) {
 		actor.postStop();
 		UUID buf = actor.getId();
 		try {
@@ -42,23 +48,36 @@ public class RestartProtocol {
 		Iterator<UUID> iterator = actor.getChildren().iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
+			actor.watch(dest);
+		}
+		iterator = actor.getChildren().iterator();
+		while (iterator.hasNext()) {
+			UUID dest = iterator.next();
 			waitForChildren.add(dest);
 			actor.watch(dest);
 			actor.send(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 
-			postStop(reason);
+			postRestart(reason);
 		else
 			actor.become(new Consumer<ActorMessage<?>>() {
+				protected boolean flag_stop;
 				@Override
 				public void accept(ActorMessage<?> message) {
-					if (message.tag==INTERNAL_STOP_SUCCESS) {
+					if (message.tag==INTERNAL_STOP)
+						flag_stop = true;
+					else if (message.tag==INTERNAL_STOP_SUCCESS) {
 						waitForChildren.remove(message.source);
 						if (waitForChildren.isEmpty())
-							postStop(reason);
+							if (flag_stop)
+								postStop();
+							else {
+								postRestart(reason);
+								actor.unbecome();
+							}
 					}
 				}
-			});
+			}, false);
 	}
 }

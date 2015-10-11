@@ -33,6 +33,11 @@ public class StopProtocol {
 		Iterator<UUID> iterator = actor.getChildren().iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
+			actor.watch(dest);
+		}
+		iterator = actor.getChildren().iterator();
+		while (iterator.hasNext()) {
+			UUID dest = iterator.next();
 			waitForChildren.add(dest);
 			actor.watch(dest);
 			actor.send(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
