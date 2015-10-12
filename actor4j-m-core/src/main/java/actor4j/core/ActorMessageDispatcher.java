@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import actor4j.function.BiConsumer;
+
 import static actor4j.core.ActorUtils.*;
 
 public class ActorMessageDispatcher {
@@ -21,6 +23,10 @@ public class ActorMessageDispatcher {
 	
 	protected final UUID UUID_ALIAS = UUID_ZERO;
 	
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerOuter;
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
+	
 	public ActorMessageDispatcher(ActorSystem system) {
 		super();
 		
@@ -30,6 +36,25 @@ public class ActorMessageDispatcher {
 		threadsMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
+		
+		biconsumerOuter = new BiConsumer<Long, ActorMessage<?>>() {
+			@Override
+			public void accept(Long id_dest, ActorMessage<?> msg) {
+				threadsMap.get(id_dest).outerQueueL2.offer(msg);
+			}
+		};
+		biconsumerServer = new BiConsumer<Long, ActorMessage<?>>() {
+			@Override
+			public void accept(Long id_dest, ActorMessage<?> msg) {
+				threadsMap.get(id_dest).serverQueueL2.offer(msg);
+			}
+		};
+		biconsumerDirective = new BiConsumer<Long, ActorMessage<?>>() {
+			@Override
+			public void accept(Long id_dest, ActorMessage<?> msg) {
+				threadsMap.get(id_dest).directiveQueue.offer(msg);
+			}
+		};
 	}
 	
 	public void post(ActorMessage<?> message) {
@@ -68,7 +93,7 @@ public class ActorMessageDispatcher {
 		}
 	}
 	
-	public void postOuter(ActorMessage<?> message) {
+	public void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {
 		if (message==null)
 			throw new NullPointerException();
 		
@@ -77,19 +102,19 @@ public class ActorMessageDispatcher {
 		
 		Long id_dest = actorsMap.get(message.dest);
 		if (id_dest!=null)
-			threadsMap.get(id_dest).outerQueueL2.offer(message.clone());
+			biconsumer.accept(id_dest, message.clone());
+	}
+	
+	public void postOuter(ActorMessage<?> message) {
+		postQueue(message, biconsumerOuter);
 	}
 	
 	public void postServer(ActorMessage<?> message) {
-		if (message==null)
-			throw new NullPointerException();
-		
-		if (system.analyzeMode.get())
-			system.analyzerThread.outerQueueL2.offer(message.clone());
-		
-		Long id_dest = actorsMap.get(message.dest);
-		if (id_dest!=null)
-			threadsMap.get(id_dest).serverQueueL2.offer(message.clone());
+		postQueue(message, biconsumerServer);
+	}
+	
+	public void postDirective(ActorMessage<?> message) {
+		postQueue(message, biconsumerDirective);
 	}
 	
 	public void beforeRun(List<ActorThread> actorThreads) {

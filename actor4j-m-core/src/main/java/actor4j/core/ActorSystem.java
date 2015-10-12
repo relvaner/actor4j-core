@@ -272,6 +272,11 @@ public class ActorSystem {
 			messageDispatcher.postServer(message);
 	}
 	
+	public void sendAsDirective(ActorMessage<?> message) {
+		if (executerService.isStarted()) 
+			messageDispatcher.postDirective(message);
+	}
+	
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group) {
 		if (!executerService.isStarted())
 			for (UUID id : group) {

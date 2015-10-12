@@ -57,7 +57,7 @@ public class RestartProtocol {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
 			actor.watch(dest);
-			actor.send(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
+			actor.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 

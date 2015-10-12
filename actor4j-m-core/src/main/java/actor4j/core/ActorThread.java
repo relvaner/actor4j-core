@@ -19,6 +19,7 @@ import safety4j.SafetyMethod;
 public class ActorThread extends Thread {
 	protected final UUID uuid; // for safety
 	
+	protected Queue<ActorMessage<?>> directiveQueue;
 	protected Queue<ActorMessage<?>> innerQueue;
 	protected Queue<ActorMessage<?>> outerQueueL2;
 	protected Queue<ActorMessage<?>> outerQueueL1;
@@ -39,11 +40,12 @@ public class ActorThread extends Thread {
 		this.system = system;
 		uuid = UUID.randomUUID();
 		
-		innerQueue    = new CircularFifoQueue<>(50000); //new LinkedList<>();
-		outerQueueL2  = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
-		outerQueueL1  = new CircularFifoQueue<>(10000);
-		serverQueueL2 = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
-		serverQueueL1 = new CircularFifoQueue<>(10000); //new LinkedList<>();
+		directiveQueue = new MpscArrayQueue<>(50000);
+		serverQueueL2  = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
+		serverQueueL1  = new CircularFifoQueue<>(10000); //new LinkedList<>();
+		outerQueueL2   = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
+		outerQueueL1   = new CircularFifoQueue<>(10000);
+		innerQueue     = new CircularFifoQueue<>(50000); //new LinkedList<>();
 		
 		counter = new AtomicLong(0);
 	}
@@ -79,11 +81,14 @@ public class ActorThread extends Thread {
 		SafetyMethod.run(new Method() {
 			@Override
 			public void run(UUID uuid) {
-				boolean hasNextServer = false;
-				boolean hasNextOuter  = false;
-				boolean hasNextInner  = false;
+				boolean hasNextDirective = false;
+				boolean hasNextServer 	 = false;
+				boolean hasNextOuter     = false;
+				boolean hasNextInner     = false;
 				
 				while (!isInterrupted()) { 
+					while (hasNextDirective = poll(directiveQueue));
+					
 					if (system.serverMode) {
 						hasNextServer = poll(serverQueueL1);
 						if (!hasNextServer && serverQueueL2.peek()!=null) {
@@ -105,7 +110,7 @@ public class ActorThread extends Thread {
 					}
 					
 					hasNextInner = poll(innerQueue);
-					if ((!hasNextOuter && !hasNextInner && !hasNextServer))
+					if ((!hasNextInner && !hasNextOuter && !hasNextServer && !hasNextDirective))
 						if (!system.softMode)
 							yield();
 						else {
