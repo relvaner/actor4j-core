@@ -4,16 +4,17 @@
 package actor4j.benchmark.bcast;
 
 import actor4j.core.Actor;
+import actor4j.core.ActorGroup;
 import actor4j.core.ActorMessage;
 import actor4j.core.HubPattern;
 
 public class TestActor extends Actor {
 	protected HubPattern hub;
 	
-	public TestActor(HubPattern hub) {
+	public TestActor(ActorGroup group) {
 		super();
 		
-		this.hub = hub;
+		hub = new HubPattern(this, group);
 	}
 
 	@Override

@@ -16,7 +16,6 @@ import actor4j.core.HubPattern;
 public class AnalyzeExample {
 	public AnalyzeExample() {
 		ActorSystem system = new ActorSystem();
-		final ActorSystem global = system;
 		
 		final int size = 2;
 		ActorGroup group = new ActorGroup();
@@ -53,7 +52,7 @@ public class AnalyzeExample {
 			@Override
 			public Actor create() {
 				return new Actor("group-"+size) {
-					protected HubPattern hub = new HubPattern(global);
+					protected HubPattern hub = new HubPattern(this);
 					protected boolean first = true;
 					@Override
 					protected void receive(ActorMessage<?> message) {

@@ -8,22 +8,22 @@ import java.util.List;
 import java.util.UUID;
 
 public class HubPattern {
-	protected ActorSystem system;
+	protected Actor actor;
 	
 	protected List<UUID> ports;
 
-	public HubPattern(ActorSystem system) {
+	public HubPattern(Actor actor) {
 		super();
 		
-		this.system = system;
+		this.actor = actor;
 		
 		ports = new LinkedList<>();
 	}
 	
-	public HubPattern(ActorSystem system, ActorGroup group) {
-		this(system);
+	public HubPattern(Actor actor, ActorGroup group) {
+		this(actor);
 		
-		ports.addAll(group);
+		ports = group;
 	}
 	
 	public void add(UUID id) {
@@ -37,7 +37,7 @@ public class HubPattern {
 	public void broadcast(ActorMessage<?> message) {
 		for (UUID id : ports) {
 			message.dest = id;
-			system.messageDispatcher.post(message);
+			actor.getSystem().messageDispatcher.post(message, actor.getId());
 		}
 	}
 }

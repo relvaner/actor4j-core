@@ -57,11 +57,11 @@ public class ActorMessageDispatcher {
 		};
 	}
 	
-	public void post(ActorMessage<?> message) {
-		post(message, null);
+	public void post(ActorMessage<?> message, UUID source) {
+		post(message, source, null);
 	}
 	
-	public void post(ActorMessage<?> message, String alias) {
+	public void post(ActorMessage<?> message, UUID source, String alias) {
 		if (message==null)
 			throw new NullPointerException();
 		
@@ -81,7 +81,7 @@ public class ActorMessageDispatcher {
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
 			((ActorThread)Thread.currentThread()).innerQueue.offer(message.clone());
 		else {
-			Long id_source = actorsMap.get(message.source);
+			Long id_source = actorsMap.get(source);
 			Long id_dest   = actorsMap.get(message.dest);
 		
 			if (id_dest!=null) {

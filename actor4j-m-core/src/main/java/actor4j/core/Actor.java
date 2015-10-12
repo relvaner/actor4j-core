@@ -192,11 +192,11 @@ public abstract class Actor {
 	}
 	
 	public void send(ActorMessage<?> message) {
-		system.messageDispatcher.post(message);
+		system.messageDispatcher.post(message, getSelf());
 	}
 	
 	public void send(ActorMessage<?> message, String alias) {
-		system.messageDispatcher.post(message, alias);
+		system.messageDispatcher.post(message, getSelf(), alias);
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
