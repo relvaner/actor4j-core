@@ -15,7 +15,7 @@ public class TestBcast {
 	public TestBcast() {
 		ActorSystem system = new ActorSystem();
 		system.setParallelismFactor(1);
-		system.setParallelismMin(1);
+		//system.setParallelismMin(1);
 		system.softMode();
 		
 		ActorGroup group = new ActorGroup();

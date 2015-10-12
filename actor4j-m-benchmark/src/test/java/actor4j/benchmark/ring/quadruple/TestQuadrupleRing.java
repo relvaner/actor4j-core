@@ -15,7 +15,7 @@ public class TestQuadrupleRing {
 		ActorSystem system = new ActorSystem();
 		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
-		system.softMode();
+		system.hardMode();
 		
 		for (int j=0; j<4; j++) {
 			ActorGroup group = new ActorGroup();
