@@ -10,7 +10,7 @@ import static actor4j.core.ActorUtils.actorLabel;
 import java.util.Iterator;
 import java.util.UUID;
 
-import actor4j.core.supervisor.AllForOneSupervisorStrategy;
+import actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import actor4j.core.supervisor.OneForOneSupervisorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.supervisor.SupervisorStrategyDirective;
@@ -34,11 +34,11 @@ public class ActorStrategyOnFailure {
 		actor.stop();
 	}
 	
-	protected void allForOne_directive_resume(Actor actor) {
+	protected void oneForAll_directive_resume(Actor actor) {
 		oneForOne_directive_resume(actor);
 	}
 	
-	protected void allForOne_directive_restart(Actor actor, Exception reason) {
+	protected void oneForAll_directive_restart(Actor actor, Exception reason) {
 		if (!actor.isRoot()) {
 			Actor parent = system.actors.get(actor.getParent());
 			if (parent!=null) {
@@ -55,7 +55,7 @@ public class ActorStrategyOnFailure {
 			actor.preRestart(reason);
 	}
 	
-	protected void allForOne_directive_stop(Actor actor) {
+	protected void oneForAll_directive_stop(Actor actor) {
 		if (!actor.isRoot()) {
 			Actor parent = system.actors.get(actor.getParent());
 			if (parent!=null) {
@@ -86,13 +86,13 @@ public class ActorStrategyOnFailure {
 			else if (directive==SupervisorStrategyDirective.ESCALATE)
 				;
 		}
-		else if (actor.supervisorStrategy() instanceof AllForOneSupervisorStrategy) { 
+		else if (actor.supervisorStrategy() instanceof OneForAllSupervisorStrategy) { 
 			if (directive==SupervisorStrategyDirective.RESUME)
-				allForOne_directive_resume(actor);
+				oneForAll_directive_resume(actor);
 			else if (directive==SupervisorStrategyDirective.RESTART)
-				allForOne_directive_restart(actor, e);
+				oneForAll_directive_restart(actor, e);
 			else if (directive==SupervisorStrategyDirective.STOP)
-				allForOne_directive_stop(actor);
+				oneForAll_directive_stop(actor);
 			else if (directive==SupervisorStrategyDirective.ESCALATE)
 				;
 		}
