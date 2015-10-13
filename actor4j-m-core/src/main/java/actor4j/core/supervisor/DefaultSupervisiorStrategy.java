@@ -6,6 +6,7 @@ package actor4j.core.supervisor;
 import static actor4j.core.supervisor.SupervisorStrategyDirective.*;
 
 import actor4j.core.ActorInitializationException;
+import actor4j.core.ActorKilledException;
 
 public class DefaultSupervisiorStrategy extends OneForOneSupervisorStrategy {
 	public DefaultSupervisiorStrategy() {
@@ -14,7 +15,7 @@ public class DefaultSupervisiorStrategy extends OneForOneSupervisorStrategy {
 
 	@Override
 	public SupervisorStrategyDirective apply(Exception e) {
-		if (e instanceof ActorInitializationException)
+		if (e instanceof ActorInitializationException || e instanceof ActorKilledException)
 			return STOP;
 		else
 			return RESTART;

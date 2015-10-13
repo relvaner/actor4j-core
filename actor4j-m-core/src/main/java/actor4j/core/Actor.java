@@ -41,6 +41,7 @@ public abstract class Actor {
 	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
+	public static final int KILL       = INTERNAL_KILL;
 	
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
@@ -114,6 +115,8 @@ public abstract class Actor {
 			else
 				preRestart(null);
 		}
+		else if (message.tag==INTERNAL_KILL) 
+			throw new ActorKilledException();
 		else {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
