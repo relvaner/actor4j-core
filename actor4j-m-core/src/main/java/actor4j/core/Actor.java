@@ -46,10 +46,20 @@ public abstract class Actor {
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
 			
+	/**
+	 * Don't create here, new actors as child or send messages too other actors. You will 
+	 * get a NullPointerException, because the variable system is not initialized. It will 
+	 * injected later by the framework. Use instead the method preStart for these reasons.
+	 */
 	public Actor() {
 		this(null);
 	}
 	
+	/**
+	 * Don't create here, new actors as child or send messages too other actors. You will 
+	 * get a NullPointerException, because the variable system is not initialized. It will 
+	 * injected later by the framework. Use instead the method preStart for these reasons.
+	 */
 	public Actor(String name) {
 		super();
 		
@@ -106,6 +116,9 @@ public abstract class Actor {
 		return (parent==system.USER_ID);
 	}
 	
+	/**
+	 * Don't use this method within your actor code. It's an internal method.
+	 */
 	protected void internal_receive(ActorMessage<?> message) {
 		if (message.tag==INTERNAL_STOP)
 			stop();
@@ -233,6 +246,9 @@ public abstract class Actor {
 		system.setAlias(id, alias);
 	}
 	
+	/**
+	 * Don't use this method within your actor code. It's an internal method.
+	 */
 	protected UUID internal_addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
@@ -275,6 +291,10 @@ public abstract class Actor {
 		return new DefaultSupervisiorStrategy();
 	}
 	
+	/**
+	 * Initialize here, your actor code. Create new actors as child or send too other actors messages, 
+	 * before the first message for this actor could be processed.
+	 */
 	public void preStart() {
 		// empty
 	}
@@ -295,6 +315,9 @@ public abstract class Actor {
 		stopProtocol.apply();
 	}
 	
+	/**
+	 * Don't use this method within your actor code. It's an internal method.
+	 */
 	protected void internal_stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(getSelf());
