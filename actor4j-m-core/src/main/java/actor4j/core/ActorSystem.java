@@ -196,6 +196,8 @@ public class ActorSystem {
 	protected UUID system_addActor(Actor actor) {
 		actor.setSystem(this);
 		actors.put(actor.getId(), actor);
+		if (actor instanceof ResourceActor)
+			resourceActors.put(actor.getId(), true);
 		return actor.getId();
 	}
 	

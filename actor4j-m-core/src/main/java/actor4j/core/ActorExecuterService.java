@@ -125,6 +125,17 @@ public class ActorExecuterService {
 			});
 	}
 	
+	public void resource(final ActorMessage<?> message) {
+		final Actor actor = system.actors.get(message.dest);
+		if (actor!=null)
+			resourceExecuterService.submit(new Runnable() {
+				@Override
+				public void run() {
+					actor.receive(message);
+				}
+			});
+	}
+	
 	public void shutdown(boolean await) {
 		resourceExecuterService.shutdown();
 		if (system.serverMode)

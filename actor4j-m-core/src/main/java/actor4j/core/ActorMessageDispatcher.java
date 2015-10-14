@@ -77,6 +77,10 @@ public class ActorMessageDispatcher {
 			system.executerService.client(message.clone(), alias);
 			return;
 		}
+		else if (system.resourceActors.containsKey(message.dest)) {
+			system.executerService.resource(message.clone());
+			return;
+		}
 			
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
 			((ActorThread)Thread.currentThread()).innerQueue.offer(message.clone());
@@ -99,6 +103,11 @@ public class ActorMessageDispatcher {
 		
 		if (system.analyzeMode.get())
 			system.analyzerThread.outerQueueL2.offer(message.clone());
+		
+		if (system.resourceActors.containsKey(message.dest)) {
+			system.executerService.resource(message.clone());
+			return;
+		}
 		
 		Long id_dest = actorsMap.get(message.dest);
 		if (id_dest!=null)
