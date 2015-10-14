@@ -126,6 +126,7 @@ public class ActorExecuterService {
 	}
 	
 	public void shutdown(boolean await) {
+		resourceExecuterService.shutdown();
 		if (system.serverMode)
 			clientExecuterService.shutdown();
 
