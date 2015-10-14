@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import safety4j.SafetyManager;
@@ -17,6 +18,7 @@ import tools4j.di.DIContainer;
 import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorUtils.*;
+import static actor4j.core.ActorProtocolTag.*;
 
 public class ActorSystem {
 	protected DIContainer<UUID> container;
@@ -49,6 +51,8 @@ public class ActorSystem {
 	
 	protected AtomicBoolean analyzeMode;
 	protected ActorAnalyzerThread analyzerThread;
+	
+	protected CountDownLatch countDownLatch;
 	
 	public final UUID USER_ID;
 	public final UUID SYSTEM_ID;
@@ -85,20 +89,30 @@ public class ActorSystem {
 		
 		analyzeMode = new AtomicBoolean(false);
 		
+		countDownLatch = new CountDownLatch(1);
+		
 		user = new Actor("user") {
 			@Override
-			protected void receive(ActorMessage<?> message) {
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+			
+			@Override
+			public void postStop() {
+				countDownLatch.countDown();
 			}
 		};
 		USER_ID = system_addActor(user);
 		SYSTEM_ID = system_addActor(new Actor("system") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
+				// empty
 			}
 		});
 		UNKNOWN_ID = system_addActor(new Actor("unknown") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
+				// empty
 			}
 		});
 	}
@@ -317,6 +331,40 @@ public class ActorSystem {
 						messageDispatcher.postOuter(message);
 				}
 			}, onTermination);
+	}
+	
+	public void shutdownWithActors() {
+		shutdownWithActors(false);
+	}
+	
+	public void shutdownWithActors(boolean await) {
+		if (executerService.isStarted()) {
+			if (analyzeMode.get()) {
+				analyzeMode.set(false);
+				analyzerThread.interrupt();
+			}
+			
+			Thread waitOnTermination = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					send(new ActorMessage<>(null, INTERNAL_STOP, USER_ID, USER_ID));
+					try {
+						countDownLatch.await();
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					executerService.shutdown(await);
+				}
+			});
+			
+			waitOnTermination.start();
+			if (await)
+				try {
+					waitOnTermination.join();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+		}
 	}
 	
 	public void shutdown() {
