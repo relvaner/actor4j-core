@@ -70,13 +70,15 @@ public class RestartProtocol {
 						flag_stop = true;
 					else if (message.tag==INTERNAL_STOP_SUCCESS) {
 						waitForChildren.remove(message.source);
-						if (waitForChildren.isEmpty())
+						if (waitForChildren.isEmpty()) {
 							if (flag_stop)
 								postStop();
 							else {
 								postRestart(reason);
 								actor.unbecome();
+								actor.activeDirectiveBehaviour = false;
 							}
+						}
 					}
 				}
 			}, false);

@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.function.Consumer;
+import actor4j.function.Function;
 import actor4j.function.Predicate;
 import tools4j.di.InjectorParam;
 
@@ -45,6 +46,9 @@ public abstract class Actor {
 	
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
+	
+	protected Function<ActorMessage<?>, Boolean> processedDirective;
+	protected boolean activeDirectiveBehaviour;
 			
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
@@ -74,6 +78,34 @@ public abstract class Actor {
 		stopProtocol = new StopProtocol(this);
 		
 		deathWatcher =  new ConcurrentLinkedQueue<>();
+		
+		processedDirective = new Function<ActorMessage<?>, Boolean>() {
+			@Override
+			public Boolean apply(ActorMessage<?> message) {
+				boolean result = false;
+				
+				if (isDirective(message) && !activeDirectiveBehaviour) {
+					result = true;
+					if (message.tag==INTERNAL_RESTART || message.tag==INTERNAL_STOP)
+						activeDirectiveBehaviour = true;
+						
+					if (message.tag==INTERNAL_RESTART) {
+						if (message.value instanceof Exception)
+							preRestart((Exception)message.value);
+						else
+							preRestart(null);
+					}
+					else if (message.tag==INTERNAL_STOP)
+						stop();
+					else if (message.tag==INTERNAL_KILL) 
+						throw new ActorKilledException();
+					else
+						result = false;
+				}
+				
+				return result;
+			}	
+		};
 	}
 	
 	public ActorSystem getSystem() {
@@ -120,22 +152,12 @@ public abstract class Actor {
 	 * Don't use this method within your actor code. It's an internal method.
 	 */
 	protected void internal_receive(ActorMessage<?> message) {
-		if (message.tag==INTERNAL_STOP)
-			stop();
-		else if (message.tag==INTERNAL_RESTART) {
-			if (message.value instanceof Exception)
-				preRestart((Exception)message.value);
-			else
-				preRestart(null);
-		}
-		else if (message.tag==INTERNAL_KILL) 
-			throw new ActorKilledException();
-		else {
+		if (!processedDirective.apply(message)) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
 				receive(message);
 			else
-				behaviour.accept(message);
+				behaviour.accept(message);	
 		}
 	}
 	
@@ -327,7 +349,7 @@ public abstract class Actor {
 		Iterator<UUID> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
-			send(new ActorMessage<>(null, TERMINATED, getSelf(), dest));
+			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, getSelf(), dest));
 		}
 	}
 	
