@@ -77,13 +77,8 @@ public class ActorStrategyOnFailure {
 		Actor parent = system.actors.get(actor.parent);
 		SupervisorStrategy supervisorStrategy = parent.supervisorStrategy();
 		SupervisorStrategyDirective directive = supervisorStrategy.apply(e);
-		
-		while (directive==ESCALATE && !parent.isRoot()) {
-			parent = system.actors.get(parent.parent);
-			directive = parent.supervisorStrategy().apply(e);
-		} ;
 			
-		if (actor.supervisorStrategy() instanceof OneForOneSupervisorStrategy) { 
+		if (supervisorStrategy instanceof OneForOneSupervisorStrategy) { 
 			if (directive==RESUME)
 				oneForOne_directive_resume(actor);
 			else if (directive==RESTART)
@@ -91,7 +86,7 @@ public class ActorStrategyOnFailure {
 			else if (directive==STOP)
 				oneForOne_directive_stop(actor);
 		}
-		else if (actor.supervisorStrategy() instanceof OneForAllSupervisorStrategy) { 
+		else if (supervisorStrategy instanceof OneForAllSupervisorStrategy) { 
 			if (directive==RESUME)
 				oneForAll_directive_resume(actor);
 			else if (directive==RESTART)
