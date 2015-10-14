@@ -67,21 +67,23 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 	}
 	
 	public void analyzeRootActor(Map<UUID, Actor> actors, Actor root, String color, boolean showDefaultRoot) {
-		if (activeCells.put(root.getId(), true)==null) {
-			Object rootVertex;
-			if (root.getName()!=null)
-				rootVertex = addVertex(root.getName(), color);
-			else
-				rootVertex = addVertex(root.getId().toString(), color);
-		
-			if (showDefaultRoot)
-				addEdge(null, defaultRoot, rootVertex);
+		if (root!=null) {
+			if (activeCells.put(root.getId(), true)==null) {
+				Object rootVertex;
+				if (root.getName()!=null)
+					rootVertex = addVertex(root.getName(), color);
+				else
+					rootVertex = addVertex(root.getId().toString(), color);
 			
-			cells.put(root.getId(), rootVertex);
-			changed = true;
+				if (showDefaultRoot)
+					addEdge(null, defaultRoot, rootVertex);
+				
+				cells.put(root.getId(), rootVertex);
+				changed = true;
+			}
+			
+			analyzeActor(actors, root, cells.get(root.getId()));
 		}
-		
-		analyzeActor(actors, root, cells.get(root.getId()));
 	}
 	
 	public void analyzeActor(Map<UUID, Actor> actors, Actor parent, Object parentVertex) {

@@ -11,4 +11,8 @@ public final class ActorUtils {
 	public static String actorLabel(Actor actor) {
 		return actor.getName()!=null ? actor.getName() : actor.getId().toString();
 	}
+	
+	public static boolean isDirective(ActorMessage<?> message) {
+		return message.tag<0;
+	}
 }
