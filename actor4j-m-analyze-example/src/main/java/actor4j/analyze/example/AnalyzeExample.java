@@ -123,13 +123,16 @@ public class AnalyzeExample {
 			.scheduleOnce(new ActorMessage<Object>(null, Actor.RESTART, system.SYSTEM_ID, null), ping, 5000);
 		system.timer()
 			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), id, 10000);
-		
+		/*
+		system.timer()
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), system.USER_ID, 15000);
+		*/
 		try {
 			Thread.sleep(240000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		system.shutdown();
+		system.shutdownWithActors(true);
 	}
 
 	public static void main(String[] args) {
