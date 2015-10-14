@@ -3,10 +3,8 @@
  */
 package actor4j.core;
 
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
@@ -87,7 +85,8 @@ public class ActorThread extends Thread {
 				boolean hasNextInner     = false;
 				
 				while (!isInterrupted()) { 
-					while (hasNextDirective = poll(directiveQueue));
+					while (poll(directiveQueue)) 
+						hasNextDirective=true;
 					
 					if (system.serverMode) {
 						hasNextServer = poll(serverQueueL1);
