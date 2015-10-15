@@ -21,6 +21,8 @@ import static actor4j.core.ActorUtils.*;
 import static actor4j.core.ActorProtocolTag.*;
 
 public class ActorSystem {
+	protected String name;
+	
 	protected DIContainer<UUID> container;
 	
 	protected Map<UUID, Actor> actors; // ActorID -> Actor
@@ -61,7 +63,23 @@ public class ActorSystem {
 	protected Actor user;
 	
 	public ActorSystem() {
+		this(null, false);
+	}
+	
+	public ActorSystem(String name) {
+		this(name, false);
+	}
+	
+	public ActorSystem(boolean serverMode) {
+		this(null, serverMode);
+	}
+	
+	public ActorSystem(String name, boolean serverMode) {
 		super();
+		
+		if (name==null)
+			this.name = "actor4j";
+		this.serverMode = serverMode;
 		
 		container      = DIContainer.create();
 		
@@ -117,10 +135,8 @@ public class ActorSystem {
 		});
 	}
 	
-	public ActorSystem(boolean serverMode) {
-		this();
-		
-		this.serverMode = serverMode;
+	public String getName() {
+		return name;
 	}
 	
 	public ActorSystem setClientRunnable(ActorClientRunnable clientRunnable) {
@@ -339,7 +355,7 @@ public class ActorSystem {
 		shutdownWithActors(false);
 	}
 	
-	public void shutdownWithActors(boolean await) {
+	public void shutdownWithActors(final boolean await) {
 		if (executerService.isStarted()) {
 			if (analyzeMode.get()) {
 				analyzeMode.set(false);

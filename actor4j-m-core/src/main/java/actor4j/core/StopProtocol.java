@@ -24,7 +24,7 @@ public class StopProtocol {
 	protected void postStop() {
 		actor.postStop();
 		actor.internal_stop();
-		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
+		logger().info(String.format("%s - System: actor (%s) stopped", actor.system.name, actorLabel(actor)));
 	}
 	
 	public void apply() {

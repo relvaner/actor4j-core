@@ -18,14 +18,18 @@ public abstract class RESTActorApplication extends ResourceConfig {
 	protected ActorSystem system;
 	
 	public RESTActorApplication() {
+		this(null);
+	}
+	
+	public RESTActorApplication(String name) {
 		super();
 		
-		system = new ActorSystem(true);
+		system = new ActorSystem(name, true);
 		configure(system);
 		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();
 		
-		logger().info("actor4j - System started...");
+		logger().info(String.format("%s - System started...", system.getName()));
 
 		register(new AbstractBinder() {
 			protected void configure() {
@@ -43,6 +47,6 @@ public abstract class RESTActorApplication extends ResourceConfig {
 	@PreDestroy
 	public void shutdown() {
 		system.shutdown(true);
-		logger().info("actor4j - System stopped...");
+		logger().info(String.format("%s - System stopped...", system.getName()));
 	}
 }

@@ -53,20 +53,20 @@ public class ActorExecuterService {
 				if (message!=null) {
 					if (message.equals("initialization")) {
 						logger().error(
-							String.format("Safety (%s) - Exception in initialization of an actor", 
-								Thread.currentThread().getName()));
+							String.format("%s - Safety (%s) - Exception in initialization of an actor", 
+								system.name, Thread.currentThread().getName()));
 					}
 					else if (message.equals("actor")) {
 						Actor actor = system.actors.get(uuid);
 							logger().error(
-								String.format("Safety (%s) - Exception in actor: %s", 
-									Thread.currentThread().getName(), actorLabel(actor)));
+								String.format("%s - Safety (%s) - Exception in actor: %s", 
+									system.name, Thread.currentThread().getName(), actorLabel(actor)));
 					}
 				}
 				else {
 					logger().fatal(
-						String.format("Safety (%s) - Exception in ActorThread", 
-							Thread.currentThread().getName()));
+						String.format("%s - Safety (%s) - Exception in ActorThread", 
+								system.name, Thread.currentThread().getName()));
 				}
 				
 				e.printStackTrace();

@@ -253,13 +253,13 @@ public abstract class Actor {
 			Actor sourceActor = system.actors.get(message.source);
 			if (sourceActor!=null)
 				logger().warn(
-					String.format("System - actor (%s): Unhandled message (%s) from source (%s)",
-						actorLabel(this), message.toString(), actorLabel(sourceActor)
+					String.format("%s - System: actor (%s) - Unhandled message (%s) from source (%s)",
+						system.name, actorLabel(this), message.toString(), actorLabel(sourceActor)
 					));
 			else
 				logger().warn(
-					String.format("System - actor (%s): Unhandled message (%s) from unavaible source (???)",
-						actorLabel(this), message.toString()
+					String.format("%s - System: actor (%s) - Unhandled message (%s) from unavaible source (???)",
+						system.name, actorLabel(this), message.toString()
 					));
 		}
 	}

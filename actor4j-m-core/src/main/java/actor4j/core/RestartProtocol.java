@@ -24,7 +24,7 @@ public class RestartProtocol {
 	protected void postStop() {
 		actor.postStop();
 		actor.internal_stop();
-		logger().info(String.format("System - actor (%s) stopped", actorLabel(actor)));
+		logger().info(String.format("%s - System: actor (%s) stopped", actor.system.name, actorLabel(actor)));
 	}
 	
 	protected void postRestart(Exception reason) {
@@ -38,7 +38,7 @@ public class RestartProtocol {
 			newActor.parent = parent;
 			system.system_addActor(newActor);
 			newActor.postRestart(reason);
-			logger().info(String.format("System - actor (%s) restarted", actorLabel(actor))); 
+			logger().info(String.format("%s - System: actor (%s) restarted", actor.system.name, actorLabel(actor))); 
 		} catch (Exception e) {
 			throw new ActorInitializationException(); // never must occur
 		}

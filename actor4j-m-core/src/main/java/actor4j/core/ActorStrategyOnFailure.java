@@ -24,7 +24,7 @@ public class ActorStrategyOnFailure {
 	}
 	
 	protected void oneForOne_directive_resume(Actor actor) {
-		logger().info(String.format("System - actor (%s) resumed", actorLabel(actor)));
+		logger().info(String.format("%s - System: actor (%s) resumed", actor.system.name, actorLabel(actor)));
 	}
 	
 	protected void oneForOne_directive_restart(Actor actor, Exception reason) {
