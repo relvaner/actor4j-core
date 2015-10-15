@@ -8,17 +8,17 @@ import java.util.UUID;
 import actor4j.core.Actor;
 import actor4j.core.ActorMessage;
 
-public class Sender extends Actor {
+public class Client extends Actor {
 	protected UUID next;
 	protected String alias;
 	
-	public Sender(UUID next) {
+	public Client(UUID next) {
 		super();
 		
 		this.next = next;
 	}
 	
-	public Sender(String alias) {
+	public Client(String alias) {
 		super();
 		
 		this.alias = alias;

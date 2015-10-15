@@ -13,20 +13,20 @@ import actor4j.core.ActorSystem;
 import actor4j.server.RESTActorApplication;
 
 @ApplicationPath("api")
-public class ReceiverApplication extends RESTActorApplication {
+public class ServerApplication extends RESTActorApplication {
 	@Override
 	protected void configure(ActorSystem system) {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
 		
-		UUID receiver = system.addActor(new ActorFactory() {
+		UUID server = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
-				return new Receiver();
+				return new Server();
 			}
 		});
-		system.setAlias(receiver, "receiver");
-		System.out.println(receiver);
+		system.setAlias(server, "server");
+		System.out.println(server);
 	}
 }

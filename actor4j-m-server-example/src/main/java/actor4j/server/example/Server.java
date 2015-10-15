@@ -10,8 +10,8 @@ import actor4j.core.Actor;
 import actor4j.core.ActorMessage;
 import actor4j.core.RemoteActorMessage;
 
-public class Receiver extends Actor {
-	public Receiver() {
+public class Server extends Actor {
+	public Server() {
 		super();
 	}
 

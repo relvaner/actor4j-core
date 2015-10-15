@@ -13,8 +13,8 @@ import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
 import actor4j.server.RESTActorClientRunnable;
 
-public class SenderApplication {
-	public SenderApplication() {
+public class ClientApplication {
+	public ClientApplication() {
 		ActorSystem system = new ActorSystem();
 		configure(system);
 		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
@@ -44,10 +44,10 @@ public class SenderApplication {
 		//system.addURI("http://192.168.0.100:8080/actor4j-m-server-example/api");
 		
 		//UUID sender = system.addActor(new Sender(UUID.fromString("490a452e-d53f-41b5-b740-7eada0ae372f")));
-		UUID sender = system.addActor(new ActorFactory() {
+		UUID client = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
-				return new Sender("receiver");
+				return new Client("server");
 			}
 		});
 		Payload payload = new Payload();
@@ -60,17 +60,17 @@ public class SenderApplication {
 				return new Actor() {
 					@Override
 					protected void receive(ActorMessage<?> message) {
-						this.send(message, "receiver");
+						this.send(message, "server");
 					}
 				};
 			}
 		});
 		
-		//system.send(new ActorMessage<Object>(null, 0, sender, sender));
+		//system.send(new ActorMessage<Object>(null, 0, client, client));
 		system.send(new ActorMessage<Object>(payload, 0, helloWorld, helloWorld));
 	}
 	
 	public static void main(String[] args) {
-		new SenderApplication();
+		new ClientApplication();
 	}
 }
