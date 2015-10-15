@@ -274,7 +274,7 @@ public class ActorSystem {
 	
 	public ActorSystem send(ActorMessage<?> message) {
 		if (!executerService.isStarted()) 
-			bufferQueue.offer(message.clone());
+			bufferQueue.offer(message.copy());
 		else
 			messageDispatcher.postOuter(message);
 		
@@ -283,7 +283,7 @@ public class ActorSystem {
 	
 	public void sendAsServer(ActorMessage<?> message) {
 		if (!executerService.isStarted()) 
-			bufferQueue.offer(message.clone());
+			bufferQueue.offer(message.copy());
 		else
 			messageDispatcher.postServer(message);
 	}
@@ -297,7 +297,7 @@ public class ActorSystem {
 		if (!executerService.isStarted())
 			for (UUID id : group) {
 				message.dest = id;
-				bufferQueue.offer(message.clone());
+				bufferQueue.offer(message.copy());
 			}
 		else
 			for (UUID id : group) {

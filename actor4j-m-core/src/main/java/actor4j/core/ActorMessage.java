@@ -7,13 +7,16 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class ActorMessage<T> implements Serializable, Cloneable {
+import tools4j.utils.Copyable;
+
+public class ActorMessage<T> implements Serializable, Copyable<ActorMessage<T>> {
 	protected static final long serialVersionUID = 365363944284831003L;
 	
 	public T value;
 	public int tag;
 	public UUID source;
 	public UUID dest;
+	public boolean byRef;
 	
 	public ActorMessage(T value, int tag, UUID source, UUID dest) {
 		super();
@@ -76,14 +79,21 @@ public class ActorMessage<T> implements Serializable, Cloneable {
 		return (UUID)value;
 	}
 	
-	@Override
-	public ActorMessage<T> clone() {
+	protected ActorMessage<T> weakCopy() {
 		return new ActorMessage<T>(value, tag, source, dest);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public ActorMessage<T> copy() {
+		if (value!=null && !byRef && value instanceof Copyable)
+			return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);
+		else	
+			return new ActorMessage<T>(value, tag, source, dest);
+	}
+
 	@Override
 	public String toString() {
-		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source
-				+ ", dest=" + dest + "]";
+		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + ", byRef="
+				+ byRef + "]";
 	}
 }

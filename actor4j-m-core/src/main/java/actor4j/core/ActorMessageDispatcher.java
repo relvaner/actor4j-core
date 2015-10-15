@@ -66,7 +66,7 @@ public class ActorMessageDispatcher {
 			throw new NullPointerException();
 		
 		if (system.analyzeMode.get())
-			system.analyzerThread.outerQueueL2.offer(message.clone());
+			system.analyzerThread.outerQueueL2.offer(message.copy());
 		
 		if (alias!=null) {
 			UUID dest = system.aliases.get(alias);
@@ -74,25 +74,25 @@ public class ActorMessageDispatcher {
 		}
 		
 		if (system.serverMode && !system.actors.containsKey(message.dest)) {
-			system.executerService.client(message.clone(), alias);
+			system.executerService.client(message.copy(), alias);
 			return;
 		}
 		else if (system.resourceActors.containsKey(message.dest)) {
-			system.executerService.resource(message.clone());
+			system.executerService.resource(message.copy());
 			return;
 		}
 			
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
-			((ActorThread)Thread.currentThread()).innerQueue.offer(message.clone());
+			((ActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
 		else {
 			Long id_source = actorsMap.get(source);
 			Long id_dest   = actorsMap.get(message.dest);
 		
 			if (id_dest!=null) {
 				if (id_source!=null && id_source==id_dest && Thread.currentThread().getId()==id_source)
-					threadsMap.get(id_dest).innerQueue.offer(message.clone());
+					threadsMap.get(id_dest).innerQueue.offer(message.copy());
 				else
-					threadsMap.get(id_dest).outerQueueL2.offer(message.clone());
+					threadsMap.get(id_dest).outerQueueL2.offer(message.copy());
 			}
 		}
 	}
@@ -102,16 +102,16 @@ public class ActorMessageDispatcher {
 			throw new NullPointerException();
 		
 		if (system.analyzeMode.get())
-			system.analyzerThread.outerQueueL2.offer(message.clone());
+			system.analyzerThread.outerQueueL2.offer(message.copy());
 		
 		if (system.resourceActors.containsKey(message.dest)) {
-			system.executerService.resource(message.clone());
+			system.executerService.resource(message.copy());
 			return;
 		}
 		
 		Long id_dest = actorsMap.get(message.dest);
 		if (id_dest!=null)
-			biconsumer.accept(id_dest, message.clone());
+			biconsumer.accept(id_dest, message.copy());
 	}
 	
 	public void postOuter(ActorMessage<?> message) {

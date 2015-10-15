@@ -20,13 +20,18 @@ public class RemoteActorMessage extends ActorMessage<LinkedHashMap<String, Objec
 		return (C)(new ObjectMapper().convertValue(value, clazz));
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public RemoteActorMessage clone() {
-		return new RemoteActorMessage(value, tag, source, dest);
+	public RemoteActorMessage copy() {
+		if (value!=null && !byRef)
+			return new RemoteActorMessage((LinkedHashMap<String, Object>)value.clone(), tag, source, dest);
+		else
+			return new RemoteActorMessage(value, tag, source, dest);
 	}
 
 	@Override
 	public String toString() {
-		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
+		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
+				+ ", byRef=" + byRef + "]";
 	}
 }
