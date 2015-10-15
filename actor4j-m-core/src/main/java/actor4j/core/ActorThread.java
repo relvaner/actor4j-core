@@ -88,7 +88,7 @@ public class ActorThread extends Thread {
 					while (poll(directiveQueue)) 
 						hasNextDirective=true;
 					
-					if (system.serverMode) {
+					if (system.clientMode) {
 						hasNextServer = poll(serverQueueL1);
 						if (!hasNextServer && serverQueueL2.peek()!=null) {
 							ActorMessage<?> message = null;

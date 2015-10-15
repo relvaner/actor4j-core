@@ -24,7 +24,7 @@ public abstract class RESTActorApplication extends ResourceConfig {
 	public RESTActorApplication(String name) {
 		super();
 		
-		system = new ActorSystem(name, true);
+		system = new ActorSystem(name);
 		configure(system);
 		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();

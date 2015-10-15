@@ -73,7 +73,7 @@ public class ActorMessageDispatcher {
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
-		if (system.serverMode && !system.actors.containsKey(message.dest)) {
+		if (system.clientMode && !system.actors.containsKey(message.dest)) {
 			system.executerService.client(message.copy(), alias);
 			return;
 		}

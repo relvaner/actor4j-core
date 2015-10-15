@@ -15,7 +15,7 @@ import actor4j.server.RESTActorClientRunnable;
 
 public class SenderApplication {
 	public SenderApplication() {
-		ActorSystem system = new ActorSystem(true);
+		ActorSystem system = new ActorSystem();
 		configure(system);
 		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();

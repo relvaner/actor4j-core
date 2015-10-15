@@ -47,8 +47,8 @@ public class ActorSystem {
 	
 	protected ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected boolean serverMode;
 	protected List<String> serverURIs;
+	protected boolean clientMode;
 	protected ActorClientRunnable clientRunnable;
 	
 	protected AtomicBoolean analyzeMode;
@@ -63,23 +63,14 @@ public class ActorSystem {
 	protected Actor user;
 	
 	public ActorSystem() {
-		this(null, false);
+		this(null);
 	}
 	
 	public ActorSystem(String name) {
-		this(name, false);
-	}
-	
-	public ActorSystem(boolean serverMode) {
-		this(null, serverMode);
-	}
-	
-	public ActorSystem(String name, boolean serverMode) {
 		super();
 		
 		if (name==null)
 			this.name = "actor4j";
-		this.serverMode = serverMode;
 		
 		container      = DIContainer.create();
 		
@@ -140,6 +131,8 @@ public class ActorSystem {
 	}
 	
 	public ActorSystem setClientRunnable(ActorClientRunnable clientRunnable) {
+		clientMode = (clientRunnable!=null);
+			
 		this.clientRunnable = clientRunnable;
 		
 		return this;

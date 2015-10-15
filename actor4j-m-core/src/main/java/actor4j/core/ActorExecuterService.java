@@ -84,7 +84,7 @@ public class ActorExecuterService {
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
-		if (system.serverMode)
+		if (system.clientMode)
 			clientExecuterService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 		
 		this.onTermination = onTermination;
@@ -138,7 +138,7 @@ public class ActorExecuterService {
 	
 	public void shutdown(boolean await) {
 		resourceExecuterService.shutdown();
-		if (system.serverMode)
+		if (system.clientMode)
 			clientExecuterService.shutdown();
 
 		actorTimer.cancel();
