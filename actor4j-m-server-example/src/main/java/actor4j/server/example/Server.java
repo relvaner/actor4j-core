@@ -30,8 +30,7 @@ public class Server extends Actor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (message instanceof RemoteActorMessage)
-			message.value = ((RemoteActorMessage) message).convertValue(Payload.class);
+		RemoteActorMessage.optionalConvertValue(message, Payload.class);
 		
 		System.out.println(message);
 	}

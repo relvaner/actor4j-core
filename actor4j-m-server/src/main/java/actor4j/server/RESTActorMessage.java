@@ -20,4 +20,9 @@ public class RESTActorMessage {
 		this.source = source;
 		this.dest = dest;
 	}
+
+	@Override
+	public String toString() {
+		return "RESTActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
+	}
 }
