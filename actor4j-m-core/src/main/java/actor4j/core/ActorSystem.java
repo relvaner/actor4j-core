@@ -14,6 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import actor4.core.utils.ActorTimer;
+import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import safety4j.SafetyManager;
 import tools4j.di.DIContainer;

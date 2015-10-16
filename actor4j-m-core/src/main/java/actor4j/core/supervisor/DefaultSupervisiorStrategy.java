@@ -5,8 +5,8 @@ package actor4j.core.supervisor;
 
 import static actor4j.core.supervisor.SupervisorStrategyDirective.*;
 
-import actor4j.core.ActorInitializationException;
-import actor4j.core.ActorKilledException;
+import actor4j.core.exceptions.ActorInitializationException;
+import actor4j.core.exceptions.ActorKilledException;
 
 public class DefaultSupervisiorStrategy extends OneForOneSupervisorStrategy {
 	public DefaultSupervisiorStrategy() {

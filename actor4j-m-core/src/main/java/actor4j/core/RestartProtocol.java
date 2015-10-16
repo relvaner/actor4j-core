@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 

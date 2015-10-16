@@ -10,6 +10,8 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.exceptions.ActorInitializationException;
+import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
