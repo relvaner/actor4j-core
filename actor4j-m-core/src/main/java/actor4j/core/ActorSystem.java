@@ -232,7 +232,6 @@ public class ActorSystem {
 			container.registerConstructorInjector(actor.getId(), clazz, params);
 			container.unregister(temp);
 		} catch (Exception e) {
-			e.printStackTrace();
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
