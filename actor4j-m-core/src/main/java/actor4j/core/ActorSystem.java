@@ -69,7 +69,9 @@ public class ActorSystem {
 	public ActorSystem(String name) {
 		super();
 		
-		if (name==null)
+		if (name!=null)
+			this.name = name;
+		else
 			this.name = "actor4j";
 		
 		container      = DIContainer.create();
@@ -230,6 +232,7 @@ public class ActorSystem {
 			container.registerConstructorInjector(actor.getId(), clazz, params);
 			container.unregister(temp);
 		} catch (Exception e) {
+			e.printStackTrace();
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
