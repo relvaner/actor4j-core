@@ -6,8 +6,8 @@ package actor4j.benchmark.ring;
 import java.util.UUID;
 
 import actor4j.benchmark.Benchmark;
-import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
+import actor4j.core.messages.ActorMessage;
 
 public class TestRing {
 	public TestRing() {

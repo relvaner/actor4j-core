@@ -18,7 +18,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import actor4j.core.ActorClientRunnable;
-import actor4j.core.ActorMessage;
+import actor4j.core.messages.ActorMessage;
 
 public class RESTActorClientRunnable implements ActorClientRunnable {
 	protected List<String> serverURIs;

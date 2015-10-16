@@ -6,6 +6,8 @@ package actor4j.core;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+
+import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
 

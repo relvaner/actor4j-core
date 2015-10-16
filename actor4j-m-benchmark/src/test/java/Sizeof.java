@@ -1,5 +1,5 @@
 import actor4j.core.Actor;
-import actor4j.core.ActorMessage;
+import actor4j.core.messages.ActorMessage;
 
 public class Sizeof 
 {

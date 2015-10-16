@@ -11,8 +11,8 @@ import javax.swing.SwingUtilities;
 
 import actor4j.core.Actor;
 import actor4j.core.ActorAnalyzerThread;
-import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
+import actor4j.core.messages.ActorMessage;
 
 public class DefaultActorAnalyzerThread extends ActorAnalyzerThread {
 	protected VisualActorAnalyzer visualAnalyzer;

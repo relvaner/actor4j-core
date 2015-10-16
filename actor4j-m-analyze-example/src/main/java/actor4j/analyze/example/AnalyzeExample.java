@@ -5,13 +5,13 @@ package actor4j.analyze.example;
 
 import java.util.UUID;
 
+import actor4.core.utils.HubPattern;
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.Actor;
 import actor4j.core.ActorFactory;
 import actor4j.core.ActorGroup;
-import actor4j.core.ActorMessage;
 import actor4j.core.ActorSystem;
-import actor4j.core.HubPattern;
+import actor4j.core.messages.ActorMessage;
 
 public class AnalyzeExample {
 	public AnalyzeExample() {
@@ -122,11 +122,11 @@ public class AnalyzeExample {
 		system.timer()
 			.scheduleOnce(new ActorMessage<Object>(null, Actor.RESTART, system.SYSTEM_ID, null), ping, 5000);
 		system.timer()
-			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), id, 10000);
-		/*
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), id, 15000);
+		
 		system.timer()
-			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), system.USER_ID, 15000);
-		*/
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), system.USER_ID, 25000);
+		
 		try {
 			Thread.sleep(240000);
 		} catch (InterruptedException e) {

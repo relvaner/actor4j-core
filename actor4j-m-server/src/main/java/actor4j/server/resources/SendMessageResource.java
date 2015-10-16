@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.RemoteActorMessage;
+import actor4j.core.messages.RemoteActorMessage;
 import actor4j.server.RESTActorMessage;
 
 @Path("/sendmessage")

@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jctools.queues.MpscArrayQueue;
 
+import actor4j.core.messages.ActorMessage;
 import safety4j.Method;
 import safety4j.SafetyManager;
 import safety4j.SafetyMethod;

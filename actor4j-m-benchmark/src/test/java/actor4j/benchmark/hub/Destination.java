@@ -6,7 +6,7 @@ package actor4j.benchmark.hub;
 import static actor4j.benchmark.hub.ActorMessageTag.MSG;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorMessage;
+import actor4j.core.messages.ActorMessage;
 
 public class Destination extends Actor {
 	public Destination() {

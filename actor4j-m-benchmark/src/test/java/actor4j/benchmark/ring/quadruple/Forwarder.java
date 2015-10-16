@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorGroupMember;
-import actor4j.core.ActorMessage;
+import actor4j.core.messages.ActorMessage;
 
 public class Forwarder extends ActorGroupMember {
 	protected UUID next;

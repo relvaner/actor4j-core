@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.function.Consumer;
@@ -17,10 +18,9 @@ import actor4j.function.Function;
 import actor4j.function.Predicate;
 import tools4j.di.InjectorParam;
 
-import static actor4j.core.ActorLogger.logger;
+import static actor4.core.utils.ActorLogger.logger;
+import static actor4.core.utils.ActorUtils.*;
 import static actor4j.core.ActorProtocolTag.*;
-import static actor4j.core.ActorUtils.actorLabel;
-import static actor4j.core.ActorUtils.*;
 
 public abstract class Actor {
 	protected ActorSystem system;

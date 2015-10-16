@@ -3,14 +3,15 @@
  */
 package actor4j.core;
 
-import static actor4j.core.ActorLogger.logger;
+import static actor4.core.utils.ActorLogger.logger;
+import static actor4.core.utils.ActorUtils.actorLabel;
 import static actor4j.core.ActorProtocolTag.*;
-import static actor4j.core.ActorUtils.actorLabel;
 import static actor4j.core.supervisor.SupervisorStrategyDirective.*;
 
 import java.util.Iterator;
 import java.util.UUID;
 
+import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import actor4j.core.supervisor.OneForOneSupervisorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;

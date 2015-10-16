@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4.core.utils;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;

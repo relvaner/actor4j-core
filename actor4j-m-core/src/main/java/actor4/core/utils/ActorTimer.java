@@ -1,11 +1,15 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4.core.utils;
 
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+
+import actor4j.core.ActorGroup;
+import actor4j.core.ActorSystem;
+import actor4j.core.messages.ActorMessage;
 
 public class ActorTimer {
 	protected ActorSystem system;

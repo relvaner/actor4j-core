@@ -3,15 +3,16 @@
  */
 package actor4j.core;
 
+import static actor4.core.utils.ActorUtils.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import actor4j.core.messages.ActorMessage;
 import actor4j.function.BiConsumer;
-
-import static actor4j.core.ActorUtils.*;
 
 public class ActorMessageDispatcher {
 	protected ActorSystem system;

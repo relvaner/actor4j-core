@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorMessage;
-import actor4j.core.RemoteActorMessage;
+import actor4j.core.messages.ActorMessage;
+import actor4j.core.messages.RemoteActorMessage;
 
 public class Server extends Actor {
 	public Server() {

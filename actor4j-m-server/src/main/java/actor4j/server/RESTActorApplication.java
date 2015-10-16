@@ -3,6 +3,8 @@
  */
 package actor4j.server;
 
+import static actor4.core.utils.ActorLogger.*;
+
 import javax.annotation.PreDestroy;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -12,7 +14,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import actor4j.core.ActorSystem;
-import static actor4j.core.ActorLogger.*;
 
 public abstract class RESTActorApplication extends ResourceConfig {
 	protected ActorSystem system;

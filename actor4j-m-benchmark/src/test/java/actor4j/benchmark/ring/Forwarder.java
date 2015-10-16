@@ -6,7 +6,7 @@ package actor4j.benchmark.ring;
 import java.util.UUID;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorMessage;
+import actor4j.core.messages.ActorMessage;
 
 public class Forwarder extends Actor {
 	protected UUID next;

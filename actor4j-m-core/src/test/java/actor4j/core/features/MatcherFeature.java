@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import actor4j.core.ActorMessage;
 import actor4j.core.ActorMessageMatcher;
+import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 
 public class MatcherFeature {
