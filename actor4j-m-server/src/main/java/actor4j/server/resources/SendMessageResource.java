@@ -5,7 +5,6 @@ package actor4j.server.resources;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -29,7 +28,6 @@ public class SendMessageResource {
 	@Context 
 	ActorSystem system;
 	
-	@SuppressWarnings("unchecked")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -52,7 +50,7 @@ public class SendMessageResource {
 		}
 		
 		if (message!=null)
-			system.sendAsServer(new RemoteActorMessage((LinkedHashMap<String, Object>)message.value, message.tag, UUID.fromString(message.source),UUID.fromString( message.dest)));
+			system.sendAsServer(new RemoteActorMessage<Object>(message.value, message.tag, UUID.fromString(message.source),UUID.fromString(message.dest)));
 		
 		HashMap<String, String> map = new HashMap<>();
 		map.put("result", "accepted");
