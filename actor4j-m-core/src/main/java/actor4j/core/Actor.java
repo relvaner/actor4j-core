@@ -20,9 +20,9 @@ import actor4j.function.Function;
 import actor4j.function.Predicate;
 import tools4j.di.InjectorParam;
 
-import static actor4.core.utils.ActorLogger.logger;
-import static actor4.core.utils.ActorUtils.*;
 import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.utils.ActorLogger.logger;
+import static actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor {
 	protected ActorSystem system;

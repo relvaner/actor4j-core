@@ -3,7 +3,7 @@
  */
 package actor4j.core;
 
-import static actor4.core.utils.ActorUtils.*;
+import static actor4j.core.utils.ActorUtils.*;
 
 import java.util.HashMap;
 import java.util.List;

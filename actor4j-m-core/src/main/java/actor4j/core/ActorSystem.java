@@ -13,15 +13,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import actor4.core.utils.ActorTimer;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorTimer;
 import safety4j.SafetyManager;
 import tools4j.di.DIContainer;
 import tools4j.di.InjectorParam;
 
-import static actor4.core.utils.ActorUtils.*;
 import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorSystem {
 	protected String name;

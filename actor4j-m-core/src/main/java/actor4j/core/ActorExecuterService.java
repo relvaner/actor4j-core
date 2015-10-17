@@ -3,6 +3,9 @@
  */
 package actor4j.core;
 
+import static actor4j.core.utils.ActorLogger.logger;
+import static actor4j.core.utils.ActorUtils.actorLabel;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -13,13 +16,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import actor4.core.utils.ActorTimer;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorTimer;
 import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
-
-import static actor4.core.utils.ActorLogger.logger;
-import static actor4.core.utils.ActorUtils.actorLabel;
 
 public class ActorExecuterService {
 	protected ActorSystem system;

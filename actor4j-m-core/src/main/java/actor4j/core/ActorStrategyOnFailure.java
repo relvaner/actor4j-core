@@ -3,10 +3,10 @@
  */
 package actor4j.core;
 
-import static actor4.core.utils.ActorLogger.logger;
-import static actor4.core.utils.ActorUtils.actorLabel;
 import static actor4j.core.ActorProtocolTag.*;
 import static actor4j.core.supervisor.SupervisorStrategyDirective.*;
+import static actor4j.core.utils.ActorLogger.logger;
+import static actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.Iterator;
 import java.util.UUID;

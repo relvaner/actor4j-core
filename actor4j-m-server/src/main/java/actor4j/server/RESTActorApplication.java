@@ -3,7 +3,7 @@
  */
 package actor4j.server;
 
-import static actor4.core.utils.ActorLogger.*;
+import static actor4j.core.utils.ActorLogger.*;
 
 import javax.annotation.PreDestroy;
 

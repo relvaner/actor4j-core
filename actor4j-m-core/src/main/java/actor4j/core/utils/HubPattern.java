@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4.core.utils;
+package actor4j.core.utils;
 
 import java.util.LinkedList;
 import java.util.List;

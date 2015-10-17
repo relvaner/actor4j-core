@@ -5,13 +5,13 @@ package actor4j.analyze.example;
 
 import java.util.UUID;
 
-import actor4.core.utils.HubPattern;
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.Actor;
 import actor4j.core.ActorFactory;
 import actor4j.core.ActorGroup;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.HubPattern;
 
 public class AnalyzeExample {
 	public AnalyzeExample() {
