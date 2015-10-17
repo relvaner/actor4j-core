@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.core.utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,7 @@ import actor4j.function.Consumer;
 import actor4j.function.Predicate;
 
 public class ActorMessageMatcher {
-	protected class MatchTuple {
+	protected static class MatchTuple {
 		public Predicate<ActorMessage<?>> predicate;
 		public Consumer<ActorMessage<?>> action;
 	}
