@@ -8,8 +8,8 @@ import java.util.UUID;
 import javax.ws.rs.ApplicationPath;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorFactory;
 import actor4j.core.ActorSystem;
+import actor4j.core.utils.ActorFactory;
 import actor4j.server.RESTActorApplication;
 
 @ApplicationPath("api")

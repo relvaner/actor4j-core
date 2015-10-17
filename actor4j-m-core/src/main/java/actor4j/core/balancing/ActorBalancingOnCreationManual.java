@@ -1,21 +1,17 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.core.balancing;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import actor4j.core.Actor;
+import actor4j.core.ActorThread;
+import actor4j.core.utils.ActorGroup;
+
 public abstract class ActorBalancingOnCreationManual {
-	protected ActorSystem system;
-	
-	public ActorBalancingOnCreationManual(ActorSystem system) {
-		super();
-		
-		this.system = system;
-	}
-	
 	public abstract void balance(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads);
 	
 	public void balanceActor(Map<UUID, Long> actorsMap, Long threadId, Actor actor) {

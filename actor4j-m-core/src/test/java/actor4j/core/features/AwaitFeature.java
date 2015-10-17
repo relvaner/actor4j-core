@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorFactory;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
 
 public class AwaitFeature {

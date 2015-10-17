@@ -13,8 +13,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import actor4j.core.actors.ResourceActor;
+import actor4j.core.balancing.ActorBalancingOnCreation;
+import actor4j.core.balancing.ActorBalancingOnRuntime;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorFactory;
+import actor4j.core.utils.ActorGroup;
 import actor4j.core.utils.ActorTimer;
 import safety4j.SafetyManager;
 import tools4j.di.DIContainer;
@@ -94,8 +99,8 @@ public class ActorSystem {
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
 		
-		actorBalancingOnCreation = new ActorBalancingOnCreation(this);
-		actorBalancingOnRuntime = new ActorBalancingOnRuntime(this);
+		actorBalancingOnCreation = new ActorBalancingOnCreation();
+		actorBalancingOnRuntime = new ActorBalancingOnRuntime();
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		

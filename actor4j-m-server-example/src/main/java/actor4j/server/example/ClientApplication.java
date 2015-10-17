@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.UUID;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorFactory;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorFactory;
 import actor4j.server.RESTActorClientRunnable;
 
 public class ClientApplication {

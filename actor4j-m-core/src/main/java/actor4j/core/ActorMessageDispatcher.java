@@ -128,7 +128,7 @@ public class ActorMessageDispatcher {
 	}
 	
 	public void beforeRun(List<ActorThread> actorThreads) {
-		system.actorBalancingOnCreation.balance(actorsMap, actorThreads, groupsMap);
+		system.actorBalancingOnCreation.balance(actorsMap, actorThreads, groupsMap, system.actors);
 		
 		for(ActorThread t : actorThreads)
 			threadsMap.put(t.getId(), t);

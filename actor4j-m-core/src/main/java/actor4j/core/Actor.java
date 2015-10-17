@@ -15,6 +15,7 @@ import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
+import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
 import actor4j.function.Function;
 import actor4j.function.Predicate;

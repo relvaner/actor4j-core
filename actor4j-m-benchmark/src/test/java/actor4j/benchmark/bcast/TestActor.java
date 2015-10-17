@@ -4,8 +4,8 @@
 package actor4j.benchmark.bcast;
 
 import actor4j.core.Actor;
-import actor4j.core.ActorGroup;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorGroup;
 import actor4j.core.utils.HubPattern;
 
 public class TestActor extends Actor {

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.core.balancing;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -9,15 +9,15 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.Actor;
+import actor4j.core.ActorThread;
+import actor4j.core.actors.ActorGroupMember;
+
 public class ActorBalancingOnRuntime {
-	protected ActorSystem system;
-	
 	protected Queue<Long> balancedThreadsQueue;
 	
-	public ActorBalancingOnRuntime(ActorSystem system) {
+	public ActorBalancingOnRuntime() {
 		super();
-		
-		this.system = system;
 		
 		balancedThreadsQueue = new ConcurrentLinkedQueue<>();
 	}

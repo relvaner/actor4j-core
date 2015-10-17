@@ -8,9 +8,9 @@ import static actor4j.benchmark.hub.ActorMessageTag.RUN;
 import java.util.UUID;
 
 import actor4j.benchmark.Benchmark;
-import actor4j.core.ActorGroup;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorGroup;
 
 public class TestHub {
 	public TestHub() {

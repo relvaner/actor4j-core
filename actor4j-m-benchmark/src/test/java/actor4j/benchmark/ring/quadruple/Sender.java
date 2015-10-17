@@ -5,9 +5,9 @@ package actor4j.benchmark.ring.quadruple;
 
 import java.util.UUID;
 
-import actor4j.core.ActorGroup;
-import actor4j.core.ActorGroupMember;
+import actor4j.core.actors.ActorGroupMember;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorGroup;
 
 public class Sender extends ActorGroupMember {
 	protected UUID next;
