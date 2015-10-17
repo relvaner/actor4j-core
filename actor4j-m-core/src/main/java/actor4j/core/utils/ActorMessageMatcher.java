@@ -41,6 +41,28 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
+	public ActorMessageMatcher match(final UUID[] sources, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				for (UUID source : sources)
+					if (message.source.equals(source)) {
+						result = true;
+						break;
+					}
+				return result;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
 	public ActorMessageMatcher match(final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
@@ -57,6 +79,28 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
+	public ActorMessageMatcher match(final int[] tags, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				for (int tag : tags)
+					if (message.tag==tag) {
+						result = true;
+						break;
+					}
+				return result;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
 	public ActorMessageMatcher match(final UUID source, final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
@@ -65,6 +109,82 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				return message.source.equals(source) && message.tag==tag;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
+	public ActorMessageMatcher match(final UUID[] sources, final int tag, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				if (message.tag==tag)
+					for (UUID source : sources)
+						if (message.source.equals(source)) {
+							result = true;
+							break;
+						}
+				return result;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
+	public ActorMessageMatcher match(final UUID source, final int[] tags, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				if (message.source.equals(source))
+					for (int tag : tags)
+						if (message.tag==tag) {
+							result = true;
+							break;
+						}
+				return result;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
+	public ActorMessageMatcher match(final UUID[] sources, final int[] tags, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				for (UUID source : sources)
+					if (message.source.equals(source)) {
+						result = true;
+						break;
+					}
+				if (result) {
+					result = false;
+					for (int tag : tags)
+						if (message.tag==tag) {
+							result = true;
+							break;
+						}
+				}
+				return result;
 			}
 		};
 		tuple.action = action;
