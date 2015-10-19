@@ -65,14 +65,14 @@
       		<version>2.6.0</version>
     	</dependency>
 		<dependency>
-			<groupId>actor4j-m-research</groupId>
-			<artifactId>actor4j-m-research</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+		</dependency>
+		<dependency>
+			<groupId>io.reactivex</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>1.0.14</version>
 		</dependency>
     </dependencies>
 </project>
