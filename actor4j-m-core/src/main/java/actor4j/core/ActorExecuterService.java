@@ -107,10 +107,10 @@ public class ActorExecuterService {
 		for (ActorThread t : actorThreads)
 			t.start();
 		
-		started.set(true);
-		
 		if (onStartup!=null)
 			onStartup.run();
+		
+		started.set(true);
 	}
 	
 	public boolean isStarted() {

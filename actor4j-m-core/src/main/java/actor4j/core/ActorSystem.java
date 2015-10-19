@@ -347,6 +347,8 @@ public class ActorSystem {
 					for (Actor actor : actors.values())
 						actor.preStart();
 					
+					executerService.started.set(true);
+					
 					ActorMessage<?> message = null;
 					while ((message=bufferQueue.poll())!=null)
 						messageDispatcher.postOuter(message);
