@@ -221,15 +221,21 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public <T> void apply(ActorMessage<T> message) {
+	public <T> boolean apply(ActorMessage<T> message) {
+		boolean result = false;
+		
 		for (MatchTuple tuple : matches)
 			if (tuple.predicate.test(message)) {
 				tuple.action.accept(message);
-				break;
+				result = true;
 			}
 		for (MatchTuple tuple : matchesAny)
-			if (tuple.predicate.test(message))
+			if (tuple.predicate.test(message)) {
 				tuple.action.accept(message);
+				result = true;
+			}
+		
+		return result;
 	}
 	
 	protected void checkPredicate(Predicate<ActorMessage<?>> predicate) {
