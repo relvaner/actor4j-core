@@ -95,10 +95,12 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		return null;
 	}
 	
+	@Override
 	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		return null;
 	}
 	
+	@Override
 	public UUID addChild(ActorFactory factory) {
 		return null;
 	}
