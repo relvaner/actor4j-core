@@ -270,6 +270,8 @@ public class ActorSystem {
 		resourceActors.remove(id);
 		pseudoActors.remove(id);
 		
+		container.unregister(id);
+		
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
 			hasAliases.remove(id);
