@@ -37,6 +37,7 @@ public class ActorSystem {
 	protected Map<String, UUID> aliases; // ActorAlias -> ActorID
 	protected Map<UUID, String> hasAliases;
 	protected Map<UUID, Boolean> resourceActors;
+	protected Map<UUID, Actor> pseudoActors;
 	protected ActorMessageDispatcher messageDispatcher;
 	
 	protected int parallelismMin;
@@ -88,6 +89,7 @@ public class ActorSystem {
 		aliases        = new ConcurrentHashMap<>();
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceActors = new ConcurrentHashMap<>();
+		pseudoActors   = new ConcurrentHashMap<>();
 		messageDispatcher = new ActorMessageDispatcher(this);
 		
 		setParallelismMin(0);
@@ -213,10 +215,14 @@ public class ActorSystem {
 	}
 	
 	protected UUID internal_addActor(Actor actor) {
-		actor.setSystem(this);
-		actors.put(actor.getId(), actor);
-		if (actor instanceof ResourceActor)
-			resourceActors.put(actor.getId(), true);
+		if (actor instanceof PseudoActor) 
+			pseudoActors.put(actor.getId(), actor);
+		else {
+			actor.setSystem(this);
+			actors.put(actor.getId(), actor);
+			if (actor instanceof ResourceActor)
+				resourceActors.put(actor.getId(), true);
+		}
 		return actor.getId();
 	}
 	
@@ -259,8 +265,11 @@ public class ActorSystem {
 		return user_addActor(actor);
 	}
 	
-	protected void removeActor(UUID id) {
+	protected void removeActor(UUID id) {	
 		actors.remove(id);
+		resourceActors.remove(id);
+		pseudoActors.remove(id);
+		
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
 			hasAliases.remove(id);

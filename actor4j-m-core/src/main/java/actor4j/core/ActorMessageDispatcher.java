@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import actor4j.core.messages.ActorMessage;
 import actor4j.function.BiConsumer;
+import actor4j.function.Consumer;
 
 public class ActorMessageDispatcher {
 	protected ActorSystem system;
@@ -27,6 +28,8 @@ public class ActorMessageDispatcher {
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerOuter;
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
+	
+	protected Consumer<ActorMessage<?>> consumerPseudo;
 	
 	public ActorMessageDispatcher(ActorSystem system) {
 		super();
@@ -54,6 +57,15 @@ public class ActorMessageDispatcher {
 			@Override
 			public void accept(Long id_dest, ActorMessage<?> msg) {
 				threadsMap.get(id_dest).directiveQueue.offer(msg);
+			}
+		};
+		
+		consumerPseudo = new Consumer<ActorMessage<?>>() {
+			@Override
+			public void accept(ActorMessage<?> msg) {
+				Actor actor = ActorMessageDispatcher.this.system.pseudoActors.get(msg.dest);
+				if (actor!=null)
+					((PseudoActor)actor).outerQueueL2.offer(msg);
 			}
 		};
 	}
@@ -95,6 +107,8 @@ public class ActorMessageDispatcher {
 				else
 					threadsMap.get(id_dest).outerQueueL2.offer(message.copy());
 			}
+			else 
+				consumerPseudo.accept(message.copy());
 		}
 	}
 	
@@ -113,6 +127,8 @@ public class ActorMessageDispatcher {
 		Long id_dest = actorsMap.get(message.dest);
 		if (id_dest!=null)
 			biconsumer.accept(id_dest, message.copy());
+		else 
+			consumerPseudo.accept(message.copy());
 	}
 	
 	public void postOuter(ActorMessage<?> message) {

@@ -64,6 +64,12 @@ public class ActorExecuterService {
 								String.format("%s - Safety (%s) - Exception in actor: %s", 
 									system.name, Thread.currentThread().getName(), actorLabel(actor)));
 					}
+					else if (message.equals("pseudo")) {
+						Actor actor = system.pseudoActors.get(uuid);
+							logger().error(
+								String.format("%s - Safety (%s) - Exception in actor: %s", 
+									system.name, Thread.currentThread().getName(), actorLabel(actor)));
+					}
 				}
 				else {
 					logger().fatal(
