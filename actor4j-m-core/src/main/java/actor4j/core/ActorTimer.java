@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
+import actor4j.function.Supplier;
 
 public class ActorTimer {
 	protected ActorSystem system;
@@ -31,12 +32,37 @@ public class ActorTimer {
 		return id;
 	}
 	
-	public ActorTimer scheduleOnce(final ActorMessage<?> message, final UUID dest, long delay) {
+	public ActorTimer scheduleOnce(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay) {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				ActorMessage<?> message = supplier.get();
 				message.dest = dest;
 				system.send(message);
+			}
+		}, delay); 
+		
+		return this;
+	}
+	
+	public ActorTimer scheduleOnce(final ActorMessage<?> message, final UUID dest, long delay) {
+		return scheduleOnce(new Supplier<ActorMessage<?>>() {
+			@Override
+			public ActorMessage<?> get() {
+				return message;
+			}
+		}, dest, delay);
+	}
+	
+	public ActorTimer scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay) {
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				ActorMessage<?> message = supplier.get();
+				for (UUID id : group) {
+					message.dest = id;
+					system.send(message);
+				}
 			}
 		}, delay); 
 		
@@ -44,23 +70,19 @@ public class ActorTimer {
 	}
 	
 	public ActorTimer scheduleOnce(final ActorMessage<?> message, final ActorGroup group, long delay) {
-		timer.schedule(new TimerTask() {
+		return scheduleOnce(new Supplier<ActorMessage<?>>() {
 			@Override
-			public void run() {
-				for (UUID id : group) {
-					message.dest = id;
-					system.send(message);
-				}
+			public ActorMessage<?> get() {
+				return message;
 			}
-		}, delay); 
-		
-		return this;
+		}, group, delay);
 	}
 	
-	public ActorTimer schedule(final ActorMessage<?> message, final UUID dest, long delay, long period) {
+	public ActorTimer schedule(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay, long period) {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				ActorMessage<?> message = supplier.get();
 				message.dest = dest;
 				system.send(message);
 			}
@@ -69,10 +91,20 @@ public class ActorTimer {
 		return this;
 	}
 	
-	public ActorTimer schedule(final ActorMessage<?> message, final ActorGroup group, long delay, long period) {
+	public ActorTimer schedule(final ActorMessage<?> message, final UUID dest, long delay, long period) {
+		return schedule(new Supplier<ActorMessage<?>>() {
+			@Override
+			public ActorMessage<?> get() {
+				return message;
+			}
+		}, dest, delay, period);
+	}
+	
+	public ActorTimer schedule(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay, long period) {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				ActorMessage<?> message = supplier.get();
 				for (UUID id : group) {
 					message.dest = id;
 					system.send(message);
@@ -81,6 +113,15 @@ public class ActorTimer {
 		}, delay, period); 
 		
 		return this;
+	}
+	
+	public ActorTimer schedule(final ActorMessage<?> message, final ActorGroup group, long delay, long period) {
+		return schedule(new Supplier<ActorMessage<?>>() {
+			@Override
+			public ActorMessage<?> get() {
+				return message;
+			}
+		}, group, delay, period);
 	}
 	
 	public void cancel() {
