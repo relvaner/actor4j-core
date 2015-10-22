@@ -118,13 +118,9 @@ public class AnalyzeExample {
 			.start();
 		
 		system.timer()
-			.schedule(new ActorMessage<Object>(null, 1, system.SYSTEM_ID, null), group, 0, 500);
-		system.timer()
-			.scheduleOnce(new ActorMessage<Object>(null, Actor.RESTART, system.SYSTEM_ID, null), ping, 5000);
-		system.timer()
-			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), id, 15000);
-		
-		system.timer()
+			.schedule(new ActorMessage<Object>(null, 1, system.SYSTEM_ID, null), group, 0, 500)
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.RESTART, system.SYSTEM_ID, null), ping, 5000)
+			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), id, 15000)
 			.scheduleOnce(new ActorMessage<Object>(null, Actor.STOP, system.SYSTEM_ID, null), system.USER_ID, 25000);
 		
 		try {

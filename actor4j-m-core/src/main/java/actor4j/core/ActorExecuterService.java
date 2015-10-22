@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorTimer;
 import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
 
@@ -25,7 +24,7 @@ public class ActorExecuterService {
 	protected ActorSystem system;
 	
 	protected List<ActorThread> actorThreads;
-	protected ActorTimer actorTimer;
+	protected List<ActorTimer> actorTimers;
 	
 	protected CountDownLatch countDownLatch;
 	protected Runnable onTermination;
@@ -43,7 +42,7 @@ public class ActorExecuterService {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();
-		actorTimer = new ActorTimer(system);
+		actorTimers = new ArrayList<>();
 		
 		started = new AtomicBoolean();
 		
@@ -123,6 +122,12 @@ public class ActorExecuterService {
 		return started.get();
 	}
 	
+	public ActorTimer timer() {
+		ActorTimer timer = new ActorTimer(system);
+		actorTimers.add(timer);
+		return timer;
+	}
+	
 	public void client(final ActorMessage<?> message, final String alias) {
 		if (system.clientRunnable!=null)
 			clientExecuterService.submit(new Runnable() {
@@ -149,7 +154,10 @@ public class ActorExecuterService {
 		if (system.clientMode)
 			clientExecuterService.shutdown();
 
-		actorTimer.cancel();
+		if (actorTimers.size()>0) {
+			for (ActorTimer timer : actorTimers)
+				timer.cancel();
+		}
 		
 		if (actorThreads.size()>0) {
 			for (ActorThread t : actorThreads)

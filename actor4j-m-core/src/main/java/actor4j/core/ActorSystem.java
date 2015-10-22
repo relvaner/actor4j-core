@@ -20,7 +20,6 @@ import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
-import actor4j.core.utils.ActorTimer;
 import safety4j.SafetyManager;
 import tools4j.di.DIContainer;
 import tools4j.di.InjectorParam;
@@ -342,7 +341,7 @@ public class ActorSystem {
 	}
 	
 	public ActorTimer timer() {
-		return executerService.actorTimer;
+		return executerService.timer();
 	}
 	
 	public void start() {
