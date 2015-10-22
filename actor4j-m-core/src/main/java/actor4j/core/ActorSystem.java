@@ -69,8 +69,6 @@ public class ActorSystem {
 	public final UUID SYSTEM_ID;
 	public final UUID UNKNOWN_ID;
 	
-	protected Actor user;
-	
 	public ActorSystem() {
 		this(null);
 	}
@@ -112,7 +110,7 @@ public class ActorSystem {
 		
 		countDownLatch = new CountDownLatch(1);
 		
-		user = new Actor("user") {
+		USER_ID = internal_addActor(new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -122,8 +120,7 @@ public class ActorSystem {
 			public void postStop() {
 				countDownLatch.countDown();
 			}
-		};
-		USER_ID = internal_addActor(user);
+		});
 		SYSTEM_ID = internal_addActor(new Actor("system") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
@@ -215,7 +212,7 @@ public class ActorSystem {
 	}
 	
 	protected UUID internal_addActor(Actor actor) {
-		if (actor instanceof PseudoActor) 
+		if (actor instanceof PseudoActor)
 			pseudoActors.put(actor.getId(), actor);
 		else {
 			actor.setSystem(this);
@@ -228,13 +225,13 @@ public class ActorSystem {
 	
 	protected UUID user_addActor(Actor actor) {
 		actor.parent = USER_ID;
-		user.children.add(actor.getId());
+		actors.get(USER_ID).children.add(actor.getId());
 		return internal_addActor(actor);
 	}
 	
 	protected UUID system_addActor(Actor actor) {
 		actor.parent = SYSTEM_ID;
-		user.children.add(actor.getId());
+		actors.get(SYSTEM_ID).children.add(actor.getId());
 		return internal_addActor(actor);
 	}
 	
