@@ -277,7 +277,7 @@ public abstract class Actor {
 	protected UUID internal_addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
-		system.system_addActor(actor);
+		system.internal_addActor(actor);
 		system.messageDispatcher.registerActor(actor);
 		/* preStart */
 		actor.preStart();

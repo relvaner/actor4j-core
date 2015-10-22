@@ -38,7 +38,7 @@ public class RestartProtocol {
 			Actor newActor = (Actor)system.container.getInstance(buf);
 			newActor.setId(buf);	
 			newActor.parent = parent;
-			system.system_addActor(newActor);
+			system.internal_addActor(newActor);
 			newActor.postRestart(reason);
 			logger().info(String.format("%s - System: actor (%s) restarted", actor.system.name, actorLabel(actor))); 
 		} catch (Exception e) {

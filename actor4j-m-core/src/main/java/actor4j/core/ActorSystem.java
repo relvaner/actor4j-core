@@ -121,14 +121,14 @@ public class ActorSystem {
 				countDownLatch.countDown();
 			}
 		};
-		USER_ID = system_addActor(user);
-		SYSTEM_ID = system_addActor(new Actor("system") {
+		USER_ID = internal_addActor(user);
+		SYSTEM_ID = internal_addActor(new Actor("system") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
 				// empty
 			}
 		});
-		UNKNOWN_ID = system_addActor(new Actor("unknown") {
+		UNKNOWN_ID = internal_addActor(new Actor("unknown") {
 			@Override
 			protected void receive(ActorMessage<?> message) {
 				// empty
@@ -212,7 +212,7 @@ public class ActorSystem {
 		return this;
 	}
 	
-	protected UUID system_addActor(Actor actor) {
+	protected UUID internal_addActor(Actor actor) {
 		actor.setSystem(this);
 		actors.put(actor.getId(), actor);
 		if (actor instanceof ResourceActor)
@@ -223,7 +223,13 @@ public class ActorSystem {
 	protected UUID user_addActor(Actor actor) {
 		actor.parent = USER_ID;
 		user.children.add(actor.getId());
-		return system_addActor(actor);
+		return internal_addActor(actor);
+	}
+	
+	protected UUID system_addActor(Actor actor) {
+		actor.parent = SYSTEM_ID;
+		user.children.add(actor.getId());
+		return internal_addActor(actor);
 	}
 	
 	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {

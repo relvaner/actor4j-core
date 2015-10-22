@@ -3,6 +3,7 @@
  */
 package actor4j.core;
 
+import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,11 +41,11 @@ public class ActorThread extends Thread {
 		uuid = UUID.randomUUID();
 		
 		directiveQueue = new MpscArrayQueue<>(50000);
-		serverQueueL2  = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
-		serverQueueL1  = new CircularFifoQueue<>(10000); //new LinkedList<>();
-		outerQueueL2   = new MpscArrayQueue<>(50000);    //new ConcurrentLinkedQueue<>();
-		outerQueueL1   = new CircularFifoQueue<>(10000);
-		innerQueue     = new CircularFifoQueue<>(50000); //new LinkedList<>();
+		serverQueueL2  = new MpscArrayQueue<>(50000);
+		serverQueueL1  = new LinkedList<>();
+		outerQueueL2   = new MpscArrayQueue<>(50000);
+		outerQueueL1   = new LinkedList<>();
+		innerQueue     = new CircularFifoQueue<>(50000);
 		
 		counter = new AtomicLong(0);
 	}
