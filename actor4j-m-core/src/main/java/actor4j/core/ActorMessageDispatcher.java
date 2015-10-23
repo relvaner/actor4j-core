@@ -102,7 +102,7 @@ public class ActorMessageDispatcher {
 			Long id_dest   = actorsMap.get(message.dest);
 		
 			if (id_dest!=null) {
-				if (id_source!=null && id_source==id_dest && Thread.currentThread().getId()==id_source)
+				if (id_source!=null && id_source.equals(id_dest) && Thread.currentThread().getId()==id_source.longValue())
 					threadsMap.get(id_dest).innerQueue.offer(message.copy());
 				else
 					threadsMap.get(id_dest).outerQueueL2.offer(message.copy());

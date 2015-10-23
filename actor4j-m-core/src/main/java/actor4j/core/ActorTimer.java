@@ -126,6 +126,6 @@ public class ActorTimer {
 	
 	public void cancel() {
 		timer.cancel();
-		system.executerService.actorTimers.remove(timer);
+		system.executerService.actorTimers.remove(this);
 	}
 }

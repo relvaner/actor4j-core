@@ -293,7 +293,7 @@ public abstract class Actor {
 		UUID temp = UUID.randomUUID();
 		system.container.registerConstructorInjector(temp, clazz, params);
 		
-		Actor actor = null;
+		Actor actor;
 		try {
 			actor = (Actor)system.container.getInstance(temp);
 			system.container.registerConstructorInjector(actor.getId(), clazz, params);
@@ -302,7 +302,7 @@ public abstract class Actor {
 			throw new ActorInitializationException();
 		}
 		
-		return (actor!=null) ? internal_addChild(actor) : UUID_ZERO;
+		return internal_addChild(actor);
 	}
 	
 	public UUID addChild(ActorFactory factory) {
