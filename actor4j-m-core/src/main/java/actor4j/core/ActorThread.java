@@ -86,7 +86,7 @@ public class ActorThread extends Thread {
 				boolean hasNextOuter     = false;
 				boolean hasNextInner     = false;
 				
-				while (!isInterrupted()) { 
+				while (!isInterrupted()) {
 					while (poll(directiveQueue)) 
 						hasNextDirective=true;
 					
