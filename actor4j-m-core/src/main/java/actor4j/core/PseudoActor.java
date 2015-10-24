@@ -94,7 +94,7 @@ public abstract class PseudoActor extends ActorWithRxStash {
 	}
 	
 	@Override
-	protected UUID internal_addChild(Actor actor) {
+	public UUID internal_addChild(Actor actor) {
 		return null;
 	}
 	

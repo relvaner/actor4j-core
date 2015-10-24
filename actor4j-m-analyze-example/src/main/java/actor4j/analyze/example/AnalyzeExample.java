@@ -28,7 +28,7 @@ public class AnalyzeExample {
 						protected boolean first = true;
 						protected UUID last;
 						@Override
-						protected void receive(ActorMessage<?> message) {
+						public void receive(ActorMessage<?> message) {
 							if (first) {
 								UUID next = id;
 								for (int i=0; i<3; i++) {
@@ -55,7 +55,7 @@ public class AnalyzeExample {
 					protected HubPattern hub = new HubPattern(this);
 					protected boolean first = true;
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						if (first) {
 							for (int i=0; i<4; i++) {
 								final int f_i = i;
@@ -64,7 +64,7 @@ public class AnalyzeExample {
 									public Actor create() {
 										return new Actor("child-"+f_i){
 											@Override
-											protected void receive(ActorMessage<?> message) {
+											public void receive(ActorMessage<?> message) {
 											}
 										};
 									}
@@ -87,14 +87,14 @@ public class AnalyzeExample {
 					protected boolean first = true;
 					protected UUID pong;
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						if (first) {
 							pong = addChild(new ActorFactory() {
 								@Override
 								public Actor create() {
 									return new Actor("pong") {
 										@Override
-										protected void receive(ActorMessage<?> message) {
+										public void receive(ActorMessage<?> message) {
 											UUID buffer = message.source;
 											message.source = message.dest;
 											message.dest = buffer;

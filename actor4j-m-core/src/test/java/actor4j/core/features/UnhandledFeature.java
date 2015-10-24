@@ -22,7 +22,7 @@ public class UnhandledFeature {
 			public Actor create() {
 				return new Actor("UnhandledFeatureActor") {
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						unhandled(message);
 					}
 				};

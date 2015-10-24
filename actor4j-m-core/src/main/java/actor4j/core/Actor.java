@@ -154,7 +154,7 @@ public abstract class Actor {
 	/**
 	 * Don't use this method within your actor code. It's an internal method.
 	 */
-	protected void internal_receive(ActorMessage<?> message) {
+	public void internal_receive(ActorMessage<?> message) {
 		if (!processedDirective.apply(message)) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
@@ -164,7 +164,7 @@ public abstract class Actor {
 		}
 	}
 	
-	protected abstract void receive(ActorMessage<?> message);
+	public abstract void receive(ActorMessage<?> message);
 	
 	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
 		if (replace && !behaviourStack.isEmpty())
@@ -274,7 +274,7 @@ public abstract class Actor {
 	/**
 	 * Don't use this method within your actor code. It's an internal method.
 	 */
-	protected UUID internal_addChild(Actor actor) {
+	public UUID internal_addChild(Actor actor) {
 		actor.parent = id;
 		children.add(actor.getId());
 		system.internal_addActor(actor);
@@ -343,7 +343,7 @@ public abstract class Actor {
 	/**
 	 * Don't use this method within your actor code. It's an internal method.
 	 */
-	protected void internal_stop() {
+	public void internal_stop() {
 		if (parent!=null)
 			system.actors.get(parent).children.remove(getSelf());
 		system.messageDispatcher.unregisterActor(this);

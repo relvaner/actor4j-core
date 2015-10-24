@@ -21,7 +21,7 @@ public class SafetyFeature {
 			public Actor create() {
 				return new Actor("SafetyFeatureActor") {
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						throw new NullPointerException();
 					}
 				};

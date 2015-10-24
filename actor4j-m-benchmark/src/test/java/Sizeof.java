@@ -21,7 +21,7 @@ public class Sizeof
             // Instantiate your data here and assign it to object
             object = new Actor() {
 				@Override
-				protected void receive(ActorMessage<?> message) {
+				public void receive(ActorMessage<?> message) {
 				}};
             
             if (i >= 0)

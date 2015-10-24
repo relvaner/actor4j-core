@@ -42,7 +42,7 @@ public class BehaviourFeature {
 					};
 					
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						become(newBehaviour);
 					}
 				};
@@ -83,7 +83,7 @@ public class BehaviourFeature {
 					protected boolean first = true;
 					
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						if (first) {
 							become(newBehaviour);
 							first = false;
@@ -143,7 +143,7 @@ public class BehaviourFeature {
 					};
 					
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						become(newBehaviour1);
 					}
 				};
@@ -195,7 +195,7 @@ public class BehaviourFeature {
 					protected boolean first = true;
 					
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						if (first) {
 							become(newBehaviour1);
 							first = false;

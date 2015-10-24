@@ -46,7 +46,7 @@ public class AwaitFeature {
 					protected boolean first = true;
 					
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						if (first) {
 							await(1, action);
 							first = false;

@@ -59,7 +59,7 @@ public class ClientApplication {
 			public Actor create() {
 				return new Actor() {
 					@Override
-					protected void receive(ActorMessage<?> message) {
+					public void receive(ActorMessage<?> message) {
 						this.send(message, "server");
 					}
 				};

@@ -122,13 +122,13 @@ public class ActorSystem {
 		});
 		SYSTEM_ID = internal_addActor(new Actor("system") {
 			@Override
-			protected void receive(ActorMessage<?> message) {
+			public void receive(ActorMessage<?> message) {
 				// empty
 			}
 		});
 		UNKNOWN_ID = internal_addActor(new Actor("unknown") {
 			@Override
-			protected void receive(ActorMessage<?> message) {
+			public void receive(ActorMessage<?> message) {
 				// empty
 			}
 		});
