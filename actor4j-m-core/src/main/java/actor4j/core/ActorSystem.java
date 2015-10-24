@@ -212,25 +212,25 @@ public class ActorSystem {
 	
 	protected UUID internal_addActor(Actor actor) {
 		if (actor instanceof PseudoActor)
-			pseudoActors.put(actor.getId(), actor);
+			pseudoActors.put(actor.id, actor);
 		else {
-			actor.setSystem(this);
-			actors.put(actor.getId(), actor);
+			actor.system = this;
+			actors.put(actor.id, actor);
 			if (actor instanceof ResourceActor)
-				resourceActors.put(actor.getId(), true);
+				resourceActors.put(actor.id, true);
 		}
-		return actor.getId();
+		return actor.id;
 	}
 	
 	protected UUID user_addActor(Actor actor) {
 		actor.parent = USER_ID;
-		actors.get(USER_ID).children.add(actor.getId());
+		actors.get(USER_ID).children.add(actor.id);
 		return internal_addActor(actor);
 	}
 	
 	protected UUID system_addActor(Actor actor) {
 		actor.parent = SYSTEM_ID;
-		actors.get(SYSTEM_ID).children.add(actor.getId());
+		actors.get(SYSTEM_ID).children.add(actor.id);
 		return internal_addActor(actor);
 	}
 	
@@ -245,7 +245,7 @@ public class ActorSystem {
 		Actor actor = null;
 		try {
 			actor = (Actor)container.getInstance(temp);
-			container.registerConstructorInjector(actor.getId(), clazz, params);
+			container.registerConstructorInjector(actor.id, clazz, params);
 			container.unregister(temp);
 		} catch (Exception e) {
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
@@ -256,7 +256,7 @@ public class ActorSystem {
 	
 	public UUID addActor(ActorFactory factory) {
 		Actor actor = factory.create();
-		container.registerFactoryInjector(actor.getId(), factory);
+		container.registerFactoryInjector(actor.id, factory);
 		
 		return user_addActor(actor);
 	}

@@ -31,12 +31,12 @@ public class RestartProtocol {
 	
 	protected void postRestart(Exception reason) {
 		actor.postStop();
-		UUID buf = actor.getId();
+		UUID buf = actor.id;
 		try {
-			ActorSystem system = actor.getSystem();
-			UUID parent = actor.getParent();
+			ActorSystem system = actor.system;
+			UUID parent = actor.parent;
 			Actor newActor = (Actor)system.container.getInstance(buf);
-			newActor.setId(buf);	
+			newActor.id = buf;	
 			newActor.parent = parent;
 			system.internal_addActor(newActor);
 			newActor.postRestart(reason);
@@ -47,18 +47,18 @@ public class RestartProtocol {
 	}
 	
 	public void apply(final Exception reason) {
-		final List<UUID> waitForChildren =new ArrayList<>(actor.getChildren().size());
+		final List<UUID> waitForChildren =new ArrayList<>(actor.children.size());
 		
-		Iterator<UUID> iterator = actor.getChildren().iterator();
+		Iterator<UUID> iterator = actor.children.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			actor.watch(dest);
 		}
-		iterator = actor.getChildren().iterator();
+		iterator = actor.children.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			actor.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, actor.getSelf(), dest));
+			actor.system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, actor.self(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 

@@ -19,7 +19,7 @@ public class TestActor extends Actor {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		message.source = getId();
+		message.source = self();
 		hub.broadcast(message);
 	}
 }

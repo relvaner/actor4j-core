@@ -41,7 +41,7 @@ public class AnalyzeExample {
 								first = false;
 							}
 							if (message.tag==1)
-								send(new ActorMessage<Object>(null, 0, getId(), last));
+								send(new ActorMessage<Object>(null, 0, self(), last));
 						}
 					};
 				}
@@ -73,7 +73,7 @@ public class AnalyzeExample {
 							}
 							first = false;
 						}
-						hub.broadcast(new ActorMessage<Object>(null, 0, getId(), null));
+						hub.broadcast(new ActorMessage<Object>(null, 0, self(), null));
 					}
 				};
 			}
@@ -106,7 +106,7 @@ public class AnalyzeExample {
 							first = false;
 						}
 						if (message.tag==1)
-							send(new ActorMessage<Object>(null, 0, getId(), pong));
+							send(new ActorMessage<Object>(null, 0, self(), pong));
 					}
 				};
 			}

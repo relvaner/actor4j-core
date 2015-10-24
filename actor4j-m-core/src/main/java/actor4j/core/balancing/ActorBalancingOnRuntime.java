@@ -28,10 +28,10 @@ public class ActorBalancingOnRuntime {
 			if (threadId==null) 
 				groupsMap.put(((ActorGroupMember)actor).getGroupId(), pollThreadId(threadsMap));
 			else
-				actorsMap.put(actor.getId(), threadId);
+				actorsMap.put(actor.id, threadId);
 		}
 		else
-			actorsMap.put(actor.getId(), pollThreadId(threadsMap));
+			actorsMap.put(actor.id, pollThreadId(threadsMap));
 	}
 	
 	public void unregisterActor(Map<UUID, Long> actorsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Actor actor) {
@@ -39,7 +39,7 @@ public class ActorBalancingOnRuntime {
 			// TODO: ???
 		}
 		
-		actorsMap.remove(actor.getId());
+		actorsMap.remove(actor.id);
 	}
 	
 	public Long pollThreadId(Map<Long, ActorThread> threadsMap) {

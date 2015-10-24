@@ -20,6 +20,6 @@ public class Sender extends ActorGroupMember {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		send(new ActorMessage<UUID>(getId(), 0, getId(), next));
+		send(new ActorMessage<UUID>(self(), 0, self(), next));
 	}
 }

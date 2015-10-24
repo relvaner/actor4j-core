@@ -17,7 +17,7 @@ public class Destination extends Actor {
 	public void receive(ActorMessage<?> message) {
 		if (message.tag==MSG.ordinal()) {
 			message.dest = message.source;
-			message.source = getId();
+			message.source = self();
 			send(message);
 		}
 	}

@@ -29,8 +29,8 @@ public class ActorBalancingOnCreation {
 					if (i==actorThreads.size())
 						i = 0;
 				}
-				if (buffer.remove(actor.getId()))
-					actorsMap.put(actor.getId(), id);
+				if (buffer.remove(actor.id))
+					actorsMap.put(actor.id, id);
 			}
 		}	
 						

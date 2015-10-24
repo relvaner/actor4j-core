@@ -45,7 +45,7 @@ public abstract class PseudoActor extends ActorWithRxStash {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", getId());
+			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", self());
 			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}

@@ -68,42 +68,42 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 	
 	public void analyzeRootActor(Map<UUID, Actor> actors, Actor root, String color, boolean showDefaultRoot) {
 		if (root!=null) {
-			if (activeCells.put(root.getId(), true)==null) {
+			if (activeCells.put(root.id, true)==null) {
 				Object rootVertex;
-				if (root.getName()!=null)
-					rootVertex = addVertex(root.getName(), color);
+				if (root.name!=null)
+					rootVertex = addVertex(root.name, color);
 				else
-					rootVertex = addVertex(root.getId().toString(), color);
+					rootVertex = addVertex(root.id.toString(), color);
 			
 				if (showDefaultRoot)
 					addEdge(null, defaultRoot, rootVertex);
 				
-				cells.put(root.getId(), rootVertex);
+				cells.put(root.id, rootVertex);
 				changed = true;
 			}
 			
-			analyzeActor(actors, root, cells.get(root.getId()));
+			analyzeActor(actors, root, cells.get(root.id));
 		}
 	}
 	
 	public void analyzeActor(Map<UUID, Actor> actors, Actor parent, Object parentVertex) {
-		Iterator<UUID> iterator = parent.getChildren().iterator();
+		Iterator<UUID> iterator = parent.children.iterator();
 		while (iterator.hasNext()) {
 			Actor child = actors.get(iterator.next());
-			if (activeCells.put(child.getId(), true)==null) {
+			if (activeCells.put(child.id, true)==null) {
 				Object childVertex;
-				if (child.getName()!=null)
-					childVertex = addVertex(child.getName(), ";fillColor=#00FF00");
+				if (child.name!=null)
+					childVertex = addVertex(child.name, ";fillColor=#00FF00");
 				else
-					childVertex = addVertex(child.getId().toString(), ";fillColor=#00FF00");
+					childVertex = addVertex(child.id.toString(), ";fillColor=#00FF00");
 			
 				addEdge(null, parentVertex, childVertex);
 				
-				cells.put(child.getId(), childVertex);
+				cells.put(child.id, childVertex);
 				changed = true;
 			}
 			
-			analyzeActor(actors, child, cells.get(child.getId()));
+			analyzeActor(actors, child, cells.get(child.id));
 		}
 	}
 

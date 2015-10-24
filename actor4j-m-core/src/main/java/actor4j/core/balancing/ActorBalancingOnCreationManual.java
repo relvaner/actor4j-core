@@ -15,7 +15,7 @@ public abstract class ActorBalancingOnCreationManual {
 	public abstract void balance(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap);
 	
 	public void balanceActor(Map<UUID, Long> actorsMap, Long threadId, Actor actor) {
-		actorsMap.put(actor.getId(), threadId);
+		actorsMap.put(actor.id, threadId);
 	}
 	
 	public void balanceActors(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads, List<Actor> actors) {

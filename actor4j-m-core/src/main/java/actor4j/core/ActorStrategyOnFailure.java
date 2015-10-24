@@ -42,13 +42,13 @@ public class ActorStrategyOnFailure {
 	
 	protected void oneForAll_directive_restart(Actor actor, Exception reason) {
 		if (!actor.isRoot()) {
-			Actor parent = system.actors.get(actor.getParent());
+			Actor parent = system.actors.get(actor.parent);
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.getChildren().iterator();
+				Iterator<UUID> iterator = parent.children.iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(actor.getId()))
-						system.sendAsDirective(new ActorMessage<>(reason, INTERNAL_RESTART, parent.getId(), dest));
+					if (!dest.equals(actor.id))
+						system.sendAsDirective(new ActorMessage<>(reason, INTERNAL_RESTART, parent.id, dest));
 				}
 				actor.preRestart(reason);
 			}
@@ -59,13 +59,13 @@ public class ActorStrategyOnFailure {
 	
 	protected void oneForAll_directive_stop(Actor actor) {
 		if (!actor.isRoot()) {
-			Actor parent = system.actors.get(actor.getParent());
+			Actor parent = system.actors.get(actor.parent);
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.getChildren().iterator();
+				Iterator<UUID> iterator = parent.children.iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(actor.getId()))
-						system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, parent.getId(), dest));
+					if (!dest.equals(actor.id))
+						system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, parent.id, dest));
 				}
 				actor.stop();
 			}

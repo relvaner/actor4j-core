@@ -29,8 +29,8 @@ public class Client extends Actor {
 		System.out.println(message);
 		for (int i=0; i<10; i++)
 			if (next!=null)
-				send(new ActorMessage<UUID>(getId(), 1976+i, getId(), next));
+				send(new ActorMessage<UUID>(self(), 1976+i, self(), next));
 			else
-				send(new ActorMessage<UUID>(getId(), 1976+i, getId(), null), alias);
+				send(new ActorMessage<UUID>(self(), 1976+i, self(), null), alias);
 	}
 }

@@ -27,13 +27,13 @@ public class Client extends Actor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (message.tag==MSG.ordinal()) {
-			message.source = getId();
+			message.source = self();
 			message.dest = dest;
 			send(message);
 		}
 		else if (message.tag==RUN.ordinal())
             for (int i=0; i<initalMessages; i++) {
-            	send(new ActorMessage<Object>(null, MSG, getId(), dest));
+            	send(new ActorMessage<Object>(null, MSG, self(), dest));
 		}
 	}
 }

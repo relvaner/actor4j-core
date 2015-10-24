@@ -55,7 +55,7 @@ public class ActorThread extends Thread {
 			actor.internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "actor", actor.getId());
+			SafetyManager.getInstance().notifyErrorHandler(e, "actor", actor.id);
 			system.actorStrategyOnFailure.handle(actor, e);
 		}	
 	}

@@ -26,22 +26,22 @@ import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor {
-	protected ActorSystem system;
+	public ActorSystem system;
 	
-	protected UUID id;
-	protected String name;
+	public UUID id;
+	public String name;
 	
-	protected UUID parent;
-	protected Queue<UUID> children;
+	public UUID parent;
+	public Queue<UUID> children;
 	
-	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
+	public Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
-	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
+	public Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
-	protected RestartProtocol restartProtocol;
-	protected StopProtocol stopProtocol;
+	public RestartProtocol restartProtocol;
+	public StopProtocol stopProtocol;
 	
-	protected Queue<UUID> deathWatcher;
+	public Queue<UUID> deathWatcher;
 	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
@@ -50,8 +50,8 @@ public abstract class Actor {
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
 	
-	protected Function<ActorMessage<?>, Boolean> processedDirective;
-	protected boolean activeDirectiveBehaviour;
+	public Function<ActorMessage<?>, Boolean> processedDirective;
+	public boolean activeDirectiveBehaviour;
 			
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
@@ -110,7 +110,7 @@ public abstract class Actor {
 			}	
 		};
 	}
-	
+	/*
 	public ActorSystem getSystem() {
 		return system;
 	}
@@ -123,14 +123,14 @@ public abstract class Actor {
 		return id;
 	}
 	
-	public UUID getSelf() {
-		return id;
-	}
-	
 	public void setId(UUID id) {
 		this.id = id;
 	}
-
+	*/
+	public UUID self() {
+		return id;
+	}
+	/*
 	public String getName() {
 		return name;
 	}
@@ -142,7 +142,7 @@ public abstract class Actor {
 	public Queue<UUID> getChildren() {
 		return children;
 	}
-	
+	*/
 	public boolean isRoot() {
 		return (parent==null);
 	}
@@ -233,11 +233,11 @@ public abstract class Actor {
 	}
 	
 	public void send(ActorMessage<?> message) {
-		system.messageDispatcher.post(message, getSelf());
+		system.messageDispatcher.post(message, self());
 	}
 	
 	public void send(ActorMessage<?> message, String alias) {
-		system.messageDispatcher.post(message, getSelf(), alias);
+		system.messageDispatcher.post(message, self(), alias);
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
@@ -276,13 +276,13 @@ public abstract class Actor {
 	 */
 	public UUID internal_addChild(Actor actor) {
 		actor.parent = id;
-		children.add(actor.getId());
+		children.add(actor.id);
 		system.internal_addActor(actor);
 		system.messageDispatcher.registerActor(actor);
 		/* preStart */
 		actor.preStart();
 		
-		return actor.getId();
+		return actor.id;
 	}
 	
 	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
@@ -296,7 +296,7 @@ public abstract class Actor {
 		Actor actor;
 		try {
 			actor = (Actor)system.container.getInstance(temp);
-			system.container.registerConstructorInjector(actor.getId(), clazz, params);
+			system.container.registerConstructorInjector(actor.id, clazz, params);
 			system.container.unregister(temp);
 		} catch (Exception e) {
 			throw new ActorInitializationException();
@@ -307,7 +307,7 @@ public abstract class Actor {
 	
 	public UUID addChild(ActorFactory factory) {
 		Actor actor = factory.create();
-		system.container.registerFactoryInjector(actor.getId(), factory);
+		system.container.registerFactoryInjector(actor.id, factory);
 		
 		return internal_addChild(actor);
 	}
@@ -345,26 +345,26 @@ public abstract class Actor {
 	 */
 	public void internal_stop() {
 		if (parent!=null)
-			system.actors.get(parent).children.remove(getSelf());
+			system.actors.get(parent).children.remove(self());
 		system.messageDispatcher.unregisterActor(this);
 		system.removeActor(id);
 		
 		Iterator<UUID> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
-			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, getSelf(), dest));
+			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, self(), dest));
 		}
 	}
 	
 	public void watch(UUID dest) {
 		Actor actor = system.actors.get(dest);
 		if (actor!=null)
-			actor.deathWatcher.add(getSelf());
+			actor.deathWatcher.add(self());
 	}
 	
 	public void unwatch(UUID dest) {
 		Actor actor = system.actors.get(dest);
 		if (actor!=null)
-			actor.deathWatcher.remove(getSelf());
+			actor.deathWatcher.remove(self());
 	}
 }

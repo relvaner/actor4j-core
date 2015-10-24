@@ -46,19 +46,19 @@ public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
 	    	Iterator<Actor> iterator = actors.values().iterator();
 	        while (iterator.hasNext()) {
 	        	Actor actor = iterator.next(); 
-	        	if (activeCells.put(actor.getId(), true)==null) {
-	        		if (actor.getId()==system.USER_ID || actor.getId()==system.SYSTEM_ID || actor.getId()==system.UNKNOWN_ID)
+	        	if (activeCells.put(actor.id, true)==null) {
+	        		if (actor.id==system.USER_ID || actor.id==system.SYSTEM_ID || actor.id==system.UNKNOWN_ID)
 	        			color = ";fillColor=yellow";
 	        		else
 	        			color = ";fillColor=#00FF00";
 	        		
     				Object vertex;
-    				if (actor.getName()!=null)
-    					vertex = addVertex(actor.getName(), color);
+    				if (actor.name!=null)
+    					vertex = addVertex(actor.name, color);
     				else
-    					vertex = addVertex(actor.getId().toString(), color);
+    					vertex = addVertex(actor.id.toString(), color);
     			
-    				cells.put(actor.getId(), vertex);
+    				cells.put(actor.id, vertex);
     				changed = true;
     			}
 	        }
