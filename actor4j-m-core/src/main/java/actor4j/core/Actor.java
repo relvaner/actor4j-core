@@ -26,22 +26,11 @@ import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor {
-	public ActorSystem system;
+	protected ActorCell cell;
 	
-	public UUID id;
-	public String name;
+	protected String name;
 	
-	public UUID parent;
-	public Queue<UUID> children;
-	
-	public Deque<Consumer<ActorMessage<?>>> behaviourStack;
-	
-	public Queue<ActorMessage<?>> stash; //must be initialized by hand
-	
-	public RestartProtocol restartProtocol;
-	public StopProtocol stopProtocol;
-	
-	public Queue<UUID> deathWatcher;
+	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
@@ -50,9 +39,6 @@ public abstract class Actor {
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
 	
-	public Function<ActorMessage<?>, Boolean> processedDirective;
-	public boolean activeDirectiveBehaviour;
-			
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
 	 * get a NullPointerException, because the variable system is not initialized. It will 
@@ -70,78 +56,25 @@ public abstract class Actor {
 	public Actor(String name) {
 		super();
 		
-		this.id   = UUID.randomUUID();
 		this.name = name;
-		
-		children = new ConcurrentLinkedQueue<>();
-		
-		behaviourStack = new ArrayDeque<>();
-		
-		restartProtocol = new RestartProtocol(this);
-		stopProtocol = new StopProtocol(this);
-		
-		deathWatcher =  new ConcurrentLinkedQueue<>();
-		
-		processedDirective = new Function<ActorMessage<?>, Boolean>() {
-			@Override
-			public Boolean apply(ActorMessage<?> message) {
-				boolean result = false;
-				
-				if (isDirective(message) && !activeDirectiveBehaviour) {
-					result = true;
-					if (message.tag==INTERNAL_RESTART || message.tag==INTERNAL_STOP)
-						activeDirectiveBehaviour = true;
-						
-					if (message.tag==INTERNAL_RESTART) {
-						if (message.value instanceof Exception)
-							preRestart((Exception)message.value);
-						else
-							preRestart(null);
-					}
-					else if (message.tag==INTERNAL_STOP)
-						stop();
-					else if (message.tag==INTERNAL_KILL) 
-						throw new ActorKilledException();
-					else
-						result = false;
-				}
-				
-				return result;
-			}	
-		};
 	}
 	
 	public UUID self() {
-		return id;
+		return cell.id;
 	}
 	
 	public boolean isRoot() {
-		return (parent==null);
+		
 	}
 	
 	public boolean isRootInUser() {
-		return (parent==system.USER_ID);
-	}
-	
-	/**
-	 * Don't use this method within your actor code. It's an internal method.
-	 */
-	public void internal_receive(ActorMessage<?> message) {
-		if (!processedDirective.apply(message)) {
-			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
-			if (behaviour==null)
-				receive(message);
-			else
-				behaviour.accept(message);	
-		}
+		
 	}
 	
 	public abstract void receive(ActorMessage<?> message);
 	
 	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
-		if (replace && !behaviourStack.isEmpty())
-			behaviourStack.pop();
-		behaviourStack.push(behaviour);
+		
 	}
 	
 	public void become(Consumer<ActorMessage<?>> behaviour) {
@@ -149,11 +82,11 @@ public abstract class Actor {
 	}
 	
 	public void unbecome() {
-		behaviourStack.pop();
+		
 	}
 	
 	public void unbecomeAll() {
-		behaviourStack.clear();
+		
 	}
 	
 	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
@@ -205,11 +138,11 @@ public abstract class Actor {
 	}
 	
 	public void send(ActorMessage<?> message) {
-		system.messageDispatcher.post(message, self());
+		
 	}
 	
 	public void send(ActorMessage<?> message, String alias) {
-		system.messageDispatcher.post(message, self(), alias);
+		
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
@@ -243,45 +176,12 @@ public abstract class Actor {
 		system.setAlias(id, alias);
 	}
 	
-	/**
-	 * Don't use this method within your actor code. It's an internal method.
-	 */
-	public UUID internal_addChild(Actor actor) {
-		actor.parent = id;
-		children.add(actor.id);
-		system.internal_addActor(actor);
-		system.messageDispatcher.registerActor(actor);
-		/* preStart */
-		actor.preStart();
-		
-		return actor.id;
-	}
-	
 	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		InjectorParam[] params = new InjectorParam[args.length];
-		for (int i=0; i<args.length; i++)
-			params[i] = InjectorParam.createWithObj(args[i]);
 		
-		UUID temp = UUID.randomUUID();
-		system.container.registerConstructorInjector(temp, clazz, params);
-		
-		Actor actor;
-		try {
-			actor = (Actor)system.container.getInstance(temp);
-			system.container.registerConstructorInjector(actor.id, clazz, params);
-			system.container.unregister(temp);
-		} catch (Exception e) {
-			throw new ActorInitializationException();
-		}
-		
-		return internal_addChild(actor);
 	}
 	
 	public UUID addChild(ActorFactory factory) {
-		Actor actor = factory.create();
-		system.container.registerFactoryInjector(actor.id, factory);
 		
-		return internal_addChild(actor);
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {
@@ -297,7 +197,7 @@ public abstract class Actor {
 	}
 	
 	public void preRestart(Exception reason) {
-		restartProtocol.apply(reason);
+		// empty
 	}
 	
 	public void postRestart(Exception reason) {
@@ -309,34 +209,14 @@ public abstract class Actor {
 	}
 	
 	public void stop() {
-		stopProtocol.apply();
-	}
-	
-	/**
-	 * Don't use this method within your actor code. It's an internal method.
-	 */
-	public void internal_stop() {
-		if (parent!=null)
-			system.actors.get(parent).children.remove(self());
-		system.messageDispatcher.unregisterActor(this);
-		system.removeActor(id);
 		
-		Iterator<UUID> iterator = deathWatcher.iterator();
-		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
-			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, self(), dest));
-		}
 	}
 	
 	public void watch(UUID dest) {
-		Actor actor = system.actors.get(dest);
-		if (actor!=null)
-			actor.deathWatcher.add(self());
+		
 	}
 	
 	public void unwatch(UUID dest) {
-		Actor actor = system.actors.get(dest);
-		if (actor!=null)
-			actor.deathWatcher.remove(self());
+		
 	}
 }

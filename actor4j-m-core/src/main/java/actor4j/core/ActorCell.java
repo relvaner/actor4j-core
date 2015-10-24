@@ -1,0 +1,232 @@
+/*
+ * Copyright (c) 2015, David A. Bauer
+ */
+package actor4j.core;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import actor4j.core.exceptions.ActorInitializationException;
+import actor4j.core.exceptions.ActorKilledException;
+import actor4j.core.messages.ActorMessage;
+import actor4j.core.supervisor.DefaultSupervisiorStrategy;
+import actor4j.core.supervisor.SupervisorStrategy;
+import actor4j.core.utils.ActorFactory;
+import actor4j.function.Consumer;
+import actor4j.function.Function;
+import actor4j.function.Predicate;
+import tools4j.di.InjectorParam;
+
+import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.utils.ActorLogger.logger;
+import static actor4j.core.utils.ActorUtils.*;
+
+public class ActorCell {
+	protected ActorSystem system;
+	protected Actor actor;
+	
+	protected UUID id;
+	
+	protected UUID parent;
+	protected Queue<UUID> children;
+	
+	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
+	
+	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
+	
+	protected RestartProtocol restartProtocol;
+	protected StopProtocol stopProtocol;
+	
+	protected Queue<UUID> deathWatcher;
+	
+	public static final int POISONPILL = INTERNAL_STOP;
+	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
+	public static final int KILL       = INTERNAL_KILL;
+	
+	public static final int STOP       = INTERNAL_STOP;
+	public static final int RESTART    = INTERNAL_RESTART;
+	
+	protected Function<ActorMessage<?>, Boolean> processedDirective;
+	protected boolean activeDirectiveBehaviour;
+			
+	public ActorCell(ActorSystem system, Actor actor) {
+		super();
+		
+		this.system = system;
+		this.actor  = actor;
+		
+		this.id = UUID.randomUUID();
+		
+		children = new ConcurrentLinkedQueue<>();
+		
+		behaviourStack = new ArrayDeque<>();
+		
+		restartProtocol = new RestartProtocol(this);
+		stopProtocol = new StopProtocol(this);
+		
+		deathWatcher =  new ConcurrentLinkedQueue<>();
+		
+		processedDirective = new Function<ActorMessage<?>, Boolean>() {
+			@Override
+			public Boolean apply(ActorMessage<?> message) {
+				boolean result = false;
+				
+				if (isDirective(message) && !activeDirectiveBehaviour) {
+					result = true;
+					if (message.tag==INTERNAL_RESTART || message.tag==INTERNAL_STOP)
+						activeDirectiveBehaviour = true;
+						
+					if (message.tag==INTERNAL_RESTART) {
+						if (message.value instanceof Exception)
+							preRestart((Exception)message.value);
+						else
+							preRestart(null);
+					}
+					else if (message.tag==INTERNAL_STOP)
+						stop();
+					else if (message.tag==INTERNAL_KILL) 
+						throw new ActorKilledException();
+					else
+						result = false;
+				}
+				
+				return result;
+			}	
+		};
+	}
+	
+	public UUID getId() {
+		return id;
+	}
+	
+	public boolean isRoot() {
+		return (parent==null);
+	}
+	
+	public boolean isRootInUser() {
+		return (parent==system.USER_ID);
+	}
+	
+	protected void internal_receive(ActorMessage<?> message) {
+		if (!processedDirective.apply(message)) {
+			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
+			if (behaviour==null)
+				actor.receive(message);
+			else
+				behaviour.accept(message);	
+		}
+	}
+	
+	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
+		if (replace && !behaviourStack.isEmpty())
+			behaviourStack.pop();
+		behaviourStack.push(behaviour);
+	}
+	
+	public void become(Consumer<ActorMessage<?>> behaviour) {
+		become(behaviour, true);
+	}
+	
+	public void unbecome() {
+		behaviourStack.pop();
+	}
+	
+	public void unbecomeAll() {
+		behaviourStack.clear();
+	}
+	
+	public void send(ActorMessage<?> message) {
+		system.messageDispatcher.post(message, id);
+	}
+	
+	public void send(ActorMessage<?> message, String alias) {
+		system.messageDispatcher.post(message, id, alias);
+	}
+	
+	protected UUID internal_addChild(ActorCell cell) {
+		cell.parent = id;
+		children.add(cell.id);
+		system.internal_addActor(actor);
+		system.messageDispatcher.registerActor(actor);
+		/* preStart */
+		cell.preStart();
+		
+		return cell.id;
+	}
+	
+	public UUID addChild(Class<? extends ActorCell> clazz, Object... args) throws ActorInitializationException {
+		InjectorParam[] params = new InjectorParam[args.length];
+		for (int i=0; i<args.length; i++)
+			params[i] = InjectorParam.createWithObj(args[i]);
+		
+		ActorCell cell = new ActorCell(system, null);
+		system.container.registerConstructorInjector(cell.id, clazz, params);
+		try {
+			Actor child = (Actor)system.container.getInstance(cell.id);
+			cell.actor = child;
+		} catch (Exception e) {
+			throw new ActorInitializationException();
+		}
+		
+		return internal_addChild(cell);
+	}
+	
+	public UUID addChild(ActorFactory factory) {
+		ActorCell cell = new ActorCell(system, factory.create());
+		system.container.registerFactoryInjector(cell.id, factory);
+		
+		return internal_addChild(cell);
+	}
+	
+	public SupervisorStrategy supervisorStrategy() {
+		return new DefaultSupervisiorStrategy();
+	}
+	
+	public void preStart() {
+		actor.preStart();
+	}
+	
+	public void preRestart(Exception reason) {
+		actor.preRestart(reason);
+	}
+	
+	public void restart(Exception reason) {
+		restartProtocol.apply(reason);
+	}
+	
+	public void stop() {
+		stopProtocol.apply();
+	}
+	
+	/**
+	 * Don't use this method within your actor code. It's an internal method.
+	 */
+	public void internal_stop() {
+		if (parent!=null)
+			system.cells.get(parent).children.remove(id);
+		system.messageDispatcher.unregisterActor(this);
+		system.removeActor(id);
+		
+		Iterator<UUID> iterator = deathWatcher.iterator();
+		while (iterator.hasNext()) {
+			UUID dest = iterator.next();
+			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, id, dest));
+		}
+	}
+	
+	public void watch(UUID dest) {
+		ActorCell cell = system.cells.get(dest);
+		if (cell!=null)
+			cell.deathWatcher.add(id);
+	}
+	
+	public void unwatch(UUID dest) {
+		ActorCell cell = system.cells.get(dest);
+		if (cell!=null)
+			cell.deathWatcher.remove(id);
+	}
+}

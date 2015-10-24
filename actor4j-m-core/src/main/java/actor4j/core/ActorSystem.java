@@ -32,11 +32,11 @@ public class ActorSystem {
 	
 	protected DIContainer<UUID> container;
 	
-	protected Map<UUID, Actor> actors; // ActorID -> Actor
-	protected Map<String, UUID> aliases; // ActorAlias -> ActorID
+	protected Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
+	protected Map<String, UUID> aliases;  // ActorCellAlias -> ActorCellID
 	protected Map<UUID, String> hasAliases;
-	protected Map<UUID, Boolean> resourceActors;
-	protected Map<UUID, Actor> pseudoActors;
+	protected Map<UUID, Boolean> resourceCells;
+	protected Map<UUID, ActorCell> pseudoCells;
 	protected ActorMessageDispatcher messageDispatcher;
 	
 	protected int parallelismMin;
@@ -82,11 +82,11 @@ public class ActorSystem {
 		
 		container      = DIContainer.create();
 		
-		actors         = new ConcurrentHashMap<>();
+		cells          = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
 		hasAliases     = new ConcurrentHashMap<>();
-		resourceActors = new ConcurrentHashMap<>();
-		pseudoActors   = new ConcurrentHashMap<>();
+		resourceCells  = new ConcurrentHashMap<>();
+		pseudoCells    = new ConcurrentHashMap<>();
 		messageDispatcher = new ActorMessageDispatcher(this);
 		
 		setParallelismMin(0);
@@ -224,13 +224,13 @@ public class ActorSystem {
 	
 	protected UUID user_addActor(Actor actor) {
 		actor.parent = USER_ID;
-		actors.get(USER_ID).children.add(actor.id);
+		cells.get(USER_ID).children.add(actor.id);
 		return internal_addActor(actor);
 	}
 	
 	protected UUID system_addActor(Actor actor) {
 		actor.parent = SYSTEM_ID;
-		actors.get(SYSTEM_ID).children.add(actor.id);
+		cells.get(SYSTEM_ID).children.add(actor.id);
 		return internal_addActor(actor);
 	}
 	
@@ -262,9 +262,9 @@ public class ActorSystem {
 	}
 	
 	protected void removeActor(UUID id) {	
-		actors.remove(id);
-		resourceActors.remove(id);
-		pseudoActors.remove(id);
+		cells.remove(id);
+		resourceCells.remove(id);
+		pseudoCells.remove(id);
 		
 		container.unregister(id);
 		
@@ -283,7 +283,7 @@ public class ActorSystem {
 		catch (IllegalArgumentException e) {
 			return false;
 		}
-		return actors.containsKey(key);
+		return cells.containsKey(key);
 	}
 	
 	public ActorSystem setAlias(UUID id, String alias) {
@@ -357,8 +357,8 @@ public class ActorSystem {
 						analyzerThread.start();
 					
 					/* preStart */
-					for (Actor actor : actors.values())
-						actor.preStart();
+					for (ActorCell cell : cells.values())
+						cell.preStart();
 					
 					executerService.started.set(true);
 					
