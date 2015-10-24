@@ -8,7 +8,9 @@ import static actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +26,7 @@ public class ActorExecuterService {
 	protected ActorSystem system;
 	
 	protected List<ActorThread> actorThreads;
-	protected List<ActorTimer> actorTimers;
+	protected Queue<ActorTimer> actorTimers;
 	
 	protected CountDownLatch countDownLatch;
 	protected Runnable onTermination;
@@ -42,7 +44,7 @@ public class ActorExecuterService {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();
-		actorTimers = new ArrayList<>();
+		actorTimers = new ConcurrentLinkedQueue<>();
 		
 		started = new AtomicBoolean();
 		
@@ -155,8 +157,8 @@ public class ActorExecuterService {
 			clientExecuterService.shutdown();
 
 		if (actorTimers.size()>0) {
-			for (ActorTimer timer : actorTimers)
-				timer.cancel();
+			for (ActorTimer t : actorTimers)
+				t.timer.cancel();
 		}
 		
 		if (actorThreads.size()>0) {
