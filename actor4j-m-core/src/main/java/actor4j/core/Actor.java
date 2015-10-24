@@ -110,39 +110,11 @@ public abstract class Actor {
 			}	
 		};
 	}
-	/*
-	public ActorSystem getSystem() {
-		return system;
-	}
-
-	protected void setSystem(ActorSystem system) {
-		this.system = system;
-	}
 	
-	public UUID getId() {
-		return id;
-	}
-	
-	public void setId(UUID id) {
-		this.id = id;
-	}
-	*/
 	public UUID self() {
 		return id;
 	}
-	/*
-	public String getName() {
-		return name;
-	}
 	
-	public UUID getParent() {
-		return parent;
-	}
-	
-	public Queue<UUID> getChildren() {
-		return children;
-	}
-	*/
 	public boolean isRoot() {
 		return (parent==null);
 	}
