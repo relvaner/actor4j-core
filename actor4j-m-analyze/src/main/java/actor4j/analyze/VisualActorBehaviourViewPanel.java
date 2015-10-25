@@ -14,7 +14,7 @@ import com.mxgraph.model.mxCell;
 
 import java.util.Map.Entry;
 
-import actor4j.core.Actor;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 
 public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
@@ -34,7 +34,7 @@ public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
 		add("Behaviour", paDesign);
 	}
 	
-	public void analyzeBehaviour(Map<UUID, Actor> actors, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
+	public void analyzeBehaviour(Map<UUID, ActorCell> actorCells, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
 		Iterator<Entry<UUID, Boolean>> iteratorActiveCells = activeCells.entrySet().iterator();
 		while (iteratorActiveCells.hasNext())
 			iteratorActiveCells.next().setValue(false);
@@ -43,22 +43,22 @@ public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
 		String color = null;
 		graph.getModel().beginUpdate();
 	    try {
-	    	Iterator<Actor> iterator = actors.values().iterator();
+	    	Iterator<ActorCell> iterator = actorCells.values().iterator();
 	        while (iterator.hasNext()) {
-	        	Actor actor = iterator.next(); 
-	        	if (activeCells.put(actor.id, true)==null) {
-	        		if (actor.id==system.USER_ID || actor.id==system.SYSTEM_ID || actor.id==system.UNKNOWN_ID)
+	        	ActorCell actorCell = iterator.next(); 
+	        	if (activeCells.put(actorCell.getId(), true)==null) {
+	        		if (actorCell.getId()==system.USER_ID || actorCell.getId()==system.SYSTEM_ID || actorCell.getId()==system.UNKNOWN_ID)
 	        			color = ";fillColor=yellow";
 	        		else
 	        			color = ";fillColor=#00FF00";
 	        		
     				Object vertex;
-    				if (actor.name!=null)
-    					vertex = addVertex(actor.name, color);
+    				if (actorCell.getActor().getName()!=null)
+    					vertex = addVertex(actorCell.getActor().getName(), color);
     				else
-    					vertex = addVertex(actor.id.toString(), color);
+    					vertex = addVertex(actorCell.getId().toString(), color);
     			
-    				cells.put(actor.id, vertex);
+    				cells.put(actorCell.getId(), vertex);
     				changed = true;
     			}
 	        }

@@ -12,7 +12,7 @@ import java.util.UUID;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 
-import actor4j.core.Actor;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 
 public class VisualActorStructureViewPanel extends VisualActorViewPanel {
@@ -33,7 +33,7 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 		add("Structure", paDesign);
 	}
 			
-	public void analyzeStructure(Map<UUID, Actor> actors, boolean showDefaultRoot) {
+	public void analyzeStructure(Map<UUID, ActorCell> actorCells, boolean showDefaultRoot) {
 		Iterator<Entry<UUID, Boolean>> iteratorActiveCells = activeCells.entrySet().iterator();
 		while (iteratorActiveCells.hasNext())
 			iteratorActiveCells.next().setValue(false);
@@ -44,9 +44,9 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
         	if (showDefaultRoot && defaultRoot==null)
         		defaultRoot = addVertex("actor4j", ";fillColor=white");
         	
-        	analyzeRootActor(actors, actors.get(system.USER_ID),    ";fillColor=yellow", showDefaultRoot);
-        	analyzeRootActor(actors, actors.get(system.SYSTEM_ID),  ";fillColor=yellow", showDefaultRoot);
-        	analyzeRootActor(actors, actors.get(system.UNKNOWN_ID), ";fillColor=yellow", showDefaultRoot);
+        	analyzeRootActor(actorCells, actorCells.get(system.USER_ID),    ";fillColor=yellow", showDefaultRoot);
+        	analyzeRootActor(actorCells, actorCells.get(system.SYSTEM_ID),  ";fillColor=yellow", showDefaultRoot);
+        	analyzeRootActor(actorCells, actorCells.get(system.UNKNOWN_ID), ";fillColor=yellow", showDefaultRoot);
         	
         	iteratorActiveCells = activeCells.entrySet().iterator();
         	while (iteratorActiveCells.hasNext()) {
@@ -66,44 +66,44 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
         graphComponent.refresh();
 	}
 	
-	public void analyzeRootActor(Map<UUID, Actor> actors, Actor root, String color, boolean showDefaultRoot) {
+	public void analyzeRootActor(Map<UUID, ActorCell> actorCells, ActorCell root, String color, boolean showDefaultRoot) {
 		if (root!=null) {
-			if (activeCells.put(root.id, true)==null) {
+			if (activeCells.put(root.getId(), true)==null) {
 				Object rootVertex;
-				if (root.name!=null)
-					rootVertex = addVertex(root.name, color);
+				if (root.getActor().getName()!=null)
+					rootVertex = addVertex(root.getActor().getName(), color);
 				else
-					rootVertex = addVertex(root.id.toString(), color);
+					rootVertex = addVertex(root.getId().toString(), color);
 			
 				if (showDefaultRoot)
 					addEdge(null, defaultRoot, rootVertex);
 				
-				cells.put(root.id, rootVertex);
+				cells.put(root.getId(), rootVertex);
 				changed = true;
 			}
 			
-			analyzeActor(actors, root, cells.get(root.id));
+			analyzeActor(actorCells, root, cells.get(root.getId()));
 		}
 	}
 	
-	public void analyzeActor(Map<UUID, Actor> actors, Actor parent, Object parentVertex) {
-		Iterator<UUID> iterator = parent.children.iterator();
+	public void analyzeActor(Map<UUID, ActorCell> actorCells, ActorCell parent, Object parentVertex) {
+		Iterator<UUID> iterator = parent.getChildren().iterator();
 		while (iterator.hasNext()) {
-			Actor child = actors.get(iterator.next());
-			if (activeCells.put(child.id, true)==null) {
+			ActorCell child = actorCells.get(iterator.next());
+			if (activeCells.put(child.getId(), true)==null) {
 				Object childVertex;
-				if (child.name!=null)
-					childVertex = addVertex(child.name, ";fillColor=#00FF00");
+				if (child.getActor().getName()!=null)
+					childVertex = addVertex(child.getActor().getName(), ";fillColor=#00FF00");
 				else
-					childVertex = addVertex(child.id.toString(), ";fillColor=#00FF00");
+					childVertex = addVertex(child.getId().toString(), ";fillColor=#00FF00");
 			
 				addEdge(null, parentVertex, childVertex);
 				
-				cells.put(child.id, childVertex);
+				cells.put(child.getId(), childVertex);
 				changed = true;
 			}
 			
-			analyzeActor(actors, child, cells.get(child.id));
+			analyzeActor(actorCells, child, cells.get(child.getId()));
 		}
 	}
 

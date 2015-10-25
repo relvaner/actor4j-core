@@ -35,7 +35,7 @@ public abstract class ActorAnalyzerThread extends Thread {
 		timer = new Timer(delay, new TimerListener() {
 			@Override
 			public void task() {	
-				update(system.actors);
+				update(system.cells);
 			}
 		});
 	}
@@ -60,7 +60,7 @@ public abstract class ActorAnalyzerThread extends Thread {
 	
 	protected abstract void analyze(ActorMessage<?> message);
 	
-	protected abstract void update(Map<UUID, Actor> actors);
+	protected abstract void update(Map<UUID, ActorCell> cells);
 	
 	@Override
 	public void run() {

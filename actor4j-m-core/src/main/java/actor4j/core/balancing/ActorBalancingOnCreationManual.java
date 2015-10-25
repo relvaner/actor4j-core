@@ -7,28 +7,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import actor4j.core.Actor;
 import actor4j.core.ActorThread;
 import actor4j.core.utils.ActorGroup;
 
 public abstract class ActorBalancingOnCreationManual {
-	public abstract void balance(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap);
+	public abstract void balance(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap);
 	
-	public void balanceActor(Map<UUID, Long> actorsMap, Long threadId, Actor actor) {
-		actorsMap.put(actor.id, threadId);
+	public void balanceActor(Map<UUID, Long> cellsMap, Long threadId, UUID actorID) {
+		cellsMap.put(actorID, threadId);
 	}
 	
-	public void balanceActors(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads, List<Actor> actors) {
+	public void balanceActors(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, List<UUID> actorIDs) {
 		int i=0;
-		for (Actor actor : actors) {
-			balanceActor(actorsMap, actorThreads.get(i).getId(), actor);
+		for (UUID id: actorIDs) {
+			balanceActor(cellsMap, actorThreads.get(i).getId(), id);
 			i++;
 			if (i==actorThreads.size())
 				i = 0;
 		}
 	}
 	
-	public void balanceGroup(Map<UUID, Long> actorsMap, Map<UUID, Long> groupsMap, Long threadId, ActorGroup group) {
+	public void balanceGroup(Map<UUID, Long> cellsMap, Map<UUID, Long> groupsMap, Long threadId, ActorGroup group) {
 		Long foundThreadId = groupsMap.get(group.getId());
 		if (foundThreadId==null)
 			groupsMap.put(group.getId(), threadId);
@@ -36,13 +35,13 @@ public abstract class ActorBalancingOnCreationManual {
 			threadId = foundThreadId;
 		
 		for (UUID id : group)
-			actorsMap.put(id, threadId);
+			cellsMap.put(id, threadId);
 	}
 	
-	public void balanceGroups(Map<UUID, Long> actorsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, List<ActorGroup> groups) {
+	public void balanceGroups(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, List<ActorGroup> groups) {
 		int i=0;
 		for (ActorGroup group : groups) {
-			balanceGroup(actorsMap, groupsMap, actorThreads.get(i).getId(), group);
+			balanceGroup(cellsMap, groupsMap, actorThreads.get(i).getId(), group);
 			i++;
 			if (i==actorThreads.size())
 				i = 0;

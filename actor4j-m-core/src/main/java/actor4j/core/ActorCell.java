@@ -10,15 +10,14 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
 import actor4j.function.Function;
-import actor4j.function.Predicate;
 import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorProtocolTag.*;
@@ -42,13 +41,6 @@ public class ActorCell {
 	protected StopProtocol stopProtocol;
 	
 	protected Queue<UUID> deathWatcher;
-	
-	public static final int POISONPILL = INTERNAL_STOP;
-	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
-	public static final int KILL       = INTERNAL_KILL;
-	
-	public static final int STOP       = INTERNAL_STOP;
-	public static final int RESTART    = INTERNAL_RESTART;
 	
 	protected Function<ActorMessage<?>, Boolean> processedDirective;
 	protected boolean activeDirectiveBehaviour;
@@ -99,8 +91,24 @@ public class ActorCell {
 		};
 	}
 	
+	public ActorSystem getSystem() {
+		return system;
+	}
+	
+	public Actor getActor() {
+		return actor;
+	}
+	
 	public UUID getId() {
 		return id;
+	}
+	
+	public UUID getParent() {
+		return parent;
+	}
+	
+	public Queue<UUID> getChildren() {
+		return children;
 	}
 	
 	public boolean isRoot() {
@@ -147,18 +155,34 @@ public class ActorCell {
 		system.messageDispatcher.post(message, id, alias);
 	}
 	
+	public void unhandled(ActorMessage<?> message) {
+		if (system.debugUnhandled) {
+			Actor sourceActor = system.cells.get(message.source).actor;
+			if (sourceActor!=null)
+				logger().warn(
+					String.format("%s - System: actor (%s) - Unhandled message (%s) from source (%s)",
+						system.name, actorLabel(actor), message.toString(), actorLabel(sourceActor)
+					));
+			else
+				logger().warn(
+					String.format("%s - System: actor (%s) - Unhandled message (%s) from unavaible source (???)",
+						system.name, actorLabel(actor), message.toString()
+					));
+		}
+	}
+	
 	protected UUID internal_addChild(ActorCell cell) {
 		cell.parent = id;
 		children.add(cell.id);
-		system.internal_addActor(actor);
-		system.messageDispatcher.registerActor(actor);
+		system.internal_addCell(cell);
+		system.messageDispatcher.registerCell(cell);
 		/* preStart */
 		cell.preStart();
 		
 		return cell.id;
 	}
 	
-	public UUID addChild(Class<? extends ActorCell> clazz, Object... args) throws ActorInitializationException {
+	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InjectorParam[] params = new InjectorParam[args.length];
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
@@ -183,7 +207,7 @@ public class ActorCell {
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {
-		return new DefaultSupervisiorStrategy();
+		return actor.supervisorStrategy();
 	}
 	
 	public void preStart() {
@@ -192,6 +216,14 @@ public class ActorCell {
 	
 	public void preRestart(Exception reason) {
 		actor.preRestart(reason);
+	}
+	
+	public void postRestart(Exception reason) {
+		actor.postRestart(reason);
+	}
+	
+	public void postStop() {
+		actor.postStop();
 	}
 	
 	public void restart(Exception reason) {
@@ -208,7 +240,7 @@ public class ActorCell {
 	public void internal_stop() {
 		if (parent!=null)
 			system.cells.get(parent).children.remove(id);
-		system.messageDispatcher.unregisterActor(this);
+		system.messageDispatcher.unregisterCell(this);
 		system.removeActor(id);
 		
 		Iterator<UUID> iterator = deathWatcher.iterator();

@@ -6,8 +6,8 @@ package actor4j.analyze.example;
 import java.util.UUID;
 
 import actor4j.analyze.DefaultActorAnalyzerThread;
-import actor4j.core.Actor;
 import actor4j.core.ActorSystem;
+import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
@@ -30,7 +30,7 @@ public class AnalyzeExample {
 						@Override
 						public void receive(ActorMessage<?> message) {
 							if (first) {
-								UUID next = id;
+								UUID next = self();
 								for (int i=0; i<3; i++) {
 									final int f_i = i;
 									final UUID f_next = next;

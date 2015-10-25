@@ -7,7 +7,7 @@ import java.awt.event.WindowEvent;
 import java.util.Map;
 import java.util.UUID;
 
-import actor4j.core.Actor;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 import tools4j.utils.SwingSubApplication;
 
@@ -31,11 +31,11 @@ public class VisualActorAnalyzer {
 		application.getFrame().dispatchEvent(new WindowEvent(application.getFrame(), WindowEvent.WINDOW_CLOSING));
 	}
 	
-	public void analyzeStructure(Map<UUID, Actor> actors, boolean showDefaultRoot) {
-		((VisualActorFrame)application.getFrame()).analyzeStructure(actors, showDefaultRoot);
+	public void analyzeStructure(Map<UUID, ActorCell> actorCells, boolean showDefaultRoot) {
+		((VisualActorFrame)application.getFrame()).analyzeStructure(actorCells, showDefaultRoot);
 	}
 	
-	public void analyzeBehaviour(Map<UUID, Actor> actors, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
-		((VisualActorFrame)application.getFrame()).analyzeBehaviour(actors, deliveryRoutes);
+	public void analyzeBehaviour(Map<UUID, ActorCell> actorCells, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
+		((VisualActorFrame)application.getFrame()).analyzeBehaviour(actorCells, deliveryRoutes);
 	}
 }

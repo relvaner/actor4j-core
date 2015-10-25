@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 
-import actor4j.core.Actor;
 import actor4j.core.ActorAnalyzerThread;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 
@@ -56,12 +56,12 @@ public class DefaultActorAnalyzerThread extends ActorAnalyzerThread {
 	}
 
 	@Override
-	protected void update(final Map<UUID, Actor> actors) {
+	protected void update(final Map<UUID, ActorCell> cells) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				visualAnalyzer.analyzeStructure(actors, showDefaultRoot);
-				visualAnalyzer.analyzeBehaviour(actors, deliveryRoutes);
+				visualAnalyzer.analyzeStructure(cells, showDefaultRoot);
+				visualAnalyzer.analyzeBehaviour(cells, deliveryRoutes);
 			}
 		});
 	}

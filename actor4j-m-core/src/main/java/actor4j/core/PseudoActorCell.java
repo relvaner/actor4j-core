@@ -9,35 +9,31 @@ import java.util.UUID;
 
 import org.jctools.queues.MpscArrayQueue;
 
-import actor4j.core.actors.ActorWithRxStash;
+import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
+import actor4j.core.utils.ActorMessageObservable;
 import rx.Observable;
 import safety4j.SafetyManager;
 
-public abstract class PseudoActor extends ActorWithRxStash {
+public class PseudoActorCell extends ActorCell {
 	protected Queue<ActorMessage<?>> outerQueueL2;
 	protected Queue<ActorMessage<?>> outerQueueL1;
 	
 	protected Observable<ActorMessage<?>> rxOuterQueueL1;
 	
-	public PseudoActor(ActorSystem system) {
-		this(null, system);
-	}
-	
-	public PseudoActor(String name, ActorSystem system) {
-		super(name);
-		this.system = system;
+	public PseudoActorCell(ActorSystem system, Actor actor) {
+		super(system, actor);
 		
 		outerQueueL2 = new MpscArrayQueue<>(50000);
 		outerQueueL1 = new LinkedList<>();
 		
 		rxOuterQueueL1 = ActorMessageObservable.getMessages(outerQueueL1);
-				
-		system.system_addActor(this);
-		/* preStart */
-		preStart();
+	}
+	
+	public UUID system_addCell(ActorCell cell) {
+		return system.system_addCell(cell);
 	}
 
 	protected void safetyMethod(ActorMessage<?> message) {
@@ -45,7 +41,7 @@ public abstract class PseudoActor extends ActorWithRxStash {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", self());
+			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", id);
 			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}
@@ -94,7 +90,7 @@ public abstract class PseudoActor extends ActorWithRxStash {
 	}
 	
 	@Override
-	public UUID internal_addChild(Actor actor) {
+	public UUID internal_addChild(ActorCell cell) {
 		return null;
 	}
 	

@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import actor4j.core.actors.Actor;
+import actor4j.core.actors.PseudoActor;
 import actor4j.core.actors.ResourceActor;
 import actor4j.core.balancing.ActorBalancingOnCreation;
 import actor4j.core.balancing.ActorBalancingOnRuntime;
@@ -109,7 +111,7 @@ public class ActorSystem {
 		
 		countDownLatch = new CountDownLatch(1);
 		
-		USER_ID = internal_addActor(new Actor("user") {
+		USER_ID = internal_addCell(new ActorCell(this, new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -119,19 +121,19 @@ public class ActorSystem {
 			public void postStop() {
 				countDownLatch.countDown();
 			}
-		});
-		SYSTEM_ID = internal_addActor(new Actor("system") {
+		}));
+		SYSTEM_ID = internal_addCell(new ActorCell(this, new Actor("system") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
 			}
-		});
-		UNKNOWN_ID = internal_addActor(new Actor("unknown") {
+		}));
+		UNKNOWN_ID = internal_addCell(new ActorCell(this, new Actor("unknown") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
 			}
-		});
+		}));
 	}
 	
 	public String getName() {
@@ -210,28 +212,29 @@ public class ActorSystem {
 		return this;
 	}
 	
-	protected UUID internal_addActor(Actor actor) {
+	protected UUID internal_addCell(ActorCell cell) {
+		Actor actor = cell.actor;
 		if (actor instanceof PseudoActor)
-			pseudoActors.put(actor.id, actor);
+			pseudoCells.put(cell.id, cell);
 		else {
-			actor.system = this;
-			actors.put(actor.id, actor);
+			actor.setCell(cell);
+			cells.put(cell.id, cell);
 			if (actor instanceof ResourceActor)
-				resourceActors.put(actor.id, true);
+				resourceCells.put(cell.id, true);
 		}
-		return actor.id;
+		return cell.id;
 	}
 	
-	protected UUID user_addActor(Actor actor) {
-		actor.parent = USER_ID;
-		cells.get(USER_ID).children.add(actor.id);
-		return internal_addActor(actor);
+	protected UUID user_addCell(ActorCell cell) {
+		cell.parent = USER_ID;
+		cells.get(USER_ID).children.add(cell.id);
+		return internal_addCell(cell);
 	}
 	
-	protected UUID system_addActor(Actor actor) {
-		actor.parent = SYSTEM_ID;
-		cells.get(SYSTEM_ID).children.add(actor.id);
-		return internal_addActor(actor);
+	protected UUID system_addCell(ActorCell cell) {
+		cell.parent = SYSTEM_ID;
+		cells.get(SYSTEM_ID).children.add(cell.id);
+		return internal_addCell(cell);
 	}
 	
 	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
@@ -239,26 +242,24 @@ public class ActorSystem {
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
 		
-		UUID temp = UUID.randomUUID();
-		container.registerConstructorInjector(temp, clazz, params);
-		
+		ActorCell cell = new ActorCell(this, null);
+		container.registerConstructorInjector(cell.id, clazz, params);
 		Actor actor = null;
 		try {
-			actor = (Actor)container.getInstance(temp);
-			container.registerConstructorInjector(actor.id, clazz, params);
-			container.unregister(temp);
+			actor = (Actor)container.getInstance(cell.id);
+			cell.actor = actor;
 		} catch (Exception e) {
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
-		return (actor!=null) ? user_addActor(actor) : UUID_ZERO;
+		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;
 	}
 	
 	public UUID addActor(ActorFactory factory) {
-		Actor actor = factory.create();
-		container.registerFactoryInjector(actor.id, factory);
+		ActorCell cell = new ActorCell(this, factory.create());
+		container.registerFactoryInjector(cell.id, factory);
 		
-		return user_addActor(actor);
+		return user_addCell(cell);
 	}
 	
 	protected void removeActor(UUID id) {	

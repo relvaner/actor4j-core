@@ -2,7 +2,7 @@ package actor4j.core.features;
 
 import java.util.UUID;
 
-import actor4j.core.Actor;
+import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.testing.TestSystem;

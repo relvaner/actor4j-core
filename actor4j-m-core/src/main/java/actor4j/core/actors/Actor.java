@@ -1,29 +1,21 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.core.actors;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import actor4j.core.exceptions.ActorInitializationException;
-import actor4j.core.exceptions.ActorKilledException;
+import actor4j.core.ActorCell;
+import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
-import actor4j.function.Function;
 import actor4j.function.Predicate;
-import tools4j.di.InjectorParam;
 
 import static actor4j.core.ActorProtocolTag.*;
-import static actor4j.core.utils.ActorLogger.logger;
-import static actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor {
 	protected ActorCell cell;
@@ -59,22 +51,50 @@ public abstract class Actor {
 		this.name = name;
 	}
 	
+	public ActorCell getCell() {
+		return cell;
+	}
+
+	public void setCell(ActorCell cell) {
+		this.cell = cell;
+	}
+	
+	public ActorSystem getSystem() {
+		return cell.getSystem();
+	}
+
+	public String getName() {
+		return name;
+	}
+	
+	public UUID getId() {
+		return cell.getId();
+	}
+	
 	public UUID self() {
-		return cell.id;
+		return cell.getId();
+	}
+	
+	public UUID getParent() {
+		return cell.getParent();
+	}
+	
+	public Queue<UUID> getChildren() {
+		return cell.getChildren();
 	}
 	
 	public boolean isRoot() {
-		
+		return cell.isRoot();
 	}
 	
 	public boolean isRootInUser() {
-		
+		return cell.isRootInUser();
 	}
 	
 	public abstract void receive(ActorMessage<?> message);
 	
 	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
-		
+		cell.become(behaviour, replace);
 	}
 	
 	public void become(Consumer<ActorMessage<?>> behaviour) {
@@ -82,11 +102,11 @@ public abstract class Actor {
 	}
 	
 	public void unbecome() {
-		
+		cell.unbecome();
 	}
 	
 	public void unbecomeAll() {
-		
+		cell.unbecomeAll();
 	}
 	
 	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
@@ -138,15 +158,15 @@ public abstract class Actor {
 	}
 	
 	public void send(ActorMessage<?> message) {
-		
+		cell.send(message);
 	}
 	
 	public void send(ActorMessage<?> message, String alias) {
-		
+		cell.send(message, alias);
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
-		message.source = id;
+		message.source = self();
 		message.dest   = dest;
 		send(message);
 	}
@@ -157,31 +177,19 @@ public abstract class Actor {
 	}
 	
 	public void unhandled(ActorMessage<?> message) {
-		if (system.debugUnhandled) {
-			Actor sourceActor = system.actors.get(message.source);
-			if (sourceActor!=null)
-				logger().warn(
-					String.format("%s - System: actor (%s) - Unhandled message (%s) from source (%s)",
-						system.name, actorLabel(this), message.toString(), actorLabel(sourceActor)
-					));
-			else
-				logger().warn(
-					String.format("%s - System: actor (%s) - Unhandled message (%s) from unavaible source (???)",
-						system.name, actorLabel(this), message.toString()
-					));
-		}
+		cell.unhandled(message);
 	}
 	
 	public void setAlias(String alias) {
-		system.setAlias(id, alias);
+		cell.getSystem().setAlias(self(), alias);
 	}
 	
-	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		
+	public UUID addChild(Class<? extends Actor> clazz, Object... args) {
+		return cell.addChild(clazz, args);
 	}
 	
 	public UUID addChild(ActorFactory factory) {
-		
+		return cell.addChild(factory);
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {
@@ -197,7 +205,7 @@ public abstract class Actor {
 	}
 	
 	public void preRestart(Exception reason) {
-		// empty
+		cell.restart(reason);
 	}
 	
 	public void postRestart(Exception reason) {
@@ -209,14 +217,14 @@ public abstract class Actor {
 	}
 	
 	public void stop() {
-		
+		cell.stop();
 	}
 	
 	public void watch(UUID dest) {
-		
+		cell.watch(dest);
 	}
 	
 	public void unwatch(UUID dest) {
-		
+		cell.unwatch(dest);
 	}
 }

@@ -12,59 +12,56 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 
 public class RestartProtocol {
-	protected final Actor actor;
+	protected final ActorCell cell;
 
-	public RestartProtocol(Actor actor) {
-		this.actor = actor;
+	public RestartProtocol(ActorCell cell) {
+		this.cell = cell;
 	}
 	
 	protected void postStop() {
-		actor.postStop();
-		actor.internal_stop();
-		logger().info(String.format("%s - System: actor (%s) stopped", actor.system.name, actorLabel(actor)));
+		cell.postStop();
+		cell.internal_stop();
+		logger().info(String.format("%s - System: actor (%s) stopped", cell.getSystem().name, actorLabel(cell.getActor())));
 	}
 	
 	protected void postRestart(Exception reason) {
-		actor.postStop();
-		UUID buf = actor.id;
+		cell.postStop();
 		try {
-			ActorSystem system = actor.system;
-			UUID parent = actor.parent;
-			Actor newActor = (Actor)system.container.getInstance(buf);
-			newActor.id = buf;	
-			newActor.parent = parent;
-			system.internal_addActor(newActor);
-			newActor.postRestart(reason);
-			logger().info(String.format("%s - System: actor (%s) restarted", actor.system.name, actorLabel(actor))); 
+			Actor newActor = (Actor)cell.getSystem().container.getInstance(cell.id);
+			newActor.setCell(cell);
+			cell.actor = newActor;
+			cell.postRestart(reason);
+			logger().info(String.format("%s - System: actor (%s) restarted", cell.getSystem().name, actorLabel(cell.getActor()))); 
 		} catch (Exception e) {
 			throw new ActorInitializationException(); // never must occur
 		}
 	}
 	
 	public void apply(final Exception reason) {
-		final List<UUID> waitForChildren =new ArrayList<>(actor.children.size());
+		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
-		Iterator<UUID> iterator = actor.children.iterator();
+		Iterator<UUID> iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
-			actor.watch(dest);
+			cell.watch(dest);
 		}
-		iterator = actor.children.iterator();
+		iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			actor.system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, actor.self(), dest));
+			cell.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 
 			postRestart(reason);
 		else
-			actor.become(new Consumer<ActorMessage<?>>() {
+			cell.become(new Consumer<ActorMessage<?>>() {
 				protected boolean flag_stop;
 				@Override
 				public void accept(ActorMessage<?> message) {
@@ -77,8 +74,8 @@ public class RestartProtocol {
 								postStop();
 							else {
 								postRestart(reason);
-								actor.unbecome();
-								actor.activeDirectiveBehaviour = false;
+								cell.unbecome();
+								cell.activeDirectiveBehaviour = false;
 							}
 						}
 					}

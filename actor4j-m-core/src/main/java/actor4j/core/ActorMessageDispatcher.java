@@ -18,7 +18,7 @@ import actor4j.function.Consumer;
 public class ActorMessageDispatcher {
 	protected ActorSystem system;
 	
-	protected Map<UUID, Long> actorsMap; // ActorID -> ThreadID
+	protected Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
 	protected Map<Long, ActorThread> threadsMap;
 	
 	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
@@ -36,7 +36,7 @@ public class ActorMessageDispatcher {
 		
 		this.system = system;
 		
-		actorsMap = new ConcurrentHashMap<>();
+		cellsMap = new ConcurrentHashMap<>();
 		threadsMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
@@ -63,9 +63,9 @@ public class ActorMessageDispatcher {
 		consumerPseudo = new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> msg) {
-				Actor actor = ActorMessageDispatcher.this.system.pseudoActors.get(msg.dest);
-				if (actor!=null)
-					((PseudoActor)actor).outerQueueL2.offer(msg);
+				ActorCell cell = ActorMessageDispatcher.this.system.pseudoCells.get(msg.dest);
+				if (cell!=null)
+					((PseudoActorCell)cell).outerQueueL2.offer(msg);
 			}
 		};
 	}
@@ -86,11 +86,11 @@ public class ActorMessageDispatcher {
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
-		if (system.clientMode && !system.actors.containsKey(message.dest)) {
+		if (system.clientMode && !system.cells.containsKey(message.dest)) {
 			system.executerService.client(message.copy(), alias);
 			return;
 		}
-		else if (system.resourceActors.containsKey(message.dest)) {
+		else if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());
 			return;
 		}
@@ -98,8 +98,8 @@ public class ActorMessageDispatcher {
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
 			((ActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
 		else {
-			Long id_source = actorsMap.get(source);
-			Long id_dest   = actorsMap.get(message.dest);
+			Long id_source = cellsMap.get(source);
+			Long id_dest   = cellsMap.get(message.dest);
 		
 			if (id_dest!=null) {
 				if (id_source!=null && id_source.equals(id_dest)
@@ -120,12 +120,12 @@ public class ActorMessageDispatcher {
 		if (system.analyzeMode.get())
 			system.analyzerThread.outerQueueL2.offer(message.copy());
 		
-		if (system.resourceActors.containsKey(message.dest)) {
+		if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());
 			return;
 		}
 		
-		Long id_dest = actorsMap.get(message.dest);
+		Long id_dest = cellsMap.get(message.dest);
 		if (id_dest!=null)
 			biconsumer.accept(id_dest, message.copy());
 		else 
@@ -145,17 +145,17 @@ public class ActorMessageDispatcher {
 	}
 	
 	public void beforeRun(List<ActorThread> actorThreads) {
-		system.actorBalancingOnCreation.balance(actorsMap, actorThreads, groupsMap, system.actors);
+		system.actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, system.cells);
 		
 		for(ActorThread t : actorThreads)
 			threadsMap.put(t.getId(), t);
 	}
 	
-	public void registerActor(Actor actor) {
-		system.actorBalancingOnRuntime.registerActor(actorsMap, threadsMap, groupsMap, actor);
+	public void registerCell(ActorCell cell) {
+		system.actorBalancingOnRuntime.registerCell(cellsMap, threadsMap, groupsMap, cell);
 	}
 	
-	public void unregisterActor(Actor actor) {
-		system.actorBalancingOnRuntime.unregisterActor(actorsMap, threadsMap, groupsMap, actor);
+	public void unregisterCell(ActorCell cell) {
+		system.actorBalancingOnRuntime.unregisterCell(cellsMap, threadsMap, groupsMap, cell);
 	}
 }

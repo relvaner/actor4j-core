@@ -50,13 +50,13 @@ public class ActorThread extends Thread {
 		counter = new AtomicLong(0);
 	}
 	
-	protected void safetyMethod(ActorMessage<?> message, Actor actor) {
+	protected void safetyMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
-			actor.internal_receive(message);
+			cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "actor", actor.id);
-			system.actorStrategyOnFailure.handle(actor, e);
+			SafetyManager.getInstance().notifyErrorHandler(e, "actor", cell.id);
+			system.actorStrategyOnFailure.handle(cell, e);
 		}	
 	}
 	
@@ -65,9 +65,9 @@ public class ActorThread extends Thread {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			Actor actor = system.actors.get(message.dest);
-			if (actor!=null)
-				safetyMethod(message, actor);
+			ActorCell cell = system.cells.get(message.dest);
+			if (cell!=null)
+				safetyMethod(message, cell);
 			counter.getAndIncrement();
 			
 			result = true;

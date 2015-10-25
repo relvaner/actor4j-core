@@ -8,7 +8,7 @@ import static actor4j.benchmark.hub.ActorMessageTag.RUN;
 
 import java.util.UUID;
 
-import actor4j.core.Actor;
+import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
 public class Client extends Actor {

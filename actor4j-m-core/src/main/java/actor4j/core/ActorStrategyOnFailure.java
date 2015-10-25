@@ -24,76 +24,76 @@ public class ActorStrategyOnFailure {
 		this.system = system;
 	}
 	
-	protected void oneForOne_directive_resume(Actor actor) {
-		logger().info(String.format("%s - System: actor (%s) resumed", actor.system.name, actorLabel(actor)));
+	protected void oneForOne_directive_resume(ActorCell cell) {
+		logger().info(String.format("%s - System: actor (%s) resumed", cell.system.name, actorLabel(cell.actor)));
 	}
 	
-	protected void oneForOne_directive_restart(Actor actor, Exception reason) {
-		actor.preRestart(reason);
+	protected void oneForOne_directive_restart(ActorCell cell, Exception reason) {
+		cell.preRestart(reason);
 	}
 	
-	protected void oneForOne_directive_stop(Actor actor) {
-		actor.stop();
+	protected void oneForOne_directive_stop(ActorCell cell) {
+		cell.stop();
 	}
 	
-	protected void oneForAll_directive_resume(Actor actor) {
-		oneForOne_directive_resume(actor);
+	protected void oneForAll_directive_resume(ActorCell cell) {
+		oneForOne_directive_resume(cell);
 	}
 	
-	protected void oneForAll_directive_restart(Actor actor, Exception reason) {
-		if (!actor.isRoot()) {
-			Actor parent = system.actors.get(actor.parent);
+	protected void oneForAll_directive_restart(ActorCell cell, Exception reason) {
+		if (!cell.isRoot()) {
+			ActorCell parent = system.cells.get(cell.parent);
 			if (parent!=null) {
 				Iterator<UUID> iterator = parent.children.iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(actor.id))
+					if (!dest.equals(cell.id))
 						system.sendAsDirective(new ActorMessage<>(reason, INTERNAL_RESTART, parent.id, dest));
 				}
-				actor.preRestart(reason);
+				cell.preRestart(reason);
 			}
 		}
 		else 
-			actor.preRestart(reason);
+			cell.preRestart(reason);
 	}
 	
-	protected void oneForAll_directive_stop(Actor actor) {
-		if (!actor.isRoot()) {
-			Actor parent = system.actors.get(actor.parent);
+	protected void oneForAll_directive_stop(ActorCell cell) {
+		if (!cell.isRoot()) {
+			ActorCell parent = system.cells.get(cell.parent);
 			if (parent!=null) {
 				Iterator<UUID> iterator = parent.children.iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(actor.id))
+					if (!dest.equals(cell.id))
 						system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, parent.id, dest));
 				}
-				actor.stop();
+				cell.stop();
 			}
 		}
 		else 
-			actor.stop();
+			cell.stop();
 	}
 	
-	public void handle(Actor actor, Exception e) {
-		Actor parent = system.actors.get(actor.parent);
+	public void handle(ActorCell cell, Exception e) {
+		ActorCell parent = system.cells.get(cell.parent);
 		SupervisorStrategy supervisorStrategy = parent.supervisorStrategy();
 		SupervisorStrategyDirective directive = supervisorStrategy.apply(e);
 			
 		if (supervisorStrategy instanceof OneForOneSupervisorStrategy) { 
 			if (directive==RESUME)
-				oneForOne_directive_resume(actor);
+				oneForOne_directive_resume(cell);
 			else if (directive==RESTART)
-				oneForOne_directive_restart(actor, e);
+				oneForOne_directive_restart(cell, e);
 			else if (directive==STOP)
-				oneForOne_directive_stop(actor);
+				oneForOne_directive_stop(cell);
 		}
 		else if (supervisorStrategy instanceof OneForAllSupervisorStrategy) { 
 			if (directive==RESUME)
-				oneForAll_directive_resume(actor);
+				oneForAll_directive_resume(cell);
 			else if (directive==RESTART)
-				oneForAll_directive_restart(actor, e);
+				oneForAll_directive_restart(cell, e);
 			else if (directive==STOP)
-				oneForAll_directive_stop(actor);
+				oneForAll_directive_stop(cell);
 		}
 	}
 }

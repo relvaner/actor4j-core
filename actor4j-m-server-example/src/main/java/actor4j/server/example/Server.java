@@ -6,7 +6,7 @@ package actor4j.server.example;
 import java.util.ArrayList;
 import java.util.List;
 
-import actor4j.core.Actor;
+import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.messages.RemoteActorMessage;
 

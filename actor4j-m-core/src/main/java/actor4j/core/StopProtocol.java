@@ -16,38 +16,38 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 
 public class StopProtocol {
-	protected final Actor actor;
+	protected final ActorCell cell;
 
-	public StopProtocol(Actor actor) {
-		this.actor = actor;
+	public StopProtocol(ActorCell cell) {
+		this.cell = cell;
 	}
 	
 	protected void postStop() {
-		actor.postStop();
-		actor.internal_stop();
-		logger().info(String.format("%s - System: actor (%s) stopped", actor.system.name, actorLabel(actor)));
+		cell.postStop();
+		cell.internal_stop();
+		logger().info(String.format("%s - System: actor (%s) stopped", cell.system.name, actorLabel(cell.actor)));
 	}
 	
 	public void apply() {
-		final List<UUID> waitForChildren =new ArrayList<>(actor.children.size());
+		final List<UUID> waitForChildren =new ArrayList<>(cell.children.size());
 		
-		Iterator<UUID> iterator = actor.children.iterator();
+		Iterator<UUID> iterator = cell.children.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
-			actor.watch(dest);
+			cell.watch(dest);
 		}
-		iterator = actor.children.iterator();
+		iterator = cell.children.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			actor.watch(dest);
-			actor.system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, actor.self(), dest));
+			cell.watch(dest);
+			cell.system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, cell.id, dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 
 			postStop();
 		else
-			actor.become(new Consumer<ActorMessage<?>>() {
+			cell.become(new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					if (message.tag==INTERNAL_STOP_SUCCESS) {

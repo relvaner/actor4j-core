@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import actor4j.core.Actor;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 
 public class VisualActorFrame extends JFrame {
@@ -52,13 +52,13 @@ public class VisualActorFrame extends JFrame {
 		paContent.add(rightViewPanel);
 	}
 	
-	public void analyzeStructure(Map<UUID, Actor> actors, boolean showDefaultParent) {
-		((VisualActorStructureViewPanel)leftViewPanel).analyzeStructure(actors, showDefaultParent);
+	public void analyzeStructure(Map<UUID, ActorCell> actorCells, boolean showDefaultParent) {
+		((VisualActorStructureViewPanel)leftViewPanel).analyzeStructure(actorCells, showDefaultParent);
 		((VisualActorStructureViewPanel)leftViewPanel).updateStructure();
 	}
 	
-	public void analyzeBehaviour(Map<UUID, Actor> actors, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
-		((VisualActorBehaviourViewPanel)rightViewPanel).analyzeBehaviour(actors, deliveryRoutes);
+	public void analyzeBehaviour(Map<UUID, ActorCell> actorCells, Map<UUID, Map<UUID, Long>> deliveryRoutes) {
+		((VisualActorBehaviourViewPanel)rightViewPanel).analyzeBehaviour(actorCells, deliveryRoutes);
 		((VisualActorBehaviourViewPanel)rightViewPanel).updateStructure();
 	}
 }

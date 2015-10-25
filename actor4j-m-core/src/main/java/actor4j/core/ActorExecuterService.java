@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
@@ -60,13 +61,13 @@ public class ActorExecuterService {
 								system.name, Thread.currentThread().getName()));
 					}
 					else if (message.equals("actor")) {
-						Actor actor = system.actors.get(uuid);
+						Actor actor = system.cells.get(uuid).actor;
 							logger().error(
 								String.format("%s - Safety (%s) - Exception in actor: %s", 
 									system.name, Thread.currentThread().getName(), actorLabel(actor)));
 					}
 					else if (message.equals("pseudo")) {
-						Actor actor = system.pseudoActors.get(uuid);
+						Actor actor = system.pseudoCells.get(uuid).actor;
 							logger().error(
 								String.format("%s - Safety (%s) - Exception in actor: %s", 
 									system.name, Thread.currentThread().getName(), actorLabel(actor)));
@@ -88,7 +89,7 @@ public class ActorExecuterService {
 	}
 	
 	public void start(Runnable onStartup, Runnable onTermination) {
-		if (system.actors.size()==0)
+		if (system.cells.size()==0)
 			return;
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
@@ -141,7 +142,7 @@ public class ActorExecuterService {
 	}
 	
 	public void resource(final ActorMessage<?> message) {
-		final Actor actor = system.actors.get(message.dest);
+		final Actor actor = system.cells.get(message.dest).actor;
 		if (actor!=null)
 			resourceExecuterService.submit(new Runnable() {
 				@Override

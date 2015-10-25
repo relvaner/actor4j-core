@@ -9,8 +9,9 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import actor4j.core.Actor;
+import actor4j.core.ActorCell;
 import actor4j.core.ActorThread;
+import actor4j.core.actors.Actor;
 import actor4j.core.actors.ActorGroupMember;
 
 public class ActorBalancingOnRuntime {
@@ -22,24 +23,25 @@ public class ActorBalancingOnRuntime {
 		balancedThreadsQueue = new ConcurrentLinkedQueue<>();
 	}
 	
-	public void registerActor(Map<UUID, Long> actorsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Actor actor) {
+	public void registerCell(Map<UUID, Long> cellsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, ActorCell cell) {
+		Actor actor = cell.getActor();
 		if (actor instanceof ActorGroupMember) {
 			Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 			if (threadId==null) 
 				groupsMap.put(((ActorGroupMember)actor).getGroupId(), pollThreadId(threadsMap));
 			else
-				actorsMap.put(actor.id, threadId);
+				cellsMap.put(cell.getId(), threadId);
 		}
 		else
-			actorsMap.put(actor.id, pollThreadId(threadsMap));
+			cellsMap.put(cell.getId(), pollThreadId(threadsMap));
 	}
 	
-	public void unregisterActor(Map<UUID, Long> actorsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Actor actor) {
-		if (actor instanceof ActorGroupMember) {
+	public void unregisterCell(Map<UUID, Long> cellsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, ActorCell cell) {
+		if (cell.getActor() instanceof ActorGroupMember) {
 			// TODO: ???
 		}
 		
-		actorsMap.remove(actor.id);
+		cellsMap.remove(cell.getId());
 	}
 	
 	public Long pollThreadId(Map<Long, ActorThread> threadsMap) {
