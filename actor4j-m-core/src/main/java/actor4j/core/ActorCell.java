@@ -35,8 +35,6 @@ public class ActorCell {
 	
 	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
-	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
-	
 	protected RestartProtocol restartProtocol;
 	protected StopProtocol stopProtocol;
 	
@@ -234,9 +232,6 @@ public class ActorCell {
 		stopProtocol.apply();
 	}
 	
-	/**
-	 * Don't use this method within your actor code. It's an internal method.
-	 */
 	public void internal_stop() {
 		if (parent!=null)
 			system.cells.get(parent).children.remove(id);
