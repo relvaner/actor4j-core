@@ -13,7 +13,7 @@ public class Sender extends ActorGroupMember {
 	protected UUID next;
 	
 	public Sender(ActorGroup group, UUID next) {
-		super( group);
+		super(group);
 		
 		this.next = next;
 	}

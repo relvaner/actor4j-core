@@ -12,7 +12,7 @@ import actor4j.core.messages.ActorMessage;
 public class TestRing {
 	public TestRing() {
 		ActorSystem system = new ActorSystem();
-		//system.setParallelismMin(1);
+		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.hardMode();
 		

@@ -249,6 +249,7 @@ public class ActorSystem {
 			actor = (Actor)container.getInstance(cell.id);
 			cell.actor = actor;
 		} catch (Exception e) {
+			e.printStackTrace();
 			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
