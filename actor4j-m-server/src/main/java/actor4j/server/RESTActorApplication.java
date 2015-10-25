@@ -47,7 +47,7 @@ public abstract class RESTActorApplication extends ResourceConfig {
 		
 	@PreDestroy
 	public void shutdown() {
-		system.shutdown(true);
+		system.shutdownWithActors(true);
 		logger().info(String.format("%s - System stopped...", system.getName()));
 	}
 }
