@@ -21,15 +21,14 @@ public class ActorTimer {
 	protected static final AtomicInteger index;
 	
 	static {
-		index = new AtomicInteger();
+		index = new AtomicInteger(-1);
 	}
 	
 	public ActorTimer(ActorSystem system) {
 		super();
 		
 		this.system = system;
-		timer = new Timer("actor4j-timer-thread-"+index.get(), false);
-		index.getAndIncrement();
+		timer = new Timer("actor4j-timer-thread-"+index.getAndIncrement(), false);
 		
 		id = UUID.randomUUID();
 	}
