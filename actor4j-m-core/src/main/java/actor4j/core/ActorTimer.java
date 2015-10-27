@@ -6,6 +6,7 @@ package actor4j.core;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
@@ -17,13 +18,18 @@ public class ActorTimer {
 	
 	protected Timer timer;
 	
-	protected static int index;
+	protected static final AtomicInteger index;
+	
+	static {
+		index = new AtomicInteger();
+	}
 	
 	public ActorTimer(ActorSystem system) {
 		super();
 		
 		this.system = system;
-		timer = new Timer("actor4j-timer-thread-"+index, false);
+		timer = new Timer("actor4j-timer-thread-"+index.get(), false);
+		index.getAndIncrement();
 		
 		id = UUID.randomUUID();
 	}
