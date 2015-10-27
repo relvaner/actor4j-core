@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 
 import actor4j.core.ActorAnalyzerThread;
 import actor4j.core.ActorCell;
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 
 public class DefaultActorAnalyzerThread extends ActorAnalyzerThread {
@@ -30,7 +30,7 @@ public class DefaultActorAnalyzerThread extends ActorAnalyzerThread {
 	}
 	
 	@Override
-	protected void setSystem(ActorSystem system) {
+	protected void setSystem(ActorSystemImpl system) {
 		super.setSystem(system);
 		
 		visualAnalyzer = new VisualActorAnalyzer(system);

@@ -13,7 +13,7 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
 
 import actor4j.core.ActorCell;
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorSystemImpl;
 
 public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 	protected static final long serialVersionUID = -1192782222987329027L;
@@ -24,7 +24,7 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 	protected Object defaultRoot;
 	protected boolean changed;
 
-	public VisualActorStructureViewPanel(ActorSystem system) {
+	public VisualActorStructureViewPanel(ActorSystemImpl system) {
 		super(system);
 		
 		activeCells = new HashMap<>();

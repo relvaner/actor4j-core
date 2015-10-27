@@ -23,8 +23,8 @@ public class PseudoActorCell extends ActorCell {
 	
 	protected Observable<ActorMessage<?>> rxOuterQueueL1;
 	
-	public PseudoActorCell(ActorSystem system, Actor actor) {
-		super(system, actor);
+	public PseudoActorCell(ActorSystem wrapper, Actor actor) {
+		super(wrapper.system, actor);
 		
 		outerQueueL2 = new MpscArrayQueue<>(50000);
 		outerQueueL1 = new LinkedList<>();

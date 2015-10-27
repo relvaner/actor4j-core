@@ -13,10 +13,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorService;
 
 public abstract class RESTActorApplication extends ResourceConfig {
-	protected ActorSystem system;
+	protected ActorService service;
 	
 	public RESTActorApplication() {
 		this(null);
@@ -25,16 +25,16 @@ public abstract class RESTActorApplication extends ResourceConfig {
 	public RESTActorApplication(String name) {
 		super();
 		
-		system = new ActorSystem(name);
-		configure(system);
-		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
-		system.start();
+		service = new ActorService(name);
+		configure(service);
+		service.setClientRunnable(new RESTActorClientRunnable(service.getServerURIs(), service.getParallelismMin()*service.getParallelismFactor(), 10000));
+		service.start();
 		
-		logger().info(String.format("%s - System started...", system.getName()));
+		logger().info(String.format("%s - System started...", service.getName()));
 
 		register(new AbstractBinder() {
 			protected void configure() {
-				bind(system).to(ActorSystem.class);
+				bind(service).to(ActorService.class);
 			}
 		});
 
@@ -43,11 +43,11 @@ public abstract class RESTActorApplication extends ResourceConfig {
 		packages("actor4j.server");
 	}
 	
-	protected abstract void configure(ActorSystem system);
+	protected abstract void configure(ActorService service);
 		
 	@PreDestroy
 	public void shutdown() {
-		system.shutdownWithActors(true);
-		logger().info(String.format("%s - System stopped...", system.getName()));
+		service.shutdownWithActors(true);
+		logger().info(String.format("%s - System stopped...", service.getName()));
 	}
 }

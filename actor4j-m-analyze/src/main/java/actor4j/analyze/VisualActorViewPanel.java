@@ -13,12 +13,12 @@ import com.mxgraph.util.mxRectangle;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorSystemImpl;
 
 public abstract class VisualActorViewPanel extends JPanel {
 	protected static final long serialVersionUID = 2646158450651956287L;
 	
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 
 	protected JTabbedPane tabbedPane;
 	
@@ -27,7 +27,7 @@ public abstract class VisualActorViewPanel extends JPanel {
 	protected mxGraph graph;
 	protected Object parent;
 	
-	public VisualActorViewPanel(ActorSystem system) {
+	public VisualActorViewPanel(ActorSystemImpl system) {
 		super();
 		
 		this.system = system;

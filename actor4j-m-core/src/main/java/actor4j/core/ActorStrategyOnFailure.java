@@ -3,7 +3,7 @@
  */
 package actor4j.core;
 
-import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.protocols.ActorProtocolTag.*;
 import static actor4j.core.supervisor.SupervisorStrategyDirective.*;
 import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.actorLabel;
@@ -18,9 +18,9 @@ import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.supervisor.SupervisorStrategyDirective;
 
 public class ActorStrategyOnFailure {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	
-	public ActorStrategyOnFailure(ActorSystem system) {
+	public ActorStrategyOnFailure(ActorSystemImpl system) {
 		this.system = system;
 	}
 	

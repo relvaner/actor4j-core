@@ -19,14 +19,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorService;
 import actor4j.core.messages.RemoteActorMessage;
 import actor4j.server.RESTActorMessage;
 
 @Path("/sendmessage")
 public class SendMessageResource {
 	@Context 
-	ActorSystem system;
+	ActorService service;
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ public class SendMessageResource {
 		}
 		
 		if (message!=null)
-			system.sendAsServer(new RemoteActorMessage<Object>(message.value, message.tag, UUID.fromString(message.source),UUID.fromString(message.dest)));
+			service.sendAsServer(new RemoteActorMessage<Object>(message.value, message.tag, UUID.fromString(message.source),UUID.fromString(message.dest)));
 		
 		HashMap<String, String> map = new HashMap<>();
 		map.put("result", "accepted");

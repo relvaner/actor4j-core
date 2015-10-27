@@ -14,18 +14,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorService;
 
 @Path("/hasactor/{uuid}")
 public class HasActorResource {
 	@Context 
-	ActorSystem system;
+	ActorService service;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response hasActor(@PathParam("uuid") String uuid) {
 		Map<String, Boolean> map = new HashMap<>();
-		if (system.hasActor(uuid))
+		if (service.hasActor(uuid))
 			map.put("result", true);
 		else
 			map.put("result", false);

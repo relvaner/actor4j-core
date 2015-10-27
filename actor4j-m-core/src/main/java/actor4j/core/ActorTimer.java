@@ -13,7 +13,7 @@ import actor4j.core.utils.ActorGroup;
 import actor4j.function.Supplier;
 
 public class ActorTimer {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	protected UUID id;
 	
 	protected Timer timer;
@@ -24,7 +24,7 @@ public class ActorTimer {
 		index = new AtomicInteger(-1);
 	}
 	
-	public ActorTimer(ActorSystem system) {
+	public ActorTimer(ActorSystemImpl system) {
 		super();
 		
 		this.system = system;
@@ -131,6 +131,6 @@ public class ActorTimer {
 	
 	public void cancel() {
 		timer.cancel();
-		system.executerService.actorTimers.remove(this);
+		system.getExecuterService().actorTimers.remove(this);
 	}
 }

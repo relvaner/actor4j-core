@@ -24,7 +24,7 @@ import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
 
 public class ActorExecuterService {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	
 	protected List<ActorThread> actorThreads;
 	protected Queue<ActorTimer> actorTimers;
@@ -39,7 +39,7 @@ public class ActorExecuterService {
 	
 	protected int maxResourceThreads;
 	
-	public ActorExecuterService(final ActorSystem system) {
+	public ActorExecuterService(final ActorSystemImpl system) {
 		super();
 		
 		this.system = system;

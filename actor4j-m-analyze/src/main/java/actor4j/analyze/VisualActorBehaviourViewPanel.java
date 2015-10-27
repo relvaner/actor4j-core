@@ -15,7 +15,7 @@ import com.mxgraph.model.mxCell;
 import java.util.Map.Entry;
 
 import actor4j.core.ActorCell;
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorSystemImpl;
 
 public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
 	protected static final long serialVersionUID = 9212208191147321764L;
@@ -25,7 +25,7 @@ public class VisualActorBehaviourViewPanel extends VisualActorViewPanel  {
 	
 	protected boolean changed;
 
-	public VisualActorBehaviourViewPanel(ActorSystem system) {
+	public VisualActorBehaviourViewPanel(ActorSystemImpl system) {
 		super(system);
 		
 		activeCells = new HashMap<>();

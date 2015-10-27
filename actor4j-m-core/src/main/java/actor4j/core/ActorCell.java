@@ -14,18 +14,20 @@ import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.protocols.RestartProtocol;
+import actor4j.core.protocols.StopProtocol;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
 import actor4j.function.Function;
 import tools4j.di.InjectorParam;
 
-import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.protocols.ActorProtocolTag.*;
 import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorCell {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	protected Actor actor;
 	
 	protected UUID id;
@@ -43,7 +45,7 @@ public class ActorCell {
 	protected Function<ActorMessage<?>, Boolean> processedDirective;
 	protected boolean activeDirectiveBehaviour;
 			
-	public ActorCell(ActorSystem system, Actor actor) {
+	public ActorCell(ActorSystemImpl system, Actor actor) {
 		super();
 		
 		this.system = system;
@@ -89,14 +91,22 @@ public class ActorCell {
 		};
 	}
 	
-	public ActorSystem getSystem() {
+	public ActorSystemImpl getSystem() {
 		return system;
+	}
+	
+	public ActorSystem getSystemWrapper() {
+		return system.wrapper;
 	}
 	
 	public Actor getActor() {
 		return actor;
 	}
 	
+	public void setActor(Actor actor) {
+		this.actor = actor;
+	}
+
 	public UUID getId() {
 		return id;
 	}
@@ -109,6 +119,10 @@ public class ActorCell {
 		return children;
 	}
 	
+	public void setActiveDirectiveBehaviour(boolean activeDirectiveBehaviour) {
+		this.activeDirectiveBehaviour = activeDirectiveBehaviour;
+	}
+
 	public boolean isRoot() {
 		return (parent==null);
 	}

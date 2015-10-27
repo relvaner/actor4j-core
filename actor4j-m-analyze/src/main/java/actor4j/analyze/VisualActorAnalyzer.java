@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import actor4j.core.ActorCell;
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorSystemImpl;
 import tools4j.utils.SwingSubApplication;
 
 public class VisualActorAnalyzer {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	protected SwingSubApplication application;
 	
-	public VisualActorAnalyzer(ActorSystem system) {
+	public VisualActorAnalyzer(ActorSystemImpl system) {
 		super();
 		
 		this.system = system;

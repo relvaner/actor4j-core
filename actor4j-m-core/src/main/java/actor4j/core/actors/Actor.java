@@ -3,6 +3,8 @@
  */
 package actor4j.core.actors;
 
+import static actor4j.core.protocols.ActorProtocolTag.*;
+
 import java.util.Queue;
 import java.util.UUID;
 
@@ -14,8 +16,6 @@ import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
 import actor4j.function.Consumer;
 import actor4j.function.Predicate;
-
-import static actor4j.core.ActorProtocolTag.*;
 
 public abstract class Actor {
 	protected ActorCell cell;
@@ -60,9 +60,9 @@ public abstract class Actor {
 	}
 	
 	public ActorSystem getSystem() {
-		return cell.getSystem();
+		return cell.getSystemWrapper();
 	}
-
+	
 	public String getName() {
 		return name;
 	}

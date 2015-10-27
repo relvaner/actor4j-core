@@ -32,22 +32,22 @@ public class Benchmark {
 				DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###");
 				
 				int i=0;
-				for (long value : system.getExecuterService().getCounts()) {
+				for (long value : system.underlyingImpl().getExecuterService().getCounts()) {
 					System.out.printf("worker-%d::count = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
 				i=0;
-				for (int value : system.getExecuterService().getWorkerInnerQueueSizes()) {
+				for (int value : system.underlyingImpl().getExecuterService().getWorkerInnerQueueSizes()) {
 					System.out.printf("worker-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
 				i=0;
-				for (int value : system.getExecuterService().getWorkerOuterQueueSizes()) {
+				for (int value : system.underlyingImpl().getExecuterService().getWorkerOuterQueueSizes()) {
 					System.out.printf("worker-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
-				System.out.printf("statistics::count        : %s%n", decimalFormat.format(system.getExecuterService().getCount()));
-				System.out.printf("statistics::mean::exact  : %s msg/s%n", decimalFormat.format(system.getExecuterService().getCount()/(duration/1000)));
+				System.out.printf("statistics::count        : %s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()));
+				System.out.printf("statistics::mean::exact  : %s msg/s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()/(duration/1000)));
 				System.out.printf("statistics::mean         : %s msg/s%n", decimalFormat.format(statistics.getMean()));
 				System.out.printf("statistics::sd           : %s msg/s%n", decimalFormat.format(statistics.getStandardDeviation()));
 				System.out.printf("statistics::median       : %s msg/s%n", decimalFormat.format(statistics.getPercentile(50)));
@@ -58,7 +58,7 @@ public class Benchmark {
 		MessageThroughputMeasurement messageTM = new MessageThroughputMeasurement(new Supplier<Long>() {
 			@Override
 			public Long get() {
-				return system.getExecuterService().getCount();
+				return system.underlyingImpl().getExecuterService().getCount();
 			}
 		}, statistics, true);
 		messageTM.start();

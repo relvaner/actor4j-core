@@ -26,14 +26,14 @@ public class ActorThread extends Thread {
 	protected Queue<ActorMessage<?>> serverQueueL2;
 	protected Queue<ActorMessage<?>> serverQueueL1;
 	
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	
 	protected AtomicLong counter;
 	protected Runnable onTermination;
 	
 	protected static int index;
 	
-	public ActorThread(ActorSystem system) {
+	public ActorThread(ActorSystemImpl system) {
 		super("actor4j-worker-thread-"+index);
 		index++;
 		

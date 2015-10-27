@@ -16,7 +16,7 @@ import actor4j.function.BiConsumer;
 import actor4j.function.Consumer;
 
 public class ActorMessageDispatcher {
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	
 	protected Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
 	protected Map<Long, ActorThread> threadsMap;
@@ -31,7 +31,7 @@ public class ActorMessageDispatcher {
 	
 	protected Consumer<ActorMessage<?>> consumerPseudo;
 	
-	public ActorMessageDispatcher(ActorSystem system) {
+	public ActorMessageDispatcher(ActorSystemImpl system) {
 		super();
 		
 		this.system = system;

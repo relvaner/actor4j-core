@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import javax.ws.rs.ApplicationPath;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorService;
 import actor4j.core.actors.Actor;
 import actor4j.core.utils.ActorFactory;
 import actor4j.server.RESTActorApplication;
@@ -15,18 +15,18 @@ import actor4j.server.RESTActorApplication;
 @ApplicationPath("api")
 public class ServerApplication extends RESTActorApplication {
 	@Override
-	protected void configure(ActorSystem system) {
-		system.setParallelismMin(1);
-		system.setParallelismFactor(1);
-		system.softMode();
+	protected void configure(ActorService service) {
+		service.setParallelismMin(1);
+		service.setParallelismFactor(1);
+		service.softMode();
 		
-		UUID server = system.addActor(new ActorFactory() {
+		UUID server = service.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
 				return new Server();
 			}
 		});
-		system.setAlias(server, "server");
+		service.setAlias(server, "server");
 		System.out.println(server);
 	}
 }

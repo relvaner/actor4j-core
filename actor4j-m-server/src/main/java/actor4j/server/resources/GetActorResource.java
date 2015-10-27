@@ -15,18 +15,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import actor4j.core.ActorSystem;
+import actor4j.core.ActorService;
 
 @Path("/getactor/{alias}")
 public class GetActorResource {
 	@Context 
-	ActorSystem system;
+	ActorService service;
 	
 	@GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getActor(@PathParam("alias") String alias) {
 		Map<String, String> map = new HashMap<>();
-		UUID uuid = system.getActor(alias);
+		UUID uuid = service.getActor(alias);
 		if (uuid!=null)
 			map.put("result", uuid.toString());
 		else

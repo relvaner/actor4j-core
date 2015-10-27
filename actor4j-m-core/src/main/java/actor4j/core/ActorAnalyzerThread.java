@@ -18,7 +18,7 @@ public abstract class ActorAnalyzerThread extends Thread {
 	protected Queue<ActorMessage<?>> outerQueueL2;
 	protected Queue<ActorMessage<?>> outerQueueL1;
 	
-	protected ActorSystem system;
+	protected ActorSystemImpl system;
 	
 	protected AtomicLong counter;
 	
@@ -40,7 +40,7 @@ public abstract class ActorAnalyzerThread extends Thread {
 		});
 	}
 	
-	protected void setSystem(ActorSystem system) {
+	protected void setSystem(ActorSystemImpl system) {
 		this.system = system;
 	}
 	

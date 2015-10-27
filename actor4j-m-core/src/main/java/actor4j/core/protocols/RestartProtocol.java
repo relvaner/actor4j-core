@@ -1,9 +1,9 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.core.protocols;
 
-import static actor4j.core.ActorProtocolTag.*;
+import static actor4j.core.protocols.ActorProtocolTag.*;
 import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.actorLabel;
 
@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import actor4j.core.ActorCell;
 import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
@@ -27,17 +28,17 @@ public class RestartProtocol {
 	protected void postStop() {
 		cell.postStop();
 		cell.internal_stop();
-		logger().info(String.format("%s - System: actor (%s) stopped", cell.getSystem().name, actorLabel(cell.getActor())));
+		logger().info(String.format("%s - System: actor (%s) stopped", cell.getSystem().getName(), actorLabel(cell.getActor())));
 	}
 	
 	protected void postRestart(Exception reason) {
 		cell.postStop();
 		try {
-			Actor newActor = (Actor)cell.getSystem().container.getInstance(cell.id);
+			Actor newActor = (Actor)cell.getSystem().getContainer().getInstance(cell.getId());
 			newActor.setCell(cell);
-			cell.actor = newActor;
+			cell.setActor(newActor);
 			cell.postRestart(reason);
-			logger().info(String.format("%s - System: actor (%s) restarted", cell.getSystem().name, actorLabel(cell.getActor()))); 
+			logger().info(String.format("%s - System: actor (%s) restarted", cell.getSystem().getName(), actorLabel(cell.getActor()))); 
 		} catch (Exception e) {
 			throw new ActorInitializationException(); // never must occur
 		}
@@ -75,7 +76,7 @@ public class RestartProtocol {
 							else {
 								postRestart(reason);
 								cell.unbecome();
-								cell.activeDirectiveBehaviour = false;
+								cell.setActiveDirectiveBehaviour(false);
 							}
 						}
 					}
