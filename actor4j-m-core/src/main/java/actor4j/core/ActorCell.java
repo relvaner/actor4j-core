@@ -131,7 +131,7 @@ public class ActorCell {
 		return (parent==system.USER_ID);
 	}
 	
-	protected void internal_receive(ActorMessage<?> message) {
+	public void internal_receive(ActorMessage<?> message) {
 		if (!processedDirective.apply(message)) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)

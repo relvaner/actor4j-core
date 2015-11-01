@@ -151,6 +151,10 @@ public class ActorSystemImpl {
 	public Map<UUID, ActorCell> getCells() {
 		return cells;
 	}
+	
+	public Map<UUID, ActorCell> getPseudoCells() {
+		return pseudoCells;
+	}
 
 	public ActorSystemImpl setClientRunnable(ActorClientRunnable clientRunnable) {
 		clientMode = (clientRunnable!=null);
