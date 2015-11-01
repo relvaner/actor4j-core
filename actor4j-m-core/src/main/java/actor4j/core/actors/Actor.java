@@ -171,6 +171,10 @@ public abstract class Actor {
 		send(message);
 	}
 	
+	public <T> void tell(T value, int tag, UUID dest) {
+		send(new ActorMessage<T>(value, tag, self(), dest));
+	}
+	
 	public void forward(ActorMessage<?> message, UUID dest) {
 		message.dest   = dest;
 		send(message);
