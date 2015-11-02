@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.mono.MonoActorSystemImpl;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
 
@@ -16,7 +17,6 @@ public class ActorSystem {
 	
 	public final UUID USER_ID;
 	public final UUID SYSTEM_ID;
-	public final UUID UNKNOWN_ID;
 	
 	public ActorSystem() {
 		this(null);
@@ -25,11 +25,10 @@ public class ActorSystem {
 	public ActorSystem(String name) {
 		super();
 		
-		system = new ActorSystemImpl(name, this);
+		system = new MonoActorSystemImpl(name, this);
 		
 		USER_ID    = system.USER_ID;
 		SYSTEM_ID  = system.SYSTEM_ID;
-		UNKNOWN_ID = system.UNKNOWN_ID;
 	}
 	
 	public String getName() {

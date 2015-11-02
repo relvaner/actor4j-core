@@ -114,4 +114,8 @@ public class PseudoActorCell extends ActorCell {
 	public void stop() {
 		internal_stop();
 	}
+	
+	public Queue<ActorMessage<?>> getOuterQueue() {
+		return outerQueueL2;
+	}
 }

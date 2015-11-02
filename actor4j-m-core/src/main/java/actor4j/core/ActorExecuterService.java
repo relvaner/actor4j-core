@@ -6,6 +6,7 @@ package actor4j.core;
 import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.actorLabel;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -84,6 +85,10 @@ public class ActorExecuterService {
 		});
 	}
 	
+	public List<ActorThread> getActorThreads() {
+		return actorThreads;
+	}
+
 	public void run(Runnable onStartup) {
 		start(onStartup, null);
 	}
@@ -101,14 +106,21 @@ public class ActorExecuterService {
 		
 		countDownLatch = new CountDownLatch(system.parallelismMin*system.parallelismFactor);
 		for (int i=0; i<system.parallelismMin*system.parallelismFactor; i++) {
-			ActorThread t = new ActorThread(system);
-			t.onTermination = new Runnable() {
-				@Override
-				public void run() {
-					countDownLatch.countDown();
-				}
-			};
-			actorThreads.add(t);
+			try {
+				Constructor<? extends ActorThread> c2 = system.actorThreadClass.getConstructor(ActorSystemImpl.class);
+				ActorThread t = c2.newInstance(system);
+			
+				t.onTermination = new Runnable() {
+					@Override
+					public void run() {
+						countDownLatch.countDown();
+					}
+				};
+				actorThreads.add(t);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		system.messageDispatcher.beforeRun(actorThreads);
@@ -215,20 +227,6 @@ public class ActorExecuterService {
 		List<Long> list = new ArrayList<>();
 		for (ActorThread t : actorThreads)
 			list.add(t.getCount());
-		return list;
-	}
-	
-	public List<Integer> getWorkerInnerQueueSizes() {
-		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getInnerQueue().size());
-		return list;
-	}
-	
-	public List<Integer> getWorkerOuterQueueSizes() {
-		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getOuterQueue().size());
 		return list;
 	}
 }

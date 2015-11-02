@@ -3,28 +3,17 @@
  */
 package actor4j.core;
 
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.jctools.queues.MpscArrayQueue;
 
 import actor4j.core.messages.ActorMessage;
 import safety4j.Method;
 import safety4j.SafetyManager;
 import safety4j.SafetyMethod;
 
-public class ActorThread extends Thread {
+public abstract class ActorThread extends Thread {
 	protected final UUID uuid; // for safety
-	
-	protected Queue<ActorMessage<?>> directiveQueue;
-	protected Queue<ActorMessage<?>> innerQueue;
-	protected Queue<ActorMessage<?>> outerQueueL2;
-	protected Queue<ActorMessage<?>> outerQueueL1;
-	protected Queue<ActorMessage<?>> serverQueueL2;
-	protected Queue<ActorMessage<?>> serverQueueL1;
 	
 	protected ActorSystemImpl system;
 	
@@ -39,13 +28,6 @@ public class ActorThread extends Thread {
 		
 		this.system = system;
 		uuid = UUID.randomUUID();
-		
-		directiveQueue = new MpscArrayQueue<>(50000);
-		serverQueueL2  = new MpscArrayQueue<>(50000);
-		serverQueueL1  = new LinkedList<>();
-		outerQueueL2   = new MpscArrayQueue<>(50000);
-		outerQueueL1   = new LinkedList<>();
-		innerQueue     = new CircularFifoQueue<>(50000);
 		
 		counter = new AtomicLong(0);
 	}
@@ -75,53 +57,15 @@ public class ActorThread extends Thread {
 		
 		return result;
 	}
+	
+	public abstract void onRun();
 		
 	@Override
 	public void run() {
 		SafetyMethod.run(new Method() {
 			@Override
 			public void run(UUID uuid) {
-				boolean hasNextDirective = false;
-				boolean hasNextServer 	 = false;
-				boolean hasNextOuter     = false;
-				boolean hasNextInner     = false;
-				
-				while (!isInterrupted()) {
-					while (poll(directiveQueue)) 
-						hasNextDirective=true;
-					
-					if (system.clientMode) {
-						hasNextServer = poll(serverQueueL1);
-						if (!hasNextServer && serverQueueL2.peek()!=null) {
-							ActorMessage<?> message = null;
-							for (int j=0; (message=serverQueueL2.poll())!=null && j<10000; j++)
-								serverQueueL1.offer(message);
-						
-							hasNextServer = poll(serverQueueL1);
-						}
-					}
-					
-					hasNextOuter = poll(outerQueueL1);
-					if (!hasNextOuter && outerQueueL2.peek()!=null) {
-						ActorMessage<?> message = null;
-						for (int j=0; (message=outerQueueL2.poll())!=null && j<10000; j++)
-							outerQueueL1.offer(message);
-						
-						hasNextOuter = poll(outerQueueL1);
-					}
-					
-					hasNextInner = poll(innerQueue);
-					if ((!hasNextInner && !hasNextOuter && !hasNextServer && !hasNextDirective))
-						if (!system.softMode)
-							yield();
-						else {
-							try {
-								sleep(system.softSleep);
-							} catch (InterruptedException e) {
-								interrupt();
-							}
-						}
-				}
+				onRun();
 				
 				if (onTermination!=null)
 					onTermination.run();
@@ -135,14 +79,6 @@ public class ActorThread extends Thread {
 			public void after() {
 			}
 		}, uuid);
-	}
-	
-	public Queue<ActorMessage<?>> getInnerQueue() {
-		return innerQueue;
-	}
-	
-	public Queue<ActorMessage<?>> getOuterQueue() {
-		return outerQueueL2;
 	}
 	
 	public long getCount() {

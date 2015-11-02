@@ -92,4 +92,8 @@ public abstract class ActorAnalyzerThread extends Thread {
 		
 		timer.interrupt();
 	}
+	
+	public Queue<ActorMessage<?>> getOuterQueue() {
+		return outerQueueL2;
+	}
 }

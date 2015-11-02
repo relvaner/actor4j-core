@@ -29,7 +29,7 @@ import tools4j.di.InjectorParam;
 import static actor4j.core.protocols.ActorProtocolTag.*;
 import static actor4j.core.utils.ActorUtils.*;
 
-public class ActorSystemImpl {
+public abstract class ActorSystemImpl {
 	protected ActorSystem wrapper;
 	
 	protected String name;
@@ -42,6 +42,7 @@ public class ActorSystemImpl {
 	protected Map<UUID, Boolean> resourceCells;
 	protected Map<UUID, ActorCell> pseudoCells;
 	protected ActorMessageDispatcher messageDispatcher;
+	protected Class<? extends ActorThread> actorThreadClass;
 	
 	protected int parallelismMin;
 	protected int parallelismFactor;
@@ -93,7 +94,6 @@ public class ActorSystemImpl {
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceCells  = new ConcurrentHashMap<>();
 		pseudoCells    = new ConcurrentHashMap<>();
-		messageDispatcher = new ActorMessageDispatcher(this);
 		
 		setParallelismMin(0);
 		parallelismFactor = 1;
@@ -155,6 +155,22 @@ public class ActorSystemImpl {
 	public Map<UUID, ActorCell> getPseudoCells() {
 		return pseudoCells;
 	}
+	
+	public Map<UUID, Boolean> getResourceCells() {
+		return resourceCells;
+	}
+	
+	public Map<String, UUID> getAliases() {
+		return aliases;
+	}
+
+	public ActorStrategyOnFailure getActorStrategyOnFailure() {
+		return actorStrategyOnFailure;
+	}
+
+	public boolean isClientMode() {
+		return clientMode;
+	}
 
 	public ActorSystemImpl setClientRunnable(ActorClientRunnable clientRunnable) {
 		clientMode = (clientRunnable!=null);
@@ -176,6 +192,14 @@ public class ActorSystemImpl {
 		return this;
 	}
 	
+	public ActorAnalyzerThread getAnalyzerThread() {
+		return analyzerThread;
+	}
+
+	public AtomicBoolean getAnalyzeMode() {
+		return analyzeMode;
+	}
+
 	public int getParallelismMin() {
 		return parallelismMin;
 	}
@@ -198,10 +222,18 @@ public class ActorSystemImpl {
 		
 		return this;
 	}
-
+	
+	public boolean isSoftMode() {
+		return softMode;
+	}
+	
 	public void setSoftMode(boolean softMode, long softSleep) {
 		this.softMode = softMode;
 		this.softSleep = softSleep;
+	}
+	
+	public long getSoftSleep() {
+		return softSleep;
 	}
 
 	public ActorSystemImpl softMode() {

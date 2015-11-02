@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import actor4j.core.ActorSystem;
+import actor4j.core.mono.MonoActorSystemImpl;
 import actor4j.function.Supplier;
 import actor4j.utils.MessageThroughputMeasurement;
 
@@ -37,12 +38,12 @@ public class Benchmark {
 					i++;
 				}
 				i=0;
-				for (int value : system.underlyingImpl().getExecuterService().getWorkerInnerQueueSizes()) {
+				for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerInnerQueueSizes()) {
 					System.out.printf("worker-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
 				i=0;
-				for (int value : system.underlyingImpl().getExecuterService().getWorkerOuterQueueSizes()) {
+				for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerOuterQueueSizes()) {
 					System.out.printf("worker-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
