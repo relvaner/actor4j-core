@@ -63,6 +63,10 @@ public class ActorMessage<T> implements Serializable, Copyable<ActorMessage<T>> 
 		return (int)value;
 	}
 	
+	public long valueAsLong() {
+		return (long)value;
+	}
+	
 	public double valueAsDouble() {
 		return (double)value;
 	}
