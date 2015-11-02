@@ -42,6 +42,7 @@ public class PseudoActorCell extends ActorCell {
 		}
 		catch(Exception e) {
 			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", id);
+			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}
 	
@@ -101,5 +102,16 @@ public class PseudoActorCell extends ActorCell {
 	@Override
 	public UUID addChild(ActorFactory factory) {
 		return null;
+	}
+	
+	@Override
+	public void restart(Exception reason) {
+		postStop();
+		postRestart(reason);
+	}
+	
+	@Override
+	public void stop() {
+		internal_stop();
 	}
 }
