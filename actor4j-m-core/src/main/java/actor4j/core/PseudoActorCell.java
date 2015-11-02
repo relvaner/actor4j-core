@@ -42,7 +42,6 @@ public class PseudoActorCell extends ActorCell {
 		}
 		catch(Exception e) {
 			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", id);
-			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}
 	
