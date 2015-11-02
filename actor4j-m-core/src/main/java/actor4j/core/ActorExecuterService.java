@@ -60,7 +60,7 @@ public class ActorExecuterService {
 							String.format("%s - Safety (%s) - Exception in initialization of an actor", 
 								system.name, Thread.currentThread().getName()));
 					}
-					else if (message.equals("actor")) {
+					else if (message.equals("actor") || message.equals("resource")) {
 						Actor actor = system.cells.get(uuid).actor;
 							logger().error(
 								String.format("%s - Safety (%s) - Exception in actor: %s", 
@@ -142,12 +142,18 @@ public class ActorExecuterService {
 	}
 	
 	public void resource(final ActorMessage<?> message) {
-		final Actor actor = system.cells.get(message.dest).actor;
-		if (actor!=null)
+		final ActorCell cell = system.cells.get(message.dest);
+		if (cell!=null)
 			resourceExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					actor.receive(message);
+					try {
+						cell.internal_receive(message);
+					}
+					catch(Exception e) {
+						SafetyManager.getInstance().notifyErrorHandler(e, "resource", cell.id);
+						system.actorStrategyOnFailure.handle(cell, e);
+					}	
 				}
 			});
 	}
