@@ -26,7 +26,7 @@ public class PseudoActorCell extends ActorCell {
 	public PseudoActorCell(ActorSystem wrapper, Actor actor) {
 		super(wrapper.system, actor);
 		
-		outerQueueL2 = new MpscArrayQueue<>(50000);
+		outerQueueL2 = new MpscArrayQueue<>(system.getQueueSize());
 		outerQueueL1 = new LinkedList<>();
 		
 		rxOuterQueueL1 = ActorMessageObservable.getMessages(outerQueueL1);
@@ -62,7 +62,7 @@ public class PseudoActorCell extends ActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<10000; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
 		while (poll(outerQueueL1));
@@ -72,7 +72,7 @@ public class PseudoActorCell extends ActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<10000; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
 		

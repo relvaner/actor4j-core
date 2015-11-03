@@ -52,6 +52,9 @@ public abstract class ActorSystemImpl {
 	
 	protected boolean debugUnhandled;
 	
+	protected int queueSize;
+	protected int bufferQueueSize;
+	
 	protected Queue<ActorMessage<?>> bufferQueue;
 	protected ActorExecuterService executerService;
 	
@@ -101,6 +104,9 @@ public abstract class ActorSystemImpl {
 		softMode  = true;
 		softSleep = 25;
 		
+		queueSize       = 50000;
+		bufferQueueSize = 10000;
+		
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
 		
@@ -139,6 +145,8 @@ public abstract class ActorSystemImpl {
 			}
 		}));
 	}
+	
+	public abstract ActorCell generateDefaultCell(Actor actor);
 	
 	public String getName() {
 		return name;
@@ -248,6 +256,14 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public int getQueueSize() {
+		return queueSize;
+	}
+
+	public int getBufferQueueSize() {
+		return bufferQueueSize;
+	}
+
 	public ActorSystemImpl setDebugUnhandled(boolean debugUnhandled) {
 		this.debugUnhandled = debugUnhandled;
 		

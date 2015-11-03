@@ -24,12 +24,12 @@ public class MonoActorThread extends ActorThread {
 	public MonoActorThread(ActorSystemImpl system) {
 		super(system);
 		
-		directiveQueue = new MpscArrayQueue<>(50000);
-		serverQueueL2  = new MpscArrayQueue<>(50000);
+		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
+		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize());
 		serverQueueL1  = new LinkedList<>();
-		outerQueueL2   = new MpscArrayQueue<>(50000);
+		outerQueueL2   = new MpscArrayQueue<>(system.getQueueSize());
 		outerQueueL1   = new LinkedList<>();
-		innerQueue     = new CircularFifoQueue<>(50000);
+		innerQueue     = new CircularFifoQueue<>(system.getQueueSize());
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class MonoActorThread extends ActorThread {
 				hasNextServer = poll(serverQueueL1);
 				if (!hasNextServer && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; (message=serverQueueL2.poll())!=null && j<10000; j++)
+					for (int j=0; (message=serverQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 						serverQueueL1.offer(message);
 				
 					hasNextServer = poll(serverQueueL1);
@@ -57,7 +57,7 @@ public class MonoActorThread extends ActorThread {
 			hasNextOuter = poll(outerQueueL1);
 			if (!hasNextOuter && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; (message=outerQueueL2.poll())!=null && j<10000; j++)
+				for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 					outerQueueL1.offer(message);
 				
 				hasNextOuter = poll(outerQueueL1);

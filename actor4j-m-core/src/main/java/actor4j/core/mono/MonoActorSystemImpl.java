@@ -3,9 +3,11 @@ package actor4j.core.mono;
 import java.util.ArrayList;
 import java.util.List;
 
+import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.ActorThread;
+import actor4j.core.actors.Actor;
 
 public class MonoActorSystemImpl extends ActorSystemImpl {
 	public MonoActorSystemImpl(ActorSystem wrapper) {
@@ -17,6 +19,11 @@ public class MonoActorSystemImpl extends ActorSystemImpl {
 		
 		messageDispatcher = new MonoActorMessageDispatcher(this);
 		actorThreadClass  = MonoActorThread.class;
+	}
+	
+	@Override
+	public ActorCell generateDefaultCell(Actor actor) {
+		return new ActorCell(this, actor);
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
