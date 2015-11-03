@@ -8,6 +8,7 @@ import java.util.UUID;
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
+import actor4j.core.classic.ClassicActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
@@ -15,7 +16,7 @@ import actor4j.core.utils.HubPattern;
 
 public class AnalyzeExample {
 	public AnalyzeExample() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem(ClassicActorSystemImpl.class);
 		
 		final int size = 2;
 		ActorGroup group = new ActorGroup();

@@ -3,7 +3,6 @@
  */
 package actor4j.core.classic;
 
-import java.util.List;
 import java.util.UUID;
 
 import actor4j.core.ActorSystemImpl;
@@ -22,10 +21,9 @@ public class ClassicActorThread extends ActorThread {
 		boolean hasNextOuter     = false;
 		boolean hasNextInner     = false;
 		
-		List<UUID> cells = null;
 		ClassicActorCell cell = null;
 		while (!isInterrupted()) {
-			for (UUID id : cells) {
+			for (UUID id : ((ClassicActorMessageDispatcher)system.getMessageDispatcher()).cellsOnThread.get(getId())) {
 				cell = (ClassicActorCell)system.getCells().get(id);
 				
 				while (poll(cell.getDirectiveQueue())) 

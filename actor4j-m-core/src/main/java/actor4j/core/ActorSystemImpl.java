@@ -172,6 +172,10 @@ public abstract class ActorSystemImpl {
 		return aliases;
 	}
 
+	public ActorMessageDispatcher getMessageDispatcher() {
+		return messageDispatcher;
+	}
+
 	public ActorStrategyOnFailure getActorStrategyOnFailure() {
 		return actorStrategyOnFailure;
 	}

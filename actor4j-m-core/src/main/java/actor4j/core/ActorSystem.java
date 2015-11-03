@@ -3,6 +3,7 @@
  */
 package actor4j.core;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,13 +20,27 @@ public class ActorSystem {
 	public final UUID SYSTEM_ID;
 	
 	public ActorSystem() {
-		this(null);
+		this(null, MonoActorSystemImpl.class);
+	}
+	
+	public ActorSystem(Class<? extends ActorSystemImpl> clazz) {
+		this(null, MonoActorSystemImpl.class);
 	}
 	
 	public ActorSystem(String name) {
+		this(name, MonoActorSystemImpl.class);
+	}
+	
+	public ActorSystem(String name, Class<? extends ActorSystemImpl> clazz) {
 		super();
 		
-		system = new MonoActorSystemImpl(name, this);
+		try {
+			Constructor<? extends ActorSystemImpl> c2 = clazz.getConstructor(String.class, ActorSystem.class);
+			system = c2.newInstance(name, this);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		USER_ID    = system.USER_ID;
 		SYSTEM_ID  = system.SYSTEM_ID;
