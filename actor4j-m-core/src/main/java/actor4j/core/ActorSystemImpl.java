@@ -121,7 +121,7 @@ public abstract class ActorSystemImpl {
 		
 		countDownLatch = new CountDownLatch(1);
 		
-		USER_ID = internal_addCell(new ActorCell(this, new Actor("user") {
+		USER_ID = internal_addCell(generateDefaultCell(new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -132,13 +132,13 @@ public abstract class ActorSystemImpl {
 				countDownLatch.countDown();
 			}
 		}));
-		SYSTEM_ID = internal_addCell(new ActorCell(this, new Actor("system") {
+		SYSTEM_ID = internal_addCell(generateDefaultCell(new Actor("system") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
 			}
 		}));
-		UNKNOWN_ID = internal_addCell(new ActorCell(this, new Actor("unknown") {
+		UNKNOWN_ID = internal_addCell(generateDefaultCell(new Actor("unknown") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -306,7 +306,7 @@ public abstract class ActorSystemImpl {
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
 		
-		ActorCell cell = new ActorCell(this, null);
+		ActorCell cell = generateDefaultCell(null);
 		container.registerConstructorInjector(cell.id, clazz, params);
 		Actor actor = null;
 		try {
@@ -321,7 +321,7 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public UUID addActor(ActorFactory factory) {
-		ActorCell cell = new ActorCell(this, factory.create());
+		ActorCell cell = generateDefaultCell(factory.create());
 		container.registerFactoryInjector(cell.id, factory);
 		
 		return user_addCell(cell);
