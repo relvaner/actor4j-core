@@ -2,16 +2,16 @@
 	<modelVersion>4.0.0</modelVersion>
   	<parent>
     	<groupId>actor4j</groupId>
-    	<artifactId>actor4j-m</artifactId>
+    	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-m-server-example</groupId>
-  	<artifactId>actor4j-m-server-example</artifactId>
+  	<groupId>actor4j-server-example</groupId>
+  	<artifactId>actor4j-server-example</artifactId>
   	
   	<dependencies>
   		<dependency>
-   			<groupId>actor4j-m-server</groupId>
-   			<artifactId>actor4j-m-server</artifactId>
+   			<groupId>actor4j-server</groupId>
+   			<artifactId>actor4j-server</artifactId>
    			<version>1.0.0</version>
    			<exclusions>
    				<exclusion>

@@ -2,11 +2,11 @@
   	<modelVersion>4.0.0</modelVersion>
   	<parent>
     	<groupId>actor4j</groupId>
-    	<artifactId>actor4j-m</artifactId>
+    	<artifactId>actor4j</artifactId>
    		<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-m-research</groupId>
-  	<artifactId>actor4j-m-research</artifactId>
+  	<groupId>actor4j-research</groupId>
+  	<artifactId>actor4j-research</artifactId>
 	<dependencies>
 	      <dependency>
 			<groupId>org.apache.commons</groupId>
