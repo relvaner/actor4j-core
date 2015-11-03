@@ -6,13 +6,13 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>actor4j-m-core</module>
-		<module>actor4j-m-benchmark</module>
-		<module>actor4j-m-server</module>
-		<module>actor4j-m-server-example</module>
-		<module>actor4j-m-analyze</module>
-		<module>actor4j-m-analyze-example</module>
-		<module>actor4j-m-research</module>
+		<module>actor4j-core</module>
+		<module>actor4j-benchmark</module>
+		<module>actor4j-server</module>
+		<module>actor4j-server-example</module>
+		<module>actor4j-analyze</module>
+		<module>actor4j-analyze-example</module>
+		<module>actor4j-research</module>
 	</modules>
 	
 	<dependencies>
