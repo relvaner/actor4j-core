@@ -14,12 +14,12 @@ import actor4j.core.ActorThread;
 import actor4j.core.messages.ActorMessage;
 
 public class MonoActorThread extends ActorThread {
-	protected Queue<ActorMessage<?>> directiveQueue;
-	protected Queue<ActorMessage<?>> innerQueue;
-	protected Queue<ActorMessage<?>> outerQueueL2;
-	protected Queue<ActorMessage<?>> outerQueueL1;
-	protected Queue<ActorMessage<?>> serverQueueL2;
-	protected Queue<ActorMessage<?>> serverQueueL1;
+	public Queue<ActorMessage<?>> directiveQueue;
+	public Queue<ActorMessage<?>> innerQueue;
+	public Queue<ActorMessage<?>> outerQueueL2;
+	public Queue<ActorMessage<?>> outerQueueL1;
+	public Queue<ActorMessage<?>> serverQueueL2;
+	public Queue<ActorMessage<?>> serverQueueL1;
 	
 	public MonoActorThread(ActorSystemImpl system) {
 		super(system);

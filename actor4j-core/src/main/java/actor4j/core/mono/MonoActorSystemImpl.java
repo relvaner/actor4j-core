@@ -10,6 +10,7 @@ import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.ActorThread;
+import actor4j.core.DefaultActorMessageDispatcher;
 import actor4j.core.actors.Actor;
 
 public class MonoActorSystemImpl extends ActorSystemImpl {
@@ -20,7 +21,7 @@ public class MonoActorSystemImpl extends ActorSystemImpl {
 	public MonoActorSystemImpl(String name, ActorSystem wrapper) {
 		super(name, wrapper);
 		
-		messageDispatcher = new MonoActorMessageDispatcher(this);
+		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		actorThreadClass  = MonoActorThread.class;
 	}
 	

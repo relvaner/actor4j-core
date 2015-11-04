@@ -46,7 +46,7 @@ public abstract class ActorMessageDispatcher {
 		consumerPseudo = new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> msg) {
-				ActorCell cell = ActorMessageDispatcher.this.system.getPseudoCells().get(msg.dest);
+				ActorCell cell = ActorMessageDispatcher.this.system.pseudoCells.get(msg.dest);
 				if (cell!=null)
 					((PseudoActorCell)cell).getOuterQueue().offer(msg);
 			}
@@ -61,24 +61,24 @@ public abstract class ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		if (system.getAnalyzeMode().get())
-			system.getAnalyzerThread().getOuterQueue().offer(message.copy());
+		if (system.analyzeMode.get())
+			system.analyzerThread.getOuterQueue().offer(message.copy());
 		
 		if (alias!=null) {
-			UUID dest = system.getAliases().get(alias);
+			UUID dest = system.aliases.get(alias);
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
-		if (system.isClientMode() && !system.getCells().containsKey(message.dest)) {
-			system.getExecuterService().client(message.copy(), alias);
+		if (system.clientMode && !system.cells.containsKey(message.dest)) {
+			system.executerService.client(message.copy(), alias);
 			return;
 		}
-		else if (system.getResourceCells().containsKey(message.dest)) {
-			system.getExecuterService().resource(message.copy());
+		else if (system.resourceCells.containsKey(message.dest)) {
+			system.executerService.resource(message.copy());
 			return;
 		}
 			
-		if (system.getParallelismMin()==1 && system.getParallelismFactor()==1)
+		if (system.parallelismMin==1 && system.parallelismFactor==1)
 			biconsumerInnerSingleThreaded.accept(message.copy());
 		else {
 			Long id_source = cellsMap.get(source);
@@ -100,11 +100,11 @@ public abstract class ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		if (system.getAnalyzeMode().get())
-			system.getAnalyzerThread().getOuterQueue().offer(message.copy());
+		if (system.analyzeMode.get())
+			system.analyzerThread.getOuterQueue().offer(message.copy());
 		
-		if (system.getResourceCells().containsKey(message.dest)) {
-			system.getExecuterService().resource(message.copy());
+		if (system.resourceCells.containsKey(message.dest)) {
+			system.executerService.resource(message.copy());
 			return;
 		}
 		
