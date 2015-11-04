@@ -108,12 +108,12 @@ public class ClassicActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void unregisterCell(ActorCell cell) {
-		super.unregisterCell(cell);
-		
 		Long id = cellsMap.get(cell.getId());
 		
 		Queue<UUID> cells = cellsOnThread.get(id);
 		if (cells!=null)
 			cells.remove(cell.getId());
+		
+		super.unregisterCell(cell);
 	}
 }
