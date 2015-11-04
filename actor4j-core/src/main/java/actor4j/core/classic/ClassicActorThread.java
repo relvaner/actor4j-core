@@ -16,13 +16,13 @@ public class ClassicActorThread extends ActorThread {
 
 	@Override
 	public void onRun() {
-		boolean hasNextDirective = false;
-		boolean hasNextServer 	 = false;
-		boolean hasNextOuter     = false;
-		boolean hasNextInner     = false;
-		
 		ClassicActorCell cell = null;
 		while (!isInterrupted()) {
+			boolean hasNextDirective = false;
+			boolean hasNextServer 	 = false;
+			boolean hasNextOuter     = false;
+			boolean hasNextInner     = false;
+			
 			for (UUID id : ((ClassicActorMessageDispatcher)system.getMessageDispatcher()).cellsOnThread.get(getId())) {
 				cell = (ClassicActorCell)system.getCells().get(id);
 				

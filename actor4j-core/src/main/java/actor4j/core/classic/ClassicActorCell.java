@@ -21,7 +21,7 @@ public class ClassicActorCell extends ActorCell {
 	protected Queue<ActorMessage<?>> outerQueueL1;
 	protected Queue<ActorMessage<?>> serverQueueL2;
 	protected Queue<ActorMessage<?>> serverQueueL1;
-
+	
 	public ClassicActorCell(ActorSystemImpl system, Actor actor) {
 		super(system, actor);
 		

@@ -37,15 +37,17 @@ public class Benchmark {
 					System.out.printf("worker-%d::count = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
-				i=0;
-				for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerInnerQueueSizes()) {
-					System.out.printf("worker-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
-					i++;
-				}
-				i=0;
-				for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerOuterQueueSizes()) {
-					System.out.printf("worker-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
-					i++;
+				if (system.underlyingImpl() instanceof MonoActorSystemImpl) {
+					i=0;
+					for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerInnerQueueSizes()) {
+						System.out.printf("worker-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
+						i++;
+					}
+					i=0;
+					for (int value : ((MonoActorSystemImpl)system.underlyingImpl()).getWorkerOuterQueueSizes()) {
+						System.out.printf("worker-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
+						i++;
+					}
 				}
 				System.out.printf("statistics::count        : %s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()));
 				System.out.printf("statistics::mean::exact  : %s msg/s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()/(duration/1000)));

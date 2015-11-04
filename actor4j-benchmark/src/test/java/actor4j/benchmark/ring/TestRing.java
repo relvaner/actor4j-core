@@ -7,12 +7,13 @@ import java.util.UUID;
 
 import actor4j.benchmark.Benchmark;
 import actor4j.core.ActorSystem;
+import actor4j.core.classic.ClassicActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 
 public class TestRing {
 	public TestRing() {
-		ActorSystem system = new ActorSystem();
-		system.setParallelismMin(1);
+		ActorSystem system = new ActorSystem(ClassicActorSystemImpl.class);
+		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.hardMode();
 		

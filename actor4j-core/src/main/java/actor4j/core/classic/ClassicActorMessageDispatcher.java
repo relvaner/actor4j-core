@@ -50,6 +50,7 @@ public class ClassicActorMessageDispatcher extends ActorMessageDispatcher {
 				ClassicActorCell cell = (ClassicActorCell)ClassicActorMessageDispatcher.this.system.getCells().get(msg.dest);
 				if (cell!=null)
 					cell.outerQueueL2.offer(msg);
+					
 			}
 		};
 		biconsumerServer = new BiConsumer<Long, ActorMessage<?>>() {

@@ -24,7 +24,7 @@ public class ActorSystem {
 	}
 	
 	public ActorSystem(Class<? extends ActorSystemImpl> clazz) {
-		this(null, MonoActorSystemImpl.class);
+		this(null, clazz);
 	}
 	
 	public ActorSystem(String name) {
