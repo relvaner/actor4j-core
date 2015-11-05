@@ -9,15 +9,14 @@ import java.util.UUID;
 
 import actor4j.benchmark.Benchmark;
 import actor4j.core.ActorSystem;
-import actor4j.core.classic.ClassicActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 
 public class TestHub {
 	public TestHub() {
 		ActorSystem system = new ActorSystem();
-		system.setParallelismFactor(1);
-		//system.setParallelismMin(1);
+		//system.setParallelismFactor(1);
+		system.setParallelismMin(1);
 		system.softMode();
 		
 		

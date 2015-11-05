@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.mono.MonoActorSystemImpl;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
 
@@ -20,7 +19,7 @@ public class ActorSystem {
 	public final UUID SYSTEM_ID;
 	
 	public ActorSystem() {
-		this(null, MonoActorSystemImpl.class);
+		this(null, DefaultActorSystemImpl.class);
 	}
 	
 	public ActorSystem(Class<? extends ActorSystemImpl> clazz) {
@@ -28,7 +27,7 @@ public class ActorSystem {
 	}
 	
 	public ActorSystem(String name) {
-		this(name, MonoActorSystemImpl.class);
+		this(name, DefaultActorSystemImpl.class);
 	}
 	
 	public ActorSystem(String name, Class<? extends ActorSystemImpl> clazz) {

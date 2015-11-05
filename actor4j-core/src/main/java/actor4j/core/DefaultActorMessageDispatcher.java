@@ -8,23 +8,37 @@ import java.util.UUID;
 import actor4j.core.ActorMessageDispatcher;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.mono.MonoActorThread;
 import actor4j.function.BiConsumer;
+import actor4j.function.Consumer;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
+	
+	protected Consumer<ActorMessage<?>> consumerPseudo;
+	
 	public DefaultActorMessageDispatcher(ActorSystemImpl system) {
 		super(system);
 		
 		biconsumerServer = new BiConsumer<Long, ActorMessage<?>>() {
 			@Override
 			public void accept(Long id_dest, ActorMessage<?> msg) {
-				((MonoActorThread)threadsMap.get(id_dest)).serverQueueL2.offer(msg);
+				((DefaultActorThread)threadsMap.get(id_dest)).serverQueueL2.offer(msg);
 			}
 		};
 		biconsumerDirective = new BiConsumer<Long, ActorMessage<?>>() {
 			@Override
 			public void accept(Long id_dest, ActorMessage<?> msg) {
-				((MonoActorThread)threadsMap.get(id_dest)).directiveQueue.offer(msg);
+				((DefaultActorThread)threadsMap.get(id_dest)).directiveQueue.offer(msg);
+			}
+		};
+		
+		consumerPseudo = new Consumer<ActorMessage<?>>() {
+			@Override
+			public void accept(ActorMessage<?> msg) {
+				ActorCell cell = DefaultActorMessageDispatcher.this.system.pseudoCells.get(msg.dest);
+				if (cell!=null)
+					((PseudoActorCell)cell).getOuterQueue().offer(msg);
 			}
 		};
 	}
@@ -52,7 +66,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		}
 			
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
-			((MonoActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
+			((DefaultActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
 		else {
 			Long id_source = cellsMap.get(source);
 			Long id_dest   = cellsMap.get(message.dest);
@@ -60,13 +74,32 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			if (id_dest!=null) {
 				if (id_source!=null && id_source.equals(id_dest)
 						&& Thread.currentThread().getId()==id_source.longValue())
-					((MonoActorThread)threadsMap.get(id_dest)).innerQueue.offer(message.copy());
+					((DefaultActorThread)threadsMap.get(id_dest)).innerQueue.offer(message.copy());
 				else
-					((MonoActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
+					((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
 			}
 			else 
 				consumerPseudo.accept(message.copy());
 		}
+	}
+	
+	public void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {
+		if (message==null)
+			throw new NullPointerException();
+		
+		if (system.analyzeMode.get())
+			system.analyzerThread.getOuterQueue().offer(message.copy());
+		
+		if (system.resourceCells.containsKey(message.dest)) {
+			system.executerService.resource(message.copy());
+			return;
+		}
+		
+		Long id_dest = cellsMap.get(message.dest);
+		if (id_dest!=null)
+			biconsumer.accept(id_dest, message.copy());
+		else 
+			consumerPseudo.accept(message.copy());
 	}
 	
 	@Override
@@ -84,8 +117,18 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		
 		Long id_dest = cellsMap.get(message.dest);
 		if (id_dest!=null)
-			((MonoActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
+			((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
 		else 
 			consumerPseudo.accept(message.copy());
+	}
+	
+	@Override
+	public void postServer(ActorMessage<?> message) {
+		postQueue(message, biconsumerServer);
+	}
+	
+	@Override
+	public void postDirective(ActorMessage<?> message) {
+		postQueue(message, biconsumerDirective);
 	}
 }

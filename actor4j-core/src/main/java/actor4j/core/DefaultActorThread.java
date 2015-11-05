@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core.mono;
+package actor4j.core;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -9,19 +9,17 @@ import java.util.Queue;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jctools.queues.MpscArrayQueue;
 
-import actor4j.core.ActorSystemImpl;
-import actor4j.core.ActorThread;
 import actor4j.core.messages.ActorMessage;
 
-public class MonoActorThread extends ActorThread {
-	public Queue<ActorMessage<?>> directiveQueue;
-	public Queue<ActorMessage<?>> innerQueue;
-	public Queue<ActorMessage<?>> outerQueueL2;
-	public Queue<ActorMessage<?>> outerQueueL1;
-	public Queue<ActorMessage<?>> serverQueueL2;
-	public Queue<ActorMessage<?>> serverQueueL1;
+public class DefaultActorThread extends ActorThread {
+	protected Queue<ActorMessage<?>> directiveQueue;
+	protected Queue<ActorMessage<?>> innerQueue;
+	protected Queue<ActorMessage<?>> outerQueueL2;
+	protected Queue<ActorMessage<?>> outerQueueL1;
+	protected Queue<ActorMessage<?>> serverQueueL2;
+	protected Queue<ActorMessage<?>> serverQueueL1;
 	
-	public MonoActorThread(ActorSystemImpl system) {
+	public DefaultActorThread(ActorSystemImpl system) {
 		super(system);
 		
 		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
