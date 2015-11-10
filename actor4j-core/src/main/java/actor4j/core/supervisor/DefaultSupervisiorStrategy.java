@@ -20,5 +20,4 @@ public class DefaultSupervisiorStrategy extends OneForOneSupervisorStrategy {
 		else
 			return RESTART;
 	}
-
 }

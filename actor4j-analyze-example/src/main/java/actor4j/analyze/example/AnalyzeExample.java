@@ -16,7 +16,7 @@ import actor4j.core.utils.HubPattern;
 public class AnalyzeExample {
 	public AnalyzeExample() {
 		ActorSystem system = new ActorSystem();
-		
+
 		final int size = 2;
 		ActorGroup group = new ActorGroup();
 		for (int i=0; i<size; i++) {
