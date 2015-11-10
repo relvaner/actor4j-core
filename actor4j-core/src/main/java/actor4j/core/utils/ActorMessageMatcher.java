@@ -18,11 +18,13 @@ public class ActorMessageMatcher {
 	}
 	
 	protected List<MatchTuple> matches;
+	protected List<MatchTuple> matchesElse;
 	protected List<MatchTuple> matchesAny;
 	
 	public ActorMessageMatcher() {
-		matches    = new LinkedList<>();
-		matchesAny = new LinkedList<>();
+		matches     = new LinkedList<>();
+		matchesElse = new LinkedList<>();
+		matchesAny  = new LinkedList<>();
 	}
 		
 	public ActorMessageMatcher match(final UUID source, Consumer<ActorMessage<?>> action) {
@@ -193,6 +195,33 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
+	public ActorMessageMatcher match(final Class<?> clazz, Consumer<ActorMessage<?>> action) {
+		return match(clazz, null, action);
+	}
+	
+	public ActorMessageMatcher match(final Class<?> clazz, Predicate<ActorMessage<?>> predicate, Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.predicate = new Predicate<ActorMessage<?>>(){
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
+				if (message.value!=null) {
+					result = message.value.getClass().equals(clazz);
+					if (predicate!=null)
+						result = result && predicate.test(message);
+				}
+				
+				return result;
+			}
+		};
+		tuple.action = action;
+		matches.add(tuple);
+		
+		return this;
+	}
+	
 	public ActorMessageMatcher match(Predicate<ActorMessage<?>> predicate, Consumer<ActorMessage<?>> action) {
 		checkPredicate(predicate);
 		checkAction(action);
@@ -205,16 +234,20 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
+	public ActorMessageMatcher matchElse(Consumer<ActorMessage<?>> action) {
+		checkAction(action);
+		
+		MatchTuple tuple = new MatchTuple();
+		tuple.action = action;
+		matchesElse.add(tuple);
+		
+		return this;
+	}
+	
 	public ActorMessageMatcher matchAny(Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple();
-		tuple.predicate = new Predicate<ActorMessage<?>>(){
-			@Override
-			public boolean test(ActorMessage<?> message) {
-				return true;
-			}
-		};
 		tuple.action = action;
 		matchesAny.add(tuple);
 		
@@ -229,11 +262,15 @@ public class ActorMessageMatcher {
 				tuple.action.accept(message);
 				result = true;
 			}
-		for (MatchTuple tuple : matchesAny)
-			if (tuple.predicate.test(message)) {
+		if (!result)
+			for (MatchTuple tuple : matchesElse) {
 				tuple.action.accept(message);
 				result = true;
 			}
+		for (MatchTuple tuple : matchesAny) {
+			tuple.action.accept(message);
+			result = true;
+		}
 		
 		return result;
 	}

@@ -11,6 +11,7 @@ import static org.junit.Assert.*;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorMessageMatcher;
 import actor4j.function.Consumer;
+import actor4j.function.Predicate;
 
 public class MatcherFeature {
 	protected ActorMessageMatcher matcher;
@@ -41,6 +42,31 @@ public class MatcherFeature {
 					postconditions[0] = message.tag;
 				}
 			})
+			.matchElse(new Consumer<ActorMessage<?>>() {
+				@Override
+				public void accept(ActorMessage<?> message) {
+					postconditions[0] = message.tag;
+				}
+			})
+			.match(String.class, new Consumer<ActorMessage<?>>() {
+				@Override
+				public void accept(ActorMessage<?> message) {
+					postconditions[0] = 1976;
+				}
+			})
+			.match(String.class, 
+					new Predicate<ActorMessage<?>>() {
+						@Override
+						public boolean test(ActorMessage<?> message) {
+							return message.valueAsString().equals("Hello World!");
+						}
+					}, 
+					new Consumer<ActorMessage<?>>() {
+						@Override
+						public void accept(ActorMessage<?> message) {
+							postconditions[0] = 1976+1;
+						}
+			})
 			.match(17, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
@@ -60,5 +86,14 @@ public class MatcherFeature {
 		matcher.apply(new ActorMessage<Object>(null, 17, null, null));
 		assertEquals(17, postconditions[0]);
 		assertEquals(17, postconditions[1]);
+		matcher.apply(new ActorMessage<Object>(null, 235, null, null));
+		assertEquals(235, postconditions[0]);
+		assertEquals(235, postconditions[1]);
+		matcher.apply(new ActorMessage<Object>("", 235, null, null));
+		assertEquals(1976, postconditions[0]);
+		assertEquals(235, postconditions[1]);
+		matcher.apply(new ActorMessage<Object>("Hello World!", 235, null, null));
+		assertEquals(1976+1, postconditions[0]);
+		assertEquals(235, postconditions[1]);
 	}
 }
