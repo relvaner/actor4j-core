@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import actor4j.benchmark.akka.ActorMessage;
 import akka.actor.UntypedActor;
-import static actor4j.benchmark.akka.hub.ActorMessageTag.*;
+import static actor4j.benchmark.akka.ping.pong.bulk.ActorMessageTag.*;
 
 public class Destination extends UntypedActor {
     protected AtomicLong counter;

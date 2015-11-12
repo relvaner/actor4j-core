@@ -3,7 +3,7 @@
  */
 package actor4j.benchmark.ping.pong;
 
-import static actor4j.benchmark.hub.ActorMessageTag.MSG;
+import static actor4j.benchmark.ping.pong.ActorMessageTag.MSG;
 
 import java.util.UUID;
 
@@ -16,11 +16,11 @@ public class TestPingPong {
 	public TestPingPong() {
 		ActorSystem system = new ActorSystem();
 		//system.setParallelismFactor(1);
-		//system.setParallelismMin(1);
+		system.setParallelismMin(1);
 		system.softMode();
 		
 		ActorGroup group = new ActorGroup();
-		int size = 1000;
+		int size = 100000;
 		UUID dest = null;
 		UUID id = null;
 		for(int i=0; i<size; i++) {

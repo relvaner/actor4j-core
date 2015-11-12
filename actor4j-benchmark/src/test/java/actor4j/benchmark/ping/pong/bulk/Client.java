@@ -3,8 +3,8 @@
  */
 package actor4j.benchmark.ping.pong.bulk;
 
-import static actor4j.benchmark.hub.ActorMessageTag.MSG;
-import static actor4j.benchmark.hub.ActorMessageTag.RUN;
+import static actor4j.benchmark.ping.pong.bulk.ActorMessageTag.MSG;
+import static actor4j.benchmark.ping.pong.bulk.ActorMessageTag.RUN;
 
 import java.util.UUID;
 

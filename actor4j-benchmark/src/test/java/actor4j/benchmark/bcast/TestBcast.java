@@ -18,7 +18,7 @@ public class TestBcast {
 		system.hardMode();
 		
 		ActorGroup group = new ActorGroup();
-		int size = 100;
+		int size = 4;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
 			id = system.addActor(TestActor.class, group);

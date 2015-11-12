@@ -8,7 +8,7 @@ import actor4j.function.Supplier;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import static actor4j.benchmark.akka.hub.ActorMessageTag.*;
+import static actor4j.benchmark.akka.ping.pong.bulk.ActorMessageTag.*;
 
 public class TestPingPong {
 	public TestPingPong() {
@@ -17,7 +17,7 @@ public class TestPingPong {
 		final AtomicLong counter = new AtomicLong();
 		
 		HubPattern hub = new HubPattern();
-		int size = 1000;
+		int size = 10;
 		ActorRef dest = null;
 		ActorRef ref = null;
 		for(int i=0; i<size; i++) {

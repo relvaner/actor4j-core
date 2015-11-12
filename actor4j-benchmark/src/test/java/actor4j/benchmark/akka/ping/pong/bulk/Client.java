@@ -2,7 +2,7 @@ package actor4j.benchmark.akka.ping.pong.bulk;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import static actor4j.benchmark.akka.hub.ActorMessageTag.*;
+import static actor4j.benchmark.akka.ping.pong.bulk.ActorMessageTag.*;
 
 import actor4j.benchmark.akka.ActorMessage;
 

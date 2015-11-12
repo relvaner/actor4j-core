@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.ring.quadruple;
+package actor4j.benchmark.ring.quadruple.bulk;
 
 import java.util.UUID;
 
@@ -10,10 +10,12 @@ import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 
+import static actor4j.benchmark.ring.quadruple.bulk.ActorMessageTag.RUN;
+
 public class TestQuadrupleRing {
 	public TestQuadrupleRing() {
 		ActorSystem system = new ActorSystem();
-		system.setParallelismMin(1);
+		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
 		
@@ -22,7 +24,7 @@ public class TestQuadrupleRing {
 			
 			UUID next = system.addActor(Forwarder.class, group);
 			group.add(next); // TODO temporary
-			int size = 10000;
+			int size = 100;
 			for(int i=0; i<size-2; i++) {
 				next = system.addActor(Forwarder.class, group, next);
 				group.add(next); // TODO temporary
@@ -30,7 +32,7 @@ public class TestQuadrupleRing {
 			UUID sender = system.addActor(Sender.class, group, next);
 			group.add(sender); // TODO temporary
 		
-			system.send(new ActorMessage<>(new Object(), 0, sender, sender));
+			system.send(new ActorMessage<>(new Object(), RUN, sender, sender));
 		}
 		
 		Benchmark benchmark = new Benchmark(system, 60000);

@@ -17,7 +17,7 @@ public class TestPingPong {
 		final AtomicLong counter = new AtomicLong();
 		
 		HubPattern hub = new HubPattern();
-		int size = 1000;
+		int size = 10;
 		ActorRef dest = null;
 		ActorRef ref = null;
 		for(int i=0; i<size; i++) {
