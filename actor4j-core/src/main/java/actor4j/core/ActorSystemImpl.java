@@ -55,6 +55,8 @@ public abstract class ActorSystemImpl {
 	protected int queueSize;
 	protected int bufferQueueSize;
 	
+	protected int throughput;
+	
 	protected Queue<ActorMessage<?>> bufferQueue;
 	protected ActorExecuterService executerService;
 	
@@ -106,6 +108,8 @@ public abstract class ActorSystemImpl {
 		
 		queueSize       = 50000;
 		bufferQueueSize = 10000;
+		
+		throughput = 100;
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
@@ -266,6 +270,18 @@ public abstract class ActorSystemImpl {
 
 	public int getBufferQueueSize() {
 		return bufferQueueSize;
+	}
+	
+	public void setBufferQueueSize(int bufferQueueSize) {
+		this.bufferQueueSize = bufferQueueSize;
+	}
+	
+	public int getThroughput() {
+		return throughput;
+	}
+
+	public void setThroughput(int throughput) {
+		this.throughput = throughput;
 	}
 
 	public ActorSystemImpl setDebugUnhandled(boolean debugUnhandled) {

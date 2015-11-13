@@ -37,6 +37,10 @@ public class HubPattern {
 		ports.addAll(group);
 	}
 	
+	public boolean contains(UUID id) {
+		return ports.contains(id);
+	}
+	
 	public void broadcast(ActorMessage<?> message) {
 		for (UUID dest : ports)
 			actor.send(message, dest);
