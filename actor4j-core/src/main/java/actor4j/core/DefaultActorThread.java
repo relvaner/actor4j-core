@@ -58,6 +58,16 @@ public class DefaultActorThread extends ActorThread {
 					hasNextServer++;
 			}
 			
+			/*
+			for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
+			if (hasNextOuter==0 && outerQueueL2.peek()!=null) {
+				ActorMessage<?> message = null;
+				for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
+					outerQueueL1.offer(message);
+				
+				for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
+			}
+			*/
 			if (!poll(outerQueueL1) && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
 				for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
@@ -71,7 +81,6 @@ public class DefaultActorThread extends ActorThread {
 			for (; poll(innerQueue) && hasNextInner<system.throughput; hasNextInner++);
 			
 			if ((hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextDirective)) {
-				System.out.println("dfsdfsdfsf");
 				if (!system.isSoftMode())
 					yield();
 				else {
