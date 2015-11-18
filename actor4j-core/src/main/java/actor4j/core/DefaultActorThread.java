@@ -3,7 +3,7 @@
  */
 package actor4j.core;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Queue;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
@@ -24,9 +24,9 @@ public class DefaultActorThread extends ActorThread {
 		
 		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
 		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize());
-		serverQueueL1  = new LinkedList<>();
+		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize());
 		outerQueueL2   = new MpscArrayQueue<>(system.getQueueSize());
-		outerQueueL1   = new LinkedList<>();
+		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize());
 		innerQueue     = new CircularFifoQueue<>(system.getQueueSize());
 	}
 	
@@ -48,7 +48,7 @@ public class DefaultActorThread extends ActorThread {
 			
 			if (system.isClientMode()) {
 				for (; poll(serverQueueL1) && hasNextServer<system.throughput; hasNextServer++);
-				if (hasNextServer==0 && serverQueueL2.peek()!=null) {
+				if (hasNextServer<system.throughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
 					for (int j=0; (message=serverQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 						serverQueueL1.offer(message);
@@ -58,11 +58,11 @@ public class DefaultActorThread extends ActorThread {
 			}
 			
 			for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
-			if (hasNextOuter==0 && outerQueueL2.peek()!=null) {
+			if (hasNextOuter<system.throughput && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
 				for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 					outerQueueL1.offer(message);
-				
+
 				for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
 			}
 			
