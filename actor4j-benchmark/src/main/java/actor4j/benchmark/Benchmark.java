@@ -34,7 +34,7 @@ public class Benchmark {
 		final DescriptiveStatistics statistics = new DescriptiveStatistics();
 		final AtomicLong warmupCount = new AtomicLong();
 		
-		System.out.println("Benchmark started...");
+		System.out.printf("Benchmark started (%s)...%n", system.getName());
 		system.start(new Runnable() {
 			@Override
 			public void run() {
@@ -42,18 +42,18 @@ public class Benchmark {
 				
 				int i=0;
 				for (long value : system.underlyingImpl().getExecuterService().getCounts()) {
-					System.out.printf("worker-%d::count = %s%n", i, decimalFormat.format(value));
+					System.out.printf("actor4j-worker-thread-%d::count = %s%n", i, decimalFormat.format(value));
 					i++;
 				}
 				if (system.underlyingImpl() instanceof DefaultActorSystemImpl) {
 					i=0;
 					for (int value : ((DefaultActorSystemImpl)system.underlyingImpl()).getWorkerInnerQueueSizes()) {
-						System.out.printf("worker-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
+						System.out.printf("actor4j-worker-thread-%d::inner::queue::size = %s%n", i, decimalFormat.format(value));
 						i++;
 					}
 					i=0;
 					for (int value : ((DefaultActorSystemImpl)system.underlyingImpl()).getWorkerOuterQueueSizes()) {
-						System.out.printf("worker-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
+						System.out.printf("actor4j-worker-thread-%d::outer::queue::size = %s%n", i, decimalFormat.format(value));
 						i++;
 					}
 				}

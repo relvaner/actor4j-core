@@ -36,7 +36,7 @@ public class Benchmark {
 		AtomicLong warmupCount = new AtomicLong();
 		DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###");
 		
-		System.out.println("Benchmark started...");
+		System.out.printf("Benchmark started (%s)...%n", system.name());
 
 		MessageThroughputMeasurement messageTM = new MessageThroughputMeasurement(counter, warmupIterations, warmupCount, statistics, true);
 		messageTM.start();
