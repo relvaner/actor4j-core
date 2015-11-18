@@ -4,6 +4,7 @@
 package actor4j.benchmark;
 
 import java.text.DecimalFormat;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -15,16 +16,23 @@ import actor4j.utils.MessageThroughputMeasurement;
 public class Benchmark {
 	protected ActorSystem system;
 	protected long duration;
+	protected long warmupIterations;
 	
 	public Benchmark(ActorSystem system, long duration) {
+		this(system, 10, duration);
+	}
+	
+	public Benchmark(ActorSystem system, long warmupIterations, long duration) {
 		super();
 		
 		this.system = system;
+		this.warmupIterations = warmupIterations;
 		this.duration = duration;
 	}
 	
 	public void start() {
 		final DescriptiveStatistics statistics = new DescriptiveStatistics();
+		final AtomicLong warmupCount = new AtomicLong();
 		
 		System.out.println("Benchmark started...");
 		system.start(new Runnable() {
@@ -49,11 +57,11 @@ public class Benchmark {
 						i++;
 					}
 				}
-				System.out.printf("statistics::count        : %s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()));
-				System.out.printf("statistics::mean::exact  : %s msg/s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()/(duration/1000)));
-				System.out.printf("statistics::mean         : %s msg/s%n", decimalFormat.format(statistics.getMean()));
-				System.out.printf("statistics::sd           : %s msg/s%n", decimalFormat.format(statistics.getStandardDeviation()));
-				System.out.printf("statistics::median       : %s msg/s%n", decimalFormat.format(statistics.getPercentile(50)));
+				System.out.printf("statistics::count         : %s%n", decimalFormat.format(system.underlyingImpl().getExecuterService().getCount()-warmupCount.get()));
+				System.out.printf("statistics::mean::derived : %s msg/s%n", decimalFormat.format((system.underlyingImpl().getExecuterService().getCount()-warmupCount.get())/(duration/1000)));
+				System.out.printf("statistics::mean          : %s msg/s%n", decimalFormat.format(statistics.getMean()));
+				System.out.printf("statistics::sd            : %s msg/s%n", decimalFormat.format(statistics.getStandardDeviation()));
+				System.out.printf("statistics::median        : %s msg/s%n", decimalFormat.format(statistics.getPercentile(50)));
 				System.out.println("Benchmark finished...");
 			}
 		});
@@ -63,11 +71,11 @@ public class Benchmark {
 			public Long get() {
 				return system.underlyingImpl().getExecuterService().getCount();
 			}
-		}, statistics, true);
+		}, warmupIterations, warmupCount, statistics, true);
 		messageTM.start();
 		
 		try {
-			Thread.sleep(duration);
+			Thread.sleep(duration+warmupIterations*1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
