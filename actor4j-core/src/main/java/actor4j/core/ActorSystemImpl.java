@@ -47,6 +47,7 @@ public abstract class ActorSystemImpl {
 	protected int parallelismMin;
 	protected int parallelismFactor;
 	
+	protected int idle;
 	protected boolean softMode; // hard, soft
 	protected long softSleep;
 	
@@ -103,6 +104,7 @@ public abstract class ActorSystemImpl {
 		setParallelismMin(0);
 		parallelismFactor = 1;
 		
+		idle = 100000;
 		softMode  = true;
 		softSleep = 25;
 		

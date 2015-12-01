@@ -33,9 +33,10 @@ public class DefaultActorThread extends ActorThread {
 	@Override
 	public void onRun() {
 		boolean hasNextDirective;
-		long hasNextServer;
-		long hasNextOuter;
-		long hasNextInner;
+		int hasNextServer;
+		int hasNextOuter;
+		int hasNextInner;
+		int idle = 0;
 		
 		while (!isInterrupted()) {
 			hasNextDirective = false;
@@ -46,7 +47,7 @@ public class DefaultActorThread extends ActorThread {
 			while (poll(directiveQueue)) 
 				hasNextDirective=true;
 			
-			if (system.isClientMode()) {
+			if (system.clientMode) {
 				for (; poll(serverQueueL1) && hasNextServer<system.throughput; hasNextServer++);
 				if (hasNextServer<system.throughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
@@ -69,16 +70,22 @@ public class DefaultActorThread extends ActorThread {
 			for (; poll(innerQueue) && hasNextInner<system.throughput; hasNextInner++);
 			
 			if ((hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextDirective)) {
-				if (!system.isSoftMode())
-					yield();
-				else {
-					try {
-						sleep(system.getSoftSleep());
-					} catch (InterruptedException e) {
-						interrupt();
+				idle++;
+				if (idle>system.idle) {
+					idle = 0;
+					if (!system.softMode)
+						yield();
+					else {
+						try {
+							sleep(system.softSleep);
+						} catch (InterruptedException e) {
+							interrupt();
+						}
 					}
 				}
 			}
+			else
+				idle = 0;
 		}		
 	}
 	
