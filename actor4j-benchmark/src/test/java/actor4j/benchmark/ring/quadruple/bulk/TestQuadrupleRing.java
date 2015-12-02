@@ -14,7 +14,7 @@ import static actor4j.benchmark.ring.quadruple.bulk.ActorMessageTag.RUN;
 
 public class TestQuadrupleRing {
 	public TestQuadrupleRing() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem("actor4j::TestQuadrupleRing-Bulk");
 		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
@@ -24,7 +24,7 @@ public class TestQuadrupleRing {
 			
 			UUID next = system.addActor(Forwarder.class, group);
 			group.add(next); // TODO temporary
-			int size = 100;
+			int size = 10000;
 			for(int i=0; i<size-2; i++) {
 				next = system.addActor(Forwarder.class, group, next);
 				group.add(next); // TODO temporary
