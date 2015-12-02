@@ -34,6 +34,14 @@ public abstract class ActorMessageDispatcher {
 		groupsMap = new ConcurrentHashMap<>();
 	}
 	
+	public Map<UUID, Long> getCellsMap() {
+		return cellsMap;
+	}
+
+	public Map<Long, ActorThread> getThreadsMap() {
+		return threadsMap;
+	}
+
 	public void post(ActorMessage<?> message, UUID source) {
 		post(message, source, null);
 	}
