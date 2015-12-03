@@ -14,7 +14,7 @@ import actor4j.core.utils.ActorGroup;
 
 public class TestHub {
 	public TestHub() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem("actor4j::TestHub");
 		//system.setParallelismFactor(1);
 		system.setParallelismMin(1);
 		system.softMode();

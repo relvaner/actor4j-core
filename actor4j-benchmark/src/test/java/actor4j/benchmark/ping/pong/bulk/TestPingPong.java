@@ -14,13 +14,13 @@ import actor4j.core.utils.ActorGroup;
 
 public class TestPingPong {
 	public TestPingPong() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem("actor4j::TestPingPong-Bulk");
 		//system.setParallelismFactor(1);
 		//system.setParallelismMin(1);
 		system.softMode();
-		
+
 		ActorGroup group = new ActorGroup();
-		int size = 100000;
+		int size = 1000;
 		UUID dest = null;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
@@ -29,7 +29,7 @@ public class TestPingPong {
 			group.add(id);
 		}
 		
-		system.broadcast(new ActorMessage<Object>(new Object(), RUN, dest, null), group);
+		system.broadcast(new ActorMessage<Object>(new Object(), RUN, system.SYSTEM_ID, null), group);
 		
 		
 		Benchmark benchmark = new Benchmark(system, 60000);

@@ -12,7 +12,7 @@ import static actor4j.benchmark.akka.ping.pong.bulk.ActorMessageTag.*;
 
 public class TestPingPong {
 	public TestPingPong() {
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-ping-pong-bulk");
 		
 		final AtomicLong counter = new AtomicLong();
 		

@@ -12,12 +12,12 @@ import static actor4j.benchmark.akka.hub.ActorMessageTag.*;
 
 public class TestPingPong {
 	public TestPingPong() {
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-ping-pong");
 		
 		final AtomicLong counter = new AtomicLong();
 		
 		HubPattern hub = new HubPattern();
-		int size = 10;
+		int size = 40;
 		ActorRef dest = null;
 		ActorRef ref = null;
 		for(int i=0; i<size; i++) {

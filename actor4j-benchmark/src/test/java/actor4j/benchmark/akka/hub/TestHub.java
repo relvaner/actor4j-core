@@ -12,7 +12,7 @@ import static actor4j.benchmark.akka.hub.ActorMessageTag.*;
 
 public class TestHub {
 	public TestHub() {
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-hub");
 		
 		final AtomicLong counter = new AtomicLong();
 		ActorRef dest = system.actorOf(Props.create(Destination.class, counter).withDispatcher("my-dispatcher"));

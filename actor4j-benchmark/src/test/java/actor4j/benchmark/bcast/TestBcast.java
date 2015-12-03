@@ -12,13 +12,13 @@ import actor4j.core.utils.ActorGroup;
 
 public class TestBcast {
 	public TestBcast() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem("actor4j::Bcast");
 		//system.setParallelismFactor(1);
 		//system.setParallelismMin(1);
 		system.hardMode();
 		
 		ActorGroup group = new ActorGroup();
-		int size = 4;
+		int size = 100;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
 			id = system.addActor(TestActor.class, group);

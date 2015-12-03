@@ -9,7 +9,7 @@ import akka.actor.Props;
 
 public class TestBcast {
 	public TestBcast() {
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-bcast");
 		
 		final HubPattern hub = new HubPattern();
 		int size = 2;

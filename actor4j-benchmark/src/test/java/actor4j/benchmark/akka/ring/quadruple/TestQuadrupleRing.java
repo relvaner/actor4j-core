@@ -10,7 +10,7 @@ import akka.actor.Props;
 
 public class TestQuadrupleRing {
 	public TestQuadrupleRing() {	
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-quadruple-ring");
 		
 		final AtomicLong counter = new AtomicLong();
 		

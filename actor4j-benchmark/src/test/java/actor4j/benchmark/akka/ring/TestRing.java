@@ -16,7 +16,7 @@ public class TestRing {
 			e.printStackTrace();
 		}
 		
-		ActorSystem system = ActorSystem.create("test");
+		ActorSystem system = ActorSystem.create("akka-benchmark-ring");
 		
 		final AtomicLong counter = new AtomicLong();
 		int size = 100;
