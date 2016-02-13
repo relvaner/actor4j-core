@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.ring.quadruple.bulk;
+package actor4j.benchmark.ring.nfold.bulk;
 
-import static actor4j.benchmark.ring.quadruple.bulk.ActorMessageTag.MSG;
-import static actor4j.benchmark.ring.quadruple.bulk.ActorMessageTag.RUN;
+import static actor4j.benchmark.ring.nfold.bulk.ActorMessageTag.MSG;
+import static actor4j.benchmark.ring.nfold.bulk.ActorMessageTag.RUN;
 
 import java.util.UUID;
 

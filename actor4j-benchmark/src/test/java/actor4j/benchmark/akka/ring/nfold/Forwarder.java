@@ -1,4 +1,4 @@
-package actor4j.benchmark.akka.ring.quadruple;
+package actor4j.benchmark.akka.ring.nfold;
 
 import actor4j.benchmark.akka.ActorMessage;
 import akka.actor.ActorRef;

@@ -1,7 +1,9 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.ring.quadruple.bulk;
+package actor4j.benchmark.ring.nfold.bulk;
+
+import static actor4j.benchmark.ring.nfold.bulk.ActorMessageTag.RUN;
 
 import java.util.UUID;
 
@@ -10,11 +12,9 @@ import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 
-import static actor4j.benchmark.ring.quadruple.bulk.ActorMessageTag.RUN;
-
-public class TestQuadrupleRing {
-	public TestQuadrupleRing() {
-		ActorSystem system = new ActorSystem("actor4j::TestQuadrupleRing-Bulk");
+public class TestNFoldRing {
+	public TestNFoldRing() {
+		ActorSystem system = new ActorSystem("actor4j::TestNFoldRing-Bulk");
 		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
@@ -40,6 +40,6 @@ public class TestQuadrupleRing {
 	}
 	
 	public static void main(String[] args) {
-		new TestQuadrupleRing();
+		new TestNFoldRing();
 	}
 }

@@ -1,4 +1,4 @@
-package actor4j.benchmark.akka.ring.quadruple;
+package actor4j.benchmark.akka.ring.nfold;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -8,9 +8,9 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 
-public class TestQuadrupleRing {
-	public TestQuadrupleRing() {	
-		ActorSystem system = ActorSystem.create("akka-benchmark-quadruple-ring");
+public class TestNFoldRing {
+	public TestNFoldRing() {	
+		ActorSystem system = ActorSystem.create("akka-benchmark-nfold-ring");
 		
 		final AtomicLong counter = new AtomicLong();
 		
@@ -34,6 +34,6 @@ public class TestQuadrupleRing {
 	}
 	
 	public static void main(String[] args) {
-		new TestQuadrupleRing();
+		new TestNFoldRing();
 	}
 }

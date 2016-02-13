@@ -1,4 +1,4 @@
-package actor4j.benchmark.akka.ring.quadruple;
+package actor4j.benchmark.akka.ring.nfold;
 
 import java.util.concurrent.atomic.AtomicLong;
 

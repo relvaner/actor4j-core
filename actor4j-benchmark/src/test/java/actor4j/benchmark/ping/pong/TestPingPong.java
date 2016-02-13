@@ -16,7 +16,7 @@ public class TestPingPong {
 	public TestPingPong() {
 		ActorSystem system = new ActorSystem("actor4j::TestPingPong");
 		//system.setParallelismFactor(1);
-		//system.setParallelismMin(1);
+		system.setParallelismMin(1);
 		system.softMode();
 		
 		ActorGroup group = new ActorGroup();
