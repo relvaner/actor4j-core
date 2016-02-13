@@ -16,10 +16,14 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import actor4j.core.ActorService;
 
 public abstract class RESTActorApplication extends ResourceConfig {
-	protected ActorService service;
+	protected static ActorService service;
 	
 	public RESTActorApplication() {
 		this(null);
+	}
+	
+	public static ActorService getService() {
+		return service;
 	}
 	
 	public RESTActorApplication(String name) {
