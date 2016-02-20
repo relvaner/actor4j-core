@@ -19,7 +19,7 @@ public class TestNFoldRing {
 		system.setParallelismFactor(1);
 		system.softMode();
 		
-		for (int j=0; j<4; j++) {
+		for (int j=0; j<Runtime.getRuntime().availableProcessors(); j++) {
 			ActorGroup group = new ActorGroup();
 			
 			UUID next = system.addActor(Forwarder.class, group);

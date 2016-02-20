@@ -14,7 +14,7 @@ public class TestNFoldRing {
 		
 		final AtomicLong counter = new AtomicLong();
 		
-		for(int j=0; j<4; j++) {
+		for(int j=0; j<Runtime.getRuntime().availableProcessors(); j++) {
 			int size = 100;
 			ActorRef next = system.actorOf(Props.create(Forwarder.class).withDispatcher("my-dispatcher"));
 			for(int i=0; i<size-2; i++) {
