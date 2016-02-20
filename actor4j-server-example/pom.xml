@@ -9,17 +9,10 @@
   	<artifactId>actor4j-server-example</artifactId>
   	
   	<dependencies>
-  	
   		<dependency>
    			<groupId>actor4j-server</groupId>
    			<artifactId>actor4j-server</artifactId>
    			<version>1.0.0</version>
-   			<exclusions>
-   				<exclusion>
-   					<artifactId>actor4j-m-research</artifactId>
-   					<groupId>actor4j-m-research</groupId>
-   				</exclusion>
-   			</exclusions>
   		</dependency>
   	</dependencies>
 </project>
