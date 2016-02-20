@@ -18,6 +18,7 @@
 		<module>actor4j-persistence</module>
 		<module>actor4j-persistence-example</module>
 		<module>actor4j-benchmark-ejb</module>
+		
 	</modules>
 	
 	<dependencies>

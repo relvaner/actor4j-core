@@ -9,10 +9,12 @@ import actor4j.benchmark.Benchmark;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
+import actor4j.research.design.flow.FlowActorSystemImpl;
 
 public class TestBcast {
 	public TestBcast() {
-		ActorSystem system = new ActorSystem("actor4j::Bcast");
+		//ActorSystem system = new ActorSystem("actor4j::Bcast");
+		ActorSystem system = new ActorSystem("actor4j::Bcast", FlowActorSystemImpl.class);
 		//system.setParallelismFactor(1);
 		//system.setParallelismMin(1);
 		system.hardMode();
