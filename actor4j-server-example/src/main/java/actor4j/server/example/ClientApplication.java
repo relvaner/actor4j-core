@@ -40,9 +40,9 @@ public class ClientApplication {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
-		system.addURI("http://localhost:8080/actor4j-server-example-jetty/api");
-		//system.addURI("http://localhost:8080/actor4j-m-server-example/api");
-		//system.addURI("http://192.168.0.100:8080/actor4j-m-server-example/api");
+		//system.addURI("http://localhost:8080/actor4j-server-example-jetty/api");
+		system.addURI("http://localhost:8080/actor4j-server-example/api");
+		//system.addURI("http://192.168.0.100:8080/actor4j-server-example/api");
 		
 		//UUID client = system.addActor(Client.class, UUID.fromString("490a452e-d53f-41b5-b740-7eada0ae372f"));
 		UUID client = system.addActor(new ActorFactory() {

@@ -8,10 +8,10 @@
   	<groupId>actor4j-research</groupId>
   	<artifactId>actor4j-research</artifactId>
 	<dependencies>
-	      <dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-collections4</artifactId>
-			<version>4.0</version>
+		<dependency>
+			<groupId>actor4j-core</groupId>
+			<artifactId>actor4j-core</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

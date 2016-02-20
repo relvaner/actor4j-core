@@ -10,9 +10,14 @@
 		<module>actor4j-benchmark</module>
 		<module>actor4j-server</module>
 		<module>actor4j-server-example</module>
+		<module>actor4j-server-example-jetty</module>
 		<module>actor4j-analyze</module>
 		<module>actor4j-analyze-example</module>
 		<module>actor4j-research</module>
+		<module>actor4j-research-utils</module>
+		<module>actor4j-persistence</module>
+		<module>actor4j-persistence-example</module>
+		<module>actor4j-benchmark-ejb</module>
 	</modules>
 	
 	<dependencies>
