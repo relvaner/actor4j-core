@@ -9,6 +9,7 @@
   	<artifactId>actor4j-server-example</artifactId>
   	
   	<dependencies>
+  	
   		<dependency>
    			<groupId>actor4j-server</groupId>
    			<artifactId>actor4j-server</artifactId>
