@@ -56,7 +56,11 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
-		if (system.clientMode && !system.cells.containsKey(message.dest)) {
+		if (system.pseudoCells.containsKey(message.dest)) {
+			consumerPseudo.accept(message.copy());
+			return;
+		}
+		else if (system.clientMode && !system.cells.containsKey(message.dest)) {
 			system.executerService.client(message.copy(), alias);
 			return;
 		}
@@ -64,7 +68,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			system.executerService.resource(message.copy());
 			return;
 		}
-			
+		
 		if (system.parallelismMin==1 && system.parallelismFactor==1)
 			((DefaultActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
 		else {
@@ -77,9 +81,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 					((DefaultActorThread)threadsMap.get(id_dest)).innerQueue.offer(message.copy());
 				else
 					((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
-			}
-			else 
-				consumerPseudo.accept(message.copy());
+			}	
 		}
 	}
 	
