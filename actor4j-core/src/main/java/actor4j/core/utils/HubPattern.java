@@ -3,8 +3,6 @@
  */
 package actor4j.core.utils;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 import actor4j.core.actors.Actor;
@@ -13,14 +11,14 @@ import actor4j.core.messages.ActorMessage;
 public class HubPattern {
 	protected Actor actor;
 	
-	protected List<UUID> ports;
+	protected ActorGroup ports;
 
 	public HubPattern(Actor actor) {
 		super();
 		
 		this.actor = actor;
 		
-		ports = new LinkedList<>();
+		ports = new ActorGroup();
 	}
 	
 	public HubPattern(Actor actor, ActorGroup group) {

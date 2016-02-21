@@ -27,6 +27,10 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		((PseudoActorCell)cell).run();
 	}
 	
+	public void runOnce() {
+		((PseudoActorCell)cell).runOnce();
+	}
+	
 	public Observable<ActorMessage<?>> runWithRx() {
 		return ((PseudoActorCell)cell).runWithRx();
 	}
