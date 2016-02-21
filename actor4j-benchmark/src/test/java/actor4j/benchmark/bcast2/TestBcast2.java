@@ -9,6 +9,7 @@ import actor4j.benchmark.Benchmark;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
+import actor4j.core.utils.ActorGroupAsList;
 
 public class TestBcast2 {
 	public TestBcast2() {
@@ -17,7 +18,7 @@ public class TestBcast2 {
 		//system.setParallelismMin(1);
 		system.softMode();
 		
-		ActorGroup group = new ActorGroup();
+		ActorGroupAsList group = new ActorGroupAsList();
 		int size = 100;
 		UUID id = null;
 		for(int i=0; i<size; i++) {
@@ -25,7 +26,7 @@ public class TestBcast2 {
 			group.add(id);
 		}
 		
-		system.broadcast((new ActorMessage<Object>(new Object(), 0, id, null)), group);
+		system.broadcast((new ActorMessage<Object>(new Object(), 0, id, null)), new ActorGroup(group));
 		
 		
 		Benchmark benchmark = new Benchmark(system, 30000);

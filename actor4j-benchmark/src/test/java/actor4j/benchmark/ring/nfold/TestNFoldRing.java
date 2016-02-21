@@ -13,7 +13,7 @@ import actor4j.core.utils.ActorGroup;
 public class TestNFoldRing {
 	public TestNFoldRing() {
 		ActorSystem system = new ActorSystem("actor4j::TestNFoldRing");
-		system.setParallelismMin(1);
+		//system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
 		
@@ -22,7 +22,7 @@ public class TestNFoldRing {
 			
 			UUID next = system.addActor(Forwarder.class, group);
 			group.add(next); // TODO temporary
-			int size = 1000;
+			int size = 100;
 			for(int i=0; i<size-2; i++) {
 				next = system.addActor(Forwarder.class, group, next);
 				group.add(next); // TODO temporary

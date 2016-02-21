@@ -8,14 +8,14 @@ import java.util.UUID;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorGroup;
+import actor4j.core.utils.ActorGroupAsList;
 import actor4j.core.utils.HubPattern;
 
 public class TestActor extends Actor {
-	protected ActorGroup group;
+	protected ActorGroupAsList group;
 	protected HubPattern hub;
 	
-	public TestActor(ActorGroup group) {
+	public TestActor(ActorGroupAsList group) {
 		super();
 		
 		this.group = group;
