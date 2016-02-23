@@ -3,23 +3,30 @@
  */
 package actor4j.benchmark.network;
 
+import java.util.UUID;
+
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.messages.RemoteActorMessage;
 
-public class RequestHandler extends Actor {
+public class Client extends Actor {
+	protected UUID next;
 	protected String alias;
 	
-	public RequestHandler(String alias) {
+	public Client(UUID next) {
+		super("client");
+		
+		this.next = next;
+	}
+	
+	public Client(String alias) {
 		super();
 		
 		this.alias = alias;
 	}
-	
+
 	@Override
 	public void receive(ActorMessage<?> message) {
-		RemoteActorMessage.optionalConvertValue(message, Payload.class);
-		
-		tell(message.value, 0, alias);
+		for (int i=0; i<message.tag; i++)
+			tell(message, 0, alias);
 	}
 }

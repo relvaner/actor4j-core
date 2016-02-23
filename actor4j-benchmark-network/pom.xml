@@ -7,23 +7,12 @@
 	</parent>
   	<groupId>actor4j-benchmark-network</groupId>
   	<artifactId>actor4j-benchmark-network</artifactId>
-  	<packaging>pom</packaging>
-  	
-  	<modules>
-  		<module>actor4j-benchmark-network-ping</module>
-  		<module>actor4j-benchmark-network-pong</module>
-  	</modules>
   	
   	<dependencies>
   		<dependency>
    			<groupId>actor4j-server</groupId>
    			<artifactId>actor4j-server</artifactId>
    			<version>1.0.0</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>actor4j-core</groupId>
-  			<artifactId>actor4j-core</artifactId>
-  			<version>1.0.0</version>
   		</dependency>
   	</dependencies>
 </project>

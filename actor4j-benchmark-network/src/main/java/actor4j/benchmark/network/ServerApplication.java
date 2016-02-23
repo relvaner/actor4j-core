@@ -16,24 +16,23 @@ import actor4j.core.ActorTimer;
 import actor4j.server.RESTActorApplication;
 
 @ApplicationPath("api")
-public class PingApplication extends RESTActorApplication {
+public class ServerApplication extends RESTActorApplication {
 	@Override
 	protected void configure(ActorService service) {
 		service.setParallelismMin(1);
 		service.setParallelismFactor(1);
 		service.hardMode();
-		service.addURI("http://localhost:8080/actor4j-benchmark-network-pong/api");
 		
-		UUID requestHandler = service.addActor(new ActorFactory() {
+		UUID server = service.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
-				return new RequestHandler("pong");
+				return new Server();
 			}
 		});
-		service.setAlias(requestHandler, "ping");
-		System.out.println(requestHandler);
+		service.setAlias(server, "server");
+		System.out.println(server);
 		
-		UUID benchmark = service.addActor(() -> new Actor() {
+		service.addActor(() -> new Actor("benchmark") {
 			protected long iteration;
 			protected long lastCount;
 			protected DecimalFormat decimalFormat;
@@ -49,9 +48,9 @@ public class PingApplication extends RESTActorApplication {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (iteration>=60) {
+				if (iteration>=120) {
 					timer.cancel();
-					tell(null, Actor.POISONPILL, requestHandler);
+					tell(null, Actor.POISONPILL, server);
 				}
 					
 				long count = service.underlyingImpl().getExecuterService().getCount();
@@ -62,9 +61,5 @@ public class PingApplication extends RESTActorApplication {
 				lastCount = count;
 			}
 		});
-
-		Payload payload = new Payload();
-		payload.data = "";
-		service.send(new ActorMessage<Object>(payload, 0, service.SYSTEM_ID, requestHandler));
 	}
 }
