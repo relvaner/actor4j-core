@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.network;
+package actor4j.benchmark.server;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;

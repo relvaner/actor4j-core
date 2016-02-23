@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.network;
+package actor4j.benchmark.server;
 
 import java.text.DecimalFormat;
 import java.util.UUID;
@@ -19,18 +19,18 @@ import actor4j.server.RESTActorApplication;
 public class ServerApplication extends RESTActorApplication {
 	@Override
 	protected void configure(ActorService service) {
-		service.setParallelismMin(1);
 		service.setParallelismFactor(1);
-		service.hardMode();
+		service.softMode();
 		
-		UUID server = service.addActor(new ActorFactory() {
-			@Override
-			public Actor create() {
-				return new Server();
-			}
-		});
-		service.setAlias(server, "server");
-		System.out.println(server);
+		for (int i=0; i<service.getParallelismMin()*service.getParallelismFactor(); i++) {
+			UUID server = service.addActor(new ActorFactory() {
+				@Override
+				public Actor create() {
+					return new Server();
+				}
+			});
+			service.setAlias(server, "server"+i);
+		}
 		
 		service.addActor(() -> new Actor("benchmark") {
 			protected long iteration;
@@ -50,7 +50,8 @@ public class ServerApplication extends RESTActorApplication {
 			public void receive(ActorMessage<?> message) {
 				if (iteration>=120) {
 					timer.cancel();
-					tell(null, Actor.POISONPILL, server);
+					for (int i=0; i<service.getParallelismMin()*service.getParallelismFactor(); i++)
+						tell(null, Actor.POISONPILL, "server"+i);
 				}
 					
 				long count = service.underlyingImpl().getExecuterService().getCount();

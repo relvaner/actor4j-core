@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.network;
+package actor4j.benchmark.server;
 
 import java.util.UUID;
 
@@ -29,8 +29,8 @@ public class ClientApplication {
 	protected void configure(ActorSystem system) {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
-		system.hardMode();
-		system.addURI("http://localhost:8080/actor4j-benchmark-network/api");
+		system.softMode();
+		system.addURI("http://localhost:8080/actor4j-benchmark-server/api");
 		
 		UUID client = system.addActor(new ActorFactory() {
 			@Override
@@ -41,7 +41,7 @@ public class ClientApplication {
 		Payload payload = new Payload();
 		payload.data = "";
 		
-		system.timer().schedule(new ActorMessage<Payload>(payload, 125, system.SYSTEM_ID, null), client, 1000, 1000);
+		system.timer().schedule(new ActorMessage<Payload>(payload, 200, system.SYSTEM_ID, null), client, 1000, 1000);
 	}
 	
 	public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package actor4j.benchmark.network;
+package actor4j.benchmark.server;
 
 public class Payload {
 	public String data;
