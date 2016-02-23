@@ -18,7 +18,7 @@ public class PongApplication extends RESTActorApplication {
 	protected void configure(ActorService service) {
 		service.setParallelismMin(1);
 		service.setParallelismFactor(1);
-		service.softMode();
+		service.hardMode();
 		service.addURI("http://localhost:8080/actor4j-benchmark-network-ping/api");
 		
 		UUID requestHandler = service.addActor(new ActorFactory() {
