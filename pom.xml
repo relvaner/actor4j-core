@@ -20,6 +20,7 @@
 		<module>actor4j-benchmark</module>
 		<module>actor4j-benchmark-ejb</module>
 		<module>actor4j-benchmark-server-rest</module>
+		<module>actor4j-server-websocket</module>
 	</modules>
 	
 	<dependencies>
