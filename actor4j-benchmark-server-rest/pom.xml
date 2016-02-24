@@ -5,13 +5,13 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-benchmark-server</groupId>
-  	<artifactId>actor4j-benchmark-server</artifactId>
+  	<groupId>actor4j-benchmark-server-rest</groupId>
+  	<artifactId>actor4j-benchmark-server-rest</artifactId>
   	
   	<dependencies>
   		<dependency>
-   			<groupId>actor4j-server</groupId>
-   			<artifactId>actor4j-server</artifactId>
+   			<groupId>actor4j-server-rest</groupId>
+   			<artifactId>actor4j-server-rest</artifactId>
    			<version>1.0.0</version>
   		</dependency>
   	</dependencies>
