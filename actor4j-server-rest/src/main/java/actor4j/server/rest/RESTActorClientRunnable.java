@@ -19,6 +19,7 @@ import com.google.common.cache.LoadingCache;
 
 import actor4j.core.ActorClientRunnable;
 import actor4j.core.messages.ActorMessage;
+import actor4j.server.core.TransferActorMessage;
 
 public class RESTActorClientRunnable implements ActorClientRunnable {
 	protected List<String> serverURIs;
@@ -108,7 +109,7 @@ public class RESTActorClientRunnable implements ActorClientRunnable {
 		if ((index=cache.getUnchecked(message.dest))!=-1) {
 			try {
 				Client client = RESTActorClient.createClient();
-				RESTActorClient.sendMessage(client, serverURIs.get(index), new RESTActorMessage(message.value, message.tag, message.source.toString(), message.dest.toString()));
+				RESTActorClient.sendMessage(client, serverURIs.get(index), new TransferActorMessage(message.value, message.tag, message.source.toString(), message.dest.toString()));
 				client.close();
 			} catch (IOException e) {
 				e.printStackTrace();

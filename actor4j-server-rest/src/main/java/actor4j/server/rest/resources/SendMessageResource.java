@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.ActorService;
 import actor4j.core.messages.RemoteActorMessage;
-import actor4j.server.rest.RESTActorMessage;
+import actor4j.server.core.TransferActorMessage;
 
 @Path("/sendmessage")
 public class SendMessageResource {
@@ -32,9 +32,9 @@ public class SendMessageResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
     public Response sendMessage(String json) {
-		RESTActorMessage message = null;
+		TransferActorMessage message = null;
 		try {
-			message = new ObjectMapper().readValue(json, RESTActorMessage.class);
+			message = new ObjectMapper().readValue(json, TransferActorMessage.class);
 		} catch (JsonParseException e) {
 			HashMap<String, String> map = new HashMap<>();
 			map.put("error", e.getMessage());

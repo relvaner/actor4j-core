@@ -34,5 +34,10 @@
    			<artifactId>actor4j-core</artifactId>
    			<version>1.0.0</version>
    		</dependency>
+   		<dependency>
+   			<groupId>actor4j</groupId>
+   			<artifactId>actor4j-server-core</artifactId>
+   			<version>1.0.0</version>
+   		</dependency>
   	</dependencies>
 </project>
