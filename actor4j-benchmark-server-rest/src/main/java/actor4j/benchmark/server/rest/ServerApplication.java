@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.server;
+package actor4j.benchmark.server.rest;
 
 import java.text.DecimalFormat;
 import java.util.UUID;
@@ -12,8 +12,8 @@ import actor4j.core.ActorService;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
+import actor4j.server.rest.RESTActorApplication;
 import actor4j.core.ActorTimer;
-import actor4j.server.RESTActorApplication;
 
 @ApplicationPath("api")
 public class ServerApplication extends RESTActorApplication {

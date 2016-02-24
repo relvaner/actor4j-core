@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.server;
+package actor4j.benchmark.server.rest;
 
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
-import actor4j.server.RESTActorClientRunnable;
+import actor4j.server.rest.RESTActorClientRunnable;
 
 public class ClientApplication {
 	public ClientApplication() {

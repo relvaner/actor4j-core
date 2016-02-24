@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.server;
+package actor4j.server.rest;
 
 import java.io.IOException;
 import java.util.HashMap;

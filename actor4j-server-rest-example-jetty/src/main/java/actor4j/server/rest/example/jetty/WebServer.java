@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015-2016, David A. Bauer
  */
-package actor4j.server.example.jetty;
+package actor4j.server.rest.example.jetty;
 
 import java.net.URI;
 
@@ -10,7 +10,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
 
-import actor4j.server.example.ServerApplication;
+import actor4j.server.rest.example.ServerApplication;
 
 public class WebServer {
 	public static void main(String[] args) throws Exception {

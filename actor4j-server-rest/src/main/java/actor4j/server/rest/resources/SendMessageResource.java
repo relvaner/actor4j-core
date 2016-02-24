@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.server.resources;
+package actor4j.server.rest.resources;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.ActorService;
 import actor4j.core.messages.RemoteActorMessage;
-import actor4j.server.RESTActorMessage;
+import actor4j.server.rest.RESTActorMessage;
 
 @Path("/sendmessage")
 public class SendMessageResource {

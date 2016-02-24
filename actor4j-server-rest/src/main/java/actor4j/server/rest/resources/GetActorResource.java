@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.server.resources;
+package actor4j.server.rest.resources;
 
 import java.util.HashMap;
 import java.util.Map;

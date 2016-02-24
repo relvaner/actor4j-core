@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.server;
+package actor4j.server.rest;
 
 import java.io.IOException;
 import javax.ws.rs.client.Client;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import actor4j.server.utils.RESTClient;
+import actor4j.server.rest.utils.RESTClient;
 
 public class RESTActorClient extends RESTClient {
 	public static Response version(Client client, String uri) {

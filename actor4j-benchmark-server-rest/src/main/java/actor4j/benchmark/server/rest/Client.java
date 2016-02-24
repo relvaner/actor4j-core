@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.benchmark.server;
+package actor4j.benchmark.server.rest;
 
 import java.util.Random;
 import java.util.UUID;

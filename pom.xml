@@ -7,7 +7,7 @@
 	
 	<modules>
 		<module>actor4j-core</module>
-		<module>actor4j-benchmark</module>
+		<module>actor4j-server-core</module>
 		<module>actor4j-server-rest</module>
 		<module>actor4j-server-rest-example</module>
 		<module>actor4j-server-rest-example-jetty</module>
@@ -17,6 +17,7 @@
 		<module>actor4j-research-utils</module>
 		<module>actor4j-persistence</module>
 		<module>actor4j-persistence-example</module>
+		<module>actor4j-benchmark</module>
 		<module>actor4j-benchmark-ejb</module>
 		<module>actor4j-benchmark-server-rest</module>
 	</modules>

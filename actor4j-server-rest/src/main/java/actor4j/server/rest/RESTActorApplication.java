@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.server;
+package actor4j.server.rest;
 
 import static actor4j.core.utils.ActorLogger.*;
 
@@ -44,7 +44,7 @@ public abstract class RESTActorApplication extends ResourceConfig {
 
 		register(new JacksonJsonProvider().configure(SerializationFeature.INDENT_OUTPUT, true));
 
-		packages("actor4j.server");
+		packages("actor4j.server.rest");
 	}
 	
 	protected abstract void configure(ActorService service);
