@@ -199,7 +199,7 @@ public class ActorCell {
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
 		
-		ActorCell cell = system.generateDefaultCell(null);
+		ActorCell cell = system.generateCell(clazz);
 		system.container.registerConstructorInjector(cell.id, clazz, params);
 		try {
 			Actor child = (Actor)system.container.getInstance(cell.id);
@@ -212,7 +212,7 @@ public class ActorCell {
 	}
 	
 	public UUID addChild(ActorFactory factory) {
-		ActorCell cell = system.generateDefaultCell(factory.create());
+		ActorCell cell = system.generateCell(factory.create());
 		system.container.registerFactoryInjector(cell.id, factory);
 		
 		return internal_addChild(cell);

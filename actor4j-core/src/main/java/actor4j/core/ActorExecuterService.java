@@ -154,20 +154,15 @@ public class ActorExecuterService {
 	}
 	
 	public void resource(final ActorMessage<?> message) {
-		final ActorCell cell = system.cells.get(message.dest);
-		if (cell!=null)
+		final ResourceActorCell cell = (ResourceActorCell)system.cells.get(message.dest);
+		if (cell!=null) {
 			resourceExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					try {
-						cell.internal_receive(message);
-					}
-					catch(Exception e) {
-						SafetyManager.getInstance().notifyErrorHandler(e, "resource", cell.id);
-						system.actorStrategyOnFailure.handle(cell, e);
-					}	
+					cell.run(message);
 				}
 			});
+		}
 	}
 	
 	public void shutdown(boolean await) {

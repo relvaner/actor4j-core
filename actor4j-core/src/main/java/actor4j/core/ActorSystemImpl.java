@@ -127,7 +127,7 @@ public abstract class ActorSystemImpl {
 		
 		countDownLatch = new CountDownLatch(1);
 		
-		USER_ID = internal_addCell(generateDefaultCell(new Actor("user") {
+		USER_ID = internal_addCell(generateCell(new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -138,13 +138,13 @@ public abstract class ActorSystemImpl {
 				countDownLatch.countDown();
 			}
 		}));
-		SYSTEM_ID = internal_addCell(generateDefaultCell(new Actor("system") {
+		SYSTEM_ID = internal_addCell(generateCell(new Actor("system") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
 			}
 		}));
-		UNKNOWN_ID = internal_addCell(generateDefaultCell(new Actor("unknown") {
+		UNKNOWN_ID = internal_addCell(generateCell(new Actor("unknown") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -152,7 +152,9 @@ public abstract class ActorSystemImpl {
 		}));
 	}
 	
-	public abstract ActorCell generateDefaultCell(Actor actor);
+	public abstract ActorCell generateCell(Actor actor);
+	
+	public abstract ActorCell generateCell(Class<? extends Actor> clazz);
 	
 	public String getName() {
 		return name;
@@ -306,7 +308,7 @@ public abstract class ActorSystemImpl {
 			actor.setCell(cell);
 			cells.put(cell.id, cell);
 			if (actor instanceof ResourceActor)
-				resourceCells.put(cell.id, true);
+				resourceCells.put(cell.id, false);
 		}
 		return cell.id;
 	}
@@ -328,7 +330,7 @@ public abstract class ActorSystemImpl {
 		for (int i=0; i<args.length; i++)
 			params[i] = InjectorParam.createWithObj(args[i]);
 		
-		ActorCell cell = generateDefaultCell(null);
+		ActorCell cell = generateCell(clazz);
 		container.registerConstructorInjector(cell.id, clazz, params);
 		Actor actor = null;
 		try {
@@ -343,7 +345,7 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public UUID addActor(ActorFactory factory) {
-		ActorCell cell = generateDefaultCell(factory.create());
+		ActorCell cell = generateCell(factory.create());
 		container.registerFactoryInjector(cell.id, factory);
 		
 		return user_addCell(cell);
