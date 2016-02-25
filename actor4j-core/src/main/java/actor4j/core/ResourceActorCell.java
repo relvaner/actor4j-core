@@ -55,8 +55,7 @@ public class ResourceActorCell extends ActorCell {
 				internal_receive(message);
 				
 				if (stateful) {
-					boolean loop = true;
-					while (loop) {
+					while (true) {
 						while ((message=queue.poll())!=null)
 							internal_receive(message);
 						
@@ -66,7 +65,7 @@ public class ResourceActorCell extends ActorCell {
 						
 							if (queue.peek()==null) {
 								status = false;
-								loop   = false;
+								break;
 							}	
 						}
 						finally {
