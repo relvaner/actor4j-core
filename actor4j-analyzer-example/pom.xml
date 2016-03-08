@@ -5,12 +5,12 @@
 		<artifactId>actor4j</artifactId>
 		<version>1.0.0</version>
 	</parent>
-	<groupId>actor4j-analyze-example</groupId>
-	<artifactId>actor4j-analyze-example</artifactId>
+	<groupId>actor4j-analyzer-example</groupId>
+	<artifactId>actor4j-analyzer-example</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>actor4j-analyze</groupId>
-			<artifactId>actor4j-analyze</artifactId>
+			<groupId>actor4j-analyzer</groupId>
+			<artifactId>actor4j-analyzer</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

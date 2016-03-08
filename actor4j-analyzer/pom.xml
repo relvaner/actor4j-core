@@ -5,8 +5,8 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-analyze</groupId>
-  	<artifactId>actor4j-analyze</artifactId>
+  	<groupId>actor4j-analyzer</groupId>
+  	<artifactId>actor4j-analyzer</artifactId>
   	
   	<dependencies>
   		<dependency>

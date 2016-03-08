@@ -11,8 +11,8 @@
 		<module>actor4j-server-rest</module>
 		<module>actor4j-server-rest-example</module>
 		<module>actor4j-server-rest-example-jetty</module>
-		<module>actor4j-analyze</module>
-		<module>actor4j-analyze-example</module>
+		<module>actor4j-analyzer</module>
+		<module>actor4j-analyzer-example</module>
 		<module>actor4j-research</module>
 		<module>actor4j-research-utils</module>
 		<module>actor4j-persistence</module>
