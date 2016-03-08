@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015-2016, David A. Bauer
  */
-package actor4j.analyze;
+package actor4j.analyzer;
 
 import actor4j.core.ActorSystem;
 

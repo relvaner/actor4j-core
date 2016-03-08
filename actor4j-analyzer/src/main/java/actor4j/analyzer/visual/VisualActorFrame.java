@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.analyze.visual;
+package actor4j.analyzer.visual;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;

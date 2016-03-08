@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.analyze;
+package actor4j.analyzer;
 
 import java.util.Map;
 import java.util.UUID;
@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 
-import actor4j.analyze.visual.VisualActorAnalyzer;
+import actor4j.analyzer.visual.VisualActorAnalyzer;
 import actor4j.core.ActorCell;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;

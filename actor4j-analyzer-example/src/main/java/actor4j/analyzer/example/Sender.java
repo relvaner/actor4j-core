@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.analyze.example;
+package actor4j.analyzer.example;
 
 import java.util.UUID;
 

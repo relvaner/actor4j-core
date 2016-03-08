@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.analyze.example;
+package actor4j.analyzer.example;
 
 import java.util.UUID;
 
-import actor4j.analyze.ActorAnalyzer;
-import actor4j.analyze.DefaultActorAnalyzerThread;
+import actor4j.analyzer.ActorAnalyzer;
+import actor4j.analyzer.DefaultActorAnalyzerThread;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
@@ -14,8 +14,8 @@ import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
 import actor4j.core.utils.HubPattern;
 
-public class AnalyzeExample {
-	public AnalyzeExample() {
+public class AnalyzerExample {
+	public AnalyzerExample() {
 		ActorSystem system = new ActorAnalyzer(new DefaultActorAnalyzerThread(2000, true));
 
 		final int size = 2;
@@ -132,6 +132,6 @@ public class AnalyzeExample {
 	}
 
 	public static void main(String[] args) {
-		new AnalyzeExample();
+		new AnalyzerExample();
 	}
 }
