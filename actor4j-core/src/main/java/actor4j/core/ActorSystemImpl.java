@@ -152,10 +152,20 @@ public abstract class ActorSystemImpl {
 		}));
 	}
 	
-	public abstract ActorCell generateCell(Actor actor);
+	public ActorCell generateCell(Actor actor) {
+		if (actor instanceof ResourceActor)
+			return new ResourceActorCell(this, actor);
+		else
+			return new ActorCell(this, actor);
+	}
 	
-	public abstract ActorCell generateCell(Class<? extends Actor> clazz);
-	
+	public ActorCell generateCell(Class<? extends Actor> clazz) {
+		if (clazz==ResourceActor.class)
+			return new ResourceActorCell(this, null);
+		else
+			return new ActorCell(this, null);
+	}
+
 	public String getName() {
 		return name;
 	}
