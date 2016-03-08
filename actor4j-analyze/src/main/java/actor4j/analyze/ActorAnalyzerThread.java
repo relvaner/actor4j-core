@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015, David A. Bauer
  */
-package actor4j.core;
+package actor4j.analyze;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -10,6 +10,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
+import actor4j.core.ActorCell;
+import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 import tools4j.utils.Timer;
 import tools4j.utils.TimerListener;
@@ -35,7 +37,7 @@ public abstract class ActorAnalyzerThread extends Thread {
 		timer = new Timer(delay, new TimerListener() {
 			@Override
 			public void task() {	
-				update(system.cells);
+				update(system.getCells());
 			}
 		});
 	}
@@ -79,11 +81,11 @@ public abstract class ActorAnalyzerThread extends Thread {
 			}
 			
 			if ((!hasNextOuter))
-				if (!system.softMode)
+				if (!system.isSoftMode())
 					yield();
 				else {
 					try {
-						sleep(system.softSleep);
+						sleep(system.getSoftSleep());
 					} catch (InterruptedException e) {
 						interrupt();
 					}

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.SwingUtilities;
 
-import actor4j.core.ActorAnalyzerThread;
+import actor4j.analyze.visual.VisualActorAnalyzer;
 import actor4j.core.ActorCell;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;

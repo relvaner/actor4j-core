@@ -5,6 +5,7 @@ package actor4j.analyze.example;
 
 import java.util.UUID;
 
+import actor4j.analyze.ActorAnalyzer;
 import actor4j.analyze.DefaultActorAnalyzerThread;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
@@ -15,7 +16,7 @@ import actor4j.core.utils.HubPattern;
 
 public class AnalyzeExample {
 	public AnalyzeExample() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorAnalyzer(new DefaultActorAnalyzerThread(2000, true));
 
 		final int size = 2;
 		ActorGroup group = new ActorGroup();
@@ -114,7 +115,6 @@ public class AnalyzeExample {
 		group.add(ping);
 
 		system
-			.analyze(new DefaultActorAnalyzerThread(2000, true))
 			.start();
 		
 		system.timer()
