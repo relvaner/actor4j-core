@@ -48,9 +48,6 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		if (system.analyzeMode.get())
-			system.analyzerThread.getOuterQueue().offer(message.copy());
-		
 		if (alias!=null) {
 			UUID dest = system.aliases.get(alias);
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
@@ -85,12 +82,9 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		}
 	}
 	
-	public void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {
+	protected void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {
 		if (message==null)
 			throw new NullPointerException();
-		
-		if (system.analyzeMode.get())
-			system.analyzerThread.getOuterQueue().offer(message.copy());
 		
 		if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());
@@ -108,9 +102,6 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	public void postOuter(ActorMessage<?> message) {
 		if (message==null)
 			throw new NullPointerException();
-		
-		if (system.analyzeMode.get())
-			system.analyzerThread.getOuterQueue().offer(message.copy());
 		
 		if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());

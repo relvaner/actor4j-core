@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
@@ -70,9 +69,6 @@ public abstract class ActorSystemImpl {
 	protected boolean clientMode;
 	protected ActorClientRunnable clientRunnable;
 	
-	protected AtomicBoolean analyzeMode;
-	protected ActorAnalyzerThread analyzerThread;
-	
 	protected CountDownLatch countDownLatch;
 	
 	public final UUID USER_ID;
@@ -122,9 +118,7 @@ public abstract class ActorSystemImpl {
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
 		serverURIs = new ArrayList<>();
-		
-		analyzeMode = new AtomicBoolean(false);
-		
+				
 		countDownLatch = new CountDownLatch(1);
 		
 		USER_ID = internal_addCell(generateCell(new Actor("user") {
@@ -210,26 +204,6 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
-	public ActorSystemImpl analyze(ActorAnalyzerThread analyzerThread) {
-		if (!executerService.isStarted()) {
-			this.analyzerThread = analyzerThread;
-			if (analyzerThread!=null) {
-				analyzerThread.setSystem(this);
-				analyzeMode.set(true);
-			}
-		}
-		
-		return this;
-	}
-	
-	public ActorAnalyzerThread getAnalyzerThread() {
-		return analyzerThread;
-	}
-
-	public AtomicBoolean getAnalyzeMode() {
-		return analyzeMode;
-	}
-
 	public int getParallelismMin() {
 		return parallelismMin;
 	}
@@ -453,9 +427,6 @@ public abstract class ActorSystemImpl {
 			executerService.start(new Runnable() {
 				@Override
 				public void run() {
-					if (analyzeMode.get())
-						analyzerThread.start();
-					
 					/* preStart */
 					for (ActorCell cell : cells.values())
 						cell.preStart();
@@ -475,11 +446,6 @@ public abstract class ActorSystemImpl {
 	
 	public void shutdownWithActors(final boolean await) {
 		if (executerService.isStarted()) {
-			if (analyzeMode.get()) {
-				analyzeMode.set(false);
-				analyzerThread.interrupt();
-			}
-			
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -508,13 +474,8 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public void shutdown(boolean await) {
-		if (executerService.isStarted()) {
-			if (analyzeMode.get()) {
-				analyzeMode.set(false);
-				analyzerThread.interrupt();
-			}
+		if (executerService.isStarted())
 			executerService.shutdown(await);
-		}
 	}
 	
 	public ActorExecuterService getExecuterService() {

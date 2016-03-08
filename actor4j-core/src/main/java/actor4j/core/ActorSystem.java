@@ -54,13 +54,7 @@ public class ActorSystem {
 		
 		return this;
 	}
-	
-	public ActorSystem analyze(ActorAnalyzerThread analyzerThread) {
-		system.analyze(analyzerThread);
-		
-		return this;
-	}
-	
+
 	public int getParallelismMin() {
 		return system.getParallelismMin();
 	}
