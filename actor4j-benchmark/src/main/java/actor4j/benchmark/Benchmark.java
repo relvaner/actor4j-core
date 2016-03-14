@@ -35,6 +35,7 @@ public class Benchmark {
 		final AtomicLong warmupCount = new AtomicLong();
 		
 		System.out.printf("Benchmark started (%s)...%n", system.getName());
+		system.underlyingImpl().setCounterEnabled(true);
 		system.start(new Runnable() {
 			@Override
 			public void run() {

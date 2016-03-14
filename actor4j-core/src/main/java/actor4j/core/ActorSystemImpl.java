@@ -43,6 +43,8 @@ public abstract class ActorSystemImpl {
 	protected ActorMessageDispatcher messageDispatcher;
 	protected Class<? extends ActorThread> actorThreadClass;
 	
+	protected boolean counterEnabled;
+	
 	protected int parallelismMin;
 	protected int parallelismFactor;
 	
@@ -204,6 +206,14 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public boolean isCounterEnabled() {
+		return counterEnabled;
+	}
+
+	public void setCounterEnabled(boolean counterEnabled) {
+		this.counterEnabled = counterEnabled;
+	}
+
 	public int getParallelismMin() {
 		return parallelismMin;
 	}

@@ -50,7 +50,8 @@ public abstract class ActorThread extends Thread {
 			ActorCell cell = system.cells.get(message.dest);
 			if (cell!=null)
 				safetyMethod(message, cell);
-			counter.getAndIncrement();
+			if (system.counterEnabled)
+				counter.getAndIncrement();
 			
 			result = true;
 		} 
