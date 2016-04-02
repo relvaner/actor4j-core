@@ -17,6 +17,11 @@ public class AnalyzerActorMessageDispatcher extends DefaultActorMessageDispatche
 
 	@Override
 	public void post(ActorMessage<?> message, UUID source, String alias) {
+		if (alias!=null) {
+			UUID dest = system.getAliases().get(alias);
+			if (dest!=null)
+				message.dest = dest;
+		}
 		analyze(message);
 		super.post(message, source, alias);
 	}
