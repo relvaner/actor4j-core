@@ -10,7 +10,7 @@ import javax.ws.rs.ApplicationPath;
 import actor4j.core.ActorService;
 import actor4j.core.actors.Actor;
 import actor4j.core.utils.ActorFactory;
-import actor4j.server.RESTActorApplication;
+import actor4j.server.rest.RESTActorApplication;
 
 @ApplicationPath("api")
 public class ServerApplication extends RESTActorApplication {
