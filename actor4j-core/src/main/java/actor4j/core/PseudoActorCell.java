@@ -17,6 +17,8 @@ import actor4j.core.utils.ActorMessageObservable;
 import rx.Observable;
 import safety4j.SafetyManager;
 
+import static actor4j.core.utils.ActorUtils.*;
+
 public class PseudoActorCell extends ActorCell {
 	protected Queue<ActorMessage<?>> outerQueueL2;
 	protected Queue<ActorMessage<?>> outerQueueL1;
@@ -96,6 +98,11 @@ public class PseudoActorCell extends ActorCell {
 	
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
+		if (alias!=null) {
+			UUID dest = system.aliases.get(alias);
+			message.dest = (dest!=null) ? dest : UUID_ZERO;
+		}
+		
 		system.send(message);
 	}
 	
