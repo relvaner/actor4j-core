@@ -4,7 +4,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-@Stateless
+@Stateless // or as Singleton
 public class Ping {
 	@EJB
 	Pong pong;
