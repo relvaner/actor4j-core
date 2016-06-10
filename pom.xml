@@ -21,6 +21,7 @@
 		<module>actor4j-benchmark-ejb</module>
 		<module>actor4j-benchmark-server-rest</module>
 		<module>actor4j-server-websocket</module>
+		<module>actor4j-utils</module>
 	</modules>
 	
 	<dependencies>
