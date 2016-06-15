@@ -90,20 +90,23 @@ public class VisualActorStructureViewPanel extends VisualActorViewPanel {
 		Iterator<UUID> iterator = parent.getChildren().iterator();
 		while (iterator.hasNext()) {
 			ActorCell child = actorCells.get(iterator.next());
-			if (activeCells.put(child.getId(), true)==null) {
-				Object childVertex;
-				if (child.getActor().getName()!=null)
-					childVertex = addVertex(child.getActor().getName(), ";fillColor=#00FF00");
-				else
-					childVertex = addVertex(child.getId().toString(), ";fillColor=#00FF00");
-			
-				addEdge(null, parentVertex, childVertex);
+			if (child!=null) {
+				if (activeCells.put(child.getId(), true)==null) {
+					Object childVertex;
+					if (child.getActor().getName()!=null)
+						childVertex = addVertex(child.getActor().getName(), ";fillColor=#00FF00");
+					else
+						childVertex = addVertex(child.getId().toString(), ";fillColor=#00FF00");
 				
-				cells.put(child.getId(), childVertex);
-				changed = true;
+					addEdge(null, parentVertex, childVertex);
+					
+					cells.put(child.getId(), childVertex);
+					changed = true;
+				}
+				
+				
+				analyzeActor(actorCells, child, cells.get(child.getId()));
 			}
-			
-			analyzeActor(actorCells, child, cells.get(child.getId()));
 		}
 	}
 

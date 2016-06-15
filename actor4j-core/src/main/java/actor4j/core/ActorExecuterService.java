@@ -155,7 +155,7 @@ public class ActorExecuterService {
 	
 	public void resource(final ActorMessage<?> message) {
 		final ResourceActorCell cell = (ResourceActorCell)system.cells.get(message.dest);
-		if (cell!=null) {
+		if (cell!=null && cell.beforeRun(message)) {
 			resourceExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
