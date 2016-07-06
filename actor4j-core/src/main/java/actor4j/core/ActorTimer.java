@@ -21,7 +21,7 @@ public class ActorTimer {
 	protected static final AtomicInteger index;
 	
 	static {
-		index = new AtomicInteger(-1);
+		index = new AtomicInteger(0);
 	}
 	
 	public ActorTimer(ActorSystemImpl system) {

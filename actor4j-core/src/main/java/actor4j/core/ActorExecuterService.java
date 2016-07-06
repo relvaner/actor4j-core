@@ -98,7 +98,7 @@ public class ActorExecuterService {
 			return;
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ResourceThreadFactory());
 		if (system.clientMode)
 			clientExecuterService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 		
