@@ -34,6 +34,7 @@ public class Benchmark {
 		final DescriptiveStatistics statistics = new DescriptiveStatistics();
 		final AtomicLong warmupCount = new AtomicLong();
 		
+		System.out.printf("Logical cores: %d%n", Runtime.getRuntime().availableProcessors());
 		System.out.printf("Benchmark started (%s)...%n", system.getName());
 		system.underlyingImpl().setCounterEnabled(true);
 		system.start(new Runnable() {
