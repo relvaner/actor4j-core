@@ -27,10 +27,12 @@ public class ActorBalancingOnRuntime {
 		Actor actor = cell.getActor();
 		if (actor instanceof ActorGroupMember) {
 			Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
-			if (threadId==null) 
-				groupsMap.put(((ActorGroupMember)actor).getGroupId(), pollThreadId(threadsMap));
-			else
-				cellsMap.put(cell.getId(), threadId);
+			if (threadId==null) {
+				threadId = pollThreadId(threadsMap);
+				groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
+			}
+			
+			cellsMap.put(cell.getId(), threadId);
 		}
 		else
 			cellsMap.put(cell.getId(), pollThreadId(threadsMap));
