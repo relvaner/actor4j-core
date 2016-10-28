@@ -33,4 +33,8 @@ public class WebSocketActorClientManager {
         session.getBasicRemote().sendText(message);
         return result;
 	}
+	
+	public static CompletableFuture<String> sendText(Session session, String tag, String message) throws IOException, InterruptedException, ExecutionException {
+		return sendText(session, tag+message);
+	}
 }
