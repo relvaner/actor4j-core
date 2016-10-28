@@ -27,10 +27,10 @@ public class WebSocketActorClientManager {
 	private WebSocketActorClientManager() {
 	}
 	
-	public static String sendText(Session session, String message) throws IOException, InterruptedException, ExecutionException {
-		CompletableFuture<String> future = new CompletableFuture<>();
-		sessionMap.put(session, future);
+	public static CompletableFuture<String> sendText(Session session, String message) throws IOException, InterruptedException, ExecutionException {
+		CompletableFuture<String> result = new CompletableFuture<>();
+		sessionMap.put(session, result);
         session.getBasicRemote().sendText(message);
-        return future.get();
+        return result;
 	}
 }

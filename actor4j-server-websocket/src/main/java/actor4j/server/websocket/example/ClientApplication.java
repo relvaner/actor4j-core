@@ -19,8 +19,8 @@ public class ClientApplication {
         ClientManager client = ClientManager.createClient();
         try {
             Session session = client.connectToServer(ActorClientEndpoint.class, new URI("ws://localhost:8025/websockets/actor4j"));
-            logger().debug(WebSocketActorClientManager.sendText(session, WebSocketActorClientManager.GET_ACTOR));
-            logger().debug(WebSocketActorClientManager.sendText(session, WebSocketActorClientManager.HAS_ACTOR));
+            logger().debug(WebSocketActorClientManager.sendText(session, WebSocketActorClientManager.GET_ACTOR).get());
+            logger().debug(WebSocketActorClientManager.sendText(session, WebSocketActorClientManager.HAS_ACTOR).get());
             session.close();
  
         } catch (Exception e) {
