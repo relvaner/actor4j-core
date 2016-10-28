@@ -44,12 +44,12 @@ public class ActorServerEndpoint {
     	String data = message.substring(1);
     	switch (message.charAt(0)) {
     		case HAS_ACTOR    : {
-    			UUID uuid = service.getActor(data);
-    			result = (uuid!=null) ? uuid.toString() : "none";
+    			result = (service.hasActor(data)) ? "true" : "false";
     			result = CLIENT + result;
     		}; break;
     		case GET_ACTOR    : {
-    			result = (service.hasActor(data)) ? "true" : "false";
+    			UUID uuid = service.getActor(data);
+    			result = (uuid!=null) ? uuid.toString() : "";
     			result = CLIENT + result;
     		}; break;
     		case SEND_MESSAGE : {
