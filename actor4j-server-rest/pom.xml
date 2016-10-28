@@ -35,7 +35,7 @@
    			<version>1.0.0</version>
    		</dependency>
    		<dependency>
-   			<groupId>actor4j</groupId>
+   			<groupId>actor4j-server-core</groupId>
    			<artifactId>actor4j-server-core</artifactId>
    			<version>1.0.0</version>
    		</dependency>
