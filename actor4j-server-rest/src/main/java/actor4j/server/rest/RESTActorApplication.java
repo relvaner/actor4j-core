@@ -31,7 +31,7 @@ public abstract class RESTActorApplication extends ResourceConfig {
 		
 		service = new ActorService(name);
 		configure(service);
-		service.setClientRunnable(new RESTActorClientRunnable(service.getServerURIs(), service.getParallelismMin()*service.getParallelismFactor(), 10000));
+		service.setClientRunnable(new RESTActorClientRunnable(service.getServiceNodes(), service.getParallelismMin()*service.getParallelismFactor(), 10000));
 		service.start();
 		
 		logger().info(String.format("%s - System started...", service.getName()));

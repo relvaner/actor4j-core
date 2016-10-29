@@ -5,6 +5,7 @@ package actor4j.benchmark.server.rest;
 
 import java.util.UUID;
 
+import actor4j.core.ActorServiceNode;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
@@ -15,7 +16,7 @@ public class ClientApplication {
 	public ClientApplication() {
 		ActorSystem system = new ActorSystem();
 		configure(system);
-		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
+		system.setClientRunnable(new RESTActorClientRunnable(system.getServiceNodes(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();
 		
 		try {
@@ -30,7 +31,7 @@ public class ClientApplication {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
-		system.addURI("http://localhost:8080/actor4j-benchmark-server/api");
+		system.addServiceNode(new ActorServiceNode("Node 1", "http://localhost:8080/actor4j-benchmark-server/api"));
 		
 		UUID client = system.addActor(new ActorFactory() {
 			@Override

@@ -67,7 +67,7 @@ public abstract class ActorSystemImpl {
 	
 	protected ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected List<String> serverURIs;
+	protected List<ActorServiceNode> serviceNodes;
 	protected boolean clientMode;
 	protected ActorClientRunnable clientRunnable;
 	
@@ -119,7 +119,7 @@ public abstract class ActorSystemImpl {
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
-		serverURIs = new ArrayList<>();
+		serviceNodes = new ArrayList<>();
 				
 		countDownLatch = new CountDownLatch(1);
 		
@@ -288,8 +288,8 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 		
-	public ActorSystemImpl addURI(String uri) {
-		serverURIs.add(uri);
+	public ActorSystemImpl addServiceNode(ActorServiceNode serviceNode) {
+		serviceNodes.add(serviceNode);
 		
 		return this;
 	}
@@ -492,7 +492,7 @@ public abstract class ActorSystemImpl {
 		return executerService;
 	}
 	
-	public List<String> getServerURIs() {
-		return serverURIs;
+	public List<ActorServiceNode> getServiceNodes() {
+		return serviceNodes;
 	}
 }

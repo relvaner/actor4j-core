@@ -97,8 +97,8 @@ public class ActorSystem {
 		return this;
 	}
 		
-	public ActorSystem addURI(String uri) {
-		system.addURI(uri);
+	public ActorSystem addServiceNode(ActorServiceNode serviceNode) {
+		system.addServiceNode(serviceNode);
 		
 		return this;
 	}
@@ -157,8 +157,8 @@ public class ActorSystem {
 		system.shutdown(await);
 	}
 	
-	public List<String> getServerURIs() {
-		return system.getServerURIs();
+	public List<ActorServiceNode> getServiceNodes() {
+		return system.getServiceNodes();
 	}
 	
 	public ActorSystemImpl underlyingImpl() {

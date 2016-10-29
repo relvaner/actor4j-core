@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import actor4j.core.ActorServiceNode;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
@@ -17,7 +18,7 @@ public class ClientApplication {
 	public ClientApplication() {
 		ActorSystem system = new ActorSystem();
 		configure(system);
-		system.setClientRunnable(new RESTActorClientRunnable(system.getServerURIs(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
+		system.setClientRunnable(new RESTActorClientRunnable(system.getServiceNodes(), system.getParallelismMin()*system.getParallelismFactor(), 10000));
 		system.start();
 		
 		try {
@@ -40,9 +41,9 @@ public class ClientApplication {
 		system.setParallelismMin(1);
 		system.setParallelismFactor(1);
 		system.softMode();
-		//system.addURI("http://localhost:8080/actor4j-server-example-jetty/api");
-		system.addURI("http://localhost:8080/actor4j-server-example/api");
-		//system.addURI("http://192.168.0.100:8080/actor4j-server-example/api");
+		//system.addServiceNode(new ActorServiceNode("Node 1", "http://localhost:8080/actor4j-server-rest-example-jetty/api"));
+		system.addServiceNode(new ActorServiceNode("Node 1", "http://localhost:8080/actor4j-server-rest-example/api"));
+		//system.addServiceNode(new ActorServiceNode("Node 1", "http://192.168.0.100:8080/actor4j-server-rest-example/api"));
 		
 		//UUID client = system.addActor(Client.class, UUID.fromString("490a452e-d53f-41b5-b740-7eada0ae372f"));
 		UUID client = system.addActor(new ActorFactory() {
