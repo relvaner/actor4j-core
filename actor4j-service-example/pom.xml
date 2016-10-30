@@ -24,6 +24,11 @@
    			<artifactId>actor4j-service-rest</artifactId>
    			<version>1.0.0</version>
    		</dependency>
+   		<dependency>
+   			<groupId>actor4j-service-websocket</groupId>
+   			<artifactId>actor4j-service-websocket</artifactId>
+   			<version>1.0.0</version>
+   		</dependency>
   	</dependencies>
   	<packaging>war</packaging>
 </project>

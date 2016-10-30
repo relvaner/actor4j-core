@@ -21,7 +21,7 @@ import actor4j.core.ActorService;
 import actor4j.service.websocket.WebSocketActorClientManager;
 
 @ServerEndpoint(value = "/actor4j")
-public class ActorServerEndpoint {
+public abstract class ActorServerEndpoint {
 	public static final char HAS_ACTOR    = '1';
 	public static final char GET_ACTOR    = '2';
 	public static final char SEND_MESSAGE = '3';
@@ -29,12 +29,13 @@ public class ActorServerEndpoint {
 	
 	protected ActorService service;
 	
-	public ActorServerEndpoint(ActorService service) {
-		this.service = service;
-	}
+	protected abstract ActorService getService();
 	
 	@OnOpen
 	public void onOpen(Session session) throws IOException {
+		service = getService();
+		
+		logger().info(String.format("%s - Websocket-Service started...", service.getName()));
 	}
 	
     @OnMessage
@@ -69,6 +70,7 @@ public class ActorServerEndpoint {
     
     @OnClose
 	public void onClose(Session session, CloseReason closeReason) {
+    	logger().info(String.format("%s - Websocket-Service stopped...", service.getName()));
 	}
     
     @OnError
