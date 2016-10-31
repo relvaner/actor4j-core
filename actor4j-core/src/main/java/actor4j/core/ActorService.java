@@ -24,4 +24,8 @@ public class ActorService extends ActorSystem {
 	public void sendAsServer(ActorMessage<?> message) {
 		system.sendAsServer(message);
 	}
+	
+	public ActorClientRunnable getClientRunnable() {
+		return system.getClientRunnable();
+	}
 }

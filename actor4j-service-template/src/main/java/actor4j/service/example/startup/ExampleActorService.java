@@ -35,7 +35,7 @@ public class ExampleActorService {
 	
 	public static void stop() {
 		service.shutdownWithActors(true);
-		//service.get
+		((WebsocketActorClientRunnable)service.getClientRunnable()).closeAll();
 		logger().info(String.format("%s - Service stopped...", service.getName()));
 	}
 	

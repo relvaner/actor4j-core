@@ -205,7 +205,11 @@ public abstract class ActorSystemImpl {
 		
 		return this;
 	}
-	
+
+	public ActorClientRunnable getClientRunnable() {
+		return clientRunnable;
+	}
+
 	public boolean isCounterEnabled() {
 		return counterEnabled;
 	}

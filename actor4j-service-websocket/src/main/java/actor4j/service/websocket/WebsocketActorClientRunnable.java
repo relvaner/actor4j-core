@@ -6,8 +6,10 @@ package actor4j.service.websocket;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -132,5 +134,16 @@ public class WebsocketActorClientRunnable implements ActorClientRunnable {
 		}
 		
 		return result;
+	}
+	
+	public void closeAll() {
+		Iterator<Entry<ActorServiceNode, Session>> iterator = sessions.entrySet().iterator();
+		
+		while (iterator.hasNext())
+			try {
+				iterator.next().getValue().close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 }
