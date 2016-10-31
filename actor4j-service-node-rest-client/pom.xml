@@ -5,8 +5,8 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-node-rest-client</groupId>
-  	<artifactId>actor4j-node-rest-client</artifactId>
+  	<groupId>actor4j-service-node-rest-client</groupId>
+  	<artifactId>actor4j-service-node-rest-client</artifactId>
   	
   	<dependencies>
   		<dependency>
