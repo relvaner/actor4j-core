@@ -5,6 +5,6 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-utils</groupId>
-  	<artifactId>actor4j-service-utils</artifactId>
+  	<groupId>actor4j-node-utils</groupId>
+  	<artifactId>actor4j-node-utils</artifactId>
 </project>

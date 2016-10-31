@@ -15,11 +15,11 @@
 		<module>actor4j-benchmark-ejb</module>
 		<module>actor4j-server-websocket</module>
 		<module>actor4j-utils</module>
-		<module>actor4j-service-rest</module>
-		<module>actor4j-service-rest-client</module>
-		<module>actor4j-service-websocket</module>
-		<module>actor4j-service-utils</module>
-		<module>actor4j-service-template</module>
+		<module>actor4j-node-rest</module>
+		<module>actor4j-node-rest-client</module>
+		<module>actor4j-node-websocket</module>
+		<module>actor4j-node-utils</module>
+		<module>actor4j-node-template</module>
 	</modules>
 	
 	<dependencies>

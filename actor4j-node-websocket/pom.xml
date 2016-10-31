@@ -5,8 +5,8 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-websocket</groupId>
-  	<artifactId>actor4j-service-websocket</artifactId>
+  	<groupId>actor4j-node-websocket</groupId>
+  	<artifactId>actor4j-node-websocket</artifactId>
   	
   	<dependencies>
   		<dependency>
@@ -34,8 +34,8 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>actor4j-service-utils</groupId>
-			<artifactId>actor4j-service-utils</artifactId>
+			<groupId>actor4j-node-utils</groupId>
+			<artifactId>actor4j-node-utils</artifactId>
 			<version>1.0.0</version>
 		</dependency>
   	</dependencies>
