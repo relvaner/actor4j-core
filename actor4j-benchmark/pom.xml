@@ -54,10 +54,5 @@
     		<artifactId>akka-actor_2.11</artifactId>
     		<version>2.4.9</version>
 		</dependency>
-		<dependency>
-			<groupId>actor4j-research</groupId>
-			<artifactId>actor4j-research</artifactId>
-			<version>1.0.0</version>
-		</dependency>
     </dependencies>
 </project>

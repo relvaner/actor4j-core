@@ -9,8 +9,6 @@
 		<module>actor4j-core</module>
 		<module>actor4j-analyzer</module>
 		<module>actor4j-analyzer-example</module>
-		<module>actor4j-research</module>
-		<module>actor4j-research-utils</module>
 		<module>actor4j-persistence</module>
 		<module>actor4j-persistence-example</module>
 		<module>actor4j-benchmark</module>
