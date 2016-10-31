@@ -17,7 +17,11 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import actor4j.core.ActorService;
+import actor4j.core.messages.RemoteActorMessage;
+import actor4j.service.utils.TransferActorMessage;
 import actor4j.service.websocket.WebSocketActorClientManager;
 
 @ServerEndpoint(value = "/actor4j")
@@ -47,7 +51,7 @@ public abstract class ActorServerEndpoint {
     	String data = message.substring(1);
     	switch (message.charAt(0)) {
     		case HAS_ACTOR    : {
-    			result = (service.hasActor(data)) ? "true" : "false";
+    			result = (service.hasActor(data)) ? "1" : "0";
     			result = CLIENT + result;
     		}; break;
     		case GET_ACTOR    : {
@@ -56,7 +60,18 @@ public abstract class ActorServerEndpoint {
     			result = CLIENT + result;
     		}; break;
     		case SEND_MESSAGE : {
-    			result = CLIENT + "accepted";
+    			TransferActorMessage buf = null;
+    			try {
+    				buf = new ObjectMapper().readValue(data, TransferActorMessage.class);
+    			} catch (Exception e) {
+    				return CLIENT + "0";
+    			}
+    			
+    			if (buf!=null) {
+    				service.sendAsServer(new RemoteActorMessage<Object>(buf.value, buf.tag, UUID.fromString(buf.source), UUID.fromString(buf.dest)));
+    			
+    				result = CLIENT + "1";
+    			}
     		}; break;
     		case CLIENT       : {
     			message = message.substring(1);

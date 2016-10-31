@@ -5,8 +5,8 @@
     	<artifactId>actor4j</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-example</groupId>
-  	<artifactId>actor4j-service-example</artifactId>
+  	<groupId>actor4j-service-template</groupId>
+  	<artifactId>actor4j-service-template</artifactId>
   	
   	<dependencies>
    		<dependency>
