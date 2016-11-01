@@ -25,19 +25,20 @@ import actor4j.core.ActorClientRunnable;
 import actor4j.core.ActorServiceNode;
 import actor4j.core.messages.ActorMessage;
 import actor4j.service.utils.TransferActorMessage;
+import actor4j.service.websocket.endpoints.ActorClientEndpoint;
 
 public class WebsocketActorClientRunnable implements ActorClientRunnable {
-	protected Object annotatedEndpointInstance;
+	protected final Object annotatedEndpointInstance;
 	
 	protected Map<ActorServiceNode, Session> sessions;
 	protected List<ActorServiceNode> serviceNodes;
 	protected LoadingCache<UUID, Integer> cache;
 	protected LoadingCache<String, UUID> cacheAlias;
 	
-	public WebsocketActorClientRunnable(final Object annotatedEndpointInstance, final List<ActorServiceNode> serviceNodes, int concurrencyLevel, int cachesize) {
-		this.annotatedEndpointInstance = annotatedEndpointInstance;
+	public WebsocketActorClientRunnable(final List<ActorServiceNode> serviceNodes, int concurrencyLevel, int cachesize) {
 		this.serviceNodes = serviceNodes;
 		
+		annotatedEndpointInstance = new ActorClientEndpoint();
 		sessions = new ConcurrentHashMap<>();
 		
 		cache =  CacheBuilder.newBuilder()
