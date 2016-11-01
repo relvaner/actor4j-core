@@ -26,7 +26,6 @@ public class ActorClientEndpoint {
 	 
 	@OnMessage
 	public String onMessage(String message, Session session) {
-		logger().debug(message);
 		message = message.substring(1);
 		CompletableFuture<String> future = WebSocketActorClientManager.sessionMap.get(session);
 		future.complete(message);
