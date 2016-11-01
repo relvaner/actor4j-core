@@ -10,8 +10,4 @@ public class ExampleWebsocketActorService extends Configurator {
     public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
         return (T)serverEndpoint;
     }
-    
-    public static Object getEndpointInstance() {
-    	return serverEndpoint;
-    }
 }
