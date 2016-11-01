@@ -67,6 +67,7 @@ public abstract class ActorSystemImpl {
 	
 	protected ActorStrategyOnFailure actorStrategyOnFailure;
 	
+	protected String serviceNodeName;
 	protected List<ActorServiceNode> serviceNodes;
 	protected boolean clientMode;
 	protected ActorClientRunnable clientRunnable;
@@ -119,6 +120,7 @@ public abstract class ActorSystemImpl {
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
+		serviceNodeName = "Default Node";
 		serviceNodes = new ArrayList<>();
 				
 		countDownLatch = new CountDownLatch(1);
@@ -498,5 +500,13 @@ public abstract class ActorSystemImpl {
 	
 	public List<ActorServiceNode> getServiceNodes() {
 		return serviceNodes;
+	}
+
+	public String getServiceNodeName() {
+		return serviceNodeName;
+	}
+
+	public void setServiceNodeName(String serviceNodeName) {
+		this.serviceNodeName = serviceNodeName;
 	}
 }

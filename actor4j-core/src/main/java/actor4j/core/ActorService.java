@@ -13,6 +13,14 @@ public class ActorService extends ActorSystem {
 		super(name);
 	}
 	
+	public String getServiceNodeName() {
+		return system.getServiceNodeName();
+	}
+
+	public void setServiceNodeName(String serviceNodeName) {
+		system.setServiceNodeName(serviceNodeName);
+	}
+
 	public boolean hasActor(String uuid) {
 		return system.hasActor(uuid);
 	}
