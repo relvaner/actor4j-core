@@ -39,7 +39,7 @@ public abstract class ActorServerEndpoint {
 	public void onOpen(Session session) throws IOException {
 		service = getService();
 		
-		logger().info(String.format("%s - Websocket-Service started...", service.getName()));
+		logger().info(String.format("%s - Websocket-Session started...", service.getName()));
 	}
 	
     @OnMessage
@@ -85,7 +85,7 @@ public abstract class ActorServerEndpoint {
     
     @OnClose
 	public void onClose(Session session, CloseReason closeReason) {
-    	logger().info(String.format("%s - Websocket-Service stopped...", service.getName()));
+    	logger().info(String.format("%s - Websocket-Session stopped...", service.getName()));
 	}
     
     @OnError
