@@ -16,7 +16,7 @@
 		}
 	</style>
 	<body>
-		<jsp:useBean id="controller" class="actor4j.service.example.controller.ExampleActorServiceController" scope="session"/>
+		<jsp:useBean id="controller" class="actor4j.service.node.template.controller.ExampleActorServiceController" scope="session"/>
 		<h1>Actor4j - Service Node (<%=controller.getName()%>)</h1>
 		<p class="actor4j">Service: Actor4j <%=controller.isOnline()%> online!</p>
 		<img src="images/actor4j.png" alt="Actor4j" width="91" height="73" />
