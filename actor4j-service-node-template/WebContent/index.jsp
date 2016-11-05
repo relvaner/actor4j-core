@@ -17,8 +17,17 @@
 	</style>
 	<body>
 		<jsp:useBean id="controller" class="actor4j.service.node.template.controller.ExampleActorServiceController" scope="session"/>
-		<h1>Actor4j - Service Node (<%=controller.getName()%>)</h1>
-		<p class="actor4j">Service: Actor4j <%=controller.isOnline()%> online!</p>
+		<h1>Actor4j - Service Node (<%=controller.getName()%>)</h1> 
+		<table style="margin-left:auto;margin-right:auto;">
+			<tr>
+				<td>
+					<p class="actor4j">Service: Actor4j <%=controller.isOnline()%> online! See also: </p>
+				</td>
+				<td>	
+					<a href="http://docs.actor4j.apiary.io/">REST API</a>
+				</td>
+			</tr>
+		</table>
 		<img src="images/actor4j.png" alt="Actor4j" width="91" height="73" />
 		<p>Copyright (c) 2015-2016, David A. Bauer</p>
 	</body>
