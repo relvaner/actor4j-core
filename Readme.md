@@ -25,7 +25,7 @@ In addition, it can be determined whether the threads are operating in soft or h
 <pre><code>
 system.start();
 </code></pre>
-The actor system can be terminated, either with controlled shutdown of all actuators or not. With a controlled shutdown, a stop directive is sent internally to all actuators. By means of parameter transfer, it is possible to determine whether the calling thread waits until the shutdown of the actor system has been completely terminated.
+The actor system can be terminated, either with controlled shutdown of all actors or not. With a controlled shutdown, a stop directive is sent internally to all actors. By means of parameter transfer, it is possible to determine whether the calling thread waits until the shutdown of the actor system has been completely terminated.
 ```java
 system.shutdown(); // normal shutdown
 system.shutdown(true); // shutdown and wait
