@@ -1,6 +1,6 @@
 Actor4j an actor implementation
 ===============================
-Aim of this project was to enhance the performance in message passing. As a reference implementation Akka [1] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The four principles of reactive manifesto [2] and the four semantic properties [3] of actor systems have been applied. The actor system is from extern accessible by the REST-Api or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to ResourceActors, which are executed by an extra ThreadPool. So the responsiveness of the actor system therfore will not tangented.
+Aim of this project was to enhance the performance in message passing. As a reference implementation Akka [1] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The four principles of reactive manifesto [2] and the four semantic properties [3] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to ResourceActors, which are executed by an extra ThreadPool. So the responsiveness of the actor system therfore will not tangented.
 
 [1] Lightbend (2016). Akka. http://akka.io/  
 [2] Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
@@ -34,4 +34,6 @@ system.shutdownWithActors(); // shutdown with actors
 system.shutdownWithActors(true);
 ```
 
-Page to be updated 11/15/2016
+Actor4j solves a controlled shutdown by sending a termination message to the user actor (father node of all actors, tree structure), which results that the other subordinate actors are terminating in a cascade form. The actors themselves are responsible for an orderly handling of their termination.
+
+Page to be updated 11/17/2016
