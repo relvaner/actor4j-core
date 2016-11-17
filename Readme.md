@@ -1,5 +1,5 @@
 ## Actor4j an actor implementation ##
-Aim of this project was to enhance the performance in message passing. As a reference implementation `Akka` [1] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The four principles of reactive manifesto [2] and the four semantic properties [3] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
+Aim of this project was to enhance the performance in message passing. As a reference implementation `Akka` [1] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [2] and the **four semantic properties** [3] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
 >[1] Lightbend (2016). Akka. http://akka.io/  
 >[2] Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
@@ -71,5 +71,63 @@ public class MyActor extends Actor {
 	}
 }		            
 ```
+Messages can be sent using the `send` method. The following methods are available. `Tell` offers a similar syntax to `Akka`. A message can also be forwarded (`forward`). Aliases are among other things available to access a remote actor in a simplified manner.
+```java
+send(ActorMessage<?> message)
+send(ActorMessage<?> message, String alias)
+send(ActorMessage<?> message, UUID dest)
+tell(T value, int tag, UUID dest)
 
+forward(ActorMessage<?> message, UUID dest)
+```
+### Patern matching ###
+To receive messages, pattern matching can be used with the `ActorMessageMatcher` class. This class was inspired by pattern matching in `Scala`. The message can be checked to match a tag, source, or class of the passed object (value). If a match is true, an action is triggered. This example is based on the top, except that this is expressed by the language means of the class `ActorMessageMatcher`. Tags serve as a simple means of communication. `ACK` would be such a tag.
+```java
+public class MyActor extends Actor {
+	protected ActorMessageMatcher matcher;
+	protected final int ACK = 1;
+	
+	@Override
+	public void preStart() {
+		matcher = new ActorMessageMatcher();
+		
+		matcher
+		.match(String.class, 
+			msg -> logger().info(String.format(
+				"Received String message: %s", msg.valueAsString())))
+		.match(ACK, 
+			msg -> logger().info("ACK tag received"))
+		.matchAny(
+			msg -> send(msg, msg.dest))
+		.matchElse(
+			msg -> unhandled(msg));
+	}
+	
+	@Override
+	public void receive(ActorMessage<?> message) {
+		matcher.apply(message);
+	}
+}                
+```
+`MatchAny` is always triggered, no matter what message has been received. If no match is found, `MatchElse` is fired.
+
+### Behaviour ###
+The message processing method `receive` of an actor can be replaced by another method at runtime (`HotSwap` to `Akka`). In the later example, the behavior of the actor is changed (on receipt of a tag `SWAP`). Upon receipt of the next message, information about the then received message is outputed. Finally, the behavior with `unbecome` is returned to the original `receive` method.
+```java
+public class MyActor extends Actor {
+	protected final int SWAP=22;
+	
+	@Override
+	public void receive(ActorMessage<?> message) {
+		if (message.tag == SWAP)
+			become(msg -> {
+				logger().info(String.format(
+					"Received message: %s", msg));
+				unbecome();
+			}, false); // false -> putted on stack
+		else
+			unhandled(message);
+	}
+}
+```
 Page to be updated 11/17/2016
