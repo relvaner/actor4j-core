@@ -52,7 +52,7 @@ addChild(MyActor.class, "MyActor", ...);
 // or
 UUID myActor = addChild( () -> new MyActor() ); 
 ```
-Actors must derive from the class `Actor` and implement the `receive` method. In the example below, `MyActor` waits for a message that contains a `String` and then outputs it via a logger. Subsequently, the message is sent back to the sender. When a different message is received, a warning (`unhandled (message)`) is output if `debugUnhandled` has been set in the actor system.
+Actors must derive from the class `Actor` and implement the `receive` method. In the example below, `MyActor` waits for a message that contains a `String` and then outputs it via a logger. Subsequently, the message is sent back to the sender. When a different message is received, a warning (`unhandled (message)`) is outputted if `debugUnhandled` has been set in the actor system.
 ```java
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
@@ -112,7 +112,7 @@ public class MyActor extends Actor {
 `MatchAny` is always triggered, no matter what message has been received. If no match is found, `MatchElse` is fired.
 
 ### Behaviour ###
-The message processing method `receive` of an actor can be replaced by another method at runtime (`HotSwap` to `Akka`). In the later example, the behavior of the actor is changed (on receipt of a tag `SWAP`). Upon receipt of the next message, information about the then received message is outputed. Finally, the behavior with `unbecome` is returned to the original `receive` method.
+The message processing method `receive` of an actor can be replaced by another method at runtime (`HotSwap` to `Akka`). In the later example, the behavior of the actor is changed (on receipt of a tag `SWAP`). Upon receipt of the next message, information about the then received message is outputted. Finally, the behavior with `unbecome` is returned to the original `receive` method.
 ```java
 public class MyActor extends Actor {
 	protected final int SWAP=22;
@@ -130,4 +130,20 @@ public class MyActor extends Actor {
 	}
 }
 ```
-Page to be updated 11/17/2016
+## Life cycle of actors, monitoring ##
+<img src="doc/images/life cycle.png" alt="Representation of the life cycle of an actor" style="width: 500px;"/>
+Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [4])
+>[4] Lightbend (2016). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html
+
+### Life cycle ###
+As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message.
+### Monitoring ###
+An actor can also monitor another actor for that it has not yet terminated itself. If the observed actor is terminated, a message `TERMINATED` is sent to the observer. An assignment is then made via `message.source`, which corresponds to the sender's `UUID`. With `watch`, an observer can register with an actor and de-register with `unwatch`.
+```java
+watch(UUID dest)
+unwatch(UUID dest)
+```
+### Comparison to Akka ###
+The life cycle and monitoring are largely similar to Akka's approach. Instead of a UUID, an ActorRef is returned when an actuator is instantiated.
+
+Page to be updated 11/18/2016
