@@ -145,6 +145,6 @@ watch(UUID dest)
 unwatch(UUID dest)
 ```
 ### Comparison to Akka ###
-The life cycle and monitoring are largely similar to Akka's approach. Instead of a UUID, an ActorRef is returned when an actuator is instantiated.
+The life cycle and monitoring are largely similar to Akka's approach. Instead of a `UUID`, an `ActorRef` is returned when an actor is instantiated.
 
 Page to be updated 11/18/2016
