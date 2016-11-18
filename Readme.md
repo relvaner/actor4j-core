@@ -131,7 +131,7 @@ public class MyActor extends Actor {
 }
 ```
 ## Life cycle of actors, monitoring ##
-<img src="doc/images/life cycle.png" alt="Representation of the life cycle of an actor" width="500" height="642"/>
+<img src="doc/images/lifecycle1.png" alt="Representation of the life cycle of an actor" width="500" height="642"/>
 
 Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [4])
 >[4] Lightbend (2016). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html
@@ -146,5 +146,9 @@ unwatch(UUID dest)
 ```
 ### Comparison to Akka ###
 The life cycle and monitoring are largely similar to Akka's approach. Instead of a `UUID`, an `ActorRef` is returned when an actor is instantiated.
+## Supervision ##
+<img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
 
-Page to be updated 11/18/2016
+Fig. 2: Extended representation of the life cycle of an actor
+
+Page to be updated 11/19/2016
