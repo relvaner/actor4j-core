@@ -148,6 +148,8 @@ unwatch(UUID dest)
 The life cycle and monitoring are largely similar to Akka's approach. Instead of a `UUID`, an `ActorRef` is returned when an actor is instantiated.
 ## Supervision ##
 <img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
-Fig. 2: Extended representation of the life cycle of an actor
+
+Fig. 2: Extended representation of the life cycle of an actor (cp. Wyatt [5])
+>[5] Derek Wyatt (2013). AKKA Concurrency. Artima Inc. Page 160.
 
 Page to be updated 11/19/2016
