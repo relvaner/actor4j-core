@@ -131,7 +131,7 @@ public class MyActor extends Actor {
 }
 ```
 ## Life cycle of actors, monitoring ##
-<img src="doc/images/life cycle.png" alt="Representation of the life cycle of an actor" style="width: 500px;"/>
+![alt text](doc/images/life cycle.jpg "Representation of the life cycle of an actor")
 Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [4])
 >[4] Lightbend (2016). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html
 
