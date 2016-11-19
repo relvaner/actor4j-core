@@ -172,13 +172,31 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5
   * Call of `postStop`.
 * `RESTART`:
   * `PreRestart` is called at the current instance.
-  * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of watch, to observe that all children have terminated.
+  * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of `watch`, to observe that all children have terminated.
   * Call of `postStop` at the current instance, after all children have finished and confirmed this with the `TERMINATED` message.
   * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
   * Call of `postRestart` (with `preStart`) for the new instance.
 
 ### Comparison to Akka ###
 `Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification.
+
+## Presentation of different actor types within `actor4j` ##
+Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
+
+### ActorGroupMember ###
+The use of this class signals to the `ActorSystem` that the correspondingly implemented actor is a member of a group. This is taken into account when distributing the actors to the threads. Actors belonging to a group are held together on a thread. The basic idea behind this has already been explained in our paper (see chapters results and conclusion [[?](#?)]). Inter-communication between threads is more expensive than pure intra-communication (within the same thread).
+
+### ResourceActor ###
+Workload tasks should not be performed within the `ActorSystem`. Because they block the reactive system and it is no longer responsive. Therefore the class `ResorceActor` is provided. These special actors are executed in a separate thread pool, thus avoiding disturbances within the `ActorSystem`. It should distinguish stateless (`@Stateless`) and stateful (`@Stateful`) actors. The advantage of this distinction lies in the fact that stateless actors can be executed in parallel.
+
+### ActorWithRxStash ###
+The `ActorWithRxStash` class implements the queue `stash`, from the class `Actor`. With `stash`, messages can be temporarily stored, which are not to be processed immediately. `RxStash` provides access to `stash` as an observer by using `RxJava` [[9](#9)]. This allows a comfortable access to `stash` (filters, transformations, aggregators, etc.).
+
+### PseudoActor ###
+A `PseudoActor` is a mediator between the outside world and the `ActorSystem`. It allows communication with the actors within the actor system from outside. Unlike the other actors, the `PseudoActor` has its own message queue, in which the messages of other actors can then be stored by the `ActorSystem`. The class `PseudoActor` is derived from the class `ActorWithRxStash`. To be able to process received messages, the run method must be started manually.
+
+#### Note ####
+Examples for the actors `ActorWithRxStash` and `PseudoActor` can be viewed under GitHub [[10](#10)]. Application examples for `ActorGroupMember` are also included in the benchmarks of `actor4j`.
 
 ## References ##
 >[1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
@@ -189,5 +207,7 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5
 >[6]<a name="6"/> Lightbend (2015). Actors. HotSwap. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html#untypedactor-hotswap  
 >[7]<a name="7"/> Joe Armstrong (2013). Programming Erlang. Software for a Concurrent World (Pragmatic Programmers). Pragmatic Bookshelf. Pages 398-399  
 >[8]<a name="8"/> Lightbend (2015). Supervision and Monitoring. http://doc.akka.io/docs/akka/2.4/general/supervision.html  
+>[9]<a name="9"/> Netflix, Inc (2013). RxJava. https://github.com/ReactiveX/RxJava
+>[10]<a name="10"/> David A. Bauer (2015). Actor4j Examples. https://github.com/relvaner/actor4j-examples
 
 Page to be updated 11/19/2016
