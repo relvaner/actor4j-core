@@ -1,9 +1,5 @@
 ## Actor4j an actor implementation ##
-Aim of this project was to enhance the performance in message passing. As a reference implementation `Akka` [1] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [2] and the **four semantic properties** [3] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
-
->[1] Lightbend (2016). Akka. http://akka.io/  
->[2] Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
->[3] Rajesh K. Karmani, Gul Agha (2011). Actors. In Encyclopedia of Parallel Computing, Pages 1–11. Springer. http://osl.cs.illinois.edu/media/papers/karmani-2011-actors.pdf  
+Aim of this project was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the nodes are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
 ## Configuration, starting and stopping the actor system ##
 In `actor4j` the following important configuration options are available.
@@ -35,7 +31,7 @@ system.shutdownWithActors(true);
 `Actor4j` solves a controlled shutdown by sending a termination message to the user actor (father node of all actors, tree structure), which results that the other subordinate actors are terminating in a cascade form. The actors themselves are responsible for an orderly handling of their termination.
 
 ## Actors, pattern matching and behaviour ##
-There are two possibilities to add actors to the actor system. On one hand, by specifying the class and its constructor (is then instantiated using reflection) or via a factory method. Both variants are passed to a dependency injection container, which can then instantiate the actors accordingly. Actors can be generated outside the actor system, these are automatically subordinated to the user actor (father of all user-generated actors). However, they can also be generated within an actor, but these are then child actors of the corresponding actor. After instantiation, they return a unique `UUID` (unambiguous identification of the actor).
+There are two possibilities to add actors to the actor system. On one hand, by specifying the class and its constructor (is then instantiated by using reflection) or via a factory method. Both variants are passed to a dependency injection container, which can then instantiate the actors accordingly. Actors can be generated outside the actor system, these are automatically subordinated to the user actor (father of all user-generated actors). However, they can also be generated within an actor, but these are then child actors of the corresponding actor. After instantiation, the function returns a unique `UUID` (unambiguous identification of the actor).
 ```java
 // over reflection
 system.addActor(MyActor.class, "MyActor", ...);
@@ -112,7 +108,7 @@ public class MyActor extends Actor {
 `MatchAny` is always triggered, no matter what message has been received. If no match is found, `MatchElse` is fired.
 
 ### Behaviour ###
-The message processing method `receive` of an actor can be replaced by another method at runtime (`HotSwap` to `Akka`). In the later example, the behavior of the actor is changed (on receipt of a tag `SWAP`). Upon receipt of the next message, information about the then received message is outputted. Finally, the behavior with `unbecome` is returned to the original `receive` method.
+The message processing method `receive` of an actor can be replaced by another method at runtime (`HotSwap`  to `Akka` [[6](#6)]). In the later example, the behavior of the actor is changed (on receipt of a tag `SWAP`). Upon receipt of the next message, information about the then received message is outputted. Finally, the behavior with `unbecome` is returned to the original `receive` method.
 ```java
 public class MyActor extends Actor {
 	protected final int SWAP=22;
@@ -133,8 +129,7 @@ public class MyActor extends Actor {
 ## Life cycle of actors, monitoring ##
 <img src="doc/images/lifecycle1.png" alt="Representation of the life cycle of an actor" width="500" height="642"/>
 
-Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [4])
->[4] Lightbend (2016). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html
+Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [[4](#5)])
 
 ### Life cycle ###
 As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message.
@@ -149,7 +144,14 @@ The life cycle and monitoring are largely similar to Akka's approach. Instead of
 ## Supervision ##
 <img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
 
-Fig. 2: Extended representation of the life cycle of an actor (cp. Wyatt [5])
->[5] Derek Wyatt (2013). AKKA Concurrency. Artima Inc. Page 160.
+Fig. 2: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5)])
+
+## References ##
+>[1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
+>[2]<a name="2"/> Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
+>[3]<a name="3"/> Rajesh K. Karmani, Gul Agha (2011). Actors. In Encyclopedia of Parallel Computing, Pages 1–11. Springer. http://osl.cs.illinois.edu/media/papers/karmani-2011-actors.pdf 
+>[4]<a name="4"/> Lightbend (2015). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html
+>[5]<a name="5"/> Derek Wyatt (2013). AKKA Concurrency. Artima Inc. Page 160.
+>[6]<a name="6"/> Lightbend (2015). Actors. HotSwap. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html#untypedactor-hotswap
 
 Page to be updated 11/19/2016
