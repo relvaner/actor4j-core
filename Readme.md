@@ -207,7 +207,7 @@ Examples for the actors `ActorWithRxStash` and `PseudoActor` can be viewed under
 >[6]<a name="6"/> Lightbend (2015). Actors. HotSwap. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html#untypedactor-hotswap  
 >[7]<a name="7"/> Joe Armstrong (2013). Programming Erlang. Software for a Concurrent World (Pragmatic Programmers). Pragmatic Bookshelf. Pages 398-399  
 >[8]<a name="8"/> Lightbend (2015). Supervision and Monitoring. http://doc.akka.io/docs/akka/2.4/general/supervision.html  
->[9]<a name="9"/> Netflix, Inc (2013). RxJava. https://github.com/ReactiveX/RxJava
->[10]<a name="10"/> David A. Bauer (2015). Actor4j Examples. https://github.com/relvaner/actor4j-examples
+>[9]<a name="9"/> Netflix, Inc (2013). RxJava. https://github.com/ReactiveX/RxJava  
+>[10]<a name="10"/> David A. Bauer (2015). Actor4j Examples. https://github.com/relvaner/actor4j-examples  
 
 Page to be updated 11/19/2016
