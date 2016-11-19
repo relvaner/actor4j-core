@@ -142,16 +142,52 @@ unwatch(UUID dest)
 ### Comparison to Akka ###
 The life cycle and monitoring are largely similar to Akka's approach. Instead of a `UUID`, an `ActorRef` is returned when an actor is instantiated.
 ## Supervision ##
+
+<img src="doc/images/supervision.png" alt="OneForOne-Strategy and OneForAll-Strategy" width="589" height="268"/>
+
+Fig. 2: `OneForOne-Strategy` and `OneForAll-Strategy` (cp. [[7](#7)][[8](#8)])
+
+The supervisor actor monitors its child actors, in the event of an error, they are resumed or restarted or stopped by them. Two strategies are foreseen (see Fig. 2). In the `OneForOne-Strategy`, only the affected actor is considered. In the `OneForAll-Strategy`, on the other hand, not only the affected actor is considered but also the neighbouring actors (below the supervisor actor). [[7](#7)][[8](#8)] The default strategy for `actor4j` is a `OneForOne-Strategy` and is specified as:
+```java
+public SupervisorStrategyDirective apply(Exception e) {
+	if (
+	     e instanceof ActorInitializationException || 
+	     e instanceof ActorKilledException)
+		return STOP;
+	else
+		return RESTART;
+}
+```
+An `ActorInitializationException` is thrown if an error occurs during the instantiation of an actor. An `ActorKilledException` is triggered by an incoming `KILL` message at the actor. In this case, an exception is deliberately provoked to activate the supervisor and its error handling strategy. A restart is carried out by default for every exception otherwise the actor is stopped. The default strategy can be changed by overriding the `supervisorStrategy` method.
+
 <img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
 
-Fig. 2: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5)])
+Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5)])
+
+`Actor4j` currently supports three directives: `RESUME`, `STOP`, and `RESTART` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
+
+* `RESUME`: In this case, the supervisor remains passive. The actor can continue its activities undisturbed [[5](#5)].
+* `STOP`:
+  * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of `watch`, to observe that all children have terminated.
+  * Call of `postStop`.
+* `RESTART`:
+  * `PreRestart` is called at the current instance.
+  * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of watch, to observe that all children have terminated.
+  * Call of `postStop` at the current instance, after all children have finished and confirmed this with the `TERMINATED` message.
+  * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
+  * Call of `postRestart` (with `preStart`) for the new instance.
+
+### Comparison to Akka ###
+`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification.
 
 ## References ##
 >[1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
 >[2]<a name="2"/> Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
 >[3]<a name="3"/> Rajesh K. Karmani, Gul Agha (2011). Actors. In Encyclopedia of Parallel Computing, Pages 1–11. Springer. http://osl.cs.illinois.edu/media/papers/karmani-2011-actors.pdf  
 >[4]<a name="4"/> Lightbend (2015). Actors. UntypedActor API. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html  
->[5]<a name="5"/> Derek Wyatt (2013). AKKA Concurrency. Artima Inc. Page 160.  
+>[5]<a name="5"/> Derek Wyatt (2013). AKKA Concurrency. Artima Inc. Pages 160, 163.  
 >[6]<a name="6"/> Lightbend (2015). Actors. HotSwap. http://doc.akka.io/docs/akka/2.4/java/untyped-actors.html#untypedactor-hotswap  
+>[7]<a name="7"/> Joe Armstrong (2013). Programming Erlang. Software for a Concurrent World (Pragmatic Programmers). Pragmatic Bookshelf. Pages 398-399  
+>[8]<a name="8"/> Lightbend (2015). Supervision and Monitoring. http://doc.akka.io/docs/akka/2.4/general/supervision.html  
 
 Page to be updated 11/19/2016
