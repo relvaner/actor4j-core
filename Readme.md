@@ -219,7 +219,12 @@ Fig. 4: Class diagram to the core components of `actor4j`
 
 ## Structure and behavioral analysis with an analysis tool ##
 
-...
+An analysis tool is suitable for testing, checking and optimizing an actor system. Such a tool is shown in Fig. 5. The internal structure of the actor system and the behavior of the actor system are shown on the left. The ellipses each correspond to one actor. The numbers at the edges between the actors, corresponds to the frequency of the exchange of messages. The right representation contains two rings, a hub and a tuple, linked in the message exchange. The impetus for message distribution is triggered via a timer (marked as `system`, since implemented from outside the actor system). It might be useful to see what kind of messages are exchanged between the actors.
+
+<img src="doc/images/analyzer.png" alt="Representation of the analysis tool for actor4j" width="871" height="464"/>
+
+
+Fig. 5: Representation of the analysis tool for `actor4j`
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
