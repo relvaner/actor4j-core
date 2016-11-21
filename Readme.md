@@ -162,7 +162,7 @@ An `ActorInitializationException` is thrown if an error occurs during the instan
 
 <img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
 
-Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5)])
+Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 
 `Actor4j` currently supports three directives: `RESUME`, `STOP`, and `RESTART` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
 
