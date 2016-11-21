@@ -180,7 +180,7 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5
 (cp. [[4](#4)], [[5](#5)])
 
 ### Comparison to Akka ###
-`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. (cp. [[11](#11)])
+`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. (cp. [[11](#11)], [[5](#5)])
 
 ## Presentation of different actor types within `actor4j` ##
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
