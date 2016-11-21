@@ -48,7 +48,7 @@ addChild(MyActor.class, "MyActor", ...);
 // or
 UUID myActor = addChild( () -> new MyActor() ); 
 ```
-Actors must derive from the class `Actor` and implement the `receive` method. In the example below, `MyActor` waits for a message that contains a `String` and then outputs it via a logger. Subsequently, the message is sent back to the sender. When a different message is received, a warning (`unhandled (message)`) is outputted if `debugUnhandled` has been set in the actor system. ([[4](#4)])
+Actors must derive from the class `Actor` and implement the `receive` method. In the example below, `MyActor` waits for a message that contains a `String` and then outputs it via a logger. Subsequently, the message is sent back to the sender. When a different message is received, a warning (`unhandled (message)`) is outputted if `debugUnhandled` has been set in the actor system. [[4](#4)]
 ```java
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
@@ -132,9 +132,9 @@ public class MyActor extends Actor {
 Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [[4](#5)])
 
 ### Life cycle ###
-As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. ([[4](#4)])
+As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. [[4](#4)]
 ### Monitoring ###
-An actor can also monitor another actor for that it has not yet terminated itself. If the observed actor is terminated, a message `TERMINATED` is sent to the observer. An assignment is then made via `message.source`, which corresponds to the sender's `UUID`. With `watch`, an observer can register with an actor and de-register with `unwatch`. ([[4](#4)])
+An actor can also monitor another actor for that it has not yet terminated itself. If the observed actor is terminated, a message `TERMINATED` is sent to the observer. An assignment is then made via `message.source`, which corresponds to the sender's `UUID`. With `watch`, an observer can register with an actor and de-register with `unwatch`. [[4](#4)]
 ```java
 watch(UUID dest)
 unwatch(UUID dest)
@@ -147,7 +147,7 @@ The life cycle and monitoring are largely similar to Akka's approach. Instead of
 
 Fig. 2: `OneForOne-Strategy` and `OneForAll-Strategy` (cp. [[7](#7)][[8](#8)])
 
-The supervisor actor monitors its child actors, in the event of an error, they are resumed or restarted or stopped by them. Two strategies are foreseen (see Fig. 2). In the `OneForOne-Strategy`, only the affected actor is considered. In the `OneForAll-Strategy`, on the other hand, not only the affected actor is considered but also the neighbouring actors (below the supervisor actor). ([[7](#7)][[8](#8)]) The default strategy for `actor4j` is a `OneForOne-Strategy` ([[11](#11)]) and is specified as:
+The supervisor actor monitors its child actors, in the event of an error, they are resumed or restarted or stopped by them. Two strategies are foreseen (see Fig. 2). In the `OneForOne-Strategy`, only the affected actor is considered. In the `OneForAll-Strategy`, on the other hand, not only the affected actor is considered but also the neighbouring actors (below the supervisor actor). [[7](#7)][[8](#8)] The default strategy for `actor4j` is a `OneForOne-Strategy` [[11](#11)] and is specified as:
 ```java
 public SupervisorStrategyDirective apply(Exception e) {
 	if (
@@ -158,7 +158,7 @@ public SupervisorStrategyDirective apply(Exception e) {
 		return RESTART;
 }
 ```
-An `ActorInitializationException` is thrown if an error occurs during the instantiation of an actor. An `ActorKilledException` is triggered by an incoming `KILL` message at the actor. In this case, an exception is deliberately provoked to activate the supervisor and its error handling strategy. A restart is carried out by default for every exception otherwise the actor is stopped. The default strategy can be changed by overriding the `supervisorStrategy` method. ([[4](#4)])
+An `ActorInitializationException` is thrown if an error occurs during the instantiation of an actor. An `ActorKilledException` is triggered by an incoming `KILL` message at the actor. In this case, an exception is deliberately provoked to activate the supervisor and its error handling strategy. A restart is carried out by default for every exception otherwise the actor is stopped. The default strategy can be changed by overriding the `supervisorStrategy` method. [[4](#4)]
 
 <img src="doc/images/lifecycle2.png" alt="Extended representation of the life cycle of an actor" width="800" height="455"/>
 
@@ -177,10 +177,10 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. Wyatt [[5](#5
   * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
   * Call of `postRestart` (with `preStart`) for the new instance.
 
-([[4](#4)], [[5](#5)])
+[[4](#4)][[5](#5)]
 
 ### Comparison to Akka ###
-`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. ([[11](#11)], [[5](#5)])
+`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. [[11](#11)][[5](#5)]
 
 ## Presentation of different actor types within `actor4j` ##
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
