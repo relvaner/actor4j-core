@@ -129,7 +129,7 @@ public class MyActor extends Actor {
 ## Life cycle of actors, monitoring ##
 <img src="doc/images/lifecycle1.png" alt="Representation of the life cycle of an actor" width="500" height="642"/>
 
-Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to Lightbend [[4](#5)])
+Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to [[4](#5)])
 
 ### Life cycle ###
 As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. [[4](#4)]
