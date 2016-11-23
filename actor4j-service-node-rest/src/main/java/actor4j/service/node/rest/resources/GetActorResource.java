@@ -1,10 +1,8 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.service.node.rest.resources;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.GET;
@@ -16,22 +14,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import actor4j.core.ActorService;
+import actor4j.service.node.rest.databind.RESTActorResponse;
 
 @Path("/getactor/{alias}")
 public class GetActorResource {
-	@Context 
+	@Context
 	ActorService service;
-	
+
 	@GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getActor(@PathParam("alias") String alias) {
-		Map<String, String> map = new HashMap<>();
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getActor(@PathParam("alias") String alias) {
 		UUID uuid = service.getActor(alias);
-		if (uuid!=null)
-			map.put("result", uuid.toString());
+		if (uuid != null)
+			return Response.ok().entity(
+					new RESTActorResponse(
+							RESTActorResponse.SUCCESS, 200, uuid.toString(), "")).build();
 		else
-			map.put("result", "");
-			
-		return Response.ok().entity(map).build();
+			return Response.status(404).entity(
+					new RESTActorResponse(
+							RESTActorResponse.FAIL, 404, "", "The actor for a given alias was not found.")).build();
 	}
 }

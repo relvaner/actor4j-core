@@ -1,10 +1,9 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.service.node.rest.resources;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -21,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.ActorService;
 import actor4j.core.messages.RemoteActorMessage;
+import actor4j.service.node.rest.databind.RESTActorResponse;
 import actor4j.service.node.utils.TransferActorMessage;
 
 @Path("/sendmessage")
@@ -33,27 +33,27 @@ public class SendMessageResource {
 	@Produces(MediaType.APPLICATION_JSON)
     public Response sendMessage(String json) {
 		TransferActorMessage message = null;
+		String error = null;
 		try {
 			message = new ObjectMapper().readValue(json, TransferActorMessage.class);
 		} catch (JsonParseException e) {
-			HashMap<String, String> map = new HashMap<>();
-			map.put("error", e.getMessage());
-			return Response.serverError().entity(map).build();
+			error =  e.getMessage();
 		} catch (JsonMappingException e) {
-			HashMap<String, String> map = new HashMap<>();
-			map.put("error", e.getMessage());
-			return Response.serverError().entity(map).build();
+			error =  e.getMessage();
 		} catch (IOException e) {
-			HashMap<String, String> map = new HashMap<>();
-			map.put("error", e.getMessage());
-			return Response.serverError().entity(map).build();
+			error =  e.getMessage();
 		}
 		
 		if (message!=null)
 			service.sendAsServer(new RemoteActorMessage<Object>(message.value, message.tag, UUID.fromString(message.source),UUID.fromString(message.dest)));
 		
-		HashMap<String, String> map = new HashMap<>();
-		map.put("result", "accepted");
-		return Response.accepted().entity(map).build();
+		if (error==null)
+			return Response.status(202).entity(
+					new RESTActorResponse(
+							RESTActorResponse.SUCCESS, 202, "", "The request was accepted and the message was send.")).build();
+		else
+			return Response.serverError().entity(
+					new RESTActorResponse(
+							RESTActorResponse.ERROR, 500, error, "The request was error prone.")).build();
 	}
 }
