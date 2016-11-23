@@ -36,7 +36,7 @@ public class HasActorResource {
 		if (service.hasActor(uuid))
 			return Response.ok().entity(
 					new RESTActorResponse(
-							RESTActorResponse.SUCCESS, 200, "true", "The actor was found.")).build();
+							RESTActorResponse.SUCCESS, 302, "true", "The actor was found.")).build();
 		else
 			return Response.status(404).entity(
 					new RESTActorResponse(
