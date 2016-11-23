@@ -60,13 +60,15 @@ public class MyActor extends Actor {
 		if (message.value instanceof String) {
 			logger().info(String.format(
 				"Received String message: %s", message.valueAsString()));
-			send(message, message.dest);
+			send(message, message.source);
 		} 
 		else
 			unhandled(message);
 	}
 }		            
+/* Adapted for actor4j according to [4] */
 ```
+
 Messages can be sent using the `send` method. The following methods are available. `Tell` offers a similar syntax to `Akka`. A message can also be forwarded (`forward`). Aliases are among other things available to access a remote actor in a simplified manner.
 ```java
 send(ActorMessage<?> message)
@@ -129,7 +131,7 @@ public class MyActor extends Actor {
 ## Life cycle of actors, monitoring ##
 <img src="doc/images/lifecycle1.png" alt="Representation of the life cycle of an actor" width="500" height="642"/>
 
-Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to [[4](#5)])
+Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to [[4](#4)])
 
 ### Life cycle ###
 As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. [[4](#4)]
@@ -215,16 +217,25 @@ Fig. 4: Class diagram to the core components of `actor4j`
 
 ## Cluster configuration ##
 
-...
+In the cluster, `actor4j` can also be operated. A tomcat server is generally used as the front end. A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible as a client. The websocket approach is similar to the REST API (see Fig. 5).
+
+<img src="doc/images/rest api.jpg" alt="Representation of the basic calls to the actor4j REST API" width="353" height="253"/>
+
+Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
+
+Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for later easy access (use of Guava Cache [[14](#14)]).
+
+#### Note ####
+An example can be found under ([Actor4j - Cluster Examples](https://github.com/relvaner/actor4j-cluster-examples)) and there is also a template (see [Actor4j - Service Node - Template](https://github.com/relvaner/actor4j/tree/master/actor4j-service-node-template)).
 
 ## Structure and behavioral analysis with an analysis tool ##
 
-An analysis tool (using JGraphX [[13](#13)] for visualizations) is suitable for testing, checking and optimizing an actor system. Such a tool is shown in Fig. 5. The internal structure of the actor system and the behavior of the actor system are shown on the left. The ellipses each correspond to one actor. The numbers at the edges between the actors, corresponds to the frequency of the exchange of messages. The right representation contains two rings, a hub and a tuple, linked in the message exchange. The impetus for message distribution is triggered via a timer (marked as `system`, since implemented from outside the actor system). It might be useful to see what kind of messages are exchanged between the actors.
+An analysis tool (using JGraphX [[13](#13)] for visualizations) is suitable for testing, checking and optimizing an actor system. Such a tool is shown in Fig. 6. The internal structure of the actor system and the behavior of the actor system are shown on the left. The ellipses each correspond to one actor. The numbers at the edges between the actors, corresponds to the frequency of the exchange of messages. The right representation contains two rings, a hub and a tuple, linked in the message exchange. The impetus for message distribution is triggered via a timer (marked as `system`, since implemented from outside the actor system). It might be useful to see what kind of messages are exchanged between the actors.
 
 <img src="doc/images/analyzer.png" alt="Representation of the analysis tool for actor4j" width="871" height="464"/>
 
 
-Fig. 5: Representation of the analysis tool for `actor4j`
+Fig. 6: Representation of the analysis tool for `actor4j`
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
@@ -240,5 +251,6 @@ Fig. 5: Representation of the analysis tool for `actor4j`
 [11]<a name="11"/> Lightbend (2015). Fault tolerance. http://doc.akka.io/docs/akka/2.4/java/fault-tolerance.html  
 [12]<a name="12"/> EPFL (2015). Pattern Matching. http://docs.scala-lang.org/tutorials/tour/pattern-matching.html  
 [13]<a name="13"/> JGraph Ltd (2016). JGraphX. https://github.com/jgraph/jgraphx  
+[14]<a name="14"/>  Google Inc (2015). Guava. Google Core Libraries for Java. CachesExplained. https://github.com/google/guava/wiki/CachesExplained  
 
-Page to be updated 11/21/2016
+Page to be updated 11/23/2016
