@@ -3,8 +3,6 @@
  */
 package actor4j.service.node.websocket.endpoints;
 
-import static actor4j.core.utils.ActorLogger.logger;
-
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
