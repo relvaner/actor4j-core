@@ -91,6 +91,12 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public ActorSystem persistenceMode(String databaseHost, int databasePort, String databaseName) {
+		system.persistenceMode(databaseHost, databasePort, databaseName);
+		
+		return this;
+	}
+	
 	public ActorSystem setDebugUnhandled(boolean debugUnhandled) {
 		system.setDebugUnhandled(debugUnhandled);
 		

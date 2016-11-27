@@ -1,19 +1,28 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import actor4j.core.actors.Actor;
+import actor4j.core.actors.PersistenceActor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.actor.PersistenceServiceActor;
 import actor4j.core.protocols.RestartProtocol;
 import actor4j.core.protocols.StopProtocol;
 import actor4j.core.supervisor.SupervisorStrategy;
@@ -27,6 +36,17 @@ import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorCell {
+	static class PersistenceTuple {
+		protected Consumer<Object> handler;
+		protected List<Object> objects;
+		
+		public PersistenceTuple(Consumer<Object> handler, List<Object> objects) {
+			super();
+			this.handler = handler;
+			this.objects = objects;
+		}
+	}
+	
 	protected ActorSystemImpl system;
 	protected Actor actor;
 	
@@ -44,6 +64,8 @@ public class ActorCell {
 	
 	protected Function<ActorMessage<?>, Boolean> processedDirective;
 	protected boolean activeDirectiveBehaviour;
+	
+	protected Queue<PersistenceTuple> persistenceTuples;
 			
 	public ActorCell(ActorSystemImpl system, Actor actor) {
 		super();
@@ -82,6 +104,13 @@ public class ActorCell {
 						stop();
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
+					else if (message.tag==INTERNAL_PERSISTENCE_RECOVERY)
+						recovery(message);
+					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
+						PersistenceTuple tuple = persistenceTuples.poll();
+						for (int i=0; i<tuple.objects.size(); i++)
+							tuple.handler.accept(tuple.objects.get(i));
+					}
 					else
 						result = false;
 				}
@@ -89,6 +118,8 @@ public class ActorCell {
 				return result;
 			}	
 		};
+		
+		persistenceTuples = new LinkedList<>();
 	}
 	
 	public ActorSystemImpl getSystem() {
@@ -269,5 +300,39 @@ public class ActorCell {
 		ActorCell cell = system.cells.get(dest);
 		if (cell!=null)
 			cell.deathWatcher.remove(id);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <E> void persist(Consumer<E> handler, E... events) {	
+		if (system.persistenceMode) {
+			List<Object> list = new ArrayList<>(Arrays.asList(events));
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)handler, list);
+			persistenceTuples.offer(tuple);
+			try {
+				system.messageDispatcher.postPersistenceEvent(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.EVENT, id, null));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <S> void saveSnapshot(Consumer<S> handler, S state) {
+		if (system.persistenceMode) {
+			List<Object> list = new ArrayList<Object>();
+			list.add(state);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)handler, list);
+			persistenceTuples.offer(tuple);
+			try {
+				system.messageDispatcher.postPersistenceState(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.STATE, id, null));
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void recovery(ActorMessage<?> message) {
+		if (system.persistenceMode && actor instanceof PersistenceActor)
+			((PersistenceActor<?, ?>)actor).recovery(message);
 	}
 }

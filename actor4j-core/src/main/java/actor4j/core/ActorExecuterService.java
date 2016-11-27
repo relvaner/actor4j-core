@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.ActorPersistenceService;
 import safety4j.ErrorHandler;
 import safety4j.SafetyManager;
 
@@ -37,6 +38,8 @@ public class ActorExecuterService {
 	
 	protected ExecutorService clientExecuterService;
 	protected ExecutorService resourceExecuterService;
+	
+	protected ActorPersistenceService persistenceService;
 	
 	protected int maxResourceThreads;
 	
@@ -101,6 +104,11 @@ public class ActorExecuterService {
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ResourceThreadFactory());
 		if (system.clientMode)
 			clientExecuterService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+		
+		if (system.persistenceMode) {
+			persistenceService = new ActorPersistenceService(system.wrapper, system.parallelismMin, system.parallelismFactor, system.databaseHost, system.databasePort, system.databaseName);
+			persistenceService.start();
+		}
 		
 		this.onTermination = onTermination;
 		
@@ -209,6 +217,9 @@ public class ActorExecuterService {
 					Thread.currentThread().interrupt();
 				}
 		}
+		
+		if (system.persistenceMode)
+			persistenceService.shutdown(await);
 	}
 	
 	public long getCount() {

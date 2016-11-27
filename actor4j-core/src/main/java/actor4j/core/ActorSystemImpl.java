@@ -67,6 +67,12 @@ public abstract class ActorSystemImpl {
 	
 	protected ActorStrategyOnFailure actorStrategyOnFailure;
 	
+	protected String databaseHost;
+	protected int databasePort;
+	protected String databaseName;
+	
+	protected boolean persistenceMode;
+	
 	protected String serviceNodeName;
 	protected List<ActorServiceNode> serviceNodes;
 	protected boolean clientMode;
@@ -119,6 +125,12 @@ public abstract class ActorSystemImpl {
 		actorBalancingOnRuntime = new ActorBalancingOnRuntime();
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
+		
+		databaseHost = "localhost";
+		databasePort = 27017;
+		databaseName = "actor4j";
+		
+		persistenceMode = false;
 		
 		serviceNodeName = "Default Node";
 		serviceNodes = new ArrayList<>();
@@ -268,6 +280,13 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public void persistenceMode(String databaseHost, int databasePort, String databaseName) {
+		this.databaseHost = databaseHost;
+		this.databasePort = databasePort;
+		this.databaseName = databaseName;
+		this.persistenceMode = true;
+	}
+
 	public int getQueueSize() {
 		return queueSize;
 	}
@@ -293,7 +312,11 @@ public abstract class ActorSystemImpl {
 		
 		return this;
 	}
-		
+
+	public void setPersistenceEnabled(boolean persistenceEnabled) {
+		this.persistenceMode = persistenceEnabled;
+	}
+
 	public ActorSystemImpl addServiceNode(ActorServiceNode serviceNode) {
 		serviceNodes.add(serviceNode);
 		

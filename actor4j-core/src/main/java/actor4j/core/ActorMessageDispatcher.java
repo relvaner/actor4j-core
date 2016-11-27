@@ -12,12 +12,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.ActorPersistenceService;
 
 public abstract class ActorMessageDispatcher {
 	protected ActorSystemImpl system;
 	
 	protected Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
 	protected Map<Long, ActorThread> threadsMap;
+	protected Map<Long, String> persistenceMap;
 	
 	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
 	
@@ -30,6 +32,7 @@ public abstract class ActorMessageDispatcher {
 		
 		cellsMap = new ConcurrentHashMap<>();
 		threadsMap = new HashMap<>();
+		persistenceMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
 	}
@@ -54,11 +57,19 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postDirective(ActorMessage<?> message);
 	
+	public abstract void postPersistenceEvent(ActorMessage<?> message);
+	
+	public abstract void postPersistenceState(ActorMessage<?> message);
+	
 	public void beforeRun(List<ActorThread> actorThreads) {
 		system.actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, system.cells);
 		
-		for(ActorThread t : actorThreads)
+		int i=0;
+		for(ActorThread t : actorThreads) {
 			threadsMap.put(t.getId(), t);
+			persistenceMap.put(t.getId(), ActorPersistenceService.getAlias(i));
+			i++;
+		}
 	}
 	
 	public void registerCell(ActorCell cell) {
