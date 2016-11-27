@@ -22,6 +22,7 @@ import actor4j.core.actors.PersistenceActor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.ActorPersistenceObject;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 import actor4j.core.protocols.RestartProtocol;
 import actor4j.core.protocols.StopProtocol;
@@ -37,11 +38,11 @@ import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorCell {
 	static class PersistenceTuple {
-		protected Consumer<Object> onSuccess;
+		protected Consumer<ActorPersistenceObject> onSuccess;
 		protected Consumer<Exception> onFailure;
-		protected List<Object> objects;
+		protected List<ActorPersistenceObject> objects;
 		
-		public PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
+		public PersistenceTuple(Consumer<ActorPersistenceObject> onSuccess, Consumer<Exception> onFailure, List<ActorPersistenceObject> objects) {
 			super();
 			this.onSuccess = onSuccess;
 			this.onFailure = onFailure;
@@ -309,30 +310,35 @@ public class ActorCell {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <E> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
+	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
 		if (system.persistenceMode) {
-			List<Object> list = new ArrayList<>(Arrays.asList(events));
-			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, list);
-			persistenceTuples.offer(tuple);
+			List<ActorPersistenceObject> list = new ArrayList<>(Arrays.asList(events));
+			for (ActorPersistenceObject obj : list)
+				obj.persistenceId = persistenceId();
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
 			try {
 				system.messageDispatcher.postPersistenceEvent(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.EVENT, id, null));
+				persistenceTuples.offer(tuple);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
+				onFailure.accept(e);
 			}
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
+	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
 		if (system.persistenceMode) {
-			List<Object> list = new ArrayList<Object>();
+			state.persistenceId = persistenceId();
+			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
-			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, list);
-			persistenceTuples.offer(tuple);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
 			try {
 				system.messageDispatcher.postPersistenceState(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.STATE, id, null));
+				persistenceTuples.offer(tuple);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
+				onFailure.accept(e);
 			}
 		}
 	}
@@ -340,5 +346,13 @@ public class ActorCell {
 	public void recovery(ActorMessage<?> message) {
 		if (system.persistenceMode && actor instanceof PersistenceActor)
 			((PersistenceActor<?, ?>)actor).recovery(message);
+	}
+	
+	public UUID persistenceId() {
+		UUID result = null;
+		if (system.persistenceMode && actor instanceof PersistenceActor)
+			result = ((PersistenceActor<?, ?>)actor).persistenceId();
+		
+		return result;
 	}
 }

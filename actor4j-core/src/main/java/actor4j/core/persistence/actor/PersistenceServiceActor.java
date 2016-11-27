@@ -56,8 +56,8 @@ public class PersistenceServiceActor extends Actor {
 		if (message.tag==EVENT) {
 			try {
 				JSONArray array = new JSONArray(message.valueAsString());
-				System.out.println(array.getString(0));
-				Document document = Document.parse(array.getString(0));
+				System.out.println(array.get(0));
+				Document document = Document.parse(array.get(0).toString());
 				events.insertOne(document);
 				parent.send(new ActorMessage<Object>(null, SUCCESS, self(), message.source));
 			}

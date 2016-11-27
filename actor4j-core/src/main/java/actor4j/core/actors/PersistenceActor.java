@@ -3,10 +3,13 @@
  */
 package actor4j.core.actors;
 
+import java.util.UUID;
+
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.ActorPersistenceObject;
 import actor4j.function.Consumer;
 
-public abstract class PersistenceActor<S, E> extends Actor {
+public abstract class PersistenceActor<S extends ActorPersistenceObject, E extends ActorPersistenceObject> extends Actor {
 	public PersistenceActor(String name) {
 		super(name);
 	}
@@ -23,4 +26,6 @@ public abstract class PersistenceActor<S, E> extends Actor {
 	public void recovery(ActorMessage<?> message) {
 		// empty
 	}
+	
+	public abstract UUID persistenceId();
 }
