@@ -37,12 +37,14 @@ import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorCell {
 	static class PersistenceTuple {
-		protected Consumer<Object> handler;
+		protected Consumer<Object> onSuccess;
+		protected Consumer<Exception> onFailure;
 		protected List<Object> objects;
 		
-		public PersistenceTuple(Consumer<Object> handler, List<Object> objects) {
+		public PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
 			super();
-			this.handler = handler;
+			this.onSuccess = onSuccess;
+			this.onFailure = onFailure;
 			this.objects = objects;
 		}
 	}
@@ -109,7 +111,11 @@ public class ActorCell {
 					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();
 						for (int i=0; i<tuple.objects.size(); i++)
-							tuple.handler.accept(tuple.objects.get(i));
+							tuple.onSuccess.accept(tuple.objects.get(i));
+					}
+					else if (message.tag==INTERNAL_PERSISTENCE_FAILURE) {
+						PersistenceTuple tuple = persistenceTuples.poll();
+						tuple.onFailure.accept((Exception)message.value);
 					}
 					else
 						result = false;
@@ -303,10 +309,10 @@ public class ActorCell {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <E> void persist(Consumer<E> handler, E... events) {	
+	public <E> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
 		if (system.persistenceMode) {
 			List<Object> list = new ArrayList<>(Arrays.asList(events));
-			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)handler, list);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, list);
 			persistenceTuples.offer(tuple);
 			try {
 				system.messageDispatcher.postPersistenceEvent(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.EVENT, id, null));
@@ -317,11 +323,11 @@ public class ActorCell {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <S> void saveSnapshot(Consumer<S> handler, S state) {
+	public <S> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
 		if (system.persistenceMode) {
 			List<Object> list = new ArrayList<Object>();
 			list.add(state);
-			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)handler, list);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, list);
 			persistenceTuples.offer(tuple);
 			try {
 				system.messageDispatcher.postPersistenceState(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.STATE, id, null));

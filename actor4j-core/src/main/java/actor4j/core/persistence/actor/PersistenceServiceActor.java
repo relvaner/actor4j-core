@@ -32,7 +32,7 @@ public class PersistenceServiceActor extends Actor {
 	public static final int STATE    = 101;
 	public static final int RECOVERY = INTERNAL_PERSISTENCE_RECOVERY;
 	public static final int SUCCESS  = INTERNAL_PERSISTENCE_SUCCESS;
-	public static final int FAILED   = INTERNAL_PERSISTENCE_FAILED;
+	public static final int FAILURE   = INTERNAL_PERSISTENCE_FAILURE;
 	
 	public PersistenceServiceActor(ActorSystem parent, String name, String host, int port, String databaseName) {
 		super(name);
@@ -47,8 +47,8 @@ public class PersistenceServiceActor extends Actor {
 		client = new MongoClient(host, port);
 		
 		database = client.getDatabase(databaseName);
-		events = database.getCollection(name+".events");
-		states = database.getCollection(name+".states");
+		events = database.getCollection("persistence.events");
+		states = database.getCollection("persistence.states");
 	}
 	
 	@Override
@@ -63,7 +63,7 @@ public class PersistenceServiceActor extends Actor {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				parent.send(new ActorMessage<Object>(null, FAILED, self(), message.source));
+				parent.send(new ActorMessage<Exception>(e, FAILURE, self(), message.source));
 			}
 		}
 		else {
@@ -74,7 +74,7 @@ public class PersistenceServiceActor extends Actor {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				parent.send(new ActorMessage<Object>(null, FAILED, self(), message.source));
+				parent.send(new ActorMessage<Exception>(e, FAILURE, self(), message.source));
 			}
 		}
 	}

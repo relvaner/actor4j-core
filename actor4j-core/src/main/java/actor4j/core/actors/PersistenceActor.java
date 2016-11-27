@@ -7,13 +7,17 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.function.Consumer;
 
 public abstract class PersistenceActor<S, E> extends Actor {
-	@SuppressWarnings("unchecked")
-	public void persist(Consumer<E> handler, E... events) {	
-		cell.persist(handler, events);
+	public PersistenceActor(String name) {
+		super(name);
 	}
 	
-	public void saveSnapshot(Consumer<S> handler, S state) {
-		cell.saveSnapshot(handler, state);
+	@SuppressWarnings("unchecked")
+	public void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
+		cell.persist(onSuccess, onFailure, events);
+	}
+	
+	public void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
+		cell.saveSnapshot(onSuccess, onFailure, state);
 	}
 	
 	public void recovery(ActorMessage<?> message) {

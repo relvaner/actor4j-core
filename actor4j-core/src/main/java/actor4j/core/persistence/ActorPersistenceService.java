@@ -32,7 +32,7 @@ public class ActorPersistenceService {
 	}
 	
 	public static String getAlias(int index) {
-		return "persistence"+String.valueOf(index);
+		return "persistence-actor-"+String.valueOf(index);
 	}
 	
 	public ActorService getService() {

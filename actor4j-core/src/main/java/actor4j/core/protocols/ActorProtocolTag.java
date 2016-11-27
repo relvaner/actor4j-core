@@ -11,5 +11,5 @@ public final class ActorProtocolTag {
 	
 	public static final int INTERNAL_PERSISTENCE_RECOVERY = -7;
 	public static final int INTERNAL_PERSISTENCE_SUCCESS  = -8;
-	public static final int INTERNAL_PERSISTENCE_FAILED   = -9;
+	public static final int INTERNAL_PERSISTENCE_FAILURE  = -9;
 }
