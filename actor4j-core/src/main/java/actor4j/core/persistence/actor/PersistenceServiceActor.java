@@ -5,12 +5,17 @@ package actor4j.core.persistence.actor;
 
 import static actor4j.core.protocols.ActorProtocolTag.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 import org.json.JSONArray;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.InsertOneModel;
+import com.mongodb.client.model.WriteModel;
 
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
@@ -56,9 +61,18 @@ public class PersistenceServiceActor extends Actor {
 		if (message.tag==EVENT) {
 			try {
 				JSONArray array = new JSONArray(message.valueAsString());
-				System.out.println(array.get(0));
-				Document document = Document.parse(array.get(0).toString());
-				events.insertOne(document);
+				if (array.length()==1) {
+					Document document = Document.parse(array.get(0).toString());
+					events.insertOne(document);
+				}
+				else {
+					List<WriteModel<Document>> requests = new ArrayList<WriteModel<Document>>();
+					for (Object obj : array) {
+						Document document = Document.parse(obj.toString());
+						requests.add(new InsertOneModel<Document>(document));
+					}
+					events.bulkWrite(requests);
+				}
 				parent.send(new ActorMessage<Object>(null, SUCCESS, self(), message.source));
 			}
 			catch (Exception e) {
