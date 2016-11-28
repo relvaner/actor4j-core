@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -28,6 +28,8 @@ import safety4j.SafetyManager;
 public class ActorExecuterService {
 	protected ActorSystemImpl system;
 	
+	protected SafetyManager safetyManager;
+	
 	protected List<ActorThread> actorThreads;
 	protected Queue<ActorTimer> actorTimers;
 	
@@ -55,7 +57,8 @@ public class ActorExecuterService {
 		
 		maxResourceThreads = 200;
 		
-		SafetyManager.getInstance().setErrorHandler(new ErrorHandler() {
+		safetyManager = new SafetyManager();
+		safetyManager.setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Exception e, String message, UUID uuid) {
 				if (message!=null) {

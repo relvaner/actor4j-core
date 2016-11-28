@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -15,7 +15,6 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorMessageObservable;
 import rx.Observable;
-import safety4j.SafetyManager;
 
 import static actor4j.core.utils.ActorUtils.*;
 
@@ -43,7 +42,7 @@ public class PseudoActorCell extends ActorCell {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "pseudo", id);
+			system.executerService.safetyManager.notifyErrorHandler(e, "pseudo", id);
 			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}

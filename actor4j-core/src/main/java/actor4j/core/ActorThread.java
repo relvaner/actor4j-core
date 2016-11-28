@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import actor4j.core.messages.ActorMessage;
 import safety4j.Method;
-import safety4j.SafetyManager;
 import safety4j.SafetyMethod;
 
 public abstract class ActorThread extends Thread {
@@ -37,7 +36,7 @@ public abstract class ActorThread extends Thread {
 			cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "actor", cell.id);
+			system.executerService.safetyManager.notifyErrorHandler(e, "actor", cell.id);
 			system.actorStrategyOnFailure.handle(cell, e);
 		}	
 	}
@@ -63,7 +62,7 @@ public abstract class ActorThread extends Thread {
 		
 	@Override
 	public void run() {
-		SafetyMethod.run(new Method() {
+		SafetyMethod.run(system.executerService.safetyManager, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

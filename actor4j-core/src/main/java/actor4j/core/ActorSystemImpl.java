@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -21,7 +21,6 @@ import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
-import safety4j.SafetyManager;
 import tools4j.di.DIContainer;
 import tools4j.di.InjectorParam;
 
@@ -361,7 +360,7 @@ public abstract class ActorSystemImpl {
 			cell.actor = actor;
 		} catch (Exception e) {
 			e.printStackTrace();
-			SafetyManager.getInstance().notifyErrorHandler(new ActorInitializationException(), "initialization", null);
+			executerService.safetyManager.notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
 		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;

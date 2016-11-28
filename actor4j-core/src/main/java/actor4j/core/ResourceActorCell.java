@@ -11,7 +11,6 @@ import actor4j.annotations.Stateless;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.ResourceActor;
 import actor4j.core.messages.ActorMessage;
-import safety4j.SafetyManager;
 
 public class ResourceActorCell extends ActorCell {
 	protected boolean stateful;
@@ -84,7 +83,7 @@ public class ResourceActorCell extends ActorCell {
 			after();
 		}
 		catch(Exception e) {
-			SafetyManager.getInstance().notifyErrorHandler(e, "resource", id);
+			system.executerService.safetyManager.notifyErrorHandler(e, "resource", id);
 			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}

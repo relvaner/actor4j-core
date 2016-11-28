@@ -311,7 +311,7 @@ public class ActorCell {
 	
 	@SuppressWarnings("unchecked")
 	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
-		if (system.persistenceMode) {
+		if (system.persistenceMode && events!=null) {
 			List<ActorPersistenceObject> list = new ArrayList<>(Arrays.asList(events));
 			for (ActorPersistenceObject obj : list)
 				obj.persistenceId = persistenceId();
@@ -328,7 +328,7 @@ public class ActorCell {
 	
 	@SuppressWarnings("unchecked")
 	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
-		if (system.persistenceMode) {
+		if (system.persistenceMode && state!=null) {
 			state.persistenceId = persistenceId();
 			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
