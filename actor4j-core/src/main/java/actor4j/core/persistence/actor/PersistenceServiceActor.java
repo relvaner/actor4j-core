@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.WriteModel;
@@ -82,7 +83,6 @@ public class PersistenceServiceActor extends Actor {
 		}
 		else if (message.tag==STATE){
 			try {
-				System.out.println(message.valueAsString());
 				Document document = Document.parse(message.valueAsString());
 				states.insertOne(document);
 				parent.send(new ActorMessage<Object>(null, INTERNAL_PERSISTENCE_SUCCESS, self(), message.source));
@@ -97,20 +97,32 @@ public class PersistenceServiceActor extends Actor {
 				JSONObject obj = new JSONObject();
 				Document document = null;
 				
-				FindIterable<Document> iterable = states.find(new Document("persistenceId", message.valueAsString())).sort(new Document("timeStamp", -1)).limit(1);
-				document = iterable.first();
+				FindIterable<Document> statesIterable = states.find(new Document("persistenceId", message.valueAsString())).sort(new Document("timeStamp", -1)).limit(1);
+				document = statesIterable.first();
 				if (document!=null) {
-					System.out.println(document.toJson());
 					JSONObject stateValue = new JSONObject(document.toJson());
 					stateValue.remove("_id");
 					long timeStamp = stateValue.getJSONObject("timeStamp").getLong("$numberLong");
 					stateValue.put("timeStamp", timeStamp);
 					obj.put("state", stateValue);
+					
+					FindIterable<Document> eventsIterable = events.find(new Document("persistenceId", message.valueAsString()).append("timeStamp", new Document("$gte", timeStamp))).sort(new Document("timeStamp", -1));
+					JSONArray array = new JSONArray();
+					MongoCursor<Document> cursor = eventsIterable.iterator();
+					while (cursor.hasNext()) {
+						document = cursor.next();
+						JSONObject eventValue = new JSONObject(document.toJson());
+						eventValue.remove("_id");
+						timeStamp = eventValue.getJSONObject("timeStamp").getLong("$numberLong");
+						eventValue.put("timeStamp", timeStamp);
+						array.put(eventValue);
+					}
+					cursor.close();
+					obj.put("events", array);
 				}
 				else
 					obj.put("state", new JSONObject());
 				
-				System.out.println(obj.toString());
 				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVERY, self(), message.source));
 			}
 			catch (Exception e) {
