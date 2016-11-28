@@ -3,9 +3,12 @@
  */
 package actor4j.core.persistence;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ActorPersistenceRecoveryObject<S extends ActorPersistenceObject, E extends ActorPersistenceObject> {
@@ -17,8 +20,19 @@ public class ActorPersistenceRecoveryObject<S extends ActorPersistenceObject, E 
 		events = new ArrayList<>();
 	}
 	
-	public static <R> R convertValue(String json, Class<R> clazz) {
-		return (R)(new ObjectMapper().convertValue(json, clazz));
+	@SuppressWarnings("unchecked")
+	public static <A extends ActorPersistenceObject, B extends ActorPersistenceObject> ActorPersistenceRecoveryObject<A, B> convertValue(String json, TypeReference<?> valueTypeRef) {
+		ActorPersistenceRecoveryObject<A, B> result = null;
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		try {
+			result = (ActorPersistenceRecoveryObject<A, B>)objectMapper.readValue(json, valueTypeRef);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 	@Override
