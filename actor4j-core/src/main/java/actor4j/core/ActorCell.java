@@ -24,6 +24,7 @@ import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceObject;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
+import actor4j.core.protocols.RecoveryProtocol;
 import actor4j.core.protocols.RestartProtocol;
 import actor4j.core.protocols.StopProtocol;
 import actor4j.core.supervisor.SupervisorStrategy;
@@ -62,6 +63,7 @@ public class ActorCell {
 	
 	protected RestartProtocol restartProtocol;
 	protected StopProtocol stopProtocol;
+	protected RecoveryProtocol recoveryProtocol;
 	
 	protected Queue<UUID> deathWatcher;
 	
@@ -84,6 +86,7 @@ public class ActorCell {
 		
 		restartProtocol = new RestartProtocol(this);
 		stopProtocol = new StopProtocol(this);
+		recoveryProtocol = new RecoveryProtocol(this);
 		
 		deathWatcher =  new ConcurrentLinkedQueue<>();
 		
@@ -107,16 +110,20 @@ public class ActorCell {
 						stop();
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
+					else if (message.tag==INTERNAL_RECOVERY)
+						recoveryProtocol.apply();
 					else if (message.tag==INTERNAL_PERSISTENCE_RECOVERY)
 						recovery(message);
 					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();
-						for (int i=0; i<tuple.objects.size(); i++)
-							tuple.onSuccess.accept(tuple.objects.get(i));
+						if (tuple.onSuccess!=null)
+							for (int i=0; i<tuple.objects.size(); i++)
+								tuple.onSuccess.accept(tuple.objects.get(i));
 					}
 					else if (message.tag==INTERNAL_PERSISTENCE_FAILURE) {
 						PersistenceTuple tuple = persistenceTuples.poll();
-						tuple.onFailure.accept((Exception)message.value);
+						if (tuple.onFailure!=null)
+							tuple.onFailure.accept((Exception)message.value);
 					}
 					else
 						result = false;
@@ -261,6 +268,7 @@ public class ActorCell {
 	}
 	
 	public void preStart() {
+		recoveryProtocol.apply();
 		actor.preStart();
 	}
 	
@@ -317,7 +325,7 @@ public class ActorCell {
 				obj.persistenceId = persistenceId();
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
 			try {
-				system.messageDispatcher.postPersistenceEvent(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.EVENT, id, null));
+				system.messageDispatcher.postPersistence(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.EVENT, id, null));
 				persistenceTuples.offer(tuple);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -334,7 +342,7 @@ public class ActorCell {
 			list.add(state);
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
 			try {
-				system.messageDispatcher.postPersistenceState(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.STATE, id, null));
+				system.messageDispatcher.postPersistence(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.STATE, id, null));
 				persistenceTuples.offer(tuple);
 			} catch (JsonProcessingException e) {
 				e.printStackTrace();
@@ -345,7 +353,7 @@ public class ActorCell {
 	
 	public void recovery(ActorMessage<?> message) {
 		if (system.persistenceMode && actor instanceof PersistenceActor)
-			((PersistenceActor<?, ?>)actor).recovery(message);
+			((PersistenceActor<?, ?>)actor).recovery(message.valueAsString());
 	}
 	
 	public UUID persistenceId() {

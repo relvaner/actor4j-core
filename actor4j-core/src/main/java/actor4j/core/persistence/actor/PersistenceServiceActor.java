@@ -10,8 +10,10 @@ import java.util.List;
 
 import org.bson.Document;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.InsertOneModel;
@@ -35,9 +37,7 @@ public class PersistenceServiceActor extends Actor {
 	
 	public static final int EVENT    = 100;
 	public static final int STATE    = 101;
-	public static final int RECOVERY = INTERNAL_PERSISTENCE_RECOVERY;
-	public static final int SUCCESS  = INTERNAL_PERSISTENCE_SUCCESS;
-	public static final int FAILURE   = INTERNAL_PERSISTENCE_FAILURE;
+	public static final int RECOVERY = 102;
 	
 	public PersistenceServiceActor(ActorSystem parent, String name, String host, int port, String databaseName) {
 		super(name);
@@ -73,22 +73,51 @@ public class PersistenceServiceActor extends Actor {
 					}
 					events.bulkWrite(requests);
 				}
-				parent.send(new ActorMessage<Object>(null, SUCCESS, self(), message.source));
+				parent.send(new ActorMessage<Object>(null, INTERNAL_PERSISTENCE_SUCCESS, self(), message.source));
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				parent.send(new ActorMessage<Exception>(e, FAILURE, self(), message.source));
+				parent.send(new ActorMessage<Exception>(e, INTERNAL_PERSISTENCE_FAILURE, self(), message.source));
 			}
 		}
-		else {
+		else if (message.tag==STATE){
 			try {
+				System.out.println(message.valueAsString());
 				Document document = Document.parse(message.valueAsString());
 				states.insertOne(document);
-				parent.send(new ActorMessage<Object>(null, SUCCESS, self(), message.source));
+				parent.send(new ActorMessage<Object>(null, INTERNAL_PERSISTENCE_SUCCESS, self(), message.source));
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				parent.send(new ActorMessage<Exception>(e, FAILURE, self(), message.source));
+				parent.send(new ActorMessage<Exception>(e, INTERNAL_PERSISTENCE_FAILURE, self(), message.source));
+			}
+		}
+		else if (message.tag==RECOVERY) {
+			try {
+				JSONObject obj = new JSONObject();
+				Document document = null;
+				
+				FindIterable<Document> iterable = states.find(new Document("persistenceId", message.valueAsString())).sort(new Document("timeStamp", -1)).limit(1);
+				document = iterable.first();
+				if (document!=null) {
+					System.out.println(document.toJson());
+					JSONObject stateValue = new JSONObject(document.toJson());
+					stateValue.remove("_id");
+					long timeStamp = stateValue.getJSONObject("timeStamp").getLong("$numberLong");
+					stateValue.put("timeStamp", timeStamp);
+					obj.put("state", stateValue);
+				}
+				else
+					obj.put("state", new JSONObject());
+				
+				System.out.println(obj.toString());
+				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVERY, self(), message.source));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				JSONObject obj = new JSONObject();
+				obj.put("error", e.getMessage());
+				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVERY, self(), message.source));
 			}
 		}
 	}

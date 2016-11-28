@@ -57,9 +57,7 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postDirective(ActorMessage<?> message);
 	
-	public abstract void postPersistenceEvent(ActorMessage<?> message);
-	
-	public abstract void postPersistenceState(ActorMessage<?> message);
+	public abstract void postPersistence(ActorMessage<?> message);
 	
 	public void beforeRun(List<ActorThread> actorThreads) {
 		system.actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, system.cells);

@@ -5,7 +5,6 @@ package actor4j.core.actors;
 
 import java.util.UUID;
 
-import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceObject;
 import actor4j.function.Consumer;
 
@@ -23,7 +22,7 @@ public abstract class PersistenceActor<S extends ActorPersistenceObject, E exten
 		cell.saveSnapshot(onSuccess, onFailure, state);
 	}
 	
-	public void recovery(ActorMessage<?> message) {
+	public void recovery(String json) {
 		// empty
 	}
 	

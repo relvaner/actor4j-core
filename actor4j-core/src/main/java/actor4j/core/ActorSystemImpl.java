@@ -279,6 +279,10 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public boolean isPersistenceMode() {
+		return persistenceMode;
+	}
+
 	public void persistenceMode(String databaseHost, int databasePort, String databaseName) {
 		this.databaseHost = databaseHost;
 		this.databasePort = databasePort;
@@ -310,10 +314,6 @@ public abstract class ActorSystemImpl {
 		this.debugUnhandled = debugUnhandled;
 		
 		return this;
-	}
-
-	public void setPersistenceEnabled(boolean persistenceEnabled) {
-		this.persistenceMode = persistenceEnabled;
 	}
 
 	public ActorSystemImpl addServiceNode(ActorServiceNode serviceNode) {

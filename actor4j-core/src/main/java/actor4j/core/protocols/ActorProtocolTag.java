@@ -8,8 +8,9 @@ public final class ActorProtocolTag {
 	public static final int INTERNAL_STOP                 = -2;
 	public static final int INTERNAL_STOP_SUCCESS         = -3;
 	public static final int INTERNAL_KILL                 = -4;
+	public static final int INTERNAL_RECOVERY             = -5;
 	
-	public static final int INTERNAL_PERSISTENCE_RECOVERY = -7;
-	public static final int INTERNAL_PERSISTENCE_SUCCESS  = -8;
-	public static final int INTERNAL_PERSISTENCE_FAILURE  = -9;
+	public static final int INTERNAL_PERSISTENCE_RECOVERY = -6;
+	public static final int INTERNAL_PERSISTENCE_SUCCESS  = -7;
+	public static final int INTERNAL_PERSISTENCE_FAILURE  = -8;
 }

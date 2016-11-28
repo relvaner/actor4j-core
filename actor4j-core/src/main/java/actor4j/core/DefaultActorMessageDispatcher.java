@@ -126,14 +126,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	}
 
 	@Override
-	public void postPersistenceEvent(ActorMessage<?> message) {
-		Long id_source = cellsMap.get(message.source);
-		message.dest = system.executerService.persistenceService.getService().getActor(persistenceMap.get(id_source));
-		system.executerService.persistenceService.getService().send(message.copy());
-	}
-
-	@Override
-	public void postPersistenceState(ActorMessage<?> message) {
+	public void postPersistence(ActorMessage<?> message) {
 		Long id_source = cellsMap.get(message.source);
 		message.dest = system.executerService.persistenceService.getService().getActor(persistenceMap.get(id_source));
 		system.executerService.persistenceService.getService().send(message.copy());
