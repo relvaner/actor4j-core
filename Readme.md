@@ -166,7 +166,7 @@ An `ActorInitializationException` is thrown if an error occurs during the instan
 
 Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 
-`Actor4j` currently supports four directives: `RESUME`, `STOP`, `RESTART` and `RECOVERY` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
+`Actor4j` currently supports four directives: `RESUME`, `STOP`, `RESTART` and `RECOVER` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
 
 * `RESUME`: In this case, the supervisor remains passive. The actor can continue its activities undisturbed [[5](#5)].
 * `STOP`:
@@ -178,7 +178,7 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
   * Call of `postStop` at the current instance, after all children have finished and confirmed this with the `TERMINATED` message.
   * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
   * Call of `postRestart` (with `preStart` (with optional `recovery`) for the new instance.
-* `RECOVERY`: The actor will be recovered to it's last state, novel events can lead to an update of the actor's state.
+* `RECOVER`: The actor will be recovered to it's last state, novel events can lead to an update of the actor's state.
 
 [[4](#4)][[5](#5)][[15](#15)]
 
