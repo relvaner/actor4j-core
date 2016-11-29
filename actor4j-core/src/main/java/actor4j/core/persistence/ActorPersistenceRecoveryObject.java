@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +20,32 @@ public class ActorPersistenceRecoveryObject<S extends ActorPersistenceObject, E 
 	public ActorPersistenceRecoveryObject() {
 		super();
 		events = new ArrayList<>();
+	}
+	
+	public static boolean isError(String json) {
+		boolean result = false;
+		try {
+			JSONObject obj = new JSONObject(json);
+			result = obj.has("error");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public static String getErrorMsg(String json) {
+		String result = null;
+		try {
+			JSONObject obj = new JSONObject(json);
+			result = obj.getString("error");
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
