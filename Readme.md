@@ -187,15 +187,18 @@ To persist the state of an actor, this must be derived from the `PersistenceActo
 public class MyActor extends PersistenceActor<MyState, MyEvent> {
 	@Override
 	public void receive(ActorMessage<?> message) {
+    	// two events are generated based on the received message (!)
 		MyEvent event1 = new MyEvent("I am the first event!");
 		MyEvent event2 = new MyEvent("I am the second event!");
-				
-		saveSnapshot(null, null, new MyState("I am a state!"));
-				
+		
+        // the events will be persisted
 		persist(
 			(s) -> logger().debug(String.format("Event: %s", s)), 
 			(e) -> logger().error(String.format("Error: %s", e.getMessage())),
 			event1, event2);		
+            
+        // the state will be persisted
+        saveSnapshot(null, null, new MyState("I am a state!"));
 	}
     
     @Override
@@ -287,5 +290,6 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 [14]<a name="14"/>  Google Inc (2015). Guava. Google Core Libraries for Java. CachesExplained. https://github.com/google/guava/wiki/CachesExplained  
 [15]<a name="15"/> Lightbend (2015). Persistence.  http://doc.akka.io/docs/akka/2.4/java/persistence.html  
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
-[17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/
+[17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
+
 Page to be updated 11/30/2016
