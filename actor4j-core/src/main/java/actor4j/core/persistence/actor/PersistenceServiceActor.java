@@ -36,9 +36,9 @@ public class PersistenceServiceActor extends Actor {
 	protected MongoCollection<Document> events;
 	protected MongoCollection<Document> states;
 	
-	public static final int EVENT    = 100;
-	public static final int STATE    = 101;
-	public static final int RECOVER  = 102;
+	public static final int PERSIST_EVENTS = 100;
+	public static final int PERSIST_STATE  = 101;
+	public static final int RECOVER  	   = 102;
 	
 	public PersistenceServiceActor(ActorSystem parent, String name, String host, int port, String databaseName) {
 		super(name);
@@ -59,7 +59,7 @@ public class PersistenceServiceActor extends Actor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (message.tag==EVENT) {
+		if (message.tag==PERSIST_EVENTS) {
 			try {
 				JSONArray array = new JSONArray(message.valueAsString());
 				if (array.length()==1) {
@@ -81,7 +81,7 @@ public class PersistenceServiceActor extends Actor {
 				parent.send(new ActorMessage<Exception>(e, INTERNAL_PERSISTENCE_FAILURE, self(), message.source));
 			}
 		}
-		else if (message.tag==STATE){
+		else if (message.tag==PERSIST_STATE){
 			try {
 				Document document = Document.parse(message.valueAsString());
 				states.insertOne(document);

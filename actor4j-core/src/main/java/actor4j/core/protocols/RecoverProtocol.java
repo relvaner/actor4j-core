@@ -8,10 +8,10 @@ import actor4j.core.actors.PersistenceActor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 
-public class RecoveryProtocol {
+public class RecoverProtocol {
 	protected final ActorCell cell;
 
-	public RecoveryProtocol(ActorCell cell) {
+	public RecoverProtocol(ActorCell cell) {
 		this.cell = cell;
 	}
 	
