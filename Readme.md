@@ -185,6 +185,10 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 ### Comparison to Akka ###
 `Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. [[11](#11)][[5](#5)]
 
+## Persistence ##
+
+...
+
 ## Presentation of different actor types within `actor4j` ##
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
 
@@ -254,4 +258,4 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 [13]<a name="13"/> JGraph Ltd (2016). JGraphX. https://github.com/jgraph/jgraphx  
 [14]<a name="14"/>  Google Inc (2015). Guava. Google Core Libraries for Java. CachesExplained. https://github.com/google/guava/wiki/CachesExplained  
 
-Page to be updated 11/23/2016
+Page to be updated 11/29/2016
