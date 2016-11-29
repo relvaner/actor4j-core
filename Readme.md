@@ -50,10 +50,6 @@ UUID myActor = addChild( () -> new MyActor() );
 ```
 Actors must derive from the class `Actor` and implement the `receive` method. In the example below, `MyActor` waits for a message that contains a `String` and then outputs it via a logger. Subsequently, the message is sent back to the sender. When a different message is received, a warning (`unhandled (message)`) is outputted if `debugUnhandled` has been set in the actor system. [[4](#4)]
 ```java
-import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
-import static actor4j.core.utils.ActorLogger.*;
-
 public class MyActor extends Actor {
 	@Override
 	public void receive(ActorMessage<?> message) {
@@ -186,8 +182,40 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 `Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. [[11](#11)][[5](#5)]
 
 ## Persistence ##
-
-...
+To persist the state of an actor, this must be derived from the `PersistenceActor` class. A `PersistenceActor` is characterized by events and a state, which can be saved, depending on use case. In the example below, two events are defined. First, a snapshot of the state is made and persisted. Then the two events are saved. Handlers are defined for error handling and for a successful case. In general after successful saving the events, the state of the actor can be updated. Side effects can be triggered, which may be affects other actors. The `recovery` method is called to recover the state of the actor. It is loaded from the database, where the last state and the last events have been persisted. With the help of the `Recovery` class this attributes can be loaded, for this purpose the `json` `String` will be transformed to a `Recovery` object. The principles of `Event Sourcing` [[16](#16)] are followed, as a database `MongoDB` [[17](#17)] is currently used. Every `PersistenceActor` must have a persistent `UUID` for unique access. [[15](#15)]
+```java
+public class MyActor extends PersistenceActor<MyState, MyEvent> {
+	@Override
+	public void receive(ActorMessage<?> message) {
+		MyEvent event1 = new MyEvent("I am the first event!");
+		MyEvent event2 = new MyEvent("I am the second event!");
+				
+		saveSnapshot(null, null, new MyState("I am a state!"));
+				
+		persist(
+			(s) -> logger().debug(String.format("Event: %s", s)), 
+			(e) -> logger().error(String.format("Error: %s", e.getMessage())),
+			event1, event2);		
+	}
+    
+    @Override
+	public void recovery(String json) {
+		if (!Recovery.isError(json)) {
+			logger().debug(String.format("Recovery: %s", json));
+			Recovery<MyState, MyEvent> obj = Recovery.convertValue(json, 
+           		new TypeReference<Recovery<MyState, MyEvent>>(){});
+			logger().debug(String.format("Recovery: %s", obj.toString()));
+		}
+		else
+			logger().error(String.format("Error: %s", Recovery.getErrorMsg(json)));
+	}
+			
+	@Override
+	public UUID persistenceId() {
+		return UUID.fromString("60f086af-27d3-44e9-8fd7-eb095c98daed");
+	}
+}		            
+```
 
 ## Presentation of different actor types within `actor4j` ##
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
@@ -258,5 +286,6 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 [13]<a name="13"/> JGraph Ltd (2016). JGraphX. https://github.com/jgraph/jgraphx  
 [14]<a name="14"/>  Google Inc (2015). Guava. Google Core Libraries for Java. CachesExplained. https://github.com/google/guava/wiki/CachesExplained  
 [15]<a name="15"/> Lightbend (2015). Persistence.  http://doc.akka.io/docs/akka/2.4/java/persistence.html  
-
-Page to be updated 11/29/2016
+[16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
+[17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/
+Page to be updated 11/30/2016
