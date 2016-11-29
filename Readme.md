@@ -204,7 +204,6 @@ public class MyActor extends PersistenceActor<MyState, MyEvent> {
     @Override
 	public void recovery(String json) {
 		if (!Recovery.isError(json)) {
-			logger().debug(String.format("Recovery: %s", json));
 			Recovery<MyState, MyEvent> obj = Recovery.convertValue(json, 
            		new TypeReference<Recovery<MyState, MyEvent>>(){});
 			logger().debug(String.format("Recovery: %s", obj.toString()));
