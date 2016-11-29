@@ -38,7 +38,7 @@ public class PersistenceServiceActor extends Actor {
 	
 	public static final int EVENT    = 100;
 	public static final int STATE    = 101;
-	public static final int RECOVERY = 102;
+	public static final int RECOVER  = 102;
 	
 	public PersistenceServiceActor(ActorSystem parent, String name, String host, int port, String databaseName) {
 		super(name);
@@ -92,7 +92,7 @@ public class PersistenceServiceActor extends Actor {
 				parent.send(new ActorMessage<Exception>(e, INTERNAL_PERSISTENCE_FAILURE, self(), message.source));
 			}
 		}
-		else if (message.tag==RECOVERY) {
+		else if (message.tag==RECOVER) {
 			try {
 				JSONObject obj = new JSONObject();
 				Document document = null;
@@ -123,13 +123,13 @@ public class PersistenceServiceActor extends Actor {
 				else
 					obj.put("state", new JSONObject());
 				
-				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVERY, self(), message.source));
+				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVER, self(), message.source));
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 				JSONObject obj = new JSONObject();
 				obj.put("error", e.getMessage());
-				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVERY, self(), message.source));
+				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVER, self(), message.source));
 			}
 		}
 	}

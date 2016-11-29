@@ -110,9 +110,9 @@ public class ActorCell {
 						stop();
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
-					else if (message.tag==INTERNAL_RECOVERY)
+					else if (message.tag==INTERNAL_RECOVER)
 						recoveryProtocol.apply();
-					else if (message.tag==INTERNAL_PERSISTENCE_RECOVERY)
+					else if (message.tag==INTERNAL_PERSISTENCE_RECOVER)
 						recovery(message);
 					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();

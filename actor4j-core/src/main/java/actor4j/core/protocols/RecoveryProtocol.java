@@ -18,6 +18,6 @@ public class RecoveryProtocol {
 	public void apply() {
 		if (cell.getSystem().isPersistenceMode() && cell.getActor() instanceof PersistenceActor) {
 			cell.getSystem().getMessageDispatcher().postPersistence(
-					new ActorMessage<String>(((PersistenceActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVERY, cell.getId(), null));}
+					new ActorMessage<String>(((PersistenceActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));}
 	}
 }
