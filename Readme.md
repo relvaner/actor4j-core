@@ -254,7 +254,7 @@ Fig. 4: Class diagram to the core components of `actor4j`
 
 In the cluster, `actor4j` can also be operated. A tomcat server is generally used as the front end. A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible as a client. The websocket approach is similar to the REST API (see Fig. 5).
 
-<img src="doc/images/rest api.jpg" alt="Representation of the basic calls to the actor4j REST API" width="353" height="253"/>
+<img src="doc/images/rest api.png" alt="Representation of the basic calls to the actor4j REST API" width="974" height="85"/>
 
 Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
 
