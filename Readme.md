@@ -222,8 +222,11 @@ public class MyActor extends PersistenceActor<MyState, MyEvent> {
 ## Presentation of different actor types within `actor4j` ##
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
 
-### ActorGroupMember ###
-The use of this class signals to the `ActorSystem` that the correspondingly implemented actor is a member of a group. This is taken into account when distributing the actors to the threads. Actors belonging to a group are held together on a thread. The basic idea behind this has already been explained in our paper (see chapters results and conclusion [[?](#?)]). Inter-communication between threads is more expensive than pure intra-communication (within the same thread).
+### ActorGroupMember (Interface) ###
+The use of this interface signals to the `ActorSystem` that the correspondingly implemented actor is a member of a group. This is taken into account when distributing the actors to the threads. Actors belonging to a group are held together on a thread. The basic idea behind this has already been explained in our paper (see chapters results and conclusion [[?](#?)]). Inter-communication between threads is more expensive than pure intra-communication (within the same thread).
+
+### ActorWithGroup ###
+This class implements the interface `ActorGroupMember`.
 
 ### ResourceActor ###
 Workload tasks should not be performed within the `ActorSystem`. Because they block the reactive system and it is no longer responsive. Therefore the class `ResorceActor` is provided. These special actors are executed in a separate thread pool, thus avoiding disturbances within the `ActorSystem`. It should distinguish stateless (`@Stateless`) and stateful (`@Stateful`) actors. The advantage of this distinction lies in the fact that stateless actors can be executed in parallel.
