@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.benchmark.ring.nfold;
 
 import java.util.UUID;
 
-import actor4j.core.actors.ActorGroupMember;
+import actor4j.core.actors.ActorWithGroup;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 
-public class Sender extends ActorGroupMember {
+public class Sender extends ActorWithGroup {
 	protected UUID next;
 	
 	public Sender(ActorGroup group, UUID next) {
