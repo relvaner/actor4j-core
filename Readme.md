@@ -249,11 +249,11 @@ The most important core components of `actor4j` can be seen in the overview (Fig
 ### Developer's point of view ###
 For a potential supporter or interested person, further details are helpful. The class `ActorSystem` is a wrapper of the class `ActorSystemImpl`. `ActorSystemImpl` internally creates a map of the set `ActorCell`. A wrapper is also the class `Actor` from the class `ActorCell`. `ActorSystemImpl` uses the `ActorExecuterService` to generate the `ActorThreads`. `ActorThreads` are executing the actors when they have received a message. The `ActorMessageDispatcher` acts as a link between the actors during message passing. It places the new message in the appropriate queue of the `ActorThread`. In the case of an actor error, the `ActorThread` class is called the auxiliary class `ActorStrategyOnFailure`, which then executes the defined strategy of the supervisor (`OneForOneSupervisorStrategy` or `OneForAllSupervisorStrategy`). Supervisor strategies can affect the `RestartProtocol` as well as the `StopProtocol`. These protocols can also be triggered by a corresponding message to the actor (`RESTART`, `STOP` or `POISONPILL`). `PseudoActor` has its own `ActorCell`, which is called `PseudoActorCell`. This also includes a separate queue for the purpose of communication between the actor system and the outside world (the `PseudoActor`). Last but not least again to the `ActorMessageDispatcher`. The `ActorBalancingOnCreation` class is used to distribute the actors on the `ActorThreads` when the actor system is started. At runtime, the class `ActorBalancingOnRuntime` is used.
 
-<img src="doc/images/cd_top_down.png" alt="Class diagram to the core components of actor4j" width="1690" height="1070"/>
+<img src="doc/images/cd_top_down.png" alt="Class diagram to the core components of actor4j" width="1267" height="802"/>
 
 Fig. 4 a): Class diagram (top-down) to the core components of `actor4j`
 
-<img src="doc/images/cd_left_right.png" alt="Class diagram to the core components of actor4j" width="2005" height="723"/>
+<img src="doc/images/cd_left_right.png" alt="Class diagram to the core components of actor4j" width="1504" height="539"/>
 
 Fig. 4 b): Class diagram (left-right) to the core components of `actor4j`
 
