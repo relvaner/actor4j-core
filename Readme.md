@@ -253,7 +253,7 @@ For a potential supporter or interested person, further details are helpful. The
 
 Fig. 4: Class diagram to the core components of `actor4j`
 
-### Note ###
+#### Note ####
 
 Enclosed two scruffy class diagrams maked with `yuml.me`, have fun!
 * [Class diagram - top down](https://raw.githubusercontent.com/relvaner/actor4j/master/doc/images/cd_top_down.png)
