@@ -18,6 +18,9 @@
 		<module>actor4j-service-node-websocket</module>
 		<module>actor4j-service-node-utils</module>
 		<module>actor4j-service-node-template</module>
+		<module>actor4j-cluster-manager</module>
+		<module>actor4j-cluster-load-balancer</module>
+		<module>actor4j-cluster-application</module>
 	</modules>
 	
 	<dependencies>

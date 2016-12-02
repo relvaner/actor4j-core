@@ -16,9 +16,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-    		<groupId>org.glassfish.jersey.core</groupId>
-    		<artifactId>jersey-client</artifactId>
-    		<version>2.22</version>
+    		<groupId>org.jboss.resteasy</groupId>
+    		<artifactId>resteasy-client</artifactId>
+    		<version>3.0.19.Final</version>
 		</dependency>
     	<dependency>
       		<groupId>com.fasterxml.jackson.jaxrs</groupId>
