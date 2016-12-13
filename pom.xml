@@ -21,6 +21,7 @@
 		<module>actor4j-cluster-manager</module>
 		<module>actor4j-cluster-load-balancer</module>
 		<module>actor4j-cluster-application</module>
+		<module>actor4j-verification</module>
 	</modules>
 	
 	<dependencies>
