@@ -18,6 +18,8 @@ public class ActorVerificationSM {
 	protected Actor actor;
 	protected String prefix;
 	
+	protected String intialStateMarker;
+	
 	public ActorVerificationSM(Actor actor) {
 		super();
 		this.actor = actor;
@@ -28,67 +30,87 @@ public class ActorVerificationSM {
 	public DirectedGraph<String, ActorVerificationEdge> getGraph() {
 		return graph;
 	}
-
-	public boolean addStateMarker(String state) {
-		return graph.addVertex(prefix+state);
+	
+	public String getName() {
+		return actor.getName();
 	}
 	
-	protected boolean addTransition(String sourceState, String targetState, Set<Integer> events, List<ActorVerficationMessageTuple> tuples) {
+	public String getIntialStateMarker() {
+		return intialStateMarker;
+	}
+
+	public ActorVerificationSM addInitialStateMarker(String state) {
+		intialStateMarker = prefix+state;
+		graph.addVertex(intialStateMarker);
+		
+		return this;
+	}
+
+	public ActorVerificationSM addStateMarker(String state) {
+		graph.addVertex(prefix+state);
+		
+		return this;
+	}
+	
+	protected ActorVerificationSM addTransition(String sourceState, String targetState, Set<Integer> events, List<ActorVerficationMessageTuple> tuples) {
 		ActorVerificationEdge edge = graph.getEdge(prefix+sourceState, prefix+targetState);
 		if (edge!=null) {
 			if (events!=null)
 				edge.events = events;
 			if (tuples!=null)
 				edge.tuples = tuples;
-			return false;
 		}
 		else
-			return graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(events, tuples));
+			graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(events, tuples));
+		
+		return this;
 	};
 	
-	protected boolean addTransition(String sourceState, String targetState, int event) {
+	protected ActorVerificationSM addTransition(String sourceState, String targetState, int event) {
 		ActorVerificationEdge edge = graph.getEdge(prefix+sourceState, prefix+targetState);
 		if (edge!=null) {
 			if (edge.events!=null)
 				edge.events.add(event);
 			else
 				edge.events = new HashSet<Integer>(Arrays.asList(event));
-			return false;
 		}
 		else
-			return graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(new HashSet<Integer>(Arrays.asList(event)), null));
+			graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(new HashSet<Integer>(Arrays.asList(event)), null));
+	
+		return this;
 	};
 	
-	protected boolean addTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
+	protected ActorVerificationSM addTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
 		ActorVerificationEdge edge = graph.getEdge(prefix+sourceState, prefix+targetState);
 		if (edge!=null) {
 			if (edge.tuples!=null)
 				edge.tuples.add(tuple);
 			else
 				edge.tuples = Arrays.asList(tuple);
-			return false;
 		}
 		else
-			return graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(null, Arrays.asList(tuple)));
+			graph.addEdge(prefix+sourceState, prefix+targetState, new ActorVerificationEdge(null, Arrays.asList(tuple)));
+	
+		return this;
 	};
 	
-	public boolean addInTransition(String sourceState, String targetState, Set<Integer> events) {
+	public ActorVerificationSM addInTransition(String sourceState, String targetState, Set<Integer> events) {
 		return addTransition(sourceState, targetState, events, null);
 	};
 	
-	public boolean addInTransition(String sourceState, String targetState, int event) {
+	public ActorVerificationSM addInTransition(String sourceState, String targetState, int event) {
 		return addTransition(sourceState, targetState, event);
 	};
 	
-	public boolean addOutTransition(String sourceState, String targetState, List<ActorVerficationMessageTuple> tuples) {
+	public ActorVerificationSM addOutTransition(String sourceState, String targetState, List<ActorVerficationMessageTuple> tuples) {
 		return addTransition(sourceState, targetState, null, tuples);
 	}
 	
-	public boolean addOutTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
+	public ActorVerificationSM addOutTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
 		return addTransition(sourceState, targetState, tuple);
 	}
 	
-	public boolean addOutTransition(String sourceState, String targetState, int event, String... aliases) {
+	public ActorVerificationSM addOutTransition(String sourceState, String targetState, int event, String... aliases) {
 		return addTransition(sourceState, targetState, new ActorVerficationMessageTuple(new HashSet<Integer>(Arrays.asList(event)), Arrays.asList(aliases)));
 	}
 }
