@@ -28,7 +28,7 @@ public class Application {
 			ActorVerificationSM result = new ActorVerificationSM(this);
 			result.addStateMarker("PING");
 			result.addInTransition("PING", "PING", PONG);
-			result.addOutTransition("PING", "PING", new ActorMessage<String>("ping", PING, /*self()*/null, null), "pong");
+			result.addOutTransition("PING", "PING", PING, "pong");
 			
 			return result;
 		}

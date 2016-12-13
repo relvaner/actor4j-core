@@ -4,37 +4,36 @@
 package actor4j.verification;
 
 import java.util.List;
-
-import actor4j.core.messages.ActorMessage;
+import java.util.Set;
 
 public class ActorVerficationMessageTuple {
-	protected List<ActorMessage<?>> messages;
+	protected Set<Integer> events;
 	protected List<String> aliases;
 	
-	public ActorVerficationMessageTuple(List<ActorMessage<?>> messages, List<String> aliases) {
+	public ActorVerficationMessageTuple(Set<Integer> events, List<String> aliases) {
 		super();
-		this.messages = messages;
+		this.events = events;
 		this.aliases = aliases;
 	}
 
-	public List<ActorMessage<?>> getMessages() {
-		return messages;
+	public Set<Integer> getEvents() {
+		return events;
 	}
-	
-	public void setMessages(List<ActorMessage<?>> messages) {
-		this.messages = messages;
+
+	public void setEvents(Set<Integer> events) {
+		this.events = events;
 	}
-	
+
 	public List<String> getAliases() {
 		return aliases;
 	}
-	
+
 	public void setAliases(List<String> aliases) {
 		this.aliases = aliases;
 	}
 
 	@Override
 	public String toString() {
-		return "ActorVerficationMessageTuple [messages=" + messages + ", aliases=" + aliases + "]";
+		return "ActorVerficationMessageTuple [events=" + events + ", aliases=" + aliases + "]";
 	}
 }

@@ -12,7 +12,6 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
 
 public class ActorVerificationSM {
 	protected DirectedGraph<String, ActorVerificationEdge> graph;
@@ -89,7 +88,7 @@ public class ActorVerificationSM {
 		return addTransition(sourceState, targetState, tuple);
 	}
 	
-	public boolean addOutTransition(String sourceState, String targetState, ActorMessage<?> message, String... aliases) {
-		return addTransition(sourceState, targetState, new ActorVerficationMessageTuple(Arrays.asList(message), Arrays.asList(aliases)));
+	public boolean addOutTransition(String sourceState, String targetState, int event, String... aliases) {
+		return addTransition(sourceState, targetState, new ActorVerficationMessageTuple(new HashSet<Integer>(Arrays.asList(event)), Arrays.asList(aliases)));
 	}
 }
