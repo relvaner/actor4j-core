@@ -83,7 +83,7 @@ public class Application {
 			logger().debug(String.format("%s - Deads: %s", sm.getName(), ActorVerificationUtils.findDead(
 					sm.getGraph(), ActorVerificationUtils.findUnreachables(sm.getGraph(), sm.getIntialStateMarker()))));
 			
-			logger().debug(String.format("%s - Edges: %s", sm.getName(), sm.getGraph().getAllEdges(sm.getIntialStateMarker(), sm.getIntialStateMarker())));
+			logger().debug(String.format("%s - Edges (initial state, self reference): %s", sm.getName(), sm.getGraph().getAllEdges(sm.getIntialStateMarker(), sm.getIntialStateMarker())));
 		}, (graph) -> {
 			logger().debug(String.format("All - Cycles: %s", ActorVerificationUtils.findCycles(graph)));
 			logger().debug(String.format("All - Unreachables: %s", ActorVerificationUtils.findUnreachables(graph, globalIntialStateMarker)));
