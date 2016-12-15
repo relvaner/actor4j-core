@@ -6,6 +6,10 @@ package actor4j.verification.example;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import static actor4j.core.utils.ActorLogger.*;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import actor4j.verification.ActorVerification;
 import actor4j.verification.ActorVerificationSM;
 import actor4j.verification.ActorVerificationUtils;
@@ -77,7 +81,10 @@ public class Application {
 		
 		String globalIntialStateMarker = "ping:PING";
 		
+		List<ActorVerificationSM> list = new LinkedList<>();
+		
 		verificator.verifyAll((sm) -> {
+			list.add(sm);
 			logger().debug(String.format("%s - Cycles: %s", sm.getName(), ActorVerificationUtils.findCycles(sm.getGraph())));
 			logger().debug(String.format("%s - Unreachables: %s", sm.getName(), ActorVerificationUtils.findUnreachables(sm.getGraph(), sm.getIntialStateMarker())));
 			logger().debug(String.format("%s - Deads: %s", sm.getName(), ActorVerificationUtils.findDead(
@@ -85,6 +92,7 @@ public class Application {
 			
 			logger().debug(String.format("%s - Edges (initial state, self reference): %s", sm.getName(), sm.getGraph().getAllEdges(sm.getIntialStateMarker(), sm.getIntialStateMarker())));
 		}, (graph) -> {
+			ActorVerificationUtils.interconnect(list, graph);
 			logger().debug(String.format("All - Cycles: %s", ActorVerificationUtils.findCycles(graph)));
 			logger().debug(String.format("All - Unreachables: %s", ActorVerificationUtils.findUnreachables(graph, globalIntialStateMarker)));
 			logger().debug(String.format("All - Deads: %s", ActorVerificationUtils.findDead(

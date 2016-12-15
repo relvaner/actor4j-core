@@ -41,4 +41,57 @@ public class ActorVerificationUtils {
 		
 		return result;
 	}
+	
+	public static void interconnect(List<ActorVerificationSM> list, DirectedGraph<String, ActorVerificationEdge> graph) {
+		Set<Integer> outEvents = new HashSet<>();
+		Set<Integer> outEventsCopy = new HashSet<>();
+		
+		for (ActorVerificationSM sm : list)
+			for (ActorVerificationEdge outEdge : sm.getGraph().edgeSet())
+				if (outEdge.tuples!=null) {
+					outEvents.clear();
+					for (ActorVerficationEdgeTuple tuple : outEdge.tuples)
+						outEvents.addAll(tuple.events);
+					
+					//System.out.println(outEvents);
+					
+					for (ActorVerificationSM _sm : list) {
+						for (ActorVerificationEdge inEdge : _sm.getGraph().edgeSet())
+							if (inEdge.tuples==null) {
+								//System.out.println(inEdge);
+								outEventsCopy.clear();
+								outEventsCopy.addAll(outEvents);
+								outEventsCopy.retainAll(inEdge.events);
+								if (!outEventsCopy.isEmpty()) {
+									for (Integer event : outEvents) {
+										ActorVerificationEdge newEdge = graph.getEdge(outEdge.getTarget(), inEdge.getSource());
+										if (newEdge!=null)
+											newEdge.events.add(event);
+										else
+											graph.addEdge(outEdge.getTarget(), inEdge.getSource(), new ActorVerificationEdge(new HashSet<>(), null));
+									}
+								}
+							}
+						for (String vertex : _sm.getGraph().vertexSet()) {
+							ActorVerificationEdge inEdge = _sm.getGraph().getEdge(vertex, vertex);
+							if (inEdge!=null) {
+								//System.out.println(inEdge);
+								outEventsCopy.clear();
+								outEventsCopy.addAll(outEvents);
+								outEventsCopy.retainAll(inEdge.events);
+								if (!outEventsCopy.isEmpty()) {
+									for (Integer event : outEvents) {
+										ActorVerificationEdge newEdge = graph.getEdge(outEdge.getTarget(), inEdge.getSource());
+										if (newEdge!=null)
+											newEdge.events.add(event);
+										else
+											graph.addEdge(outEdge.getTarget(), inEdge.getSource(), new ActorVerificationEdge(new HashSet<>(), null));
+									}
+								}
+							}
+						}
+					}
+				}
+			
+	}
 }

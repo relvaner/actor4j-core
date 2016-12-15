@@ -6,11 +6,11 @@ package actor4j.verification;
 import java.util.List;
 import java.util.Set;
 
-public class ActorVerficationMessageTuple {
+public class ActorVerficationEdgeTuple {
 	protected Set<Integer> events;
 	protected List<String> aliases;
 	
-	public ActorVerficationMessageTuple(Set<Integer> events, List<String> aliases) {
+	public ActorVerficationEdgeTuple(Set<Integer> events, List<String> aliases) {
 		super();
 		this.events = events;
 		this.aliases = aliases;
@@ -34,6 +34,6 @@ public class ActorVerficationMessageTuple {
 
 	@Override
 	public String toString() {
-		return "ActorVerficationMessageTuple [events=" + events + ", aliases=" + aliases + "]";
+		return "ActorVerficationEdgeTuple [events=" + events + ", aliases=" + aliases + "]";
 	}
 }

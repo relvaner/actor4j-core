@@ -52,7 +52,7 @@ public class ActorVerificationSM {
 		return this;
 	}
 	
-	protected ActorVerificationSM addTransition(String sourceState, String targetState, Set<Integer> events, List<ActorVerficationMessageTuple> tuples) {
+	protected ActorVerificationSM addTransition(String sourceState, String targetState, Set<Integer> events, List<ActorVerficationEdgeTuple> tuples) {
 		ActorVerificationEdge edge = graph.getEdge(prefix+sourceState, prefix+targetState);
 		if (edge!=null) {
 			if (events!=null)
@@ -80,7 +80,7 @@ public class ActorVerificationSM {
 		return this;
 	};
 	
-	protected ActorVerificationSM addTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
+	protected ActorVerificationSM addTransition(String sourceState, String targetState, ActorVerficationEdgeTuple tuple) {
 		ActorVerificationEdge edge = graph.getEdge(prefix+sourceState, prefix+targetState);
 		if (edge!=null) {
 			if (edge.tuples!=null)
@@ -102,15 +102,15 @@ public class ActorVerificationSM {
 		return addTransition(sourceState, targetState, event);
 	};
 	
-	public ActorVerificationSM addOutTransition(String sourceState, String targetState, List<ActorVerficationMessageTuple> tuples) {
+	public ActorVerificationSM addOutTransition(String sourceState, String targetState, List<ActorVerficationEdgeTuple> tuples) {
 		return addTransition(sourceState, targetState, null, tuples);
 	}
 	
-	public ActorVerificationSM addOutTransition(String sourceState, String targetState, ActorVerficationMessageTuple tuple) {
+	public ActorVerificationSM addOutTransition(String sourceState, String targetState, ActorVerficationEdgeTuple tuple) {
 		return addTransition(sourceState, targetState, tuple);
 	}
 	
 	public ActorVerificationSM addOutTransition(String sourceState, String targetState, int event, String... aliases) {
-		return addTransition(sourceState, targetState, new ActorVerficationMessageTuple(new HashSet<Integer>(Arrays.asList(event)), Arrays.asList(aliases)));
+		return addTransition(sourceState, targetState, new ActorVerficationEdgeTuple(new HashSet<Integer>(Arrays.asList(event)), Arrays.asList(aliases)));
 	}
 }
