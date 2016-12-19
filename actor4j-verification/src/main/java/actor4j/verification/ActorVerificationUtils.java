@@ -72,6 +72,7 @@ public class ActorVerificationUtils {
 									}
 								}
 							}
+						// self reference edges
 						for (String vertex : _sm.getGraph().vertexSet()) {
 							ActorVerificationEdge inEdge = _sm.getGraph().getEdge(vertex, vertex);
 							if (inEdge!=null) {
