@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -53,6 +53,10 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
+		UUID redirect = system.redirector.get(message.dest);
+		if (redirect!=null) 
+			message.dest = redirect;
+		
 		if (system.pseudoCells.containsKey(message.dest)) {
 			consumerPseudo.accept(message.copy());
 			return;
@@ -86,6 +90,10 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
+		UUID redirect = system.redirector.get(message.dest);
+		if (redirect!=null) 
+			message.dest = redirect;
+		
 		if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());
 			return;
@@ -102,6 +110,10 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	public void postOuter(ActorMessage<?> message) {
 		if (message==null)
 			throw new NullPointerException();
+		
+		UUID redirect = system.redirector.get(message.dest);
+		if (redirect!=null) 
+			message.dest = redirect;
 		
 		if (system.resourceCells.containsKey(message.dest)) {
 			system.executerService.resource(message.copy());

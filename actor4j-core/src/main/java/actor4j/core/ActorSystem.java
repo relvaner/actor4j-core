@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -131,6 +131,24 @@ public class ActorSystem {
 	
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group) {
 		system.broadcast(message, group);
+		
+		return this;
+	}
+	
+	public ActorSystem addRedirection(UUID source, UUID dest) {
+		system.addRedirection(source, dest);
+		
+		return this;
+	}
+	
+	public ActorSystem removeRedirection(UUID source) {
+		system.removeRedirection(source);
+		
+		return this;
+	}
+	
+	public ActorSystem clearRedirections() {
+		system.clearRedirections();
 		
 		return this;
 	}

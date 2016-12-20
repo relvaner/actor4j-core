@@ -69,14 +69,14 @@ public class PseudoActorCell extends ActorCell {
 		while (poll(outerQueueL1));
 	}
 	
-	public void runOnce() {
+	public boolean runOnce() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
 			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
-		poll(outerQueueL1);
+		return poll(outerQueueL1);
 	}
 	
 	public Observable<ActorMessage<?>> runWithRx() {

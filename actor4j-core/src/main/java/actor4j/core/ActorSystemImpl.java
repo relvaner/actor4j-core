@@ -39,6 +39,7 @@ public abstract class ActorSystemImpl {
 	protected Map<UUID, String> hasAliases;
 	protected Map<UUID, Boolean> resourceCells;
 	protected Map<UUID, ActorCell> pseudoCells;
+	protected Map<UUID, UUID> redirector;
 	protected ActorMessageDispatcher messageDispatcher;
 	protected Class<? extends ActorThread> actorThreadClass;
 	
@@ -104,6 +105,7 @@ public abstract class ActorSystemImpl {
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceCells  = new ConcurrentHashMap<>();
 		pseudoCells    = new ConcurrentHashMap<>();
+		redirector     = new ConcurrentHashMap<>();
 		
 		setParallelismMin(0);
 		parallelismFactor = 1;
@@ -450,6 +452,18 @@ public abstract class ActorSystemImpl {
 			}
 		
 		return this;
+	}
+	
+	public void addRedirection(UUID source, UUID dest) {
+		redirector.put(source, dest);
+	}
+	
+	public void removeRedirection(UUID source) {
+		redirector.remove(source);
+	}
+	
+	public void clearRedirections() {
+		redirector.clear();
 	}
 	
 	public ActorTimer timer() {
