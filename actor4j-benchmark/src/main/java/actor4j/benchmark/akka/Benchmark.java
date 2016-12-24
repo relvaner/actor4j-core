@@ -31,6 +31,7 @@ public class Benchmark {
 		this.duration = duration;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void start() {
 		DescriptiveStatistics statistics = new DescriptiveStatistics();
 		AtomicLong warmupCount = new AtomicLong();
