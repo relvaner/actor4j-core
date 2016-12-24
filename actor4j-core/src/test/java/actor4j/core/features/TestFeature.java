@@ -28,6 +28,7 @@ public class TestFeature {
 			}
 		});
 		
+		@SuppressWarnings("unused")
 		Actor actor = system.underlyingActor(dest);
 	}
 	
