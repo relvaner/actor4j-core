@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import java.util.Map.Entry;
 
 import actor4j.core.ActorCell;
@@ -67,11 +68,18 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 		actualMessage = new CompletableFuture<>();
 		
 		Timer timer = new Timer();
+		long timeout = 5000;
+		long start = System.currentTimeMillis();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				if (pseudoActor.runOnce()) 
 					cancel();
+				
+				if ((System.currentTimeMillis()-start)>=timeout) {
+					actualMessage.completeExceptionally(new TimeoutException());
+					cancel();
+				}
 			}
 		}, 0, 25);
 		
