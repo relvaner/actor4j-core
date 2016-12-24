@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core;
 
@@ -7,10 +7,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
-import actor4j.function.Supplier;
 
 public class ActorTimer {
 	protected ActorSystemImpl system;

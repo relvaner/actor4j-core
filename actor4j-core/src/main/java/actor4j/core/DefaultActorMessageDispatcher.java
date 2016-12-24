@@ -4,12 +4,12 @@
 package actor4j.core;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import actor4j.core.ActorMessageDispatcher;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
-import actor4j.function.BiConsumer;
-import actor4j.function.Consumer;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;

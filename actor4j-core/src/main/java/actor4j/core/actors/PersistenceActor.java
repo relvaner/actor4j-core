@@ -6,9 +6,9 @@ package actor4j.core.actors;
 import static actor4j.core.protocols.ActorProtocolTag.INTERNAL_RECOVER;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import actor4j.core.persistence.ActorPersistenceObject;
-import actor4j.function.Consumer;
 
 public abstract class PersistenceActor<S extends ActorPersistenceObject, E extends ActorPersistenceObject> extends Actor {
 	public static final int RECOVER = INTERNAL_RECOVER;

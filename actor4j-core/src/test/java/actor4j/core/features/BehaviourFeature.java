@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core.features;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
-import actor4j.function.Consumer;
 
 public class BehaviourFeature {
 	protected ActorSystem system;

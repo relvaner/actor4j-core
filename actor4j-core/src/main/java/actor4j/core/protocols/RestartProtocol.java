@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core.protocols;
 
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import actor4j.core.ActorCell;
 import actor4j.core.actors.Actor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
-import actor4j.function.Consumer;
 
 public class RestartProtocol {
 	protected final ActorCell cell;

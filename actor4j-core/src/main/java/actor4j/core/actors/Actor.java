@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.core.actors;
 
@@ -7,6 +7,8 @@ import static actor4j.core.protocols.ActorProtocolTag.*;
 
 import java.util.Queue;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
@@ -14,8 +16,6 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
-import actor4j.function.Consumer;
-import actor4j.function.Predicate;
 
 public abstract class Actor {
 	protected ActorCell cell;
@@ -33,7 +33,7 @@ public abstract class Actor {
 	
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
-	 * get a NullPointerException, because the variable system is not initialized. It will 
+	 * get a NullPointerException, because the variable cell is not initialized. It will 
 	 * injected later by the framework. Use instead the method preStart for these reasons.
 	 */
 	public Actor() {
@@ -42,7 +42,7 @@ public abstract class Actor {
 	
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
-	 * get a NullPointerException, because the variable system is not initialized. It will 
+	 * get a NullPointerException, because the variable cell is not initialized. It will 
 	 * injected later by the framework. Use instead the method preStart for these reasons.
 	 */
 	public Actor(String name) {

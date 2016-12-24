@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +31,6 @@ import actor4j.core.protocols.RestartProtocol;
 import actor4j.core.protocols.StopProtocol;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
-import actor4j.function.Consumer;
-import actor4j.function.Function;
 import tools4j.di.InjectorParam;
 
 import static actor4j.core.protocols.ActorProtocolTag.*;

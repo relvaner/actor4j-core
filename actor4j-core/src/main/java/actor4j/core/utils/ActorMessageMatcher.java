@@ -6,10 +6,10 @@ package actor4j.core.utils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import actor4j.core.messages.ActorMessage;
-import actor4j.function.Consumer;
-import actor4j.function.Predicate;
 
 public class ActorMessageMatcher {
 	protected static class MatchTuple {
