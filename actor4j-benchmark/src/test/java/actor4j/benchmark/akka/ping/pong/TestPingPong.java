@@ -1,10 +1,10 @@
 package actor4j.benchmark.akka.ping.pong;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import actor4j.benchmark.akka.ActorMessage;
 import actor4j.benchmark.akka.Benchmark;
-import actor4j.function.Supplier;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;

@@ -3,10 +3,11 @@
  */
 package actor4j.verification;
 
+import java.util.function.Consumer;
+
 import org.jgrapht.DirectedGraph;
 
 import actor4j.core.ActorSystem;
-import actor4j.function.Consumer;
 
 public class ActorVerificator extends ActorSystem {
 	

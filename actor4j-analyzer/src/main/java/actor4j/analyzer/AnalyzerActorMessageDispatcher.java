@@ -4,11 +4,11 @@
 package actor4j.analyzer;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
 
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.DefaultActorMessageDispatcher;
 import actor4j.core.messages.ActorMessage;
-import actor4j.function.BiConsumer;
 
 public class AnalyzerActorMessageDispatcher extends DefaultActorMessageDispatcher {
 	public AnalyzerActorMessageDispatcher(ActorSystemImpl system) {

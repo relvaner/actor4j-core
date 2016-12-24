@@ -1,14 +1,14 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2016, David A. Bauer
  */
 package actor4j.benchmark.akka;
 
 import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
-import actor4j.function.Supplier;
 import actor4j.utils.MessageThroughputMeasurement;
 import akka.actor.ActorSystem;
 
