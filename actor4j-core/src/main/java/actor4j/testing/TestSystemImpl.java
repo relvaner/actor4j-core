@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
@@ -42,10 +43,12 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 	public void testActor(UUID id) {
 		Actor actor = underlyingActor(id);
 		if (actor!=null && actor instanceof ActorTest) {
+			redirectToPseudoActor(actor.getId());
 			List<Story> list = ((ActorTest)actor).test();
 			if (list!=null)
 				for (Story story : list)
 					story.run();
+			clearRedirections();
 		}
 	}
 	
@@ -87,11 +90,9 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 	}
 	
 	public void redirectToPseudoActor(UUID id) {
-		Iterator<Entry<UUID, ActorCell>> iterator = getCells().entrySet().iterator();
-		while (iterator.hasNext()) {
-			ActorCell cell = iterator.next().getValue();
-			if (cell.getId()!=id)
-				addRedirection(cell.getId(), pseudoActor.getId());
-		}
+		Set<UUID> cellIds = getCells().keySet();
+		for (UUID cellId : cellIds)
+			if (cellId!=id)
+				addRedirection(cellId, pseudoActor.getId());
 	}
 }
