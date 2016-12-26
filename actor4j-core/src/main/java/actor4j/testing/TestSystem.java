@@ -22,6 +22,7 @@ public class TestSystem extends ActorSystem {
 				((TestSystemImpl)system).actualMessage.complete(message);
 			}
 		};
+		((TestSystemImpl)system).pseudoActorId = ((TestSystemImpl)system).pseudoActor.getId();
 	}
 	
 	public ActorCell underlyingCell(UUID id) {

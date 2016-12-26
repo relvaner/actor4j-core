@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2015-2016, David A. Bauer
+ */
 package actor4j.testing;
 
 import java.util.Iterator;
@@ -8,8 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
+
 import java.util.Map.Entry;
-import java.util.Set;
 
 import actor4j.core.ActorCell;
 import actor4j.core.ActorSystem;
@@ -21,6 +24,8 @@ import bdd4j.Story;
 
 public class TestSystemImpl extends DefaultActorSystemImpl  {
 	protected PseudoActor pseudoActor;
+	protected volatile UUID pseudoActorId;
+	protected volatile UUID testActorId;
 	protected volatile CompletableFuture<ActorMessage<?>> actualMessage;
 	
 	public TestSystemImpl(ActorSystem wrapper) {
@@ -29,6 +34,8 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 
 	public TestSystemImpl(String name, ActorSystem wrapper) {
 		super(name, wrapper);
+		
+		messageDispatcher = new TestActorMessageDispatcher(this);
 	}
 	
 	public ActorCell underlyingCell(UUID id) {
@@ -40,30 +47,33 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 		return (cell!=null)? cell.getActor() : null;
 	}
 	
-	public void testActor(UUID id) {
-		Actor actor = underlyingActor(id);
+	protected void testActor(Actor actor) {
 		if (actor!=null && actor instanceof ActorTest) {
-			redirectToPseudoActor(actor.getId());
+			testActorId = actor.getId();
 			List<Story> list = ((ActorTest)actor).test();
 			if (list!=null)
-				for (Story story : list)
-					story.run();
-			clearRedirections();
+				for (Story story : list) {
+					try { // workaround, Java hangs!
+						story.run();
+					}
+					catch (AssertionError e) {
+						e.printStackTrace();
+					}
+				}
+			testActorId = null;
 		}
+	}
+	
+	public void testActor(UUID id) {
+		Actor actor = underlyingActor(id);
+		testActor(actor);
 	}
 	
 	public void testAllActors() {
 		Iterator<Entry<UUID, ActorCell>> iterator = getCells().entrySet().iterator();
 		while (iterator.hasNext()) {
 			ActorCell cell = iterator.next().getValue();
-			if (cell.getActor() instanceof ActorTest) {
-				redirectToPseudoActor(cell.getId());
-				List<Story> list = ((ActorTest)cell.getActor()).test();
-				if (list!=null)
-					for (Story story : list)
-						story.run();
-				clearRedirections();
-			}
+			testActor(cell.getActor());
 		}
 	}
 
@@ -87,12 +97,5 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 		}, 0, 25);
 		
 		return actualMessage;
-	}
-	
-	public void redirectToPseudoActor(UUID id) {
-		Set<UUID> cellIds = getCells().keySet();
-		for (UUID cellId : cellIds)
-			if (cellId!=id)
-				addRedirection(cellId, pseudoActor.getId());
 	}
 }
