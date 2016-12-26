@@ -65,16 +65,13 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 	}
 	
 	public void testActor(UUID id) {
-		Actor actor = underlyingActor(id);
-		testActor(actor);
+		testActor(underlyingActor(id));
 	}
 	
 	public void testAllActors() {
 		Iterator<Entry<UUID, ActorCell>> iterator = getCells().entrySet().iterator();
-		while (iterator.hasNext()) {
-			ActorCell cell = iterator.next().getValue();
-			testActor(cell.getActor());
-		}
+		while (iterator.hasNext())
+			testActor(iterator.next().getValue().getActor());
 	}
 
 	public Future<ActorMessage<?>> awaitMessage() {
