@@ -53,7 +53,7 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 			List<Story> list = ((ActorTest)actor).test();
 			if (list!=null)
 				for (Story story : list) {
-					try { // workaround, Java hangs!
+					try { // workaround, Java hangs, when an AssertionError is thrown!
 						story.run();
 					}
 					catch (AssertionError e) {
