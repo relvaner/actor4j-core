@@ -59,14 +59,19 @@ public class PseudoActorCell extends ActorCell {
 		return result;
 	}
 	
-	public void run() {
+	public boolean run() {
+		boolean result = false;
+		
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
 			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
-		while (poll(outerQueueL1));
+		while (poll(outerQueueL1))
+			result = true;
+		
+		return result;
 	}
 	
 	public boolean runOnce() {
@@ -133,5 +138,10 @@ public class PseudoActorCell extends ActorCell {
 	
 	public Queue<ActorMessage<?>> getOuterQueue() {
 		return outerQueueL2;
+	}
+	
+	public void reset() {
+		outerQueueL2.clear();
+		outerQueueL1.clear();
 	}
 }

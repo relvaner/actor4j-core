@@ -22,6 +22,8 @@ import actor4j.core.actors.PseudoActor;
 import actor4j.core.messages.ActorMessage;
 import bdd4j.Story;
 
+import static org.junit.Assert.*;
+
 public class TestSystemImpl extends DefaultActorSystemImpl  {
 	protected PseudoActor pseudoActor;
 	protected volatile UUID pseudoActorId;
@@ -53,6 +55,7 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 			List<Story> list = ((ActorTest)actor).test();
 			if (list!=null)
 				for (Story story : list) {
+					pseudoActor.reset();
 					try { // workaround, Java hangs, when an AssertionError is thrown!
 						story.run();
 					}
@@ -94,5 +97,9 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 		}, 0, 25);
 		
 		return actualMessage;
+	}
+	
+	public void assertNoMessages() {
+		assertFalse(pseudoActor.runOnce());
 	}
 }

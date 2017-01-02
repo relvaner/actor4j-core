@@ -44,4 +44,8 @@ public class TestSystem extends ActorSystem {
 	public Future<ActorMessage<?>> awaitMessage() {
 		return ((TestSystemImpl)system).awaitMessage();
 	}
+	
+	public void assertNoMessages() {
+		((TestSystemImpl)system).assertNoMessages();
+	}
 }

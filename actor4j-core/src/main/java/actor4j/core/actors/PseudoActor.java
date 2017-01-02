@@ -23,8 +23,8 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		preStart();
 	}
 
-	public void run() {
-		((PseudoActorCell)cell).run();
+	public boolean run() {
+		return ((PseudoActorCell)cell).run();
 	}
 	
 	public boolean runOnce() {
@@ -33,5 +33,9 @@ public abstract class PseudoActor extends ActorWithRxStash {
 	
 	public Observable<ActorMessage<?>> runWithRx() {
 		return ((PseudoActorCell)cell).runWithRx();
+	}
+	
+	public void reset() {
+		((PseudoActorCell)cell).reset();
 	}
 }
