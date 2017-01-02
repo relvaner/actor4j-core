@@ -24,7 +24,7 @@ public class GetActorResource {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getActor(@PathParam("alias") String alias) {
-		UUID uuid = service.getActor(alias);
+		UUID uuid = service.getActorFromAlias(alias);
 		if (uuid != null)
 			return Response.ok().entity(
 					new RESTActorResponse(

@@ -25,8 +25,8 @@ public class ActorService extends ActorSystem {
 		return system.hasActor(uuid);
 	}
 	
-	public UUID getActor(String alias) {
-		return system.getActor(alias);
+	public UUID getActorFromAlias(String alias) {
+		return system.getActorFromAlias(alias);
 	}
 	
 	public void sendAsServer(ActorMessage<?> message) {

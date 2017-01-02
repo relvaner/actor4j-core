@@ -140,7 +140,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
 		Long id_source = cellsMap.get(message.source);
-		message.dest = system.executerService.persistenceService.getService().getActor(persistenceMap.get(id_source));
+		message.dest = system.executerService.persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
 		system.executerService.persistenceService.getService().send(message.copy());
 	}
 }

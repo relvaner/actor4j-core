@@ -55,7 +55,7 @@ public abstract class ActorServerEndpoint {
     			result = CLIENT + result;
     		}; break;
     		case GET_ACTOR    : {
-    			UUID uuid = service.getActor(data);
+    			UUID uuid = service.getActorFromAlias(data);
     			result = (uuid!=null) ? uuid.toString() : "";
     			result = CLIENT + result;
     		}; break;

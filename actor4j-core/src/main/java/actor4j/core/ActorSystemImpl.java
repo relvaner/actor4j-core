@@ -414,7 +414,11 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
-	public UUID getActor(String alias) {
+	public UUID getActorFromPath(String path) {
+		return null;
+	}
+	
+	public UUID getActorFromAlias(String alias) {
 		return aliases.get(alias);
 	}
 	
