@@ -161,7 +161,11 @@ public abstract class Actor {
 		cell.send(message);
 	}
 	
-	public void send(ActorMessage<?> message, String alias) {
+	public void sendViaPath(ActorMessage<?> message, String path) {
+		send(message, cell.getSystem().getActorFromPath(path));
+	}
+	
+	public void sendViaAlias(ActorMessage<?> message, String alias) {
 		cell.send(message, alias);
 	}
 	
@@ -176,7 +180,7 @@ public abstract class Actor {
 	}
 	
 	public <T> void tell(T value, int tag, String alias) {
-		send(new ActorMessage<T>(value, tag, self(), null), alias);
+		sendViaAlias(new ActorMessage<T>(value, tag, self(), null), alias);
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {

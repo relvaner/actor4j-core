@@ -4,9 +4,11 @@
 package actor4j.core;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -415,7 +417,30 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public UUID getActorFromPath(String path) {
-		return null;
+		ActorCell result = null;
+		
+		StringTokenizer tokenizer = new StringTokenizer(path, "/");
+		String token = null;
+		ActorCell parent = cells.get(USER_ID);
+		
+		while (tokenizer.hasMoreTokens()) {
+			token = tokenizer.nextToken();
+			
+			Iterator<UUID> iterator = parent.getChildren().iterator();
+			result  = null;
+			while (iterator.hasNext()) {
+				ActorCell child = cells.get(iterator.next());
+				if (child!=null  && (token.equals(child.getActor().getName()) || token.equals(child.getId().toString()))) {
+					result = child;
+					break;
+				}
+			}
+			if (result==null)
+				break;
+			parent = result;
+		}
+		
+		return (result!=null) ? result.getId() : null;
 	}
 	
 	public UUID getActorFromAlias(String alias) {
