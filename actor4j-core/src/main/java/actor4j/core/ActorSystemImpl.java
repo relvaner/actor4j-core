@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -509,8 +510,12 @@ public abstract class ActorSystemImpl {
 				@Override
 				public void run() {
 					/* preStart */
-					for (ActorCell cell : cells.values())
-						cell.preStart();
+					Iterator<Entry<UUID, ActorCell>> iterator = cells.entrySet().iterator();
+					while (iterator.hasNext()) {
+						ActorCell cell = iterator.next().getValue();
+						if (cell.isRootInUser() /*&& cell.isRootInSystem()*/ )
+							cell.preStart();
+					}
 					
 					executerService.started.set(true);
 					
