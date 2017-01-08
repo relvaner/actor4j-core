@@ -85,15 +85,15 @@ public class WebSocketActorClientManager {
 		return sendText(session, SEND_MESSAGE, new ObjectMapper().writeValueAsString(message));
 	}
 	
-	public static String sync_getActor(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
+	public static String getActorSync(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
 		return getActor(session, alias).get();
 	}
 	
-	public static Boolean sync_hasActor(Session session, String uuid) throws IOException, InterruptedException, ExecutionException  {
+	public static Boolean hasActorSync(Session session, String uuid) throws IOException, InterruptedException, ExecutionException  {
 		return hasActor(session, uuid).get().equals("1")? true:false;
 	}
 	
-	public static Boolean sync_sendMessage(Session session, TransferActorMessage message) throws IOException, InterruptedException, ExecutionException  {
+	public static Boolean sendMessageSync(Session session, TransferActorMessage message) throws IOException, InterruptedException, ExecutionException  {
 		return sendMessage(session, message).get().equals("1")? true:false;
 	}
 }
