@@ -26,10 +26,11 @@ import actor4j.service.node.websocket.WebSocketActorClientManager;
 
 @ServerEndpoint(value = "/actor4j")
 public abstract class ActorServerEndpoint {
-	public static final char HAS_ACTOR    = '1';
-	public static final char GET_ACTOR    = '2';
-	public static final char SEND_MESSAGE = '3';
-	public static final char CLIENT 	  = '4';
+	public static final char HAS_ACTOR    		  = '1';
+	public static final char GET_ACTOR_FROM_ALIAS = '2';
+	public static final char GET_ACTOR_FROM_PATH  = '3';
+	public static final char SEND_MESSAGE 		  = '4';
+	public static final char CLIENT 	  		  = '5';
 	
 	protected ActorService service;
 	
@@ -50,12 +51,17 @@ public abstract class ActorServerEndpoint {
     	
     	String data = message.substring(1);
     	switch (message.charAt(0)) {
-    		case HAS_ACTOR    : {
+    		case HAS_ACTOR : {
     			result = (service.hasActor(data)) ? "1" : "0";
     			result = CLIENT + result;
     		}; break;
-    		case GET_ACTOR    : {
+    		case GET_ACTOR_FROM_ALIAS : {
     			UUID uuid = service.getActorFromAlias(data);
+    			result = (uuid!=null) ? uuid.toString() : "";
+    			result = CLIENT + result;
+    		}; break;
+    		case GET_ACTOR_FROM_PATH : {
+    			UUID uuid = service.getActorFromPath(data);
     			result = (uuid!=null) ? uuid.toString() : "";
     			result = CLIENT + result;
     		}; break;

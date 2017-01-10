@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.service.node.websocket;
 
@@ -23,9 +23,10 @@ import actor4j.service.node.websocket.endpoints.ActorServerEndpoint;
 public class WebSocketActorClientManager {
 	public static Map<Session, CompletableFuture<String>> sessionMap;
 	
-	public static final String HAS_ACTOR    = String.valueOf(ActorServerEndpoint.HAS_ACTOR);
-	public static final String GET_ACTOR    = String.valueOf(ActorServerEndpoint.GET_ACTOR);
-	public static final String SEND_MESSAGE = String.valueOf(ActorServerEndpoint.SEND_MESSAGE);
+	public static final String HAS_ACTOR            = String.valueOf(ActorServerEndpoint.HAS_ACTOR);
+	public static final String GET_ACTOR_FROM_ALIAS = String.valueOf(ActorServerEndpoint.GET_ACTOR_FROM_ALIAS);
+	public static final String GET_ACTOR_FROM_PATH  = String.valueOf(ActorServerEndpoint.GET_ACTOR_FROM_PATH);
+	public static final String SEND_MESSAGE         = String.valueOf(ActorServerEndpoint.SEND_MESSAGE);
 	
 	static {
 		sessionMap = new ConcurrentHashMap<>();
@@ -73,8 +74,12 @@ public class WebSocketActorClientManager {
 		return sendText(session, tag+message);
 	}
 	
-	public static CompletableFuture<String> getActor(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
-		return sendText(session, GET_ACTOR, alias);
+	public static CompletableFuture<String> getActorFromAlias(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
+		return sendText(session, GET_ACTOR_FROM_ALIAS, alias);
+	}
+	
+	public static CompletableFuture<String> getActorFromPath(Session session, String path) throws IOException, InterruptedException, ExecutionException  {
+		return sendText(session, GET_ACTOR_FROM_PATH, path);
 	}
 	
 	public static CompletableFuture<String> hasActor(Session session, String uuid) throws IOException, InterruptedException, ExecutionException  {
@@ -85,8 +90,12 @@ public class WebSocketActorClientManager {
 		return sendText(session, SEND_MESSAGE, new ObjectMapper().writeValueAsString(message));
 	}
 	
-	public static String getActorSync(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
-		return getActor(session, alias).get();
+	public static String getActorFromAliasSync(Session session, String alias) throws IOException, InterruptedException, ExecutionException  {
+		return getActorFromAlias(session, alias).get();
+	}
+	
+	public static String getActorFromPathSync(Session session, String path) throws IOException, InterruptedException, ExecutionException  {
+		return getActorFromPath(session, path).get();
 	}
 	
 	public static Boolean hasActorSync(Session session, String uuid) throws IOException, InterruptedException, ExecutionException  {

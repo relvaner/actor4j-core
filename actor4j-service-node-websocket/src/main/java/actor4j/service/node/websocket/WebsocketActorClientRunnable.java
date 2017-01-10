@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.service.node.websocket;
 
@@ -76,7 +76,7 @@ public class WebsocketActorClientRunnable implements ActorClientRunnable {
 				int i = 0;
 				for (ActorServiceNode serviceNode : serviceNodes) {
 					Session session = getSession(serviceNode);
-					String response = WebSocketActorClientManager.getActor(session, alias).get();
+					String response = WebSocketActorClientManager.getActorFromAlias(session, alias).get();
 					if (!response.equals("")) {
 						result = UUID.fromString(response);
 						final int found = i;
