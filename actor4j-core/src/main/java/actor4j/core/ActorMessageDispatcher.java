@@ -51,6 +51,8 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void post(ActorMessage<?> message, UUID source, String alias);
 	
+	public abstract void post(ActorMessage<?> message, ActorServiceNode node, String path);
+	
 	public abstract void postOuter(ActorMessage<?> message);
 	
 	public abstract void postServer(ActorMessage<?> message);

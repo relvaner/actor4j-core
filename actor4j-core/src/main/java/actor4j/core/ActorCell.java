@@ -212,6 +212,10 @@ public class ActorCell {
 		system.messageDispatcher.post(message, id, alias);
 	}
 	
+	public void send(ActorMessage<?> message, ActorServiceNode node, String path) {
+		system.messageDispatcher.post(message, node, path);
+	}
+	
 	public void unhandled(ActorMessage<?> message) {
 		if (system.debugUnhandled) {
 			Actor sourceActor = system.cells.get(message.source).actor;

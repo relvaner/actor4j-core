@@ -97,7 +97,7 @@ public class WebsocketActorClientRunnable implements ActorClientRunnable {
 	}
 	
 	@Override
-	public void run(ActorMessage<?> message, String alias) {
+	public void runViaAlias(ActorMessage<?> message, String alias) {
 		if (alias!=null) {
 			UUID uuid = null;
 			if ((uuid=cacheAlias.getUnchecked(alias))!=null)
@@ -120,6 +120,25 @@ public class WebsocketActorClientRunnable implements ActorClientRunnable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	@Override
+	public void runViaPath(ActorMessage<?> message, ActorServiceNode node, String path) {
+		try {
+			Session session = getSession(node);
+			String response = null;
+			try {
+				response = WebSocketActorClientManager.getActorFromPath(session, path).get();
+				if (response!=null && !response.equals(""))
+					WebSocketActorClientManager.sendMessage(session, new TransferActorMessage(message.value, message.tag, message.source.toString(), response));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

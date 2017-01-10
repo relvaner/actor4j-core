@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
@@ -154,12 +154,22 @@ public class ActorExecuterService {
 		return timer;
 	}
 	
-	public void client(final ActorMessage<?> message, final String alias) {
+	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
 		if (system.clientRunnable!=null)
 			clientExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					system.clientRunnable.run(message, alias);
+					system.clientRunnable.runViaAlias(message, alias);
+				}
+			});
+	}
+	
+	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
+		if (system.clientRunnable!=null)
+			clientExecuterService.submit(new Runnable() {
+				@Override
+				public void run() {
+					system.clientRunnable.runViaPath(message, node, path);
 				}
 			});
 	}

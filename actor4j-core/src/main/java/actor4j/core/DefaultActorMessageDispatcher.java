@@ -62,7 +62,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		else if (system.clientMode && !system.cells.containsKey(message.dest)) {
-			system.executerService.client(message.copy(), alias);
+			system.executerService.clientViaAlias(message.copy(), alias);
 			return;
 		}
 		else if (system.resourceCells.containsKey(message.dest)) {
@@ -84,6 +84,14 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 					((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
 			}	
 		}
+	}
+	
+	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
+		if (message==null)
+			throw new NullPointerException();
+		
+		if (node!=null && path!=null)
+			system.executerService.clientViaPath(message, node, path);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {

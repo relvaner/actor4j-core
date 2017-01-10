@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import actor4j.core.ActorCell;
+import actor4j.core.ActorServiceNode;
 import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.supervisor.DefaultSupervisiorStrategy;
@@ -162,7 +163,25 @@ public abstract class Actor {
 	}
 	
 	public void sendViaPath(ActorMessage<?> message, String path) {
-		send(message, cell.getSystem().getActorFromPath(path));
+		UUID dest = cell.getSystem().getActorFromPath(path);
+		if (dest!=null)
+			send(message, dest);
+	}
+	
+	public void sendViaPath(ActorMessage<?> message, String uri, String path) {
+		ActorServiceNode found = null;
+		for (ActorServiceNode node : cell.getSystem().getServiceNodes())
+			if (node.getUri().equals(uri)) {
+				found = node;
+				break;
+			}
+		
+		if (found!=null)
+			sendViaPath(message, found, path);
+	}
+	
+	public void sendViaPath(ActorMessage<?> message, ActorServiceNode node, String path) {
+		cell.send(message, node, path);
 	}
 	
 	public void sendViaAlias(ActorMessage<?> message, String alias) {
