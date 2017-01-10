@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.service.node.rest.resources;
 
@@ -16,15 +16,15 @@ import javax.ws.rs.core.Response;
 import actor4j.core.ActorService;
 import actor4j.service.node.rest.databind.RESTActorResponse;
 
-@Path("/getactor/{alias}")
-public class GetActorResource {
+@Path("/getActorFromPath/{path}")
+public class GetActorFromPathResource {
 	@Context
 	ActorService service;
 
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getActor(@PathParam("alias") String alias) {
-		UUID uuid = service.getActorFromAlias(alias);
+	public Response getActorFromPath(@PathParam("path") String path) {
+		UUID uuid = service.getActorFromPath(path);
 		if (uuid != null)
 			return Response.ok().entity(
 					new RESTActorResponse(
@@ -32,6 +32,6 @@ public class GetActorResource {
 		else
 			return Response.status(404).entity(
 					new RESTActorResponse(
-							RESTActorResponse.FAIL, 404, "", "The actor for a given alias was not found.")).build();
+							RESTActorResponse.FAIL, 404, "", "The actor for a given path was not found.")).build();
 	}
 }

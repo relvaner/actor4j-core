@@ -23,7 +23,7 @@ import actor4j.core.messages.RemoteActorMessage;
 import actor4j.service.node.rest.databind.RESTActorResponse;
 import actor4j.service.node.utils.TransferActorMessage;
 
-@Path("/sendmessage")
+@Path("/sendMessage")
 public class SendMessageResource {
 	@Context 
 	ActorService service;

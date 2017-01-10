@@ -122,6 +122,10 @@ public class ActorSystem {
 		
 		return this;
 	}
+	
+	public UUID getActorFromPath(String path) {
+		return system.getActorFromPath(path);
+	}
 		
 	public ActorSystem send(ActorMessage<?> message) {
 		system.send(message);

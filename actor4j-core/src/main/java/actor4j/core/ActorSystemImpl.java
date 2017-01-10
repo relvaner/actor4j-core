@@ -417,6 +417,10 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public UUID getActorFromAlias(String alias) {
+		return aliases.get(alias);
+	}
+	
 	public UUID getActorFromPath(String path) {
 		ActorCell result = null;
 		
@@ -442,10 +446,6 @@ public abstract class ActorSystemImpl {
 		}
 		
 		return (result!=null) ? result.getId() : null;
-	}
-	
-	public UUID getActorFromAlias(String alias) {
-		return aliases.get(alias);
 	}
 	
 	public ActorSystemImpl send(ActorMessage<?> message) {

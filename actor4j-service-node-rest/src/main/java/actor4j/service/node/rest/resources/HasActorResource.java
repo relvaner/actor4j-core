@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import actor4j.core.ActorService;
 import actor4j.service.node.rest.databind.RESTActorResponse;
 
-@Path("/hasactor/{uuid}")
+@Path("/hasActor/{uuid}")
 public class HasActorResource {
 	@Context 
 	ActorService service;

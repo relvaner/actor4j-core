@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.service.node.rest.client;
 
@@ -23,15 +23,19 @@ public class RESTActorClient extends RESTClient {
 	}
 	
 	public static Response _hasActor(Client client, String uri, String uuid) {
-		return get(client, uri, "hasactor/"+uuid, "application/json; charset=UTF-8", null);
+		return get(client, uri, "hasActor/"+uuid, "application/json; charset=UTF-8", null);
 	}
 	
-	public static Response _getActor(Client client, String uri, String alias) {
-		return get(client, uri, "getactor/"+alias, "application/json; charset=UTF-8", null);
+	public static Response _getActorFromAlias(Client client, String uri, String alias) {
+		return get(client, uri, "getActorFromAlias/"+alias, "application/json; charset=UTF-8", null);
+	}
+	
+	public static Response _getActorFromPath(Client client, String uri, String path) {
+		return get(client, uri, "getActorFromPath/"+path, "application/json; charset=UTF-8", null);
 	}
 	
 	public static Response _sendMessage(Client client, String uri, String request) {
-		return post(client, uri, "sendmessage", "application/json; charset=UTF-8", null, Entity.entity(request, MediaType.APPLICATION_JSON));
+		return post(client, uri, "sendMessage", "application/json; charset=UTF-8", null, Entity.entity(request, MediaType.APPLICATION_JSON));
 	}
 	
 	public static <I> Response _sendMessage(Client client, String uri, I request) throws IOException, JsonProcessingException, JsonMappingException {
@@ -48,8 +52,13 @@ public class RESTActorClient extends RESTClient {
 		return new ObjectMapper().readValue(response.readEntity(String.class), RESTActorResponse.class);
 	}
 	
-	public static RESTActorResponse getActor(Client client, String uri, String alias) throws JsonParseException, JsonMappingException, IOException {
-		Response response = _getActor(client, uri, alias);
+	public static RESTActorResponse getActorFromAlias(Client client, String uri, String alias) throws JsonParseException, JsonMappingException, IOException {
+		Response response = _getActorFromAlias(client, uri, alias);
+		return new ObjectMapper().readValue(response.readEntity(String.class), RESTActorResponse.class);
+	}
+	
+	public static RESTActorResponse getActorFromPath(Client client, String uri, String path) throws JsonParseException, JsonMappingException, IOException {
+		Response response = _getActorFromPath(client, uri, path);
 		return new ObjectMapper().readValue(response.readEntity(String.class), RESTActorResponse.class);
 	}
 	
