@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
@@ -59,6 +59,8 @@ public class ActorCell {
 	protected UUID parent;
 	protected Queue<UUID> children;
 	
+	protected boolean active;
+	
 	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
 	protected RestartProtocol restartProtocol;
@@ -81,6 +83,8 @@ public class ActorCell {
 		this.id = UUID.randomUUID();
 		
 		children = new ConcurrentLinkedQueue<>();
+		
+		active = true;
 		
 		behaviourStack = new ArrayDeque<>();
 		
@@ -110,6 +114,10 @@ public class ActorCell {
 						stop();
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
+					else if (message.tag==INTERNAL_ACTIVATE)
+						active = true;
+					else if (message.tag==INTERNAL_DEACTIVATE)
+						active = false;
 					else if (message.tag==INTERNAL_RECOVER)
 						recoverProtocol.apply();
 					else if (message.tag==INTERNAL_PERSISTENCE_RECOVER)
@@ -164,6 +172,14 @@ public class ActorCell {
 		return children;
 	}
 	
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	public void setActiveDirectiveBehaviour(boolean activeDirectiveBehaviour) {
 		this.activeDirectiveBehaviour = activeDirectiveBehaviour;
 	}
@@ -177,7 +193,7 @@ public class ActorCell {
 	}
 	
 	public void internal_receive(ActorMessage<?> message) {
-		if (!processedDirective.apply(message)) {
+		if (!processedDirective.apply(message) && active) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
 				actor.receive(message);
@@ -356,8 +372,10 @@ public class ActorCell {
 	}
 	
 	public void recovery(ActorMessage<?> message) {
-		if (system.persistenceMode && actor instanceof PersistenceActor)
+		if (system.persistenceMode && actor instanceof PersistenceActor) {
 			((PersistenceActor<?, ?>)actor).recovery(message.valueAsString());
+			active = true;
+		}
 	}
 	
 	public UUID persistenceId() {

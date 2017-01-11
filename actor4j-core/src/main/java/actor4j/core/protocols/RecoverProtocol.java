@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core.protocols;
 
@@ -17,7 +17,9 @@ public class RecoverProtocol {
 	
 	public void apply() {
 		if (cell.getSystem().isPersistenceMode() && cell.getActor() instanceof PersistenceActor) {
+			cell.setActive(false);
 			cell.getSystem().getMessageDispatcher().postPersistence(
-					new ActorMessage<String>(((PersistenceActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));}
+					new ActorMessage<String>(((PersistenceActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));
+		}
 	}
 }

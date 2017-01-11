@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core.actors;
 
@@ -31,6 +31,9 @@ public abstract class Actor {
 	
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
+	
+	public static final int ACTIVATE   = INTERNAL_ACTIVATE;
+	public static final int DEACTIVATE = INTERNAL_DEACTIVATE;
 	
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
@@ -168,10 +171,10 @@ public abstract class Actor {
 			send(message, dest);
 	}
 	
-	public void sendViaPath(ActorMessage<?> message, String uri, String path) {
+	public void sendViaPath(ActorMessage<?> message, String nodeName, String path) {
 		ActorServiceNode found = null;
 		for (ActorServiceNode node : cell.getSystem().getServiceNodes())
-			if (node.getUri().equals(uri)) {
+			if (node.getName().equals(nodeName)) {
 				found = node;
 				break;
 			}

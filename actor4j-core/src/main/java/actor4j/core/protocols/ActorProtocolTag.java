@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core.protocols;
 
@@ -13,4 +13,7 @@ public final class ActorProtocolTag {
 	public static final int INTERNAL_PERSISTENCE_RECOVER  = -6;
 	public static final int INTERNAL_PERSISTENCE_SUCCESS  = -7;
 	public static final int INTERNAL_PERSISTENCE_FAILURE  = -8;
+	
+	public static final int INTERNAL_ACTIVATE             = -9;
+	public static final int INTERNAL_DEACTIVATE           = -10;
 }
