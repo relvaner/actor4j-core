@@ -32,6 +32,7 @@ public class ActorExecuterService {
 	
 	protected List<ActorThread> actorThreads;
 	protected Queue<ActorTimer> actorTimers;
+	protected volatile ActorTimer globalTimer;
 	
 	protected CountDownLatch countDownLatch;
 	protected Runnable onTermination;
@@ -152,6 +153,21 @@ public class ActorExecuterService {
 		ActorTimer timer = new ActorTimer(system);
 		actorTimers.add(timer);
 		return timer;
+	}
+	
+	public ActorTimer globalTimer() {
+		// Double-Check-Idiom à la Bloch
+		ActorTimer tmp = globalTimer;
+		if (tmp==null) {
+			synchronized(this) {
+				tmp = globalTimer;
+				if (tmp==null) {
+					globalTimer = tmp = new ActorTimer(system);
+					actorTimers.add(globalTimer);
+				}
+			}
+		}
+		return tmp;
 	}
 	
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {

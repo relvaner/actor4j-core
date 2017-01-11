@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.StringTokenizer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -457,6 +458,26 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
+		if (executerService.isStarted() && message!=null && message.dest!=null)  {
+			ActorCell cell = cells.get(message.dest);
+			if (cell.isActive())
+				messageDispatcher.postOuter(message);
+			else
+				globalTimer().timer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						if (cell.isActive()) {
+							messageDispatcher.postOuter(message);
+							cancel();
+						}
+					}
+				}, 0, 25);
+		}
+		
+		return this;
+	}
+	
 	public void sendAsServer(ActorMessage<?> message) {
 		if (!executerService.isStarted()) 
 			bufferQueue.offer(message.copy());
@@ -498,6 +519,10 @@ public abstract class ActorSystemImpl {
 	
 	public ActorTimer timer() {
 		return executerService.timer();
+	}
+	
+	public ActorTimer globalTimer() {
+		return executerService.globalTimer();
 	}
 	
 	public void start() {

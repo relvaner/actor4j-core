@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -59,7 +60,7 @@ public class ActorCell {
 	protected UUID parent;
 	protected Queue<UUID> children;
 	
-	protected boolean active;
+	protected AtomicBoolean active;
 	
 	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
@@ -84,7 +85,7 @@ public class ActorCell {
 		
 		children = new ConcurrentLinkedQueue<>();
 		
-		active = true;
+		active = new AtomicBoolean(true);
 		
 		behaviourStack = new ArrayDeque<>();
 		
@@ -115,9 +116,9 @@ public class ActorCell {
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
 					else if (message.tag==INTERNAL_ACTIVATE)
-						active = true;
+						active.set(true);
 					else if (message.tag==INTERNAL_DEACTIVATE)
-						active = false;
+						active.set(false);
 					else if (message.tag==INTERNAL_RECOVER)
 						recoverProtocol.apply();
 					else if (message.tag==INTERNAL_PERSISTENCE_RECOVER)
@@ -173,11 +174,11 @@ public class ActorCell {
 	}
 	
 	public boolean isActive() {
-		return active;
+		return active.get();
 	}
 
 	public void setActive(boolean active) {
-		this.active = active;
+		this.active.set(active);
 	}
 
 	public void setActiveDirectiveBehaviour(boolean activeDirectiveBehaviour) {
@@ -193,7 +194,7 @@ public class ActorCell {
 	}
 	
 	public void internal_receive(ActorMessage<?> message) {
-		if (!processedDirective.apply(message) && active) {
+		if (!processedDirective.apply(message) && active.get()) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
 				actor.receive(message);
@@ -374,7 +375,7 @@ public class ActorCell {
 	public void recovery(ActorMessage<?> message) {
 		if (system.persistenceMode && actor instanceof PersistenceActor) {
 			((PersistenceActor<?, ?>)actor).recovery(message.valueAsString());
-			active = true;
+			active.set(true);
 		}
 	}
 	

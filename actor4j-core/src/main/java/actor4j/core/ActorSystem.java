@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
@@ -133,6 +133,12 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public ActorSystem sendWhenActive(ActorMessage<?> message) {
+		system.sendWhenActive(message);
+		
+		return this;
+	}
+	
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group) {
 		system.broadcast(message, group);
 		
@@ -159,6 +165,10 @@ public class ActorSystem {
 	
 	public ActorTimer timer() {
 		return system.timer();
+	}
+	
+	public ActorTimer globalTimer() {
+		return system.globalTimer();
 	}
 	
 	public void start() {
