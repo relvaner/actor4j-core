@@ -16,7 +16,7 @@ public class BrokerActor extends Actor {
 	public static final int GET_TOPIC_ACTOR = 100;
 	
 	public BrokerActor() {
-		this(null);
+		this("broker-actor");
 	}
 	
 	public BrokerActor(String name) {
@@ -28,8 +28,13 @@ public class BrokerActor extends Actor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (message.value!=null) {
-			if (message.value instanceof Publish) {
-				String topic = ((Publish<?>)message.value).topic;
+			if (message.value instanceof Publish || message.value instanceof Subscribe) {
+				final String topic;
+				if (message.value instanceof Publish)
+					topic = ((Publish<?>)message.value).topic;
+				else
+					topic = ((Subscribe)message.value).topic;
+				
 				UUID dest = topics.get(topic);
 				if (dest==null) {
 					dest = addChild(() -> new TopicActor("topic-actor:"+topic, topic));
@@ -38,14 +43,6 @@ public class BrokerActor extends Actor {
 				if (message.tag==GET_TOPIC_ACTOR)
 					tell(dest, message.tag, message.source);
 				forward(message, dest);
-			}
-			else if (message.value instanceof Subscribe) {
-				UUID dest = topics.get(((Subscribe)message.value).topic);
-				if (dest!=null) {
-					if (message.tag==GET_TOPIC_ACTOR)
-						tell(dest, message.tag, message.source);
-					forward(message, dest);
-				}
 			}
 			else
 				unhandled(message);
