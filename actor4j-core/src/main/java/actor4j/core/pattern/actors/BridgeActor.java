@@ -10,7 +10,7 @@ import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
 public class BridgeActor extends PipeActor {
-	public BridgeActor( BiFunction<Actor, ActorMessage<?>, ActorMessage<?>> handler, UUID next) {
+	public BridgeActor(BiFunction<Actor, ActorMessage<?>, ActorMessage<?>> handler, UUID next) {
 		super(handler, next);
 	}
 	
