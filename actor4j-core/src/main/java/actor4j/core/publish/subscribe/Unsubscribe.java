@@ -3,8 +3,8 @@
  */
 package actor4j.core.publish.subscribe;
 
-public class Subscribe extends Topic {
-	public Subscribe(String topic) {
+public class Unsubscribe extends Topic {
+	public Unsubscribe(String topic) {
 		super(topic);
 	}
 }

@@ -3,13 +3,11 @@
  */
 package actor4j.core.publish.subscribe;
 
-public class Publish<T> {
-	public String topic;
+public class Publish<T> extends Topic {
 	public T value;
 	
 	public Publish(String topic, T value) {
-		super();
-		this.topic = topic;
+		super(topic);
 		this.value = value;
 	}
 }

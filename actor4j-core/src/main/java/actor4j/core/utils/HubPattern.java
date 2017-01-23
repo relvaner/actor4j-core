@@ -35,8 +35,16 @@ public class HubPattern {
 		ports.addAll(group);
 	}
 	
+	public void remove(UUID id) {
+		ports.remove(id);
+	}
+	
 	public boolean contains(UUID id) {
 		return ports.contains(id);
+	}
+	
+	public int count() {
+		return ports.size();
 	}
 	
 	public void broadcast(ActorMessage<?> message) {

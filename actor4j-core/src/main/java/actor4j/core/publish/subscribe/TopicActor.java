@@ -21,15 +21,17 @@ public class TopicActor extends Actor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (message.value!=null) {
-			if (message.value instanceof Publish) {
-				String buf = ((Publish<?>)message.value).topic;
-				if (topic.equals(buf))
+			String buf = ((Topic)message.value).topic;
+			if (topic.equals(buf)) {
+				if (message.value instanceof Publish)
 					hub.broadcast(message);
-			}
-			else if (message.value instanceof Subscribe) {
-				String buf = ((Subscribe)message.value).topic;
-				if (topic.equals(buf))
+				else if (message.value instanceof Subscribe && message.tag==BrokerActor.FORWARDED_BY_BROKER)
 					hub.add(message.source);
+				else if (message.value instanceof Unsubscribe && message.tag==BrokerActor.FORWARDED_BY_BROKER) {
+					hub.remove(message.source);
+					if (hub.count()==0)
+						stop();
+				}
 			}
 			else
 				unhandled(message);
