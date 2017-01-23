@@ -55,7 +55,7 @@ public class BrokerActor extends Actor {
 				}
 				else if (message.value instanceof Unsubscribe) {
 					message.tag = FORWARDED_BY_BROKER;
-					if (counter.get(topic)-1==0) {
+					if (counter.get(topic)-1<=0) {
 						topics.remove(topic);
 						counter.remove(topic);
 					}
