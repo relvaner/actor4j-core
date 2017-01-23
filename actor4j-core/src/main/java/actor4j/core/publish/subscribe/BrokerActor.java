@@ -4,7 +4,9 @@
 package actor4j.core.publish.subscribe;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import actor4j.core.actors.Actor;
@@ -19,7 +21,8 @@ public class BrokerActor extends Actor {
 	protected Map<String, Integer> counter;
 	
 	public static final int GET_TOPIC_ACTOR = 100;
-	protected static final int FORWARDED_BY_BROKER = 101;
+	public static final int CLEAN_UP = 101;
+	protected static final int FORWARDED_BY_BROKER = 102;
 	
 	public BrokerActor() {
 		this("broker-actor");
@@ -55,15 +58,24 @@ public class BrokerActor extends Actor {
 				}
 				else if (message.value instanceof Unsubscribe) {
 					message.tag = FORWARDED_BY_BROKER;
-					if (counter.get(topic)-1<=0) {
+					int count = counter.get(topic);
+					if (count-1<=0) {
 						topics.remove(topic);
 						counter.remove(topic);
 					}
+					else
+						counter.put(topic, count-1);
 				}
 				forward(message, dest);
 			}
 			else
 				unhandled(message);
+		}
+		else if (message.tag==CLEAN_UP) {
+			Iterator<Entry<String, Integer>> iterator = counter.entrySet().iterator();
+			while (iterator.hasNext())
+				if (iterator.next().getValue()==0)
+					iterator.remove();
 		}
 		else
 			unhandled(message);
