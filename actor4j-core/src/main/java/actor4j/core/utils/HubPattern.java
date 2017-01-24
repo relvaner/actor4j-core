@@ -27,6 +27,10 @@ public class HubPattern {
 		ports = group;
 	}
 	
+	public ActorGroup getPorts() {
+		return ports;
+	}
+
 	public void add(UUID id) {
 		ports.add(id);
 	}
