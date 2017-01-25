@@ -33,13 +33,16 @@ public class PublisherImpl {
 				if (!subscribers.add(message.source) && message.tag==SUBSCRIPTION_REQUEST)
 					request = requests.get(message.source);
 			
-				requests.put(message.source, request+message.valueAsLong());
+				requests.put(message.source, request+message.valueAsLong()); // Long.MAX_VALUE
 			}
-			else if (message.tag==SUBSCRIPTION_CANCEL) {
-				subscribers.remove(message.source);
-				requests.remove(message.source);
-			}
+			else if (message.tag==SUBSCRIPTION_CANCEL)
+				cancel(message.source);
 		}
+	}
+	
+	public void cancel(UUID dest) {
+		subscribers.remove(dest);
+		requests.remove(dest);
 	}
 	
 	public <T> void broadcast(T value) {
@@ -53,12 +56,16 @@ public class PublisherImpl {
 		if (dest!=null) {
 			Long request = requests.get(dest);
 			
-			if (request!=null && request>0) {
-				requests.put(dest, request-1);
-				actor.tell(value, ON_NEXT, dest);
+			if (request!=null) {
+				if (request==Long.MAX_VALUE)
+					actor.tell(value, ON_NEXT, dest);
+				else if (request>0) {
+					requests.put(dest, request-1);
+					actor.tell(value, ON_NEXT, dest);
 				
-				if (request==1)
-					signalOnComplete(dest);
+					if (request==1)
+						signalOnComplete(dest);
+				}
 				
 				result = true;
 			}
@@ -69,9 +76,11 @@ public class PublisherImpl {
 	
 	public void signalOnError(String error, UUID dest) {
 		actor.tell(error, ON_ERROR, dest);
+		cancel(dest);
 	}
 	
 	public void signalOnComplete(UUID dest) {
 		actor.tell(null, ON_COMPLETE, dest);
+		cancel(dest);
 	}
 }
