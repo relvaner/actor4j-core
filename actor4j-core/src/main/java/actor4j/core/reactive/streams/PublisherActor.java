@@ -25,6 +25,10 @@ public class PublisherActor extends Actor {
 		publisherImpl.receive(message);
 	}
 	
+	public <T> void broadcast(T value) {
+		publisherImpl.broadcast(value);
+	}
+	
 	public <T> boolean signalOnNext(T value, UUID dest) {
 		return publisherImpl.signalOnNext(value, dest);
 	}

@@ -39,6 +39,11 @@ public class PublisherImpl {
 		}
 	}
 	
+	public <T> void broadcast(T value) {
+		for (UUID dest: subscribers)
+			signalOnNext(value, dest);
+	}
+	
 	public <T> boolean signalOnNext(T value, UUID dest) {
 		boolean result = false;
 		
@@ -48,6 +53,10 @@ public class PublisherImpl {
 			if (request!=null && request>0) {
 				requests.put(dest, request-1);
 				actor.tell(value, ON_NEXT, dest);
+				
+				if (request==1)
+					signalOnComplete(dest);
+				
 				result = true;
 			}
 		}
