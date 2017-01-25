@@ -42,4 +42,12 @@ public class SubscriberActor extends Actor {
 	public void signalResetRequest(long n, UUID dest) {
 		subscriberImpl.signalResetRequest(n, dest);
 	}
+	
+	public void signalBulk(UUID dest) {
+		subscriberImpl.signalBulk(dest);
+	}
+	
+	public void signalBulkCancel(UUID dest) {
+		subscriberImpl.signalBulkCancel(dest);
+	}
 }

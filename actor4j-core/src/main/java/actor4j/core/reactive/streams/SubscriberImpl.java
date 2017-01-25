@@ -78,4 +78,12 @@ public class SubscriberImpl {
 	public void signalCancel(UUID dest) {
 		actor.tell(null, SUBSCRIPTION_CANCEL, dest);
 	}
+	
+	public void signalBulk(UUID dest) {
+		actor.tell(null, SUBSCRIPTION_BULK, dest);
+	}
+	
+	public void signalBulkCancel(UUID dest) {
+		actor.tell(null, SUBSCRIPTION_BULK_CANCEL, dest);
+	}
 }
