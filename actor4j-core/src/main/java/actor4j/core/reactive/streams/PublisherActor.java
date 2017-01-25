@@ -29,6 +29,10 @@ public class PublisherActor extends Actor {
 		publisherImpl.broadcast(value);
 	}
 	
+	public boolean isBulk(UUID dest) {
+		return publisherImpl.isBulk(dest);
+	}
+	
 	public <T> boolean signalOnNext(T value, UUID dest) {
 		return publisherImpl.signalOnNext(value, dest);
 	}

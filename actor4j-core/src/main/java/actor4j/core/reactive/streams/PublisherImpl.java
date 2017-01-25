@@ -18,12 +18,14 @@ public class PublisherImpl {
 	
 	protected ActorGroup subscribers;
 	protected Map<UUID, Long> requests;
+	protected Map<UUID, Boolean> bulks;
 	
 	public PublisherImpl(Actor actor) {
 		super();
 		this.actor = actor;
 		subscribers = new ActorGroup();
 		requests = new HashMap<>();
+		bulks = new HashMap<>();
 	}
 	
 	public void receive(ActorMessage<?> message) {
@@ -37,6 +39,10 @@ public class PublisherImpl {
 			}
 			else if (message.tag==SUBSCRIPTION_CANCEL)
 				cancel(message.source);
+			else if (message.tag==SUBSCRIPTION_BULK)
+				bulks.put(message.source, true);
+			else if (message.tag==SUBSCRIPTION_BULK_CANCEL)
+				bulks.remove(message.source);
 		}
 	}
 	
@@ -48,6 +54,10 @@ public class PublisherImpl {
 	public <T> void broadcast(T value) {
 		for (UUID dest: subscribers)
 			signalOnNext(value, dest);
+	}
+	
+	public boolean isBulk(UUID dest) {
+		return bulks.get(dest)!=null;
 	}
 	
 	public <T> boolean signalOnNext(T value, UUID dest) {
