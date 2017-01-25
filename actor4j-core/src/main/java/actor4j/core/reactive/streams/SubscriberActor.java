@@ -38,4 +38,8 @@ public class SubscriberActor extends Actor {
 	public void signalRequest(long n, UUID dest) {
 		subscriberImpl.signalRequest(n, dest);
 	}
+	
+	public void signalResetRequest(long n, UUID dest) {
+		subscriberImpl.signalResetRequest(n, dest);
+	}
 }

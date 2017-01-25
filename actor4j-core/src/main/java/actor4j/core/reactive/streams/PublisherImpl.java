@@ -28,9 +28,9 @@ public class PublisherImpl {
 	
 	public void receive(ActorMessage<?> message) {
 		if (message.source!=null) {
-			if (message.tag==SUBSCRIPTION_REQUEST) { //Validierung: Integer -> OnError
+			if (message.tag==SUBSCRIPTION_REQUEST || message.tag==SUBSCRIPTION_RESET_REQUEST) { //Validierung: Integer -> OnError
 				long request = 0;
-				if (!subscribers.add(message.source))
+				if (!subscribers.add(message.source) && message.tag==SUBSCRIPTION_REQUEST)
 					request = requests.get(message.source);
 			
 				requests.put(message.source, request+message.valueAsLong());

@@ -71,6 +71,10 @@ public class SubscriberImpl {
 		actor.tell(n, SUBSCRIPTION_REQUEST, dest);
 	}
 	
+	public void signalResetRequest(long n, UUID dest) {
+		actor.tell(n, SUBSCRIPTION_RESET_REQUEST, dest);
+	}
+	
 	public void signalCancel(UUID dest) {
 		actor.tell(null, SUBSCRIPTION_CANCEL, dest);
 	}
