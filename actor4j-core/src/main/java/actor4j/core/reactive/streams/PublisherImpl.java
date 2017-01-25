@@ -29,8 +29,11 @@ public class PublisherImpl {
 	public void receive(ActorMessage<?> message) {
 		if (message.source!=null) {
 			if (message.tag==SUBSCRIPTION_REQUEST) { //Validierung: Integer -> OnError
-				subscribers.add(message.source);
-				requests.put(message.source, message.valueAsLong());
+				long request = 0;
+				if (!subscribers.add(message.source))
+					request = requests.get(message.source);
+			
+				requests.put(message.source, request+message.valueAsLong());
 			}
 			else if (message.tag==SUBSCRIPTION_CANCEL) {
 				subscribers.remove(message.source);
