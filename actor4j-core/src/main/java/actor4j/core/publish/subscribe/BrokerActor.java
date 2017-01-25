@@ -22,7 +22,7 @@ public class BrokerActor extends Actor {
 	
 	public static final int GET_TOPIC_ACTOR = 100;
 	public static final int CLEAN_UP = 101;
-	protected static final int FORWARDED_BY_BROKER = 102;
+	protected static final int INTERNAL_FORWARDED_BY_BROKER = 102;
 	
 	public BrokerActor() {
 		this("broker-actor");
@@ -53,11 +53,11 @@ public class BrokerActor extends Actor {
 						tell(dest, message.tag, message.source);
 				}
 				else if (message.value instanceof Subscribe) {
-					message.tag = FORWARDED_BY_BROKER;
+					message.tag = INTERNAL_FORWARDED_BY_BROKER;
 					counter.put(topic, counter.get(topic)+1);
 				}
 				else if (message.value instanceof Unsubscribe) {
-					message.tag = FORWARDED_BY_BROKER;
+					message.tag = INTERNAL_FORWARDED_BY_BROKER;
 					int count = counter.get(topic);
 					if (count-1<=0) {
 						topics.remove(topic);
