@@ -74,6 +74,21 @@ public class PseudoActorCell extends ActorCell {
 		return result;
 	}
 	
+	public boolean runAll() {
+		boolean result = false;
+		
+		boolean hasNextOuter = outerQueueL1.peek()!=null;
+		if (!hasNextOuter && outerQueueL2.peek()!=null) {
+			ActorMessage<?> message = null;
+			while ((message=outerQueueL2.poll())!=null)
+				outerQueueL1.offer(message);
+		}
+		while (poll(outerQueueL1))
+			result = true;
+		
+		return result;
+	}
+	
 	public boolean runOnce() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {

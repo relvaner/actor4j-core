@@ -92,6 +92,10 @@ public class ActorExecuterService {
 		});
 	}
 	
+	public SafetyManager getSafetyManager() {
+		return safetyManager;
+	}
+
 	public List<ActorThread> getActorThreads() {
 		return actorThreads;
 	}

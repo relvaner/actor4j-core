@@ -16,7 +16,7 @@
         		<version>2.4</version>
         		<configuration>
         			<descriptorRefs>
-            			<descriptorRef>bin</descriptorRef>
+            			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
               		<jarName>${project.artifactId}-${project.version}</jarName>
             	</configuration>
