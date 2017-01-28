@@ -52,6 +52,7 @@ public class PublisherImpl {
 	public void cancel(UUID dest) {
 		subscribers.remove(dest);
 		requests.remove(dest);
+		bulks.remove(dest);
 	}
 	
 	public <T> void broadcast(T value) {

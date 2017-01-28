@@ -75,7 +75,7 @@ public class SubscriberImpl {
 		actor.tell(n, SUBSCRIPTION_REQUEST_RESET, dest);
 	}
 	
-	public void cancel(UUID dest) {
+	protected void cancel(UUID dest) {
 		actor.tell(null, SUBSCRIPTION_CANCEL, dest);
 	}
 	
