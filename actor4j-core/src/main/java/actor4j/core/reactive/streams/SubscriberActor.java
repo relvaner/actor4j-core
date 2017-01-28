@@ -35,19 +35,19 @@ public class SubscriberActor extends Actor {
 		subscriberImpl.unsubscribe(dest);
 	}
 	
-	public void signalRequest(long n, UUID dest) {
-		subscriberImpl.signalRequest(n, dest);
+	public void request(long n, UUID dest) {
+		subscriberImpl.request(n, dest);
 	}
 	
-	public void signalResetRequest(long n, UUID dest) {
-		subscriberImpl.signalResetRequest(n, dest);
+	public void requestReset(long n, UUID dest) {
+		subscriberImpl.requestReset(n, dest);
 	}
 	
-	public void signalBulk(UUID dest) {
-		subscriberImpl.signalBulk(dest);
+	public void bulk(UUID dest) {
+		subscriberImpl.bulk(dest);
 	}
 	
-	public void signalBulkCancel(UUID dest) {
-		subscriberImpl.signalBulkCancel(dest);
+	public void cancelBulk(UUID dest) {
+		subscriberImpl.cancelBulk(dest);
 	}
 }

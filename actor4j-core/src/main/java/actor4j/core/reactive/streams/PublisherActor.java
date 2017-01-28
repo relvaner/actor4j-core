@@ -33,15 +33,15 @@ public class PublisherActor extends Actor {
 		return publisherImpl.isBulk(dest);
 	}
 	
-	public <T> boolean signalOnNext(T value, UUID dest) {
-		return publisherImpl.signalOnNext(value, dest);
+	public <T> boolean onNext(T value, UUID dest) {
+		return publisherImpl.onNext(value, dest);
 	}
 	
-	public void signalOnError(String error, UUID dest) {
-		publisherImpl.signalOnError(error, dest);
+	public void onError(String error, UUID dest) {
+		publisherImpl.onError(error, dest);
 	}
 	
-	public void signalOnComplete(UUID dest) {
-		publisherImpl.signalOnComplete(dest);
+	public void onComplete(UUID dest) {
+		publisherImpl.onComplete(dest);
 	}
 }

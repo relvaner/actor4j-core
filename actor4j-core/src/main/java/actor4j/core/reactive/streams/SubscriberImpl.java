@@ -60,30 +60,30 @@ public class SubscriberImpl {
 	}
 	
 	public void unsubscribe(UUID dest) {
-		signalCancel(dest);
+		cancel(dest);
 		
 		onNextMap.remove(dest);
 		onErrorMap.remove(dest);
 		onCompleteMap.remove(dest);
 	}
 	
-	public void signalRequest(long n, UUID dest) {
+	public void request(long n, UUID dest) {
 		actor.tell(n, SUBSCRIPTION_REQUEST, dest);
 	}
 	
-	public void signalResetRequest(long n, UUID dest) {
-		actor.tell(n, SUBSCRIPTION_RESET_REQUEST, dest);
+	public void requestReset(long n, UUID dest) {
+		actor.tell(n, SUBSCRIPTION_REQUEST_RESET, dest);
 	}
 	
-	public void signalCancel(UUID dest) {
+	public void cancel(UUID dest) {
 		actor.tell(null, SUBSCRIPTION_CANCEL, dest);
 	}
 	
-	public void signalBulk(UUID dest) {
+	public void bulk(UUID dest) {
 		actor.tell(null, SUBSCRIPTION_BULK, dest);
 	}
 	
-	public void signalBulkCancel(UUID dest) {
-		actor.tell(null, SUBSCRIPTION_BULK_CANCEL, dest);
+	public void cancelBulk(UUID dest) {
+		actor.tell(null, SUBSCRIPTION_CANCEL_BULK, dest);
 	}
 }
