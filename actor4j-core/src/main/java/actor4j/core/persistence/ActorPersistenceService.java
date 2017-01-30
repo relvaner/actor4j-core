@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core.persistence;
 
@@ -10,12 +10,7 @@ import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 
 public class ActorPersistenceService {
-	protected ActorSystem parent;
 	protected ActorService service;
-	
-	protected String host;
-	protected int port;
-	protected String databaseName;
 	
 	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, String host, int port, String databaseName) {
 		super();
