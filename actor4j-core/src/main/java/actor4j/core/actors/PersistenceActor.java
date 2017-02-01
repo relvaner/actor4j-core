@@ -13,6 +13,10 @@ import actor4j.core.persistence.ActorPersistenceObject;
 public abstract class PersistenceActor<S extends ActorPersistenceObject, E extends ActorPersistenceObject> extends Actor {
 	public static final int RECOVER = INTERNAL_RECOVER;
 	
+	public PersistenceActor() {
+		super();
+	}
+	
 	public PersistenceActor(String name) {
 		super(name);
 	}
