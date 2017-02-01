@@ -81,7 +81,8 @@ public class ActorCell {
 		this.system = system;
 		this.actor  = actor;
 		
-		this.id = UUID.randomUUID();
+		UUID persistenceId = persistenceId();
+		this.id = (persistenceId!=null)? persistenceId : UUID.randomUUID();
 		
 		children = new ConcurrentLinkedQueue<>();
 		
@@ -381,7 +382,7 @@ public class ActorCell {
 	
 	public UUID persistenceId() {
 		UUID result = null;
-		if (system.persistenceMode && actor instanceof PersistenceActor)
+		if (actor instanceof PersistenceActor)
 			result = ((PersistenceActor<?, ?>)actor).persistenceId();
 		
 		return result;
