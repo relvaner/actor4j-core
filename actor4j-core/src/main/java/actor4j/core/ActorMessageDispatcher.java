@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
