@@ -458,6 +458,22 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public ActorSystemImpl sendViaPath(ActorMessage<?> message, String path) {
+		message.dest = getActorFromPath(path);
+		if (message.dest!=null)
+			send(message);
+		
+		return this;
+	}
+	
+	public ActorSystemImpl sendViaAlias(ActorMessage<?> message, String alias) {
+		message.dest = getActorFromAlias(alias);
+		if (message.dest!=null)
+			send(message);
+		
+		return this;
+	}
+	
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
 		if (executerService.isStarted() && message!=null && message.dest!=null)  {
 			ActorCell cell = cells.get(message.dest);
