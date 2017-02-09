@@ -4,7 +4,7 @@
 package actor4j.core.protocols;
 
 import actor4j.core.ActorCell;
-import actor4j.core.actors.PersistenceActor;
+import actor4j.core.actors.PersistentActor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 
@@ -16,10 +16,10 @@ public class RecoverProtocol {
 	}
 	
 	public void apply() {
-		if (cell.getSystem().isPersistenceMode() && cell.getActor() instanceof PersistenceActor) {
+		if (cell.getSystem().isPersistenceMode() && cell.getActor() instanceof PersistentActor) {
 			cell.setActive(false);
 			cell.getSystem().getMessageDispatcher().postPersistence(
-					new ActorMessage<String>(((PersistenceActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));
+					new ActorMessage<String>(((PersistentActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));
 		}
 	}
 }

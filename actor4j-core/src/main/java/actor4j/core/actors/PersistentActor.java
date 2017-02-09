@@ -1,23 +1,22 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core.actors;
 
 import static actor4j.core.protocols.ActorProtocolTag.INTERNAL_RECOVER;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import actor4j.core.persistence.ActorPersistenceObject;
 
-public abstract class PersistenceActor<S extends ActorPersistenceObject, E extends ActorPersistenceObject> extends Actor {
+public abstract class PersistentActor<S extends ActorPersistenceObject, E extends ActorPersistenceObject> extends Actor implements PersistenceId {
 	public static final int RECOVER = INTERNAL_RECOVER;
 	
-	public PersistenceActor() {
+	public PersistentActor() {
 		super();
 	}
 	
-	public PersistenceActor(String name) {
+	public PersistentActor(String name) {
 		super(name);
 	}
 	
@@ -30,9 +29,7 @@ public abstract class PersistenceActor<S extends ActorPersistenceObject, E exten
 		cell.saveSnapshot(onSuccess, onFailure, state);
 	}
 	
-	public void recovery(String json) {
+	public void recover(String json) {
 		// empty
 	}
-	
-	public abstract UUID persistenceId();
 }

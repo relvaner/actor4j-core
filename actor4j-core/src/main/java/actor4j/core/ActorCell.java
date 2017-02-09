@@ -21,7 +21,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.actors.Actor;
-import actor4j.core.actors.PersistenceActor;
+import actor4j.core.actors.PersistenceId;
+import actor4j.core.actors.PersistentActor;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
@@ -123,7 +124,7 @@ public class ActorCell {
 					else if (message.tag==INTERNAL_RECOVER)
 						recoverProtocol.apply();
 					else if (message.tag==INTERNAL_PERSISTENCE_RECOVER)
-						recovery(message);
+						recover(message);
 					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();
 						if (tuple.onSuccess!=null)
@@ -373,17 +374,17 @@ public class ActorCell {
 		}
 	}
 	
-	public void recovery(ActorMessage<?> message) {
-		if (system.persistenceMode && actor instanceof PersistenceActor) {
-			((PersistenceActor<?, ?>)actor).recovery(message.valueAsString());
+	public void recover(ActorMessage<?> message) {
+		if (system.persistenceMode && actor instanceof PersistentActor) {
+			((PersistentActor<?, ?>)actor).recover(message.valueAsString());
 			active.set(true);
 		}
 	}
 	
 	public UUID persistenceId() {
 		UUID result = null;
-		if (actor instanceof PersistenceActor)
-			result = ((PersistenceActor<?, ?>)actor).persistenceId();
+		if (actor instanceof PersistenceId)
+			result = ((PersistenceId)actor).persistenceId();
 		
 		return result;
 	}
