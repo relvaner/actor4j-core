@@ -133,6 +133,18 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public ActorSystem sendViaPath(ActorMessage<?> message, String path) {
+		system.sendViaPath(message, path);
+		
+		return this;
+	}
+	
+	public ActorSystem sendViaAlias(ActorMessage<?> message, String alias) {
+		system.sendViaAlias(message, alias);
+		
+		return this;
+	}
+	
 	public ActorSystem sendWhenActive(ActorMessage<?> message) {
 		system.sendWhenActive(message);
 		
