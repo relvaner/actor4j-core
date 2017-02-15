@@ -5,6 +5,9 @@ package actor4j.core.actors;
 
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import actor4j.core.ActorServiceNode;
 import actor4j.core.ActorSystem;
@@ -79,6 +82,31 @@ public abstract class ConcurrentPseudoActor {
 	
 	public boolean runOnce() {
 		return poll(getOuterQueue());
+	}
+	
+	public <T> T await(final Predicate<ActorMessage<?>> predicate, final Function<ActorMessage<?>, T> action, long timeout) throws TimeoutException {
+		T result = null;
+		
+		long start = System.currentTimeMillis();
+		long duration = 0;
+		
+		ActorMessage<?> message = getOuterQueue().poll();
+		while ((message==null || (message!=null && !predicate.test(message))) && ((duration=(System.currentTimeMillis()-start))<timeout) && !Thread.currentThread().isInterrupted()) {
+			try {
+				Thread.sleep(25);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+			
+			message = getOuterQueue().poll();
+		}
+		
+		if (message!=null && predicate.test(message))
+			result = action.apply(message);
+		else if (duration>=timeout)
+			throw new TimeoutException();
+			
+		return result;
 	}
 	
 	public void send(ActorMessage<?> message) {
