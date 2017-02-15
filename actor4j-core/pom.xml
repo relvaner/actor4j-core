@@ -99,5 +99,10 @@
     		<artifactId>mongo-java-driver</artifactId>
     		<version>3.3.0</version>
 		</dependency>
+		<dependency>
+			<groupId>actor4j-utils</groupId>
+			<artifactId>actor4j-utils</artifactId>
+			<version>1.0.0</version>
+		</dependency>
     </dependencies>
 </project>
