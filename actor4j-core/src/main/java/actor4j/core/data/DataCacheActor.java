@@ -29,6 +29,8 @@ public class DataCacheActor<K, V> extends ActorWithCache<K, V> {
 				tell(message.value, GET, dataAcess);
 			else if (message.tag==SET)
 				tell(message.value, SET, dataAcess);
+			else if (message.tag==UPDATE)
+				tell(message.value, UPDATE, dataAcess);
 			else if (message.tag==FIND_ONE) {
 				@SuppressWarnings("unchecked")
 				DataAccessObject<K,V> obj = (DataAccessObject<K,V>)message.value;

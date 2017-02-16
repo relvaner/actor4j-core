@@ -23,9 +23,11 @@ public class DataAccessActor<K, V> extends ResourceActor {
 	protected String databaseName;
 	protected Class<V> valueType;
 	
-	protected static final int INSERT_ONE = 303;
-	protected static final int HAS_ONE    = 304;
-	protected static final int FIND_ONE   = 305;
+	protected static final int HAS_ONE     = 304;
+	protected static final int INSERT_ONE  = 305;
+	protected static final int REPLACE_ONE = 306;
+	protected static final int UPDATE_ONE  = 307;
+	protected static final int FIND_ONE    = 308;
 	
 	public DataAccessActor(String name, MongoClient client, String databaseName, Class<V> valueType) {
 		super(name);
@@ -43,25 +45,41 @@ public class DataAccessActor<K, V> extends ResourceActor {
 		if (message.value!=null && message.value instanceof DataAccessObject) {
 			@SuppressWarnings("unchecked")
 			DataAccessObject<K,V> obj = (DataAccessObject<K,V>)message.value;
-			if (message.tag==INSERT_ONE)
-				insertOne(obj.value, obj.collectionName);
-			else if (message.tag==HAS_ONE) {
-				obj.reserved = hasOne(obj.filter, obj.collectionName);
-				tell(obj, FIND_ONE, message.source);
-			}
-			else if (message.tag==FIND_ONE || message.tag==GET) {
+			if (message.tag==FIND_ONE || message.tag==GET) {
 				obj.value = findOne(obj.filter, obj.collectionName, valueType);
 				tell(obj, FIND_ONE, message.source);
 			}
 			else if (message.tag==SET) {
 				if (!hasOne(obj.filter, obj.collectionName))
 					insertOne(obj.value, obj.collectionName);
+				else
+					replaceOne(obj.filter, obj.value, obj.collectionName);
+			}
+			else if (message.tag==UPDATE_ONE || message.tag==UPDATE)
+				updateOne(obj.filter, obj.update, obj.collectionName);
+			else if (message.tag==INSERT_ONE)
+				insertOne(obj.value, obj.collectionName);
+			else if (message.tag==HAS_ONE) {
+				obj.reserved = hasOne(obj.filter, obj.collectionName);
+				tell(obj, FIND_ONE, message.source);
 			}
 			else
 				unhandled(message);
 		}
 		else
 			unhandled(message);
+	}
+	
+	public boolean hasOne(Document filter, String collectionName) {
+		boolean result = false;
+		
+		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+		Document document = collection.find(filter).first();
+		
+		if (document!=null)
+			result = true;
+		
+		return result;
 	}
 	
 	public void insertOne(V value, String collectionName) {
@@ -74,23 +92,26 @@ public class DataAccessActor<K, V> extends ResourceActor {
 		}
 	}
 	
-	public boolean hasOne(Document find, String collectionName) {
-		boolean result = false;
-		
+	public void replaceOne(Document filter, V value, String collectionName) {
 		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
-		Document document = collection.find(find).first();
-		
-		if (document!=null)
-			result = true;
-		
-		return result;
+		try {
+			Document document = Document.parse(new ObjectMapper().writeValueAsString(value));
+			collection.replaceOne(filter, document);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public V findOne(Document find, String collectionName, Class<V> valueType) {
+	public void updateOne(Document filter, Document update, String collectionName) {
+		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+		collection.updateOne(filter, update);
+	}
+	
+	public V findOne(Document filter, String collectionName, Class<V> valueType) {
 		V result = null;
 		
 		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
-		Document document = collection.find(find).first();
+		Document document = collection.find(filter).first();
 		
 		if (document!=null)
 			try {

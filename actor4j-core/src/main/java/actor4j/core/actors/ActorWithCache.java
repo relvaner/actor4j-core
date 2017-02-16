@@ -14,6 +14,7 @@ public class ActorWithCache<K, V> extends Actor {
 	public static final int GC     = 300;
 	public static final int GET    = 301;
 	public static final int SET    = 302;
+	public static final int UPDATE = 303;
 	
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);

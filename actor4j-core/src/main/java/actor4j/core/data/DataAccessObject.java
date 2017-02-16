@@ -11,16 +11,18 @@ public class DataAccessObject<K, V> {
 	public K key;
 	public V value;
 	public Document filter;
+	public Document update;
 	public String collectionName;
 	public UUID source;
 	
 	public Object reserved;
 	
-	public DataAccessObject(K key, V value, Document filter, String collectionName, UUID source) {
+	public DataAccessObject(K key, V value, Document filter, Document update, String collectionName, UUID source) {
 		super();
 		this.key = key;
 		this.value = value;
 		this.filter = filter;
+		this.update = update;
 		this.collectionName = collectionName;
 		this.source = source;
 	}
