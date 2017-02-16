@@ -9,7 +9,7 @@ import actor4j.core.actors.ResourceActor;
 import actor4j.core.messages.ActorMessage;
 
 import static actor4j.core.actors.ActorWithCache.*;
-import static actor4j.core.data.MongoDBUtils.*;
+import static actor4j.core.data.MongoUtils.*;
 
 public class DataAccessActor<K, V> extends ResourceActor {
 	protected MongoClient client;

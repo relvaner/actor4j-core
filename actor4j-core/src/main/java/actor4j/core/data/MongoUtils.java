@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
-public final class MongoDBUtils {
+public final class MongoUtils {
 	public static boolean hasOne(Document filter, MongoClient client, String databaseName, String collectionName) {
 		boolean result = false;
 		
@@ -66,6 +66,17 @@ public final class MongoDBUtils {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		
+		return result;
+	}
+	
+	public static <V> Document convertToDocument(V value) {
+		Document result = null;
+		try {
+			result = Document.parse(new ObjectMapper().writeValueAsString(value));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		
 		return result;
 	}
