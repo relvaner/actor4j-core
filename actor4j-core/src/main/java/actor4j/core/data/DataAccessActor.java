@@ -50,8 +50,12 @@ public class DataAccessActor<K, V> extends ResourceActor {
 			}
 			else if (message.tag==UPDATE_ONE || message.tag==UPDATE)
 				updateOne(obj.filter, obj.update, client, databaseName, obj.collectionName);
-			else if (message.tag==INSERT_ONE)
-				insertOne(obj.value, client, databaseName, obj.collectionName);
+			else if (message.tag==INSERT_ONE) {
+				if (obj.filter!=null && !hasOne(obj.filter, client, databaseName, obj.collectionName))
+					insertOne(obj.value, client, databaseName, obj.collectionName);
+				else
+					insertOne(obj.value, client, databaseName, obj.collectionName);
+			}
 			else if (message.tag==HAS_ONE) {
 				obj.reserved = hasOne(obj.filter, client, databaseName, obj.collectionName);
 				tell(obj, FIND_ONE, message.source);
