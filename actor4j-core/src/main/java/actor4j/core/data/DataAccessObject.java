@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015-2017, David A. Bauer
  */
-package actor4j.core.business;
+package actor4j.core.data;
 
 import java.util.UUID;
 

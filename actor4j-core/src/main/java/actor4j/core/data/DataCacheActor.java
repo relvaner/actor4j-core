@@ -1,24 +1,24 @@
 /*
  * Copyright (c) 2015-2017, David A. Bauer
  */
-package actor4j.core.business;
+package actor4j.core.data;
 
 import actor4j.core.actors.ActorWithCache;
 import actor4j.core.messages.ActorMessage;
 
-import static  actor4j.core.business.DataAccessActor.*;
+import static actor4j.core.data.DataAccessActor.*;
 
 import java.util.UUID;
 
-public class BusinessLogicActor<K, V> extends ActorWithCache<K, V> {
+public class DataCacheActor<K, V> extends ActorWithCache<K, V> {
 	protected UUID dataAcess;
 	
-	public BusinessLogicActor(String name, int cacheSize, UUID dataAcess) {
+	public DataCacheActor(String name, int cacheSize, UUID dataAcess) {
 		super(name, cacheSize);
 		this.dataAcess = dataAcess;
 	}
 	
-	public BusinessLogicActor(int cacheSize, UUID dataAcess) {
+	public DataCacheActor(int cacheSize, UUID dataAcess) {
 		this(null, cacheSize, dataAcess);
 	}
 	
