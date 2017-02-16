@@ -26,4 +26,10 @@ public class DataAccessObject<K, V> {
 		this.collectionName = collectionName;
 		this.source = source;
 	}
+
+	@Override
+	public String toString() {
+		return "DataAccessObject [key=" + key + ", value=" + value + ", filter=" + filter + ", update=" + update
+				+ ", collectionName=" + collectionName + ", source=" + source + ", reserved=" + reserved + "]";
+	}
 }
