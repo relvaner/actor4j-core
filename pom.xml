@@ -11,7 +11,6 @@
 		<module>actor4j-analyzer-example</module>
 		<module>actor4j-benchmark</module>
 		<module>actor4j-benchmark-ejb</module>
-		<module>actor4j-server-websocket</module>
 		<module>actor4j-utils</module>
 		<module>actor4j-service-node-rest</module>
 		<module>actor4j-service-node-rest-client</module>

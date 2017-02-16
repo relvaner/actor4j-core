@@ -19,6 +19,9 @@
             			<descriptorRef>bin</descriptorRef>
           			</descriptorRefs>
               		<jarName>${project.artifactId}-${project.version}</jarName>
+              		<includes>
+                		<include>META-INF/LICENSE.txt</include>
+              		</includes>
             	</configuration>
         		<executions>
           			<execution>
