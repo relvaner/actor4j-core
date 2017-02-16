@@ -337,6 +337,11 @@ public abstract class ActorSystemImpl {
 			cells.put(cell.id, cell);
 			if (actor instanceof ResourceActor)
 				resourceCells.put(cell.id, false);
+			if (executerService.isStarted()) {
+				messageDispatcher.registerCell(cell);
+				/* preStart */
+				cell.preStart();
+			}
 		}
 		return cell.id;
 	}

@@ -255,9 +255,6 @@ public class ActorCell {
 		cell.parent = id;
 		children.add(cell.id);
 		system.internal_addCell(cell);
-		system.messageDispatcher.registerCell(cell);
-		/* preStart */
-		cell.preStart();
 		
 		return cell.id;
 	}
