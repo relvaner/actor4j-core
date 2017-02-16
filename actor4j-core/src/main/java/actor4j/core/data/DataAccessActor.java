@@ -16,11 +16,11 @@ public class DataAccessActor<K, V> extends ResourceActor {
 	protected String databaseName;
 	protected Class<V> valueType;
 	
-	protected static final int HAS_ONE     = 304;
-	protected static final int INSERT_ONE  = 305;
-	protected static final int REPLACE_ONE = 306;
-	protected static final int UPDATE_ONE  = 307;
-	protected static final int FIND_ONE    = 308;
+	public static final int HAS_ONE     = 304;
+	public static final int INSERT_ONE  = 305;
+	public static final int REPLACE_ONE = 306;
+	public static final int UPDATE_ONE  = 307;
+	public static final int FIND_ONE    = 308;
 	
 	public DataAccessActor(String name, MongoClient client, String databaseName, Class<V> valueType) {
 		super(name);
