@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2015-2017, David A. Bauer
  */
-package actor4j.core.data;
+package actor4j.core.data.access;
 
 import actor4j.core.actors.ActorWithCache;
 import actor4j.core.messages.ActorMessage;
 
-import static actor4j.core.data.DataAccessActor.*;
+import static actor4j.core.data.access.DataAccessActor.*;
 
 import java.util.UUID;
 

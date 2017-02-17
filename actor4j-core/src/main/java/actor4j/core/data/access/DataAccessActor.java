@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015-2017, David A. Bauer
  */
-package actor4j.core.data;
+package actor4j.core.data.access;
 
 import com.mongodb.MongoClient;
 
@@ -9,7 +9,7 @@ import actor4j.core.actors.ResourceActor;
 import actor4j.core.messages.ActorMessage;
 
 import static actor4j.core.actors.ActorWithCache.*;
-import static actor4j.core.data.MongoUtils.*;
+import static actor4j.core.data.access.MongoUtils.*;
 
 public class DataAccessActor<K, V> extends ResourceActor {
 	protected MongoClient client;
