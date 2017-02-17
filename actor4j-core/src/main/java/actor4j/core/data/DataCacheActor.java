@@ -25,15 +25,20 @@ public class DataCacheActor<K, V> extends ActorWithCache<K, V> {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (message.value!=null && message.value instanceof DataAccessObject) {
+			@SuppressWarnings("unchecked")
+			DataAccessObject<K,V> obj = (DataAccessObject<K,V>)message.value;
+			
 			if (message.tag==GET)
 				tell(message.value, GET, dataAcess);
-			else if (message.tag==SET)
+			else if (message.tag==SET) {
+				cache.put(obj.key, obj.value);
 				tell(message.value, SET, dataAcess);
-			else if (message.tag==UPDATE)
+			}
+			else if (message.tag==UPDATE) {
+				cache.remove(obj.key);
 				tell(message.value, UPDATE, dataAcess);
+			}
 			else if (message.tag==FIND_ONE) {
-				@SuppressWarnings("unchecked")
-				DataAccessObject<K,V> obj = (DataAccessObject<K,V>)message.value;
 				cache.put(obj.key, obj.value);
 				tell(obj, GET, obj.source);
 			}
