@@ -28,8 +28,13 @@ public class DataCacheActor<K, V> extends ActorWithCache<K, V> {
 			@SuppressWarnings("unchecked")
 			DataAccessObject<K,V> obj = (DataAccessObject<K,V>)message.value;
 			
-			if (message.tag==GET)
-				tell(message.value, GET, dataAcess);
+			if (message.tag==GET) {
+				obj.value = cache.get(obj.key);
+				if (obj.value!=null)
+					tell(obj, GET, obj.source); // deep copy necessary of obj.value
+				else
+					tell(message.value, GET, dataAcess);
+			}
 			else if (message.tag==SET) {
 				cache.put(obj.key, obj.value);
 				tell(message.value, SET, dataAcess);
