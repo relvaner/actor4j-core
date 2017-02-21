@@ -30,7 +30,7 @@ public class VolatileCacheActor<K, V> extends ActorWithCache<K, V> {
 			else if (message.tag==SET)
 				cache.put(obj.key, obj.value);
 			else if (message.tag==UPDATE)
-				cache.remove(obj.key);
+				; // empty
 			else if (message.tag==FIND_ONE) {
 				cache.put(obj.key, obj.value);
 				tell(obj, GET, obj.source);
