@@ -34,6 +34,6 @@ public class RouterActor extends Actor {
 	}
 	
 	public void add(Predicate<ActorMessage<?>> predicate, UUID routee) {
-		matcher.match(predicate, (msg) -> send(msg, routee));
+		matcher.match(predicate, (msg) -> forward(msg, routee));
 	}
 }
