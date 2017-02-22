@@ -6,8 +6,6 @@ package actor4j.core.data.access;
 import actor4j.core.actors.ActorWithCache;
 import actor4j.core.messages.ActorMessage;
 
-import static actor4j.core.data.access.DataAccessActor.*;
-
 public class VolatileCacheActor<K, V> extends ActorWithCache<K, V> {
 	public VolatileCacheActor(String name, int cacheSize) {
 		super(name, cacheSize);
@@ -31,10 +29,6 @@ public class VolatileCacheActor<K, V> extends ActorWithCache<K, V> {
 				cache.put(obj.key, obj.value);
 			else if (message.tag==UPDATE)
 				; // empty
-			else if (message.tag==FIND_ONE) {
-				cache.put(obj.key, obj.value);
-				tell(obj, GET, obj.source);
-			}
 			else if (message.tag==GC)
 				cache.gc(message.valueAsLong());
 			else
