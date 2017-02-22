@@ -281,6 +281,9 @@ An analysis tool (using JGraphX [[13](#13)] for visualizations) is suitable for 
 
 Fig. 6: Representation of the analysis tool for `actor4j`
 
+## Announcement ##
+This framework will be released soon under an open source license.
+
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
 [2]<a name="2"/> Jonas Bonér, Dave Farley, Roland Kuhn, and Martin Thompson (2014). The Reactive Manifesto. http://www.reactivemanifesto.org/  
@@ -300,4 +303,4 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 
-Page to be updated 12/03/2016
+Page to be updated 02/23/2017
