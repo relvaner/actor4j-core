@@ -130,7 +130,7 @@ public class MyActor extends Actor {
 Fig. 1: Representation of the life cycle of an actor (adapted for `actor4j` according to [[4](#4)])
 
 ### Life cycle ###
-As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated (or persistent) `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. It will be also called the method `recovery`, if the actor is a `PersistenceActor`. This method recoveres then the state of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. [[4](#4)][[15](#15)]
+As already mentioned, actors are either instantiated via `system.addActor(...)` or `parentActor.addChild(...)`. Actors then receive a randomly generated (or persistent) `UUID` as a unique identifier, with which they then can communicate with other actors (sending messages). An actor can also have an alternative identifier, the alias (also for the purpose of better legibility or when the `UUID` is not previously known). By the first awaken of the actor the `preStart` method is initially called. This method will be used for first initializations of the actor. It will be also called the method `recover`, if the actor is a `PersistentActor`. This method recoveres then the state of the actor. An actor can also be restarted, usually triggered by an exception (see chapter Supervision). In this case, by the old instance `preRestart` is called first. Then a new instance is generated with the dependency injection container. The old instance is replaced by the new instance, and the method `postRestart` is called by the new instance. The `preRestart` and `postRestart` methods are used so that the actor can react adequately to the situation of the restart. The marking (`UUID`) of the original actor is retained. This also guarantees that references from other actors to this actor will stay valid. An actor can be stopped either by calling the `stop` method or by receiving the `STOP` or `POISONPILL` message. [[4](#4)][[15](#15)]
 ### Monitoring ###
 An actor can also monitor another actor for that it has not yet terminated itself. If the observed actor is terminated, a message `TERMINATED` is sent to the observer. An assignment is then made via `message.source`, which corresponds to the sender's `UUID`. With `watch`, an observer can register with an actor and de-register with `unwatch`. [[4](#4)]
 ```java
@@ -162,7 +162,7 @@ An `ActorInitializationException` is thrown if an error occurs during the instan
 
 Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 
-`Actor4j` currently supports four directives: `RESUME`, `STOP`, `RESTART` and `RECOVER` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
+`Actor4j` currently supports six directives: `RESUME`, `STOP`, `RESTART`, `RECOVER`, `ACTIVATE` and `DEACTIVATE` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
 
 * `RESUME`: In this case, the supervisor remains passive. The actor can continue its activities undisturbed [[5](#5)].
 * `STOP`:
@@ -173,8 +173,9 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
   * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of `watch`, to observe that all children have terminated.
   * Call of `postStop` at the current instance, after all children have finished and confirmed this with the `TERMINATED` message.
   * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
-  * Call of `postRestart` (with `preStart` (with optional `recovery`) for the new instance.
+  * Call of `postRestart` (with `preStart` (with optional `recover`) for the new instance.
 * `RECOVER`: The actor will be recovered to it's last state, novel events can lead to an update of the actor's state.
+* `ACTIVATE` and `DEACTIAVTE`: Activates or deactivates the actor (messages will be or not longer processed). The current explained directives remains deliverable, even when the actor is deactivated.
 
 [[4](#4)][[5](#5)][[15](#15)]
 
@@ -182,9 +183,9 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 `Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. [[11](#11)][[5](#5)]
 
 ## Persistence ##
-To persist the state of an actor, this must be derived from the `PersistenceActor` class. A `PersistenceActor` is characterized by events and a state, which can be saved, depending on use case. In the example below, two events are defined. First, a snapshot of the state is made and persisted. Then the two events are saved. Handlers are defined for error handling and for a successful case. In general after successful saving the events, the state of the actor can be updated. Side effects can be triggered, which may be affects other actors. The `recovery` method is called to recover the state of the actor. It is loaded from the database, where the last state and the last events have been persisted. With the help of the `Recovery` class this attributes can be loaded, for this purpose the `json` `String` will be transformed to a `Recovery` object. The principles of `Event Sourcing` [[16](#16)] are followed, as a database `MongoDB` [[17](#17)] is currently used. Every `PersistenceActor` must have a persistent `UUID` for unique access. [[15](#15)]
+To persist the state of an actor, this must be derived from the `PersistentActor` class. A `PersistentActor` is characterized by events and a state, which can be saved, depending on use case. In the example below, two events are defined. First, a snapshot of the state is made and persisted. Then the two events are saved. Handlers are defined for error handling and for a successful case. In general after successful saving the events, the state of the actor can be updated. Side effects can be triggered, which may be affects other actors. The `recover` method is called to recover the state of the actor. It is loaded from the database, where the last state and the last events have been persisted. With the help of the `Recovery` class this attributes can be loaded, for this purpose the `json` `String` will be transformed to a `Recovery` object. The principles of `Event Sourcing` [[16](#16)] are followed, as a database `MongoDB` [[17](#17)] is currently used. Every `PersistentActor` must have a persistent `UUID` for unique access. [[15](#15)]
 ```java
-public class MyActor extends PersistenceActor<MyState, MyEvent> {
+public class MyActor extends PersistentActor<MyState, MyEvent> {
 	@Override
 	public void receive(ActorMessage<?> message) {
     	// two events are generated based on the received message (!)
@@ -202,7 +203,7 @@ public class MyActor extends PersistenceActor<MyState, MyEvent> {
 	}
     
     @Override
-	public void recovery(String json) {
+	public void recover(String json) {
 		if (!Recovery.isError(json)) {
 			Recovery<MyState, MyEvent> obj = Recovery.convertValue(json, 
            		new TypeReference<Recovery<MyState, MyEvent>>(){});
