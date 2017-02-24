@@ -74,6 +74,19 @@ tell(T value, int tag, UUID dest)
 
 forward(ActorMessage<?> message, UUID dest)
 ```
+
+The structure of the `ActorMessage<T>` looks like that:
+
+| Type | Name | Description |
+| :---: | :---: | :---: |
+| T | value | payload of the message |
+| int | tag | tags helps for differentiating between messages  |
+| UUID | source | source of the message |
+| UUID | dest | destination of the message |
+| boolean | ref | call-by-reference (by default) or call-by-value (needs deep copy)|
+
+Tab. 1: Structure of the `ActorMessage<T>`
+
 ### Patern matching ###
 To receive messages, pattern matching can be used with the `ActorMessageMatcher` class. This class was inspired by pattern matching in `Scala` [[12](#12)]. The message can be checked to match a tag, source, or class of the passed object (value). If a match is true, an action is triggered. This example is based on the top, except that this is expressed by the language means of the class `ActorMessageMatcher`. Tags serve as a simple means of communication. `ACK` would be such a tag.
 ```java
