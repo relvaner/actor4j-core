@@ -83,7 +83,7 @@ The structure of the `ActorMessage<T>` looks like that:
 | int | tag | tags helps for differentiating between messages  |
 | UUID | source | source of the message |
 | UUID | dest | destination of the message |
-| boolean | ref | call-by-reference (by default) or call-by-value (needs deep copy)|
+| boolean | ref | call-by-reference or call-by-value (needs deep copy)|
 
 Tab. 1: Structure of the `ActorMessage<T>`
 
