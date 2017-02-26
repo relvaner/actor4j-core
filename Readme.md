@@ -175,7 +175,7 @@ An `ActorInitializationException` is thrown if an error occurs during the instan
 
 Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 
-`Actor4j` currently supports six directives: `RESUME`, `STOP`, `RESTART`, `RECOVER`, `ACTIVATE` and `DEACTIVATE` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
+`Actor4j` currently supports seven directives: `RESUME`, `STOP`, `RESTART`, `ESCALATE`, `RECOVER`, `ACTIVATE` and `DEACTIVATE` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
 
 * `RESUME`: In this case, the supervisor remains passive. The actor can continue its activities undisturbed [[5](#5)].
 * `STOP`:
@@ -187,13 +187,11 @@ Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
   * Call of `postStop` at the current instance, after all children have finished and confirmed this with the `TERMINATED` message.
   * Instantiate a new instance with the dependency injection container. It is ensured that the `UUID` is maintained.
   * Call of `postRestart` (with `preStart` (with optional `recover`) for the new instance.
+* `ESCALATE`: If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification.
 * `RECOVER`: The actor will be recovered to it's last state, novel events can lead to an update of the actor's state.
 * `ACTIVATE` and `DEACTIAVTE`: Activates or deactivates the actor (messages will be or not longer processed). The current explained directives remains deliverable, even when the actor is deactivated.
 
-[[4](#4)][[5](#5)][[15](#15)]
-
-### Comparison to Akka ###
-`Akka` still has also the `ESCALATE` directive. If a supervisor is unclear as to what the correct strategy is in the event of a specific error, he can pass it on to his superior supervisor for clarification. [[11](#11)][[5](#5)]
+[[4](#4)][[5](#5)][[11](#11)][[15](#15)]
 
 ## Persistence ##
 To persist the state of an actor, this must be derived from the `PersistentActor` class. A `PersistentActor` is characterized by events and a state, which can be saved, depending on use case. In the example below, two events are defined. First, a snapshot of the state is made and persisted. Then the two events are saved. Handlers are defined for error handling and for a successful case. In general after successful saving the events, the state of the actor can be updated. Side effects can be triggered, which may be affects other actors. The `recover` method is called to recover the state of the actor. It is loaded from the database, where the last state and the last events have been persisted. With the help of the `Recovery` class this attributes can be loaded, for this purpose the `json` `String` will be transformed to a `Recovery` object. The principles of `Event Sourcing` [[16](#16)] are followed, as a database `MongoDB` [[17](#17)] is currently used. Every `PersistentActor` must have a persistent `UUID` for unique access. [[15](#15)]
