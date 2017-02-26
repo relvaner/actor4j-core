@@ -41,7 +41,6 @@ public class StopProtocol {
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			cell.watch(dest);
 			cell.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		

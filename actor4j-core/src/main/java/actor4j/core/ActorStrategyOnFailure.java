@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
@@ -78,7 +78,13 @@ public class ActorStrategyOnFailure {
 		ActorCell parent = system.cells.get(cell.parent);
 		SupervisorStrategy supervisorStrategy = parent.supervisorStrategy();
 		SupervisorStrategyDirective directive = supervisorStrategy.apply(e);
-			
+		
+		while (directive==ESCALATE && !parent.isRoot()) {
+			parent = system.cells.get(parent);
+			supervisorStrategy = parent.supervisorStrategy();
+			directive = supervisorStrategy.apply(e);
+		}
+		
 		if (supervisorStrategy instanceof OneForOneSupervisorStrategy) { 
 			if (directive==RESUME)
 				oneForOne_directive_resume(cell);
