@@ -50,11 +50,6 @@
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>tools4j</groupId>
-			<artifactId>tools4j-research-project</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>safety4j</groupId>
 			<artifactId>safety4j</artifactId>
 			<version>0.1.1</version>
