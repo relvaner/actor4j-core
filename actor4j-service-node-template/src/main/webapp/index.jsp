@@ -29,6 +29,6 @@
 			</tr>
 		</table>
 		<img src="images/actor4j.png" alt="Actor4j" width="91" height="73" />
-		<p>Copyright (c) 2015-2016, David A. Bauer</p>
+		<p>Copyright (c) 2015-2017, David A. Bauer</p>
 	</body>
 </html>
