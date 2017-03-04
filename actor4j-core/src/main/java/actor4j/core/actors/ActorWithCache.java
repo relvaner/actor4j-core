@@ -12,6 +12,7 @@ public class ActorWithCache<K, V> extends Actor {
 	protected Cache<K, V> cache;
 	
 	public static final int GC     = 300;
+	public static final int EVICT  = GC;
 	public static final int GET    = 301;
 	public static final int SET    = 302;
 	public static final int UPDATE = 303;
