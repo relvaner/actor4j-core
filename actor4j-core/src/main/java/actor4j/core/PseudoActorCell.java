@@ -1,11 +1,17 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.core;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.jctools.queues.MpscArrayQueue;
 
@@ -24,12 +30,15 @@ public class PseudoActorCell extends ActorCell {
 	
 	protected Observable<ActorMessage<?>> rxOuterQueueL1;
 	
-	public PseudoActorCell(ActorSystem wrapper, Actor actor) {
+	public PseudoActorCell(ActorSystem wrapper, Actor actor, boolean blocking) {
 		super(wrapper.system, actor);
 		
-		outerQueueL2 = new MpscArrayQueue<>(system.getQueueSize());
-		outerQueueL1 = new LinkedList<>();
+		if (blocking)
+			outerQueueL2 = new LinkedBlockingQueue<>();
+		else
+			outerQueueL2 = new MpscArrayQueue<>(system.getQueueSize());
 		
+		outerQueueL1 = new LinkedList<>();
 		rxOuterQueueL1 = ActorMessageObservable.getMessages(outerQueueL1);
 	}
 	
@@ -98,7 +107,7 @@ public class PseudoActorCell extends ActorCell {
 		}
 		return poll(outerQueueL1);
 	}
-	
+		
 	public Observable<ActorMessage<?>> runWithRx() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
@@ -108,6 +117,61 @@ public class PseudoActorCell extends ActorCell {
 		}
 		
 		return rxOuterQueueL1;
+	}
+	
+	public ActorMessage<?> await() {
+		ActorMessage<?> result = null;
+		
+		if (outerQueueL2 instanceof BlockingQueue) {
+			try {
+				result = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).take();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		
+		return result;
+	}
+	
+	public ActorMessage<?> await(long timeout, TimeUnit unit) throws TimeoutException {
+		ActorMessage<?> result = null;
+		
+		if (outerQueueL2 instanceof BlockingQueue) {
+			try {
+				result = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		if (result==null)
+			throw new TimeoutException();
+		
+		return result;
+	}
+	
+	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws TimeoutException {
+		T result = null;
+		
+		ActorMessage<?> message = null;
+		try {
+			message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		while ((message!=null && !predicate.test(message)) && !Thread.currentThread().isInterrupted()) {
+			try {
+				message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+		
+		if (message!=null && predicate.test(message))
+			result = action.apply(message);
+		else if (message==null)
+			throw new TimeoutException();
+			
+		return result;
 	}
 	
 	@Override
