@@ -122,54 +122,42 @@ public class PseudoActorCell extends ActorCell {
 	public ActorMessage<?> await() {
 		ActorMessage<?> result = null;
 		
-		if (outerQueueL2 instanceof BlockingQueue) {
+		if (outerQueueL2 instanceof BlockingQueue)
 			try {
 				result = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).take();
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
-		}
 		
 		return result;
 	}
 	
-	public ActorMessage<?> await(long timeout, TimeUnit unit) throws TimeoutException {
+	public ActorMessage<?> await(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		ActorMessage<?> result = null;
 		
 		if (outerQueueL2 instanceof BlockingQueue) {
-			try {
-				result = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
+			result = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+			
+			if (result==null)
+				throw new TimeoutException();
 		}
-		if (result==null)
-			throw new TimeoutException();
 		
 		return result;
 	}
 	
-	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws TimeoutException {
+	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		T result = null;
 		
-		ActorMessage<?> message = null;
-		try {
-			message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
-		while ((message!=null && !predicate.test(message)) && !Thread.currentThread().isInterrupted()) {
-			try {
+		if (outerQueueL2 instanceof BlockingQueue) {
+			ActorMessage<?> message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+			while ((message!=null && !predicate.test(message)) && !Thread.currentThread().isInterrupted())
 				message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-			}
+			
+			if (message!=null && predicate.test(message))
+				result = action.apply(message);
+			else if (message==null)
+				throw new TimeoutException();
 		}
-		
-		if (message!=null && predicate.test(message))
-			result = action.apply(message);
-		else if (message==null)
-			throw new TimeoutException();
 			
 		return result;
 	}

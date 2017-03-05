@@ -44,11 +44,11 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		return ((PseudoActorCell)cell).await();
 	}
 	
-	public ActorMessage<?> await(long timeout, TimeUnit unit) throws TimeoutException {
+	public ActorMessage<?> await(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return ((PseudoActorCell)cell).await(timeout, unit);
 	}
 	
-	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws TimeoutException {
+	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return ((PseudoActorCell)cell).await(predicate, action, timeout, unit);
 	}
 	
