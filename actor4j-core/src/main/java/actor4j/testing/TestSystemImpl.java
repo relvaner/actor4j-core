@@ -1,15 +1,13 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer
  */
 package actor4j.testing;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import java.util.Map.Entry;
@@ -77,26 +75,8 @@ public class TestSystemImpl extends DefaultActorSystemImpl  {
 			testActor(iterator.next().getValue().getActor());
 	}
 
-	public Future<ActorMessage<?>> awaitMessage() {
-		actualMessage = new CompletableFuture<>();
-		
-		Timer timer = new Timer();
-		long timeout = 5000;
-		long start = System.currentTimeMillis();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				if (pseudoActor.runOnce()) 
-					cancel();
-				
-				if ((System.currentTimeMillis()-start)>=timeout) {
-					actualMessage.completeExceptionally(new TimeoutException());
-					cancel();
-				}
-			}
-		}, 0, 25);
-		
-		return actualMessage;
+	public ActorMessage<?> awaitMessage(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
+		return pseudoActor.await(timeout, unit);
 	}
 	
 	public void assertNoMessages() {
