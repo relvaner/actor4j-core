@@ -149,9 +149,14 @@ public class PseudoActorCell extends ActorCell {
 		T result = null;
 		
 		if (outerQueueL2 instanceof BlockingQueue) {
+			timeout = unit.toMillis(timeout);
+			unit = TimeUnit.MILLISECONDS;
+			long start = System.currentTimeMillis();
+			long duration = 0;
+			
 			ActorMessage<?> message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
-			while ((message!=null && !predicate.test(message)) && !Thread.currentThread().isInterrupted())
-				message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout, unit);
+			while ((message!=null && !predicate.test(message)) && ((duration=(System.currentTimeMillis()-start))<timeout) && !Thread.currentThread().isInterrupted())
+				message = ((BlockingQueue<ActorMessage<?>>)outerQueueL2).poll(timeout-duration, unit);
 			
 			if (message!=null && predicate.test(message))
 				result = action.apply(message);
