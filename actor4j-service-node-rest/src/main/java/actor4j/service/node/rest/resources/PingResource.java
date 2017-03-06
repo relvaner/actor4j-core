@@ -16,6 +16,6 @@ public class PingResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getExample() {
-		return Response.ok().entity(new RESTActorResponse(RESTActorResponse.SUCCESS, 200, "", "pong")).build();
+		return Response.ok().entity(new RESTActorResponse(RESTActorResponse.SUCCESS, 200, "1", "pong")).build();
 	}
 }
