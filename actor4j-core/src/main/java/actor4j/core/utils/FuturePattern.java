@@ -13,10 +13,10 @@ import actor4j.core.pattern.actors.FutureActor;
 
 public final class FuturePattern {
 	public static <T> Future<T> ask(T value, int tag, UUID dest, Actor actor) {
-		UUID futureActor = actor.getSystem().addActor(() -> new FutureActor(dest, true));
+		UUID mediator = actor.getSystem().addActor(() -> new FutureActor(dest, true));
 		
 		CompletableFuture<T> result = new CompletableFuture<>();
-		actor.send(new FutureActorMessage<T>(result, value, tag, actor.self(), futureActor));
+		actor.send(new FutureActorMessage<T>(result, value, tag, actor.self(), mediator));
 		
 		return result;
 	}
