@@ -13,14 +13,18 @@ import actor4j.core.messages.FutureActorMessage;
 public class FutureActor extends Actor {
 	protected CompletableFuture<Object> future;
 	protected UUID source;
-	protected UUID destination;
+	protected UUID dest;
 	
-	public FutureActor() {
-		super();
+	protected boolean stopOnComplete;
+	
+	public FutureActor(UUID dest, boolean stopOnComplete) {
+		this(null, dest, stopOnComplete);
 	}
 
-	public FutureActor(String name) {
+	public FutureActor(String name, UUID dest, boolean stopOnComplete) {
 		super(name);
+		this.dest = dest;
+		this.stopOnComplete = stopOnComplete;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -28,12 +32,14 @@ public class FutureActor extends Actor {
 	public void receive(ActorMessage<?> message) {
 		if (message instanceof FutureActorMessage<?>) {
 			source = message.source;
-			destination = message.dest;
 			future = ((FutureActorMessage<Object>)message).future;
-			tell(message.value, message.tag, message.dest);
+			tell(message.value, message.tag, dest);
 		}
-		else if (message.source==destination)
+		else if (message.source==dest) {
 			tell(future.complete(message.value), message.tag, source);
+			if (stopOnComplete)
+				stop();
+		}
 		else
 			unhandled(message);
 	}
