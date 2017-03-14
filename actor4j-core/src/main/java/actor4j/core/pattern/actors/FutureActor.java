@@ -12,7 +12,6 @@ import actor4j.core.messages.FutureActorMessage;
 
 public class FutureActor extends Actor {
 	protected CompletableFuture<Object> future;
-	protected UUID source;
 	protected UUID dest;
 	
 	protected boolean stopOnComplete;
@@ -31,12 +30,11 @@ public class FutureActor extends Actor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (message instanceof FutureActorMessage<?>) {
-			source = message.source;
 			future = ((FutureActorMessage<Object>)message).future;
 			tell(message.value, message.tag, dest);
 		}
 		else if (message.source==dest) {
-			tell(future.complete(message.value), message.tag, source);
+			future.complete(message.value);
 			if (stopOnComplete)
 				stop();
 		}
