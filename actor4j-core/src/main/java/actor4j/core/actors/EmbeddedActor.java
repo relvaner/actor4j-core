@@ -21,7 +21,7 @@ public abstract class EmbeddedActor {
 	
 	protected boolean active;
 	
-	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
+	protected Deque<Predicate<ActorMessage<?>>> behaviourStack;
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
@@ -62,25 +62,29 @@ public abstract class EmbeddedActor {
 		this.active = active;
 	}
 	
-	public void embedded(ActorMessage<?> message) {
+	public boolean embedded(ActorMessage<?> message) {
+		boolean result = false;
+		
 		if (active) {
-			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
+			Predicate<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
-				receive(message);
+				result = receive(message);
 			else
-				behaviour.accept(message);	
+				result = behaviour.test(message);	
 		}
+		
+		return result;
 	}
 	
-	public abstract void receive(ActorMessage<?> message);
+	public abstract boolean receive(ActorMessage<?> message);
 	
-	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
+	public void become(Predicate<ActorMessage<?>> behaviour, boolean replace) {
 		if (replace && !behaviourStack.isEmpty())
 			behaviourStack.pop();
 		behaviourStack.push(behaviour);
 	}
 	
-	public void become(Consumer<ActorMessage<?>> behaviour) {
+	public void become(Predicate<ActorMessage<?>> behaviour) {
 		become(behaviour, true);
 	}
 	
@@ -93,49 +97,61 @@ public abstract class EmbeddedActor {
 	}
 	
 	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
-		become(new Consumer<ActorMessage<?>>() {
+		become(new Predicate<ActorMessage<?>>() {
 			@Override
-			public void accept(ActorMessage<?> message) {
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
 				if (message.source.equals(source)) {
 					action.accept(message);
+					result = true;
 					unbecome();
 				}
+				return result;
 			}
 		}, false);
 	}
 	
 	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
-		become(new Consumer<ActorMessage<?>>() {
+		become(new Predicate<ActorMessage<?>>() {
 			@Override
-			public void accept(ActorMessage<?> message) {
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
 				if (message.tag==tag) {
 					action.accept(message);
+					result = true;
 					unbecome();
 				}
+				return result;
 			}
 		}, false);
 	}
 	
 	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
-		become(new Consumer<ActorMessage<?>>() {
+		become(new Predicate<ActorMessage<?>>() {
 			@Override
-			public void accept(ActorMessage<?> message) {
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
 				if (message.source.equals(source) && message.tag==tag) {
 					action.accept(message);
+					result = true;
 					unbecome();
 				}
+				return result;
 			}
 		}, false);
 	}
 	
 	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
-		become(new Consumer<ActorMessage<?>>() {
+		become(new Predicate<ActorMessage<?>>() {
 			@Override
-			public void accept(ActorMessage<?> message) {
+			public boolean test(ActorMessage<?> message) {
+				boolean result = false;
 				if (predicate.test(message)) {
 					action.accept(message);
+					result = true;
 					unbecome();
 				}
+				return result;
 			}
 		}, false);
 	}
