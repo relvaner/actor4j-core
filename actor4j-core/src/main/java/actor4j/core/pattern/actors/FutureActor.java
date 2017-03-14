@@ -43,5 +43,4 @@ public class FutureActor extends Actor {
 		else
 			unhandled(message);
 	}
-
 }
