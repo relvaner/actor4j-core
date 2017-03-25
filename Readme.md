@@ -71,8 +71,9 @@ public class MyActor extends Actor {
 Messages can be sent using the `send` method. The following methods are available. `Tell` offers a similar syntax to `Akka`. A message can also be forwarded (`forward`). Aliases are among other things available to access a remote actor in a simplified manner.
 ```java
 send(ActorMessage<?> message)
-send(ActorMessage<?> message, String alias)
 send(ActorMessage<?> message, UUID dest)
+sendViaPath(ActorMessage<?> message, String path)
+sendViaAlias(ActorMessage<?> message, String alias)
 tell(T value, int tag, UUID dest)
 
 forward(ActorMessage<?> message, UUID dest)
