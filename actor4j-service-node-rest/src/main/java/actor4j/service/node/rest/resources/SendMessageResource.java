@@ -52,8 +52,8 @@ public class SendMessageResource {
 					new RESTActorResponse(
 							RESTActorResponse.SUCCESS, 202, "", "The request was accepted and the message was send.")).build();
 		else
-			return Response.serverError().entity(
+			return Response.status(400).entity(
 					new RESTActorResponse(
-							RESTActorResponse.ERROR, 500, error, "The request was error prone.")).build();
+							RESTActorResponse.ERROR, 400, error, "The request was error prone.")).build();
 	}
 }

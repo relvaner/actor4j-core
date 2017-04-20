@@ -28,9 +28,9 @@ public class HasActorResource {
 			UUID.fromString(uuid);
 		}
 		catch (IllegalArgumentException e) {
-			return Response.serverError().entity(
+			return Response.status(400).entity(
 					new RESTActorResponse(
-							RESTActorResponse.ERROR, 500, e.getMessage(), "The request was error prone.")).build();
+							RESTActorResponse.ERROR, 400, e.getMessage(), "The request was error prone.")).build();
 		}
 		
 		if (service.hasActor(uuid))
