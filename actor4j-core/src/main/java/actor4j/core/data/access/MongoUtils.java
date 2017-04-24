@@ -4,13 +4,17 @@
 package actor4j.core.data.access;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.bson.Document;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
 public final class MongoUtils {
@@ -68,6 +72,41 @@ public final class MongoUtils {
 			}
 		
 		return result;
+	}
+	
+	public static <V> List<V> find(Document filter, Document sort, Document projection, int skip, int limit, MongoClient client, String databaseName, String collectionName, Class<V> valueType) {
+		List<V> result = new LinkedList<>();
+		
+		List<Document> documents = new LinkedList<>();
+		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+		
+		FindIterable<Document> iterable = collection.find(filter);
+		if (sort!=null)
+			iterable = iterable.sort(sort);
+		if (projection!=null)
+			iterable = iterable.projection(projection);
+		if (skip>0)
+			iterable = iterable.skip(skip);
+		if (limit>0)
+			iterable = iterable.limit(limit);
+		
+		iterable.forEach((Block<Document>) document -> {documents.add(document);});
+		
+		for (Document document : documents)
+			try {
+				ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				
+				result.add(objectMapper.readValue(document.toJson(), valueType));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		
+		return result;
+	}
+	
+	public static <V> List<V> findAll(Document filter, Document sort, Document projection, MongoClient client, String databaseName, String collectionName, Class<V> valueType) {
+		return find(filter, sort, projection, 0, 0, client, databaseName, collectionName, valueType);
 	}
 	
 	public static <V> Document convertToDocument(V value) {
