@@ -80,7 +80,12 @@ public final class MongoUtils {
 		List<Document> documents = new LinkedList<>();
 		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
 		
-		FindIterable<Document> iterable = collection.find(filter);
+		FindIterable<Document> iterable = null;
+		if (filter!=null)
+			iterable = collection.find(filter);
+		else
+			iterable = collection.find();
+		
 		if (sort!=null)
 			iterable = iterable.sort(sort);
 		if (projection!=null)
