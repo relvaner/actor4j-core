@@ -298,7 +298,7 @@ An analysis tool (using JGraphX [[13](#13)] for visualizations) is suitable for 
 Fig. 6: Representation of the analysis tool for `actor4j`
 
 ## License ##
-This framework is released under an open source BSD-3-Clause license. Additionally provides an express grant of patent rights from contributers to users (adapted acording to Apache License 2.0).
+This framework is released under an open source BSD-3-Clause license. Additionally provides an express grant of patent rights from contributers to users (adapted acording to Apache License 2.0, see also the [Go programming language](https://github.com/golang/go/blob/master/PATENTS)).
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
