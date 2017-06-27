@@ -11,7 +11,7 @@ license that can be found in the LICENSE file.
 	<packaging>pom</packaging>
 	
 	<description>Framework for actor-oriented programming</description>
-	<inceptionYear>2014</inceptionYear>
+	<inceptionYear>2015</inceptionYear>
 	
 	<developers>
     	<developer>
