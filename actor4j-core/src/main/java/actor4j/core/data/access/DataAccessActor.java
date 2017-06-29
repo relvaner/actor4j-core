@@ -25,12 +25,13 @@ public class DataAccessActor<K, V> extends ResourceActor {
 	protected Class<V> valueType;
 	protected Map<String, MongoBufferedBulkWriter> bulkWriters;
 	
-	public static final int HAS_ONE     = 304;
-	public static final int INSERT_ONE  = 305;
-	public static final int REPLACE_ONE = 306;
-	public static final int UPDATE_ONE  = 307;
-	public static final int FIND_ONE    = 308;
-	public static final int FLUSH       = 309;
+	public static final int HAS_ONE     = 305;
+	public static final int INSERT_ONE  = 306;
+	public static final int REPLACE_ONE = 307;
+	public static final int UPDATE_ONE  = 308;
+	public static final int DELETE_ONE  = 309;
+	public static final int FIND_ONE    = 310;
+	public static final int FLUSH       = 311;
 	
 	public DataAccessActor(String name, MongoClient client, String databaseName, boolean bulkWrite, boolean bulkOrdered, int bulkSize, Class<V> valueType) {
 		super(name);
@@ -91,6 +92,8 @@ public class DataAccessActor<K, V> extends ResourceActor {
 				else
 					insertOne(obj.value, client, databaseName, obj.collectionName, bulkWriter);
 			}
+			else if (message.tag==DELETE_ONE)
+				deleteOne(obj.filter, client, databaseName, obj.collectionName, bulkWriter);
 			else if (message.tag==HAS_ONE) {
 				obj.reserved = hasOne(obj.filter, client, databaseName, obj.collectionName);
 				tell(obj, FIND_ONE, message.source);

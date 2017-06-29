@@ -18,6 +18,7 @@ import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.DeleteOneModel;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.UpdateOneModel;
@@ -45,6 +46,10 @@ public final class MongoUtils {
 	
 	public static <V> void updateOne(Document filter, Document update, MongoClient client, String databaseName, String collectionName) {
 		updateOne(filter, update, client, databaseName, collectionName, null);
+	}
+	
+	public static <V> void deleteOne(Document filter, MongoClient client, String databaseName, String collectionName) {
+		deleteOne(filter, client, databaseName, collectionName, null);
 	}
 	
 	public static  <V> void insertOne(V value, MongoClient client, String databaseName, String collectionName, MongoBufferedBulkWriter bulkWriter) {
@@ -81,6 +86,15 @@ public final class MongoUtils {
 		else {
 			MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
 			collection.updateOne(filter, update);
+		}
+	}
+	
+	public static <V> void deleteOne(Document filter, MongoClient client, String databaseName, String collectionName, MongoBufferedBulkWriter bulkWriter) {
+		if (bulkWriter!=null)
+			bulkWriter.write(new DeleteOneModel<>(filter));
+		else {
+			MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+			collection.deleteOne(filter);
 		}
 	}
 	

@@ -46,6 +46,10 @@ public class DataCacheActor<K, V> extends ActorWithCache<K, V> {
 				cache.remove(obj.key);
 				tell(message.value, UPDATE, dataAccess);
 			}
+			else if (message.tag==DEL) {
+				cache.remove(obj.key);
+				tell(message.value, DELETE_ONE, dataAccess);
+			}
 			else if (message.source==dataAccess && message.tag==FIND_ONE) {
 				cache.put(obj.key, obj.value);
 				tell(obj, GET, obj.source);
