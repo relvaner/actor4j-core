@@ -18,6 +18,9 @@ import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.InsertOneModel;
+import com.mongodb.client.model.ReplaceOneModel;
+import com.mongodb.client.model.UpdateOneModel;
 
 public final class MongoUtils {
 	public static boolean hasOne(Document filter, MongoClient client, String databaseName, String collectionName) {
@@ -33,28 +36,52 @@ public final class MongoUtils {
 	}
 	
 	public static  <V> void insertOne(V value, MongoClient client, String databaseName, String collectionName) {
-		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
-		try {
-			Document document = Document.parse(new ObjectMapper().writeValueAsString(value));
-			collection.insertOne(document);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+		insertOne(value, client, databaseName, collectionName, null);
 	}
 	
 	public static <V> void replaceOne(Document filter, V value, MongoClient client, String databaseName, String collectionName) {
-		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+		replaceOne(filter, value, client, databaseName, collectionName, null);
+	}
+	
+	public static <V> void updateOne(Document filter, Document update, MongoClient client, String databaseName, String collectionName) {
+		updateOne(filter, update, client, databaseName, collectionName, null);
+	}
+	
+	public static  <V> void insertOne(V value, MongoClient client, String databaseName, String collectionName, MongoBufferedBulkWriter bulkWriter) {
 		try {
 			Document document = Document.parse(new ObjectMapper().writeValueAsString(value));
-			collection.replaceOne(filter, document);
+			if (bulkWriter!=null)
+				bulkWriter.write(new InsertOneModel<>(document));
+			else {
+				MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+				collection.insertOne(document);
+			}
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static <V> void updateOne(Document filter, Document update, MongoClient client, String databaseName, String collectionName) {
-		MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
-		collection.updateOne(filter, update);
+	public static <V> void replaceOne(Document filter, V value, MongoClient client, String databaseName, String collectionName, MongoBufferedBulkWriter bulkWriter) {
+		try {
+			Document document = Document.parse(new ObjectMapper().writeValueAsString(value));
+			if (bulkWriter!=null)
+				bulkWriter.write(new ReplaceOneModel<>(filter, document));
+			else {
+				MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+				collection.replaceOne(filter, document);
+			}
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static <V> void updateOne(Document filter, Document update, MongoClient client, String databaseName, String collectionName, MongoBufferedBulkWriter bulkWriter) {
+		if (bulkWriter!=null)
+			bulkWriter.write(new UpdateOneModel<>(filter, update));
+		else {
+			MongoCollection<Document> collection = client.getDatabase(databaseName).getCollection(collectionName);
+			collection.updateOne(filter, update);
+		}
 	}
 	
 	public static <V> V findOne(Document filter, MongoClient client, String databaseName, String collectionName, Class<V> valueType) {
