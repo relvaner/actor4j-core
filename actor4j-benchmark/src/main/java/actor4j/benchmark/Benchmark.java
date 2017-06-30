@@ -1,5 +1,7 @@
 /*
- * Copyright (c) 2015-2016, David A. Bauer
+ * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Use of this source code is governed by a BSD-style
+ * license that can be found in the LICENSE file.
  */
 package actor4j.benchmark;
 
@@ -9,9 +11,9 @@ import java.util.function.Supplier;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
+import actor4j.benchmark.utils.MessageThroughputMeasurement;
 import actor4j.core.ActorSystem;
 import actor4j.core.DefaultActorSystemImpl;
-import actor4j.utils.MessageThroughputMeasurement;
 
 public class Benchmark {
 	protected ActorSystem system;

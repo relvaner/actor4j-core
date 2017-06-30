@@ -1,6 +1,7 @@
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
+// http://www.javaworld.com/article/2077496/testing-debugging/java-tip-130--do-you-know-your-data-size-.html
 public class Sizeof 
 {
     public static void main(String[] args) throws Exception 
