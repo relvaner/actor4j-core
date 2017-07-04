@@ -31,6 +31,8 @@ public class VolatileCacheActor<K, V> extends ActorWithCache<K, V> {
 				cache.put(obj.key, obj.value);
 			else if (message.tag==UPDATE)
 				; // empty
+			else if (message.tag==DEL)
+				cache.remove(obj.key);
 			else if (message.tag==GC)
 				cache.gc(message.valueAsLong());
 			else
