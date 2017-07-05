@@ -25,13 +25,13 @@ public class DataAccessActor<K, V> extends ResourceActor {
 	protected Class<V> valueType;
 	protected Map<String, MongoBufferedBulkWriter> bulkWriters;
 	
-	public static final int HAS_ONE     = 305;
-	public static final int INSERT_ONE  = 306;
-	public static final int REPLACE_ONE = 307;
-	public static final int UPDATE_ONE  = 308;
-	public static final int DELETE_ONE  = 309;
-	public static final int FIND_ONE    = 310;
-	public static final int FLUSH       = 311;
+	public static final int HAS_ONE     = 315;
+	public static final int INSERT_ONE  = 316;
+	public static final int REPLACE_ONE = 317;
+	public static final int UPDATE_ONE  = 318;
+	public static final int DELETE_ONE  = 319;
+	public static final int FIND_ONE    = 320;
+	public static final int FLUSH       = 321;
 	
 	public DataAccessActor(String name, MongoClient client, String databaseName, boolean bulkWrite, boolean bulkOrdered, int bulkSize, Class<V> valueType) {
 		super(name);

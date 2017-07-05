@@ -62,6 +62,12 @@ public class CacheLRUWithGC<K, E> implements Cache<K, E>  {
 		lru.remove(key);
 	}
 	
+	public void clear() {
+		map.clear();
+		timestampMap.clear();
+		lru.clear();
+	}
+	
 	protected void resize() {
 		if (map.size()>size) {
 			map.remove(lru.getFirst());

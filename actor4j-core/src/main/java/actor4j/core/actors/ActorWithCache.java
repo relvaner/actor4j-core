@@ -13,12 +13,14 @@ public class ActorWithCache<K, V> extends Actor {
 	protected int cacheSize;
 	protected Cache<K, V> cache;
 	
-	public static final int GC     = 300;
-	public static final int EVICT  = GC;
-	public static final int GET    = 301;
-	public static final int SET    = 302;
-	public static final int UPDATE = 303;
-	public static final int DEL    = 304;
+	public static final int GC      = 300;
+	public static final int EVICT   = GC;
+	public static final int GET     = 301;
+	public static final int SET     = 302;
+	public static final int UPDATE  = 303;
+	public static final int DEL     = 304;
+	public static final int DEL_ALL = 305;
+	public static final int CLEAR   = 306;
 	
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);
