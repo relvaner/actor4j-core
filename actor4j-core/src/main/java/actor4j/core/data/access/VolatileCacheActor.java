@@ -33,6 +33,8 @@ public class VolatileCacheActor<K, V> extends ActorWithCache<K, V> {
 				; // empty
 			else if (message.tag==DEL)
 				cache.remove(obj.key);
+			else if (message.tag==CLEAR)
+				cache.clear();
 			else if (message.tag==GC)
 				cache.gc(message.valueAsLong());
 			else
