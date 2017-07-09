@@ -56,9 +56,9 @@ public class SafetyFeature {
 		ErrorHandler errorHandler = system.underlyingImpl().getExecuterService().getSafetyManager().getErrorHandler();
 		system.underlyingImpl().getExecuterService().getSafetyManager().setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Exception e, String message, UUID uuid) {
-				errorHandler.handle(e, message, uuid);
-				assertEquals(new NullPointerException().getMessage(), e.getMessage());
+			public void handle(Throwable t, String message, UUID uuid) {
+				errorHandler.handle(t, message, uuid);
+				assertEquals(new NullPointerException().getMessage(), t.getMessage());
 				assertEquals("actor", message);
 				assertEquals(dest, uuid);
 			}

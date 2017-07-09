@@ -63,7 +63,7 @@ public class ActorExecuterService {
 		safetyManager = new SafetyManager();
 		safetyManager.setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Exception e, String message, UUID uuid) {
+			public void handle(Throwable t, String message, UUID uuid) {
 				if (message!=null) {
 					if (message.equals("initialization")) {
 						logger().error(
@@ -89,7 +89,7 @@ public class ActorExecuterService {
 								system.name, Thread.currentThread().getName()));
 				}
 				
-				e.printStackTrace();
+				t.printStackTrace();
 			}
 		});
 	}

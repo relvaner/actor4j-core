@@ -64,7 +64,7 @@ public abstract class ActorThread extends Thread {
 		
 	@Override
 	public void run() {
-		SafetyMethod.run(system.executerService.safetyManager, new Method() {
+		SafetyMethod.runAndCatchThrowable(system.executerService.safetyManager, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();
@@ -74,7 +74,7 @@ public abstract class ActorThread extends Thread {
 			}
 			
 			@Override
-			public void error(Exception e) {
+			public void error(Throwable t) {
 			}
 			
 			@Override
