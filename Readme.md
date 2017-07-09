@@ -298,7 +298,7 @@ An analysis tool (using JGraphX [[13](#13)] for visualizations) is suitable for 
 Fig. 6: Representation of the analysis tool for `actor4j`
 
 ## License ##
-This framework is released under an open source BSD-3-Clause license. Additionally provides an express grant of patent rights from contributers to users (adapted acording to Apache License 2.0, see also the [Go programming language](https://github.com/golang/go/blob/master/PATENTS)).
+This framework is released under an open source BSD-3-Clause license. Additionally provides an express grant of patent rights from contributers to users (adapted acording to Apache License 2.0, see also the [Go programming language](https://github.com/golang/go/blob/master/PATENTS)). Probably it is better to switch completely to the Apache License 2.0.
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
@@ -319,4 +319,4 @@ This framework is released under an open source BSD-3-Clause license. Additional
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 
-Page to be updated 06/27/2017
+Page to be updated 07/10/2017
