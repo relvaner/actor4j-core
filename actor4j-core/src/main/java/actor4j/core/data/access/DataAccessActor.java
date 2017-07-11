@@ -67,7 +67,7 @@ public class DataAccessActor<K, V> extends ResourceActor {
 			if (bulkWrite) {
 				bulkWriter = bulkWriters.get(obj.collectionName);
 				if (bulkWriter==null) {
-					bulkWriter = new MongoBufferedBulkWriter(client.getDatabase(databaseName).getCollection(obj.collectionName), bulkOrdered, bulkSize);
+					bulkWriter = new MongoBufferedBulkWriterImpl(client.getDatabase(databaseName).getCollection(obj.collectionName), bulkOrdered, bulkSize);
 					bulkWriters.put(obj.collectionName, bulkWriter);
 				}
 			}
