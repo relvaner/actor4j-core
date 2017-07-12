@@ -5,8 +5,8 @@ license that can be found in the LICENSE file.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>actor4j</groupId>
-	<artifactId>actor4j</artifactId>
+	<groupId>actor4j-prototype</groupId>
+	<artifactId>actor4j-prototype</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	
@@ -33,6 +33,7 @@ license that can be found in the LICENSE file.
 		<module>actor4j-service-node-utils</module>
 		<module>actor4j-service-node-template</module>
 		<module>actor4j-verification</module>
+		<module>actor4j-examples</module>
 	</modules>
 	
 	<dependencies>
