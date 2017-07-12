@@ -21,19 +21,19 @@ license that can be found in the LICENSE file.
     </developers>
 	
 	<modules>
-		<module>actor4j-core</module>
-		<module>actor4j-analyzer</module>
-		<module>actor4j-analyzer-example</module>
-		<module>actor4j-benchmark</module>
-		<module>actor4j-benchmark-ejb</module>
-		<module>actor4j-utils</module>
-		<module>actor4j-service-node-rest</module>
-		<module>actor4j-service-node-rest-client</module>
-		<module>actor4j-service-node-websocket</module>
-		<module>actor4j-service-node-utils</module>
-		<module>actor4j-service-node-template</module>
-		<module>actor4j-verification</module>
-		<module>actor4j-examples</module>
+		<module>actor4j-prototype-core</module>
+		<module>actor4j-prototype-analyzer</module>
+		<module>actor4j-prototype-analyzer-example</module>
+		<module>actor4j-prototype-benchmark</module>
+		<module>actor4j-prototype-benchmark-ejb</module>
+		<module>actor4j-prototype-utils</module>
+		<module>actor4j-prototype-service-node-rest</module>
+		<module>actor4j-prototype-service-node-rest-client</module>
+		<module>actor4j-prototype-service-node-websocket</module>
+		<module>actor4j-prototype-service-node-utils</module>
+		<module>actor4j-prototype-service-node-template</module>
+		<module>actor4j-prototype-verification</module>
+		<module>actor4j-prototype-examples</module>
 	</modules>
 	
 	<dependencies>

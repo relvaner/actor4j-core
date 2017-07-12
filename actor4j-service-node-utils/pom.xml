@@ -10,6 +10,6 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-node-utils</groupId>
-  	<artifactId>actor4j-service-node-utils</artifactId>
+  	<groupId>actor4j-prototype-service-node-utils</groupId>
+  	<artifactId>actor4j-prototype-service-node-utils</artifactId>
 </project>

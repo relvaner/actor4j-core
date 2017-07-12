@@ -10,8 +10,8 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-node-rest-client</groupId>
-  	<artifactId>actor4j-service-node-rest-client</artifactId>
+  	<groupId>actor4j-prototype-service-node-rest-client</groupId>
+  	<artifactId>actor4j-prototype-service-node-rest-client</artifactId>
   	
   	<dependencies>
   		<dependency>
@@ -31,8 +31,8 @@ license that can be found in the LICENSE file.
       		<version>2.6.0</version>
     	</dependency>
     	<dependency>
-    		<groupId>actor4j-service-node-rest</groupId>
-    		<artifactId>actor4j-service-node-rest</artifactId>
+    		<groupId>actor4j-prototype-service-node-rest</groupId>
+    		<artifactId>actor4j-prototype-service-node-rest</artifactId>
     		<version>1.0.0</version>
     	</dependency>
   	</dependencies>

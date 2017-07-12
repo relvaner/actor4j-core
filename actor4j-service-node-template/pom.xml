@@ -10,8 +10,8 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-service-node-template</groupId>
-  	<artifactId>actor4j-service-node-template</artifactId>
+  	<groupId>actor4j-prototype-service-node-template</groupId>
+  	<artifactId>actor4j-prototype-service-node-template</artifactId>
   	
   	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -26,18 +26,18 @@ license that can be found in the LICENSE file.
       		<version>2.22</version>
     	</dependency>
     	<dependency>
-   			<groupId>actor4j-core</groupId>
-   			<artifactId>actor4j-core</artifactId>
+   			<groupId>actor4j-prototype-core</groupId>
+   			<artifactId>actor4j-prototype-core</artifactId>
    			<version>1.0.0</version>
    		</dependency>
    		<dependency>
-   			<groupId>actor4j-service-node-rest</groupId>
-   			<artifactId>actor4j-service-node-rest</artifactId>
+   			<groupId>actor4j-prototype-service-node-rest</groupId>
+   			<artifactId>actor4j-prototype-service-node-rest</artifactId>
    			<version>1.0.0</version>
    		</dependency>
    		<dependency>
-   			<groupId>actor4j-service-node-websocket</groupId>
-   			<artifactId>actor4j-service-node-websocket</artifactId>
+   			<groupId>actor4j-prototype-service-node-websocket</groupId>
+   			<artifactId>actor4j-prototype-service-node-websocket</artifactId>
    			<version>1.0.0</version>
    		</dependency>
   	</dependencies>

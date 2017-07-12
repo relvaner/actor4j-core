@@ -10,12 +10,12 @@ license that can be found in the LICENSE file.
 		<artifactId>actor4j-prototype</artifactId>
 		<version>1.0.0</version>
 	</parent>
-	<groupId>actor4j-analyzer-example</groupId>
-	<artifactId>actor4j-analyzer-example</artifactId>
+	<groupId>actor4j-prototype-analyzer-example</groupId>
+	<artifactId>actor4j-prototype-analyzer-example</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>actor4j-analyzer</groupId>
-			<artifactId>actor4j-analyzer</artifactId>
+			<groupId>actor4j-prototype-analyzer</groupId>
+			<artifactId>actor4j-prototype-analyzer</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

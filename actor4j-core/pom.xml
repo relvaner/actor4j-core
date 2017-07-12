@@ -10,8 +10,8 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-core</groupId>
-  	<artifactId>actor4j-core</artifactId>
+  	<groupId>actor4j-prototype-core</groupId>
+  	<artifactId>actor4j-prototype-core</artifactId>
   	
   	<build>
 		<plugins>
@@ -100,8 +100,8 @@ license that can be found in the LICENSE file.
     		<version>3.4.2</version>
 		</dependency>
 		<dependency>
-			<groupId>actor4j-utils</groupId>
-			<artifactId>actor4j-utils</artifactId>
+			<groupId>actor4j-prototype-utils</groupId>
+			<artifactId>actor4j-prototype-utils</artifactId>
 			<version>1.0.0</version>
 		</dependency>
     </dependencies>

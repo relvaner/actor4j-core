@@ -10,8 +10,8 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-verification</groupId>
-  	<artifactId>actor4j-verification</artifactId>
+  	<groupId>actor4j-prototype-verification</groupId>
+  	<artifactId>actor4j-prototype-verification</artifactId>
   	<dependencies>
   		<dependency>
   			<groupId>org.jgrapht</groupId>
@@ -19,8 +19,8 @@ license that can be found in the LICENSE file.
   			<version>1.0.0</version>
   		</dependency>
   		<dependency>
-  			<groupId>actor4j-core</groupId>
-  			<artifactId>actor4j-core</artifactId>
+  			<groupId>actor4j-prototype-core</groupId>
+  			<artifactId>actor4j-prototype-core</artifactId>
   			<version>1.0.0</version>
   		</dependency>
   	</dependencies>

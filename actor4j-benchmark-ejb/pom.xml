@@ -10,8 +10,8 @@ license that can be found in the LICENSE file.
     	<artifactId>actor4j-prototype</artifactId>
     	<version>1.0.0</version>
   	</parent>
-  	<groupId>actor4j-benchmark-j2ee</groupId>
-  	<artifactId>actor4j-benchmark-j2ee</artifactId>
+  	<groupId>actor4j-prototype-benchmark-j2ee</groupId>
+  	<artifactId>actor4j-prototype-benchmark-j2ee</artifactId>
   	
   	<dependencies>
   		<dependency>
