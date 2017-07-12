@@ -58,7 +58,7 @@ license that can be found in the LICENSE file.
 			<groupId>safety4j</groupId>
 			<artifactId>safety4j</artifactId>
 			<version>0.1.1</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>bdd4j</groupId>
 			<artifactId>bdd4j</artifactId>
