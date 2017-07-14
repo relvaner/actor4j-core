@@ -301,7 +301,7 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 This framework is released under an open source Apache 2.0 license.
 
 ## Announcement ##
-This framework will be currently restructured in separate repositories (former maven modules).
+This framework will be currently restructured in separate repositories (former maven modules). It's currently under an prototype state.
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
