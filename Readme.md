@@ -272,8 +272,8 @@ Fig. 4: Class diagram to the core components of `actor4j`
 #### Note ####
 
 Enclosed two scruffy class diagrams maked with `yuml.me`, have fun!
-* [Class diagram - top down](https://raw.githubusercontent.com/relvaner/actor4j/master/doc/images/cd_top_down.png)
-* [Class diagram - left to right](https://raw.githubusercontent.com/relvaner/actor4j/master/doc/images/cd_left_right.png)
+* [Class diagram - top down](https://raw.githubusercontent.com/relvaner/actor4j-documentation/master/doc/images/cd_top_down.png)
+* [Class diagram - left to right](https://raw.githubusercontent.com/relvaner/actor4j-documentation/master/doc/images/cd_left_right.png)
 
 ## Cluster configuration ##
 
@@ -286,7 +286,7 @@ Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
 Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for later easy access (use of Guava Cache [[14](#14)]).
 
 #### Note ####
-An example can be found under ([Actor4j - Cluster Examples](https://github.com/relvaner/actor4j-cluster-examples)) and there is also a template (see [Actor4j - Service Node - Template](https://github.com/relvaner/actor4j/tree/master/actor4j-service-node-template)).
+~~An example can be found under ([Actor4j - Cluster Examples](https://github.com/relvaner/actor4j-cluster-examples))~~ and there is also a template (see [Actor4j - Web - Template](https://github.com/relvaner/actor4j-web-template)).
 
 ## Structure and behavioral analysis with an analysis tool ##
 
@@ -322,4 +322,4 @@ This framework will be currently restructured in separate repositories (former m
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 
-Page to be updated 07/14/2017
+Page to be updated 07/22/2017
