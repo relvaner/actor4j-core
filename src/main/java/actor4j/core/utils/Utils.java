@@ -49,6 +49,7 @@ public final class Utils {
 		PRIMITIVE_WRAPPERS.add(Float.class);
 		PRIMITIVE_WRAPPERS.add(Double.class);
 		PRIMITIVE_WRAPPERS.add(Character.class);
+		PRIMITIVE_WRAPPERS.add(String.class);
 		PRIMITIVE_WRAPPERS.add(Boolean.class);
 		PRIMITIVE_WRAPPERS.add(Void.class);
 	}
