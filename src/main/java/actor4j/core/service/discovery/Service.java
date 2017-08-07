@@ -18,7 +18,9 @@ package actor4j.core.service.discovery;
 import java.util.List;
 import java.util.UUID;
 
-public class Service {
+import actor4j.core.utils.Shareable;
+
+public class Service implements Shareable {
 	protected final UUID id;
 	protected final String name; // or for nodeName
 	protected final String uri;  // or for path

@@ -15,17 +15,21 @@
  */
 package actor4j.core.messages;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import actor4j.core.utils.Copyable;
+import actor4j.core.utils.Shareable;
 
 public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
+	private static Set<Class<?>> SUPPORTED_TYPES;
+	
 	public T value;
 	public int tag;
 	public UUID source;
 	public UUID dest;
-	public boolean byRef;
 	
 	public ActorMessage(T value, int tag, UUID source, UUID dest) {
 		super();
@@ -98,16 +102,49 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 	
 	@SuppressWarnings("unchecked")
 	public ActorMessage<T> copy() {
-		if (value!=null && !byRef && value instanceof Copyable)
-			return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
-		else /* if (value instanceof Shareable) */
-			return new ActorMessage<T>(value, tag, source, dest);
-		/* else throw with Error */
+		/*
+			if (value!=null && !byRef && value instanceof Copyable)
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
+			else 
+				return new ActorMessage<T>(value, tag, source, dest);
+		 */
+		
+		if (value!=null) { 
+			if (value instanceof Copyable)
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
+			else if (isSupportedType(value.getClass()) || value instanceof Shareable)
+				return new ActorMessage<T>(value, tag, source, dest);
+			else
+				throw new IllegalArgumentException();
+		}
+		else
+			return new ActorMessage<T>(null, tag, source, dest);
 	}
 
 	@Override
 	public String toString() {
-		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + ", byRef="
-				+ byRef + "]";
+		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
+	}
+
+	protected boolean isSupportedType(Class<?> type) {
+		return SUPPORTED_TYPES.contains(type);
+	}
+
+	static {
+		SUPPORTED_TYPES = new HashSet<Class<?>>();
+		SUPPORTED_TYPES.add(Byte.class);
+		SUPPORTED_TYPES.add(Short.class);
+		SUPPORTED_TYPES.add(Integer.class);
+		SUPPORTED_TYPES.add(Long.class);
+		SUPPORTED_TYPES.add(Float.class);
+		SUPPORTED_TYPES.add(Double.class);
+		SUPPORTED_TYPES.add(Character.class);
+		SUPPORTED_TYPES.add(String.class);
+		SUPPORTED_TYPES.add(Boolean.class);
+		SUPPORTED_TYPES.add(Void.class);
+		
+		// IMMUTABLE
+		SUPPORTED_TYPES.add(Exception.class);
+		SUPPORTED_TYPES.add(UUID.class);
 	}
 }

@@ -59,7 +59,6 @@ public class RemoteActorMessage<T> extends ActorMessage<T> {
 	
 	@Override
 	public String toString() {
-		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
-				+ ", byRef=" + byRef + "]";
+		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
 	}
 }
