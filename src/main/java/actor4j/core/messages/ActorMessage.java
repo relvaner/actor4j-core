@@ -30,6 +30,9 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 	public int tag;
 	public UUID source;
 	public UUID dest;
+	/*
+	 	public boolean byRef; 
+	 */
 	
 	public ActorMessage(T value, int tag, UUID source, UUID dest) {
 		super();
@@ -110,10 +113,10 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 		 */
 		
 		if (value!=null) { 
-			if (value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
-			else if (isSupportedType(value.getClass()) || value instanceof Shareable)
+			if (isSupportedType(value.getClass()) || value instanceof Shareable)
 				return new ActorMessage<T>(value, tag, source, dest);
+			else if (value instanceof Copyable)
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
 			else
 				throw new IllegalArgumentException();
 		}
