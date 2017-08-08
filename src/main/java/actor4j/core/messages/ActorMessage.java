@@ -116,7 +116,9 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
 				return new ActorMessage<T>(value, tag, source, dest);
 			else if (value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);
+			else if (value instanceof Exception)
+				return new ActorMessage<T>(value, tag, source, dest);
 			else
 				throw new IllegalArgumentException();
 		}
@@ -147,7 +149,6 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 		SUPPORTED_TYPES.add(Void.class);
 		
 		// IMMUTABLE
-		SUPPORTED_TYPES.add(Exception.class);
 		SUPPORTED_TYPES.add(UUID.class);
 	}
 }
