@@ -143,6 +143,12 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public ActorSystem setAlias(List<UUID> ids, String alias) {
+		system.setAlias(ids, alias);
+		
+		return this;
+	}
+	
 	public UUID getActorFromPath(String path) {
 		return system.getActorFromPath(path);
 	}

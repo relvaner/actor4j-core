@@ -442,6 +442,13 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public ActorSystemImpl setAlias(List<UUID> ids, String alias) {
+		for (UUID id : ids)
+			setAlias(id, alias);
+		
+		return this;
+	}
+	
 	public UUID getActorFromAlias(String alias) {
 		List<UUID> result = getActorsFromAlias(alias);
 		
