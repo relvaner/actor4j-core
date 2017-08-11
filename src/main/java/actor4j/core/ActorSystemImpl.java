@@ -391,11 +391,29 @@ public abstract class ActorSystemImpl {
 		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;
 	}
 	
+	public List<UUID> addActor(Class<? extends Actor> clazz, int instances, Object... args) throws ActorInitializationException {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addActor(clazz, args));
+		
+		return result;	
+	}
+	
 	public UUID addActor(ActorFactory factory) {
 		ActorCell cell = generateCell(factory.create());
 		container.registerFactoryInjector(cell.id, factory);
 		
 		return user_addCell(cell);
+	}
+	
+	public List<UUID> addActor(ActorFactory factory, int instances) {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addActor(factory));
+			
+		return result;
 	}
 	
 	protected void removeActor(UUID id) {	

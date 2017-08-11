@@ -133,8 +133,16 @@ public class ActorSystem {
 		return system.addActor(clazz, args);
 	}
 	
+	public List<UUID> addActor(Class<? extends Actor> clazz, int instances, Object... args) {
+		return system.addActor(clazz, instances, args);
+	}
+	
 	public UUID addActor(ActorFactory factory) {
 		return system.addActor(factory);
+	}
+	
+	public List<UUID> addActor(ActorFactory factory, int instances) {
+		return system.addActor(factory, instances);
 	}
 	
 	public ActorSystem setAlias(UUID id, String alias) {
