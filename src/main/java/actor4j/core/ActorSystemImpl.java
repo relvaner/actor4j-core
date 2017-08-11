@@ -17,10 +17,12 @@ package actor4j.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -51,7 +53,7 @@ public abstract class ActorSystemImpl {
 	protected final DIContainer<UUID> container;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
-	protected final Map<String, UUID> aliases;  // ActorCellAlias -> ActorCellID
+	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
 	protected final Map<UUID, String> hasAliases;
 	protected final Map<UUID, Boolean> resourceCells;
 	protected final Map<UUID, ActorCell> pseudoCells;
@@ -213,7 +215,7 @@ public abstract class ActorSystemImpl {
 		return resourceCells;
 	}
 	
-	public Map<String, UUID> getAliases() {
+	public Map<String, Queue<UUID>> getAliases() {
 		return aliases;
 	}
 
@@ -406,7 +408,10 @@ public abstract class ActorSystemImpl {
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
 			hasAliases.remove(id);
-			aliases.remove(alias);
+			Queue<UUID> queue = aliases.get(alias);
+			queue.remove(id);
+			if (queue.isEmpty())
+				aliases.remove(alias);
 		}
 	}
 	
@@ -422,13 +427,15 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public ActorSystemImpl setAlias(UUID id, String alias) {
-		if (!hasAliases.containsKey(id)) {
-			aliases.put(alias, id);
+		Queue<UUID> queue = null;
+		if ((queue=aliases.get(alias))==null) {
+			queue = new ConcurrentLinkedQueue<>();
+			queue.add(id);
+			aliases.put(alias, queue);
 			hasAliases.put(id, alias);
 		}	
 		else {
-			aliases.remove(hasAliases.get(id));
-			aliases.put(alias, id);
+			queue.add(id);
 			hasAliases.put(id, alias);
 		}
 		
@@ -436,7 +443,19 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public UUID getActorFromAlias(String alias) {
-		return aliases.get(alias);
+		List<UUID> result = getActorsFromAlias(alias);
+		
+		return !result.isEmpty() ? result.get(0) : null;
+	}
+	
+	public List<UUID> getActorsFromAlias(String alias) {
+		List<UUID> result = new LinkedList<>();
+		
+		Queue<UUID> queue = aliases.get(alias);
+		if (queue!=null)
+			queue.forEach((id) -> result.add(id));
+		
+		return result;
 	}
 	
 	public UUID getActorFromPath(String path) {
@@ -484,9 +503,18 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public ActorSystemImpl sendViaAlias(ActorMessage<?> message, String alias) {
-		message.dest = getActorFromAlias(alias);
-		if (message.dest!=null)
-			send(message);
+		List<UUID> destinations = getActorsFromAlias(alias);
+		
+		if (!destinations.isEmpty()) {
+			if (destinations.size()==1)
+				message.dest = destinations.get(0);
+			else {
+				Random random = new Random();
+				message.dest = destinations.get(random.nextInt(destinations.size()));
+			}
+			if (message.dest!=null)
+				send(message);
+		}
 		
 		return this;
 	}

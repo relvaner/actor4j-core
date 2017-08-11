@@ -15,6 +15,7 @@
  */
 package actor4j.core;
 
+import java.util.List;
 import java.util.UUID;
 
 import actor4j.core.messages.ActorMessage;
@@ -42,6 +43,10 @@ public class ActorService extends ActorSystem {
 	
 	public UUID getActorFromAlias(String alias) {
 		return system.getActorFromAlias(alias);
+	}
+	
+	public List<UUID> getActorsFromAlias(String alias) {
+		return system.getActorsFromAlias(alias);
 	}
 	
 	public void sendAsServer(ActorMessage<?> message) {

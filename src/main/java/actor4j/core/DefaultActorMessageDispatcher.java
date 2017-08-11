@@ -15,6 +15,7 @@
  */
 package actor4j.core;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
@@ -89,7 +90,17 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			throw new NullPointerException();
 		
 		if (alias!=null) {
-			UUID dest = system.aliases.get(alias);
+			List<UUID> destinations = system.getActorsFromAlias(alias);
+
+			UUID dest = null;
+			if (!destinations.isEmpty()) {
+				if (destinations.size()==1)
+					dest = destinations.get(0);
+				else {
+					Random random = new Random();
+					dest = destinations.get(random.nextInt(destinations.size()));
+				}
+			}
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
