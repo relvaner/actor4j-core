@@ -17,6 +17,7 @@ package actor4j.core.actors;
 
 import static actor4j.core.protocols.ActorProtocolTag.*;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -234,8 +235,16 @@ public abstract class Actor {
 		return cell.addChild(clazz, args);
 	}
 	
+	public List<UUID> addChild(Class<? extends Actor> clazz, int instances, Object... args) {
+		return cell.addChild(clazz, instances, args);
+	}
+	
 	public UUID addChild(ActorFactory factory) {
 		return cell.addChild(factory);
+	}
+	
+	public List<UUID> addChild(ActorFactory factory, int instances) {
+		return cell.addChild(factory, instances);
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {

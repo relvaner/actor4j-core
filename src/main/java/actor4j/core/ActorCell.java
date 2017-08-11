@@ -289,11 +289,29 @@ public class ActorCell {
 		return internal_addChild(cell);
 	}
 	
+	public List<UUID> addChild(Class<? extends Actor> clazz, int instances, Object... args) throws ActorInitializationException {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addChild(clazz, args));
+		
+		return result;
+	}
+	
 	public UUID addChild(ActorFactory factory) {
 		ActorCell cell = system.generateCell(factory.create());
 		system.container.registerFactoryInjector(cell.id, factory);
 		
 		return internal_addChild(cell);
+	}
+	
+	public List<UUID> addChild(ActorFactory factory, int instances) {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addChild(factory));
+		
+		return result;
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {
