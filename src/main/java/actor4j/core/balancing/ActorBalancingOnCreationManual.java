@@ -22,6 +22,7 @@ import java.util.UUID;
 import actor4j.core.ActorThread;
 import actor4j.core.utils.ActorGroup;
 
+// currently not used
 public abstract class ActorBalancingOnCreationManual {
 	public abstract void balance(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap);
 	

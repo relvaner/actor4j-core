@@ -17,6 +17,7 @@ package actor4j.core;
 
 import static actor4j.core.utils.ActorUtils.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,11 @@ public abstract class ActorMessageDispatcher {
 	
 	protected Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
 	protected Map<Long, ActorThread> threadsMap;
+	protected List<Long> threadsList;
 	protected Map<Long, String> persistenceMap;
 	
 	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
+	protected Map<UUID, Integer> groupsDistributedMap;
 	
 	protected final UUID UUID_ALIAS = UUID_ZERO;
 	
@@ -44,9 +47,11 @@ public abstract class ActorMessageDispatcher {
 		
 		cellsMap = new ConcurrentHashMap<>();
 		threadsMap = new HashMap<>();
+		threadsList = new ArrayList<>();
 		persistenceMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
+		groupsDistributedMap = new ConcurrentHashMap<>();
 	}
 	
 	public Map<UUID, Long> getCellsMap() {
@@ -74,21 +79,22 @@ public abstract class ActorMessageDispatcher {
 	public abstract void postPersistence(ActorMessage<?> message);
 	
 	public void beforeRun(List<ActorThread> actorThreads) {
-		system.actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, system.cells);
+		system.actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.cells);
 		
 		int i=0;
 		for(ActorThread t : actorThreads) {
 			threadsMap.put(t.getId(), t);
+			threadsList.add(t.getId());
 			persistenceMap.put(t.getId(), ActorPersistenceService.getAlias(i));
 			i++;
 		}
 	}
 	
 	public void registerCell(ActorCell cell) {
-		system.actorBalancingOnRuntime.registerCell(cellsMap, threadsMap, groupsMap, cell);
+		system.actorBalancingOnRuntime.registerCell(cellsMap, threadsList, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public void unregisterCell(ActorCell cell) {
-		system.actorBalancingOnRuntime.unregisterCell(cellsMap, threadsMap, groupsMap, cell);
+		system.actorBalancingOnRuntime.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 }

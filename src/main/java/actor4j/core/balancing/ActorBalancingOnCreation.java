@@ -23,15 +23,16 @@ import java.util.UUID;
 import actor4j.core.ActorCell;
 import actor4j.core.ActorThread;
 import actor4j.core.actors.Actor;
+import actor4j.core.actors.ActorDistributedGroupMember;
 import actor4j.core.actors.ActorGroupMember;
 
 public class ActorBalancingOnCreation {
-	public void balance(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, ActorCell> cells) {
+	public void balance(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, ActorCell> cells) {
 		List<UUID> buffer = new LinkedList<>();
 		for (UUID id : cells.keySet())
 			buffer.add(id);
 		
-		int i=0;
+		int i=0, j=0;
 		for (ActorCell cell : cells.values()) {
 			Actor actor = cell.getActor();
 			if (actor instanceof ActorGroupMember) {
@@ -45,6 +46,26 @@ public class ActorBalancingOnCreation {
 				}
 				if (buffer.remove(cell.getId()))
 					cellsMap.put(cell.getId(), id);
+			}
+			else if (actor instanceof ActorDistributedGroupMember) {
+				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getGroupId());
+				Long id = null;
+				if (threadIndex==null) {
+					id = actorThreads.get(j).getId();
+					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getGroupId(), j);
+				}
+				else {
+					threadIndex++;
+					if (threadIndex==actorThreads.size())
+						threadIndex = 0;
+					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getGroupId(), threadIndex);
+					id = actorThreads.get(threadIndex).getId();
+				}
+				if (buffer.remove(cell.getId()))
+					cellsMap.put(cell.getId(), id);
+				j++;
+				if (j==actorThreads.size())
+					j = 0;
 			}
 		}	
 						
