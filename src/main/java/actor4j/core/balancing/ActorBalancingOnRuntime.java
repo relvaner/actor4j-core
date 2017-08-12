@@ -73,8 +73,8 @@ public class ActorBalancingOnRuntime {
 					id = threadsList.get(threadIndex);
 				}
 				cellsMap.put(cell.getId(), id);
-				if (pollThreadIndex.incrementAndGet()==threadsList.size())
-					pollThreadIndex.set(0);
+				
+				pollThreadIndex.updateAndGet((index) -> index==threadsList.size()-1 ? 0 : index+1);
 			}
 			else
 				cellsMap.put(cell.getId(), pollThreadId(threadsMap));
