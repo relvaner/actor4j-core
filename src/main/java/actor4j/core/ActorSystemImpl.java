@@ -28,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
@@ -41,6 +41,7 @@ import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
+import actor4j.core.utils.Tuple;
 
 import static actor4j.core.protocols.ActorProtocolTag.*;
 import static actor4j.core.utils.ActorUtils.*;
@@ -53,7 +54,7 @@ public abstract class ActorSystemImpl {
 	protected final DIContainer<UUID> container;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
-	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
+	protected final Map<String, Tuple<Queue<UUID>, AtomicInteger>> aliases;  // ActorCellAlias -> ActorCellID
 	protected final Map<UUID, String> hasAliases;
 	protected final Map<UUID, Boolean> resourceCells;
 	protected final Map<UUID, ActorCell> pseudoCells;
@@ -215,7 +216,7 @@ public abstract class ActorSystemImpl {
 		return resourceCells;
 	}
 	
-	public Map<String, Queue<UUID>> getAliases() {
+	public Map<String, Tuple<Queue<UUID>, AtomicInteger>> getAliases() {
 		return aliases;
 	}
 
@@ -426,9 +427,9 @@ public abstract class ActorSystemImpl {
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
 			hasAliases.remove(id);
-			Queue<UUID> queue = aliases.get(alias);
-			queue.remove(id);
-			if (queue.isEmpty())
+			Tuple<Queue<UUID>, AtomicInteger> tuple = aliases.get(alias);
+			tuple.a.remove(id);
+			if (tuple.a.isEmpty())
 				aliases.remove(alias);
 		}
 	}
@@ -445,15 +446,15 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public ActorSystemImpl setAlias(UUID id, String alias) {
-		Queue<UUID> queue = null;
-		if ((queue=aliases.get(alias))==null) {
-			queue = new ConcurrentLinkedQueue<>();
-			queue.add(id);
-			aliases.put(alias, queue);
+		Tuple<Queue<UUID>, AtomicInteger> tuple = null;
+		if ((tuple=aliases.get(alias))==null) {
+			tuple = new Tuple<>(new ConcurrentLinkedQueue<>(), new AtomicInteger(0));
+			tuple.a.add(id);
+			aliases.put(alias, tuple);
 			hasAliases.put(id, alias);
 		}	
 		else {
-			queue.add(id);
+			tuple.a.add(id);
 			hasAliases.put(id, alias);
 		}
 		
@@ -476,9 +477,9 @@ public abstract class ActorSystemImpl {
 	public List<UUID> getActorsFromAlias(String alias) {
 		List<UUID> result = new LinkedList<>();
 		
-		Queue<UUID> queue = aliases.get(alias);
-		if (queue!=null)
-			queue.forEach((id) -> result.add(id));
+		Tuple<Queue<UUID>, AtomicInteger> tuple = aliases.get(alias);
+		if (tuple!=null)
+			tuple.a.forEach((id) -> result.add(id));
 		
 		return result;
 	}
@@ -534,7 +535,7 @@ public abstract class ActorSystemImpl {
 			if (destinations.size()==1)
 				message.dest = destinations.get(0);
 			else 
-				message.dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+				message.dest = destinations.get(aliases.get(alias).b.updateAndGet((index) -> index!=destinations.size()-1 ? index+1 : 0)/*ThreadLocalRandom.current().nextInt(destinations.size())*/);
 			if (message.dest!=null)
 				send(message);
 		}
