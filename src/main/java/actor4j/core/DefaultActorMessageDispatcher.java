@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -96,10 +97,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			if (!destinations.isEmpty()) {
 				if (destinations.size()==1)
 					dest = destinations.get(0);
-				else {
-					Random random = new Random();
-					dest = destinations.get(random.nextInt(destinations.size()));
-				}
+				else
+					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			message.dest = (dest!=null) ? dest : UUID_ALIAS;
 		}

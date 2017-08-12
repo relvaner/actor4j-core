@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadLocalRandom;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
@@ -533,10 +533,8 @@ public abstract class ActorSystemImpl {
 		if (!destinations.isEmpty()) {
 			if (destinations.size()==1)
 				message.dest = destinations.get(0);
-			else {
-				Random random = new Random();
-				message.dest = destinations.get(random.nextInt(destinations.size()));
-			}
+			else 
+				message.dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			if (message.dest!=null)
 				send(message);
 		}
