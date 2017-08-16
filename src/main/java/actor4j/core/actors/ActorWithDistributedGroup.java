@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import actor4j.core.utils.ActorGroup;
 
-public abstract class ActorWithDistributedGroup extends Actor implements ActorGroupMember {
+public abstract class ActorWithDistributedGroup extends Actor implements ActorDistributedGroupMember {
 	protected UUID groupId;
 	
 	public ActorWithDistributedGroup(ActorGroup group) {
