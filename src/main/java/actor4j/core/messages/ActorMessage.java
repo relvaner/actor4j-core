@@ -149,6 +149,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 		SUPPORTED_TYPES.add(Void.class);
 		
 		// IMMUTABLE
+		SUPPORTED_TYPES.add(Object.class);
 		SUPPORTED_TYPES.add(UUID.class);
 	}
 }

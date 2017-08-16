@@ -58,8 +58,8 @@ public class ActorBalancingOnCreation {
 					threadIndex++;
 					if (threadIndex==actorThreads.size())
 						threadIndex = 0;
-					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getGroupId(), threadIndex);
 					id = actorThreads.get(threadIndex).getId();
+					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getGroupId(), threadIndex);
 				}
 				if (buffer.remove(cell.getId()))
 					cellsMap.put(cell.getId(), id);
