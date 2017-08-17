@@ -22,7 +22,7 @@ import java.util.UUID;
 public class ActorGroup extends HashSet<UUID> {
 	protected static final long serialVersionUID = -7544316988654909201L;
 	
-	protected UUID id;
+	protected final UUID id;
 	
 	public ActorGroup() {
 		super();
@@ -38,9 +38,5 @@ public class ActorGroup extends HashSet<UUID> {
 
 	public UUID getId() {
 		return id;
-	}
-
-	protected void setId(UUID id) {
-		this.id = id;
 	}
 }
