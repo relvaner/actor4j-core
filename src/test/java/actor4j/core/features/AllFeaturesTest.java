@@ -26,6 +26,6 @@ import org.junit.runner.RunWith;
 	SafetyFeature.class,
 	UnhandledFeature.class
 })
-public class AllFeatures {
+public class AllFeaturesTest {
 
 }
