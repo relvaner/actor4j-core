@@ -37,6 +37,7 @@ public class ActorWithCache<K, V> extends Actor {
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);
 		
+		this.cacheSize = cacheSize;
 		cache = new CacheLRUWithGC<>(cacheSize);
 	}
 	
