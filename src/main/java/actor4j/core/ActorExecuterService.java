@@ -155,10 +155,15 @@ public class ActorExecuterService {
 		for (ActorThread t : actorThreads)
 			t.start();
 		
+		/*
+		 * necessary before executing onStartup; 
+		 * creating of childrens in Actor::preStart: childrens needs to register at the dispatcher
+		 * (see also ActorSystemImpl::internal_addCell)
+		 */
+		started.set(true);
+		
 		if (onStartup!=null)
 			onStartup.run();
-		
-		started.set(true);
 	}
 	
 	public boolean isStarted() {
