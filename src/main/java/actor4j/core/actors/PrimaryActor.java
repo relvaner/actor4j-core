@@ -15,6 +15,7 @@
  */
 package actor4j.core.actors;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -44,8 +45,13 @@ public abstract class PrimaryActor extends ActorWithDistributedGroup {
 	
 	@Override
 	public void preStart() {
-		// creating secondary actors
-		List<UUID> ids = addChild(secondary.apply(self()), instances);
+		List<UUID> ids = null;
+
+		if (secondary!=null)
+			// creating secondary actors
+			ids = addChild(secondary.apply(self()), instances);
+		else
+			ids = new LinkedList<>();
 
 		ActorGroup secondaryGroup = new ActorGroup(ids);
 		hub = new HubPattern(this, secondaryGroup);
