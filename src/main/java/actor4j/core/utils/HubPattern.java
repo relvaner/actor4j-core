@@ -23,20 +23,20 @@ import actor4j.core.messages.ActorMessage;
 public class HubPattern {
 	protected Actor actor;
 	
-	protected ActorGroup ports;
+	protected ActorGroupSet ports;
 
 	public HubPattern(Actor actor) {
 		super();
 		
 		this.actor = actor;
 		
-		ports = new ActorGroup();
+		ports = new ActorGroupSet();
 	}
 	
 	public HubPattern(Actor actor, ActorGroup group) {
 		this(actor);
 		
-		ports = group;
+		ports.addAll(group);
 	}
 	
 	public ActorGroup getPorts() {

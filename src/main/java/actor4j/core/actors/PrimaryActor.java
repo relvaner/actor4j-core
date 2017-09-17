@@ -23,6 +23,7 @@ import java.util.function.Function;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
+import actor4j.core.utils.ActorGroupSet;
 import actor4j.core.utils.HubPattern;
 
 public abstract class PrimaryActor extends ActorWithDistributedGroup {
@@ -53,7 +54,7 @@ public abstract class PrimaryActor extends ActorWithDistributedGroup {
 		else
 			ids = new LinkedList<>();
 
-		ActorGroup secondaryGroup = new ActorGroup(ids);
+		ActorGroupSet secondaryGroup = new ActorGroupSet(ids);
 		hub = new HubPattern(this, secondaryGroup);
 		
 		ids.add(self());

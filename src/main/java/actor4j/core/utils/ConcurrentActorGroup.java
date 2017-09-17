@@ -13,21 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package actor4j.core.features;
+package actor4j.core.utils;
 
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ActorFeature.class,
-	AwaitFeature.class,
-	BehaviourFeature.class,
-	MatcherFeature.class,
-	SafetyFeature.class,
-	UnhandledFeature.class,
-	PrimarySecondaryActorFeature.class
-})
-public class AllFeaturesTest {
+public class ConcurrentActorGroup extends ConcurrentLinkedQueue<UUID> implements ActorGroup {
+	protected static final long serialVersionUID = 1L;
+	
+	protected final UUID id;
 
+	public ConcurrentActorGroup() {
+		super();
+
+		id = UUID.randomUUID();
+	}
+
+	public ConcurrentActorGroup(Collection<? extends UUID> c) {
+		super(c);
+
+		id = UUID.randomUUID();
+	}
+
+	@Override
+	public UUID getId() {
+		return id;
+	}
 }

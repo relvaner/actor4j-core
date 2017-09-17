@@ -15,9 +15,41 @@
  */
 package actor4j.core.utils;
 
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 
-public class ActorGroupAsList extends LinkedList<UUID> {
-	protected static final long serialVersionUID = -8584311740112506967L;
+public class ActorGroupSet extends HashSet<UUID> implements ActorGroup {
+	protected static final long serialVersionUID = 1L;
+	
+	protected final UUID id;
+
+	public ActorGroupSet() {
+		super();
+		
+		id = UUID.randomUUID();
+	}
+
+	public ActorGroupSet(Collection<UUID> c) {
+		super(c);
+		
+		id = UUID.randomUUID();
+	}
+
+	public ActorGroupSet(int initialCapacity, float loadFactor) {
+		super(initialCapacity, loadFactor);
+		
+		id = UUID.randomUUID();
+	}
+
+	public ActorGroupSet(int initialCapacity) {
+		super(initialCapacity);
+		
+		id = UUID.randomUUID();
+	}
+
+	@Override
+	public UUID getId() {
+		return id;
+	}
 }
