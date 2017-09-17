@@ -15,41 +15,53 @@
  */
 package actor4j.core.features;
 
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
+import static org.junit.Assert.*;
+
 public class ActorFeature {
 	@Test
 	public void test_preStart_addChild() {
 		ActorSystem system = new ActorSystem();
 		
-		system.addActor(() -> new Actor("parent") {
+		AtomicBoolean done = new AtomicBoolean(false);
+		
+		UUID parent = system.addActor(() -> new Actor("parent") {
+			protected UUID child;
+			
 			@Override
-			public void preStart() {
-				addChild(() -> new Actor("child") {
+			public void preStart() {	
+				child = addChild(() -> new Actor("child") {
 					@Override
 					public void receive(ActorMessage<?> message) {
-						// empty
+						done.set(true);
 					}
 				});
 			}
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				// empty
+				tell(null, 0, child);
 			}
 		});
 		
 		system.start();
 		
+		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		assertTrue(done.get());
+		
 		system.shutdownWithActors(true);
 	}
 }
