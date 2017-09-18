@@ -67,4 +67,9 @@ public class HubPattern {
 		for (UUID dest : ports)
 			actor.send(message, dest);
 	}
+	
+	public <T> void broadcast(T value, int tag) {
+		for (UUID dest : ports)
+			actor.tell(value, tag, dest);
+	}
 }

@@ -35,4 +35,8 @@ public abstract class SecondaryActor extends ActorWithDistributedGroup {
 	public void publish(ActorMessage<?> message) {
 		send(message, primary);
 	}
+	
+	public <T> void publish(T value, int tag) {
+		tell(value, tag, primary);
+	}
 }

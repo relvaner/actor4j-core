@@ -65,4 +65,8 @@ public abstract class PrimaryActor extends ActorWithDistributedGroup {
 	public void publish(ActorMessage<?> message) {
 		hub.broadcast(message);
 	}
+	
+	public <T> void publish(T value, int tag) {
+		hub.broadcast(value, tag);
+	}
 }
