@@ -17,5 +17,48 @@ Following dependency from this site is involved:
 		</dependency>
 ```
 
-Page to be updated 07/14/2017
+## Simple Example ##
+```java
+// Initialize the actor system
+ActorSystem system = new ActorSystem("Example");
+		
+// Creation of actor pong
+UUID pong = system.addActor(() -> new Actor() {
+	@Override
+	public void receive(ActorMessage<?> message) {
+		// Receives message from ping
+		System.out.println(message.valueAsString());
+		// Sends message "pong" to ping
+		tell("pong", 0, message.source);
+	}
+});
+// Creation of actor ping
+UUID ping = system.addActor(() -> new Actor() {
+	@Override
+	public void receive(ActorMessage<?> message) {
+		if (message.value!=null)
+			// Receives message from pong
+			System.out.println(message.valueAsString());
+		// Sends message "ping" to pong
+		tell("ping", 0, pong);
+	}
+});
+		
+// Starts the actor system
+system.start();
+		
+// Sends a message to ping to start the ping-pong process
+system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, ping));
+		
+// Lifetime for the ping-pong process
+try {
+	Thread.sleep(2000);
+} catch (InterruptedException e) {
+	e.printStackTrace();
+}
+// Wait until all actors are shutdown
+system.shutdownWithActors(true);
+```
+
+Page updated 09/18/2017
 
