@@ -60,5 +60,5 @@ try {
 system.shutdownWithActors(true);
 ```
 
-Page updated 09/18/2017
+Page last updated 09/18/2017
 
