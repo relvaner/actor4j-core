@@ -23,7 +23,7 @@ import java.util.UUID;
 import actor4j.core.utils.Copyable;
 import actor4j.core.utils.Shareable;
 
-public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
+public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<ActorMessage<T>> {
 	private static Set<Class<?>> SUPPORTED_TYPES;
 	
 	public T value;
@@ -124,6 +124,11 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>> {
 		}
 		else
 			return new ActorMessage<T>(null, tag, source, dest);
+	}
+	
+	@Override
+	public int compareTo(ActorMessage<T> message) {
+		return Integer.compare(tag, message.tag); // tag - message.tag
 	}
 
 	@Override

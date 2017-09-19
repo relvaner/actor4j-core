@@ -248,6 +248,10 @@ public class ActorCell {
 		system.messageDispatcher.post(message, node, path);
 	}
 	
+	public void priority(ActorMessage<?> message) {
+		system.messageDispatcher.postPriority(message);
+	}
+	
 	public void unhandled(ActorMessage<?> message) {
 		if (system.debugUnhandled) {
 			Actor sourceActor = system.cells.get(message.source).actor;

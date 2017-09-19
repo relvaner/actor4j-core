@@ -74,6 +74,8 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postServer(ActorMessage<?> message);
 	
+	public abstract void postPriority(ActorMessage<?> message);
+	
 	public abstract void postDirective(ActorMessage<?> message);
 	
 	public abstract void postPersistence(ActorMessage<?> message);

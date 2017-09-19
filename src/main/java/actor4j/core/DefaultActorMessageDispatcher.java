@@ -31,6 +31,7 @@ import static actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
+	protected BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
 	
 	protected Consumer<ActorMessage<?>> consumerPseudo;
@@ -44,6 +45,13 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			@Override
 			public void accept(Long id_dest, ActorMessage<?> msg) {
 				((DefaultActorThread)threadsMap.get(id_dest)).serverQueueL2.offer(msg);
+				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
+			}
+		};
+		biconsumerPriority = new BiConsumer<Long, ActorMessage<?>>() {
+			@Override
+			public void accept(Long id_dest, ActorMessage<?> msg) {
+				((DefaultActorThread)threadsMap.get(id_dest)).priorityQueue.offer(msg);
 				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
 			}
 		};
@@ -194,6 +202,11 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	@Override
 	public void postServer(ActorMessage<?> message) {
 		postQueue(message, biconsumerServer);
+	}
+	
+	@Override
+	public void postPriority(ActorMessage<?> message) {
+		postQueue(message, biconsumerPriority);
 	}
 	
 	@Override

@@ -17,6 +17,7 @@ package actor4j.core;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
@@ -27,6 +28,7 @@ import actor4j.core.messages.ActorMessage;
 
 public class DefaultActorThread extends ActorThread {
 	protected Queue<ActorMessage<?>> directiveQueue;
+	protected Queue<ActorMessage<?>> priorityQueue;
 	protected Queue<ActorMessage<?>> innerQueue;
 	protected Queue<ActorMessage<?>> outerQueueL2;
 	protected Queue<ActorMessage<?>> outerQueueL1;
@@ -39,6 +41,7 @@ public class DefaultActorThread extends ActorThread {
 		super(system);
 		
 		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
+		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize());
 		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize());
 		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize());
 		outerQueueL2   = new MpscArrayQueue<>(system.getQueueSize());
@@ -51,6 +54,7 @@ public class DefaultActorThread extends ActorThread {
 	@Override
 	public void onRun() {
 		boolean hasNextDirective;
+		boolean hasNextPriority;
 		int hasNextServer;
 		int hasNextOuter;
 		int hasNextInner;
@@ -58,12 +62,16 @@ public class DefaultActorThread extends ActorThread {
 		
 		while (!isInterrupted()) {
 			hasNextDirective = false;
+			hasNextPriority  = false;
 			hasNextServer    = 0;
 			hasNextOuter     = 0;
 			hasNextInner     = 0;
 			
 			while (poll(directiveQueue)) 
 				hasNextDirective=true;
+			
+			while (poll(priorityQueue)) 
+				hasNextPriority=true;
 			
 			if (system.clientMode) {
 				for (; poll(serverQueueL1) && hasNextServer<system.throughput; hasNextServer++);
@@ -87,7 +95,7 @@ public class DefaultActorThread extends ActorThread {
 			
 			for (; poll(innerQueue) && hasNextInner<system.throughput; hasNextInner++);
 			
-			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextDirective) {
+			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
 				idle++;
 				if (idle>system.idle) {
 					idle = 0;
@@ -120,6 +128,10 @@ public class DefaultActorThread extends ActorThread {
 		return directiveQueue;
 	}
 	
+	public Queue<ActorMessage<?>> getPriorityQueue() {
+		return priorityQueue;
+	}
+
 	public Queue<ActorMessage<?>> getInnerQueue() {
 		return innerQueue;
 	}

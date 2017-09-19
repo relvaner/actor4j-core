@@ -223,6 +223,20 @@ public abstract class Actor {
 		send(message);
 	}
 	
+	public void priority(ActorMessage<?> message) {
+		cell.priority(message);
+	}
+	
+	public void priority(ActorMessage<?> message, UUID dest) {
+		message.source = self();
+		message.dest   = dest;
+		priority(message);
+	}
+	
+	public <T> void priority(T value, int tag, UUID dest) {
+		priority(new ActorMessage<T>(value, tag, self(), dest));
+	}
+	
 	public void unhandled(ActorMessage<?> message) {
 		cell.unhandled(message);
 	}
