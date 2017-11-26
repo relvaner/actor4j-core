@@ -62,6 +62,8 @@ system.shutdownWithActors(true);
 
 Page last updated 09/18/2017
 
+---
+
 <!-- [![gitter: actor4j/actor4j](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/actor4j/actor4j) -->
 <!-- [<img title="gitter: actor4j/actor4j" src="https://badges.gitter.im/Join Chat.svg" alt="gitter: actor4j/actor4j">](https://gitter.im/actor4j/actor4j) -->
 
