@@ -92,7 +92,7 @@ public class ActorStrategyOnFailure {
 		SupervisorStrategyDirective directive = supervisorStrategy.apply(e);
 		
 		while (directive==ESCALATE && !parent.isRoot()) {
-			parent = system.cells.get(parent);
+			parent = system.cells.get(parent.parent);
 			supervisorStrategy = parent.supervisorStrategy();
 			directive = supervisorStrategy.apply(e);
 		}
