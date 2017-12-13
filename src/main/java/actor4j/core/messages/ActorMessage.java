@@ -106,7 +106,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	public T readValue(Class<T> valueType) {
 		T result = null;
 		
-		if (value instanceof String)
+		if (value instanceof String) // as json string
 			try {
 				result = new ObjectMapper().readValue((String)value, valueType);
 			} catch (IOException e) {
@@ -119,7 +119,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	public T readValue(TypeReference<T> valueTypeRef) {
 		T result = null;
 		
-		if (value instanceof String)
+		if (value instanceof String) // as json string
 			try {
 				result = new ObjectMapper().readValue((String)value, valueTypeRef);
 			} catch (IOException e) {
