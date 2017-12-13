@@ -15,10 +15,14 @@
  */
 package actor4j.core.messages;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import actor4j.core.utils.Copyable;
 import actor4j.core.utils.Shareable;
@@ -97,6 +101,32 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	
 	public UUID valueAsUUID() {
 		return (UUID)value;
+	}
+	
+	public T readValue(Class<T> valueType) {
+		T result = null;
+		
+		if (value instanceof String)
+			try {
+				result = new ObjectMapper().readValue((String)value, valueType);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		return result;
+	}
+	
+	public T readValue(TypeReference<T> valueTypeRef) {
+		T result = null;
+		
+		if (value instanceof String)
+			try {
+				result = new ObjectMapper().readValue((String)value, valueTypeRef);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		return result;
 	}
 	
 	protected ActorMessage<T> weakCopy() {
