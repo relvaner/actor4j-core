@@ -26,7 +26,9 @@ import org.junit.runner.RunWith;
 	MatcherFeature.class,
 	SafetyFeature.class,
 	UnhandledFeature.class,
-	PrimarySecondaryActorFeature.class
+	PrimarySecondaryActorFeature.class,
+	
+	PersistenceFeature.class
 })
 public class AllFeaturesTest {
 
