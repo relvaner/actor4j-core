@@ -269,7 +269,7 @@ public class ActorExecuterService {
 		}
 		
 		if (system.persistenceMode)
-			persistenceService.shutdown(await);
+			persistenceService.shutdown();
 	}
 	
 	public long getCount() {

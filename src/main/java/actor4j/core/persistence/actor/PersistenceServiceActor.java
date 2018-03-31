@@ -39,8 +39,6 @@ import actor4j.core.messages.ActorMessage;
 public class PersistenceServiceActor extends Actor {
 	protected ActorSystem parent;
 	
-	protected String host;
-	protected int port;
 	protected String databaseName;
 	
 	protected MongoClient client;
@@ -52,18 +50,15 @@ public class PersistenceServiceActor extends Actor {
 	public static final int PERSIST_STATE  = 101;
 	public static final int RECOVER  	   = 102;
 	
-	public PersistenceServiceActor(ActorSystem parent, String name, String host, int port, String databaseName) {
+	public PersistenceServiceActor(ActorSystem parent, String name, MongoClient client, String databaseName) {
 		super(name);
 		this.parent = parent;
-		this.host = host;
-		this.port = port;
+		this.client = client;
 		this.databaseName = databaseName;
 	}
 
 	@Override
 	public void preStart() {
-		client = new MongoClient(host, port);
-		
 		database = client.getDatabase(databaseName);
 		events = database.getCollection("persistence.events");
 		states = database.getCollection("persistence.states");
@@ -144,10 +139,5 @@ public class PersistenceServiceActor extends Actor {
 				parent.send(new ActorMessage<String>(obj.toString(), INTERNAL_PERSISTENCE_RECOVER, self(), message.source));
 			}
 		}
-	}
-	
-	@Override
-	public void postStop() {
-		client.close();
 	}
 }

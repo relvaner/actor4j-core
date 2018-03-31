@@ -17,23 +17,27 @@ package actor4j.core.persistence;
 
 import java.util.UUID;
 
+import com.mongodb.MongoClient;
+
 import actor4j.core.ActorService;
 import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 
 public class ActorPersistenceService {
 	protected ActorService service;
+	protected MongoClient client;
 	
 	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, String host, int port, String databaseName) {
 		super();
-		
+
 		service = new ActorService("actor4j-persistence-service");
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
+		client = new MongoClient(host, port);
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
-			UUID id = service.addActor(() -> new PersistenceServiceActor(parent, alias, host, port, databaseName));
+			UUID id = service.addActor(() -> new PersistenceServiceActor(parent, alias, client, databaseName));
 			service.setAlias(id, alias);
 		}
 	}
@@ -51,10 +55,7 @@ public class ActorPersistenceService {
 	}
 	
 	public void shutdown() {
-		service.shutdownWithActors();
-	}
-	
-	public void shutdown(boolean await) {
-		service.shutdownWithActors(await);
+		service.shutdownWithActors(true);
+		client.close();
 	}
 }
