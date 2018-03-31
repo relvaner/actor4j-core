@@ -278,7 +278,7 @@ public abstract class Actor {
 	}
 	
 	public void postRestart(Exception reason) {
-		preStart();
+		cell.preStart();
 	}
 	
 	public void postStop() {
