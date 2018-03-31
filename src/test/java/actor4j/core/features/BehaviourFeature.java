@@ -16,6 +16,7 @@
 package actor4j.core.features;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -38,8 +39,10 @@ public class BehaviourFeature {
 		system.setParallelismMin(1);
 	}
 		
-	@Test
+	@Test(timeout=2000)
 	public void test_become() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		final AtomicBoolean behaviour = new AtomicBoolean(false);
 		
 		UUID dest = system.addActor(new ActorFactory() { 
@@ -50,6 +53,7 @@ public class BehaviourFeature {
 						@Override
 						public void accept(ActorMessage<?> t) {
 							behaviour.set(true);
+							testDone.countDown();
 						}
 					};
 					
@@ -65,7 +69,7 @@ public class BehaviourFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -74,8 +78,10 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour.get());
 	}
 	
-	@Test
+	@Test(timeout=2000)
 	public void test_become_unbecome() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		final AtomicBoolean[] behaviour = new AtomicBoolean[2];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
@@ -100,8 +106,10 @@ public class BehaviourFeature {
 							become(newBehaviour);
 							first = false;
 						}
-						else
+						else {
 							behaviour[1].set(true);
+							testDone.countDown();
+						}
 					}
 				};
 			}
@@ -112,7 +120,7 @@ public class BehaviourFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -122,8 +130,10 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour[1].get());
 	}
 	
-	@Test
+	@Test(timeout=2000)
 	public void test_stack_become_unbecome() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		final AtomicBoolean[] behaviour = new AtomicBoolean[2];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
@@ -141,8 +151,10 @@ public class BehaviourFeature {
 								become(newBehaviour2, false);
 								first = false;
 							}
-							else
+							else {
 								behaviour[1].set(true);
+								testDone.countDown();
+							}
 						}
 					};
 					
@@ -168,7 +180,7 @@ public class BehaviourFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -178,8 +190,10 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour[1].get());
 	}
 	
-	@Test
+	@Test(timeout=2000)
 	public void test_stack_become_unbecomeAll() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		final AtomicBoolean[] behaviour = new AtomicBoolean[3];
 		for (int i=0; i<behaviour.length; i++)
 			behaviour[i] = new AtomicBoolean(false);
@@ -212,8 +226,10 @@ public class BehaviourFeature {
 							become(newBehaviour1);
 							first = false;
 						}
-						else
+						else {
 							behaviour[2].set(true);
+							testDone.countDown();
+						}
 					}
 				};
 			}
@@ -225,7 +241,7 @@ public class BehaviourFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

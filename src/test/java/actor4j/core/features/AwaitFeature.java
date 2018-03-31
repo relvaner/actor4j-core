@@ -18,6 +18,7 @@ package actor4j.core.features;
 import static org.junit.Assert.assertEquals;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -38,9 +39,11 @@ public class AwaitFeature {
 		system.setParallelismMin(1);
 	}
 		
-	@Test
+	@Test(timeout=2000)
 	public void test_await() {
-		final AtomicBoolean[] postconditions = new AtomicBoolean[2];
+		CountDownLatch testDone = new CountDownLatch(1);
+		
+		AtomicBoolean[] postconditions = new AtomicBoolean[2];
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
@@ -63,8 +66,10 @@ public class AwaitFeature {
 							await(1, action);
 							first = false;
 						}
-						else
+						else {
 							postconditions[1].set(true);
+							testDone.countDown();
+						}
 					}
 				};
 			}
@@ -75,7 +80,7 @@ public class AwaitFeature {
 		system.send(new ActorMessage<Object>(null, 1, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

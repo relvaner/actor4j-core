@@ -16,7 +16,7 @@
 package actor4j.core.features;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
@@ -27,11 +27,11 @@ import actor4j.core.messages.ActorMessage;
 import static org.junit.Assert.*;
 
 public class ActorFeature {
-	@Test
+	@Test(timeout=2000)
 	public void test_preStart_addChild() {
-		ActorSystem system = new ActorSystem();
+		CountDownLatch testDone = new CountDownLatch(1);
 		
-		AtomicBoolean done = new AtomicBoolean(false);
+		ActorSystem system = new ActorSystem();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child;
@@ -41,7 +41,7 @@ public class ActorFeature {
 				child = addChild(() -> new Actor("child") {
 					@Override
 					public void receive(ActorMessage<?> message) {
-						done.set(true);
+						testDone.countDown();
 					}
 				});
 			}
@@ -56,11 +56,10 @@ public class ActorFeature {
 		
 		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertTrue(done.get());
 		
 		system.shutdownWithActors(true);
 	}

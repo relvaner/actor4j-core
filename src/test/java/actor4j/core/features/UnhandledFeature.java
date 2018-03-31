@@ -16,6 +16,7 @@
 package actor4j.core.features;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.spi.LoggingEvent;
@@ -46,8 +47,10 @@ public class UnhandledFeature {
 		system.setDebugUnhandled(true);
 	}
 	
-	@Test
+	@Test(timeout=2000)
 	public void test() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
@@ -66,6 +69,7 @@ public class UnhandledFeature {
 						verify(mockAppender, times(1)).doAppend(captorLoggingEvent.capture());
 						LoggingEvent loggingEvent = captorLoggingEvent.getValue();
 						assertTrue(loggingEvent.getMessage().toString().contains("Unhandled message"));
+						testDone.countDown();
 					}
 				};
 			}
@@ -74,7 +78,7 @@ public class UnhandledFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

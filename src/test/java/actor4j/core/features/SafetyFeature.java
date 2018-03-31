@@ -16,6 +16,7 @@
 package actor4j.core.features;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +38,10 @@ public class SafetyFeature {
 		system.setParallelismMin(1);
 	}
 	
-	@Test
+	@Test(timeout=2000)
 	public void test() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
@@ -71,6 +74,7 @@ public class SafetyFeature {
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
 				assertEquals("actor", message);
 				assertEquals(dest, uuid);
+				testDone.countDown();
 			}
 		});
 		
@@ -78,7 +82,7 @@ public class SafetyFeature {
 		system.send(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, dest));
 		system.start();
 		try {
-			Thread.sleep(500);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -18,6 +18,7 @@ package actor4j.core.features;
 import static org.junit.Assert.assertTrue;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,8 +33,10 @@ import actor4j.core.utils.ConcurrentActorGroup;
 import static org.junit.Assert.*;
 
 public class PrimarySecondaryActorFeature {
-	@Test
+	@Test(timeout=2000)
 	public void test() {
+		CountDownLatch testDone = new CountDownLatch(4);
+		
 		ActorSystem system = new ActorSystem();
 		
 		AtomicBoolean primaryReceivedFromSystem = new AtomicBoolean(false);
@@ -45,8 +48,10 @@ public class PrimarySecondaryActorFeature {
 				(id) -> () -> new SecondaryActor(group, id) {
 					@Override
 					public void receive(ActorMessage<?> message) {
-						if (message.source==primary)
+						if (message.source==primary) {
 							secondaryReceived.incrementAndGet();
+							testDone.countDown();
+						}
 						else if (message.source==system.SYSTEM_ID)
 							publish(message);
 					}
@@ -64,8 +69,10 @@ public class PrimarySecondaryActorFeature {
 							primaryReceivedFromSystem.set(true);
 							publish(message);
 						}
-						else if (message.tag==101)
+						else if (message.tag==101) {
 							primaryReceived.set(true);
+							testDone.countDown();
+						}
 					}
 		});
 		
@@ -74,7 +81,7 @@ public class PrimarySecondaryActorFeature {
 		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, primary));
 		system.send(new ActorMessage<>(null, 101, system.SYSTEM_ID, group.peek()));
 		try {
-			Thread.sleep(100);
+			testDone.await();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
