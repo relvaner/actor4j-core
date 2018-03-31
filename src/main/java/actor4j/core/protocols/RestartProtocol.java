@@ -71,8 +71,10 @@ public class RestartProtocol {
 			cell.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		
-		if (waitForChildren.isEmpty()) 
+		if (waitForChildren.isEmpty()) {
 			postRestart(reason);
+			cell.setActiveDirectiveBehaviour(false);
+		}
 		else
 			cell.become(new Consumer<ActorMessage<?>>() {
 				protected boolean flag_stop;
