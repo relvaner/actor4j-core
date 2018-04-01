@@ -72,7 +72,7 @@ public abstract class ActorSystemImpl {
 	
 	protected boolean debugUnhandled;
 	
-	protected final int queueSize;
+	protected int queueSize;
 	protected int bufferQueueSize;
 	
 	protected int throughput;
@@ -314,6 +314,10 @@ public abstract class ActorSystemImpl {
 		return queueSize;
 	}
 
+	public void setQueueSize(int queueSize) {
+		this.queueSize = queueSize;
+	}
+	
 	public int getBufferQueueSize() {
 		return bufferQueueSize;
 	}
