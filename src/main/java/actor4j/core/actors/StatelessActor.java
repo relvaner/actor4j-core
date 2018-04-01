@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package actor4j.core.features;
+package actor4j.core.actors;
 
-import org.junit.runners.Suite;
-import org.junit.runner.RunWith;
+import actor4j.core.utils.ActorGroup;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-	ActorFeature.class,
-	BehaviourFeature.class,
-	AwaitFeature.class,
-	MatcherFeature.class,
-	SafetyFeature.class,
-	UnhandledFeature.class,
-	
-	EmbeddedActorFeature.class,
-	PseudoActorFeature.class,
-	StatelessActorFeature.class,
-	PrimarySecondaryActorFeature.class,
-	
-	PersistenceFeature.class
-})
-public class AllFeaturesTest {
+public abstract class StatelessActor extends ActorWithDistributedGroup {
 
+	public StatelessActor(ActorGroup group) {
+		super(group);
+	}
+
+	public StatelessActor(String name, ActorGroup group) {
+		super(name, group);
+	}
 }
