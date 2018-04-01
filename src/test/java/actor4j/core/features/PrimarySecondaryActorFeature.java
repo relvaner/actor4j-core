@@ -35,9 +35,8 @@ import static org.junit.Assert.*;
 public class PrimarySecondaryActorFeature {
 	@Test(timeout=2000)
 	public void test() {
-		CountDownLatch testDone = new CountDownLatch(4);
-		
 		ActorSystem system = new ActorSystem();
+		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());
 		
 		AtomicBoolean primaryReceivedFromSystem = new AtomicBoolean(false);
 		AtomicInteger secondaryReceived = new AtomicInteger(0);
@@ -55,7 +54,7 @@ public class PrimarySecondaryActorFeature {
 						else if (message.source==system.SYSTEM_ID)
 							publish(message);
 					}
-				}, 3) {
+				}, system.getParallelismMin()*system.getParallelismFactor()-1) {
 					@Override
 					public void preStart() {
 						super.preStart();
