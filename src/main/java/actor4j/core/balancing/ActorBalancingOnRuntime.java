@@ -15,13 +15,14 @@
  */
 package actor4j.core.balancing;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import actor4j.core.ActorCell;
 import actor4j.core.ActorThread;
@@ -33,7 +34,7 @@ public class ActorBalancingOnRuntime {
 	protected Queue<Long> balancedThreadsQueue;
 	protected AtomicInteger pollThreadIndex;
 	
-	protected AtomicInteger lock;
+	protected Lock lock;
 	
 	public ActorBalancingOnRuntime() {
 		super();
@@ -41,12 +42,12 @@ public class ActorBalancingOnRuntime {
 		balancedThreadsQueue = new ConcurrentLinkedQueue<>();
 		pollThreadIndex = new AtomicInteger(0);
 		
-		lock = new AtomicInteger(0);
+		lock = new ReentrantLock();
 	}
 	
 	public void registerCell(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, ActorCell cell) {
 		try {
-			while (lock.compareAndSet(0, 1)); 
+			lock.lock();
 		
 			Actor actor = cell.getActor();
 			if (actor instanceof ActorGroupMember) {
@@ -80,7 +81,7 @@ public class ActorBalancingOnRuntime {
 				cellsMap.put(cell.getId(), pollThreadId(threadsMap));
 		}
 		finally {
-			lock.set(0);
+			lock.unlock();
 		}
 	}
 	
@@ -95,9 +96,8 @@ public class ActorBalancingOnRuntime {
 	public Long pollThreadId(Map<Long, ActorThread> threadsMap) {
 		Long result = balancedThreadsQueue.poll();
 		if (result==null) {
-			Iterator<Long> iterator = threadsMap.keySet().iterator();
-			while (iterator.hasNext())
-				balancedThreadsQueue.offer(iterator.next());
+			for (Long key : threadsMap.keySet())
+				balancedThreadsQueue.offer(key);
 			result = balancedThreadsQueue.poll();
 		}
 			
