@@ -75,7 +75,7 @@ public class PersistenceFeature {
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(2);
 		
-		ActorSystem system = new ActorSystem("ExamplePersistence");
+		ActorSystem system = new ActorSystem();
 		
 		AtomicBoolean first = new AtomicBoolean(true);
 		UUID id = system.addActor(() -> new PersistentActor<MyState, MyEvent>("example") {
