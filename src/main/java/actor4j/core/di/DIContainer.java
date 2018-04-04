@@ -34,7 +34,6 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import actor4j.core.di.DIConfiguration;
 import actor4j.core.di.DIContainer;
 import actor4j.core.di.DIMapEntry;
 import actor4j.core.di.FactoryInjector;
@@ -103,12 +102,5 @@ public class DIContainer<K> {
 	
 	public static <K> DIContainer<K> create() {
 		return new DIContainer<>();
-	}
-	
-	public static <K> DIContainer<K> create(DIConfiguration<K> configuration) {
-		DIContainer<K> container = new DIContainer<>();
-		configuration.configure(container);
-		
-		return container;
 	}
 }
