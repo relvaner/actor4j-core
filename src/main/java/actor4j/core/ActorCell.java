@@ -36,7 +36,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PersistenceId;
 import actor4j.core.actors.PersistentActor;
-import actor4j.core.di.InjectorParam;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.exceptions.ActorKilledException;
 import actor4j.core.messages.ActorMessage;
@@ -277,12 +276,8 @@ public class ActorCell {
 	}
 	
 	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		InjectorParam[] params = new InjectorParam[args.length];
-		for (int i=0; i<args.length; i++)
-			params[i] = InjectorParam.createWithObj(args[i]);
-		
 		ActorCell cell = system.generateCell(clazz);
-		system.container.registerConstructorInjector(cell.id, clazz, params);
+		system.container.registerConstructorInjector(cell.id, clazz, args);
 		try {
 			Actor child = (Actor)system.container.getInstance(cell.id);
 			cell.actor = child;

@@ -30,25 +30,17 @@
  */
 package actor4j.core.di;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import actor4j.core.di.ConstructorInjector;
 import actor4j.core.di.FactoryInjector;
-import actor4j.core.di.MethodInjector;
-import actor4j.core.di.SetterInjector;
 
+// Adapted for actor4j
 public class DIMapEntry {
 	protected Class<?> base;
 	protected ConstructorInjector constructorInjector;
-	protected List<SetterInjector> setterInjectorList;
-	protected List<MethodInjector> methodInjectorList;
 	protected FactoryInjector<?> factoryInjector;
 	
 	public DIMapEntry() {
 		constructorInjector = new ConstructorInjector();
-		setterInjectorList = new ArrayList<>();
-		methodInjectorList = new ArrayList<>();
 	}
 
 	public Class<?> getBase() {
@@ -65,22 +57,6 @@ public class DIMapEntry {
 
 	public void setConstructorInjector(ConstructorInjector constructorInjector) {
 		this.constructorInjector = constructorInjector;
-	}
-
-	public List<SetterInjector> getSetterInjectorList() {
-		return setterInjectorList;
-	}
-
-	public void setSetterInjectorList(List<SetterInjector> setterInjectorList) {
-		this.setterInjectorList = setterInjectorList;
-	}
-
-	public List<MethodInjector> getMethodInjectorList() {
-		return methodInjectorList;
-	}
-
-	public void setMethodInjectorList(List<MethodInjector> methodInjectorList) {
-		this.methodInjectorList = methodInjectorList;
 	}
 
 	public FactoryInjector<?> getFactoryInjector() {

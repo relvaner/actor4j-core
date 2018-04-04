@@ -30,23 +30,19 @@
  */
 package actor4j.core.di;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import actor4j.core.di.InjectorParam;
-
+// Adapted for actor4j
 public class ConstructorInjector {
-	protected List<InjectorParam> params;
+	protected Object[] params;
 	
 	public ConstructorInjector() {
-		params = new ArrayList<>();
+		super();
 	}
 
-	public List<InjectorParam> getParams() {
+	public Object[] getParams() {
 		return params;
 	}
 
-	public void setParams(List<InjectorParam> params) {
+	public void setParams(Object[] params) {
 		this.params = params;
 	}
 }

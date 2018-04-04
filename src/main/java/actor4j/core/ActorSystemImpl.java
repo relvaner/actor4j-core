@@ -36,7 +36,6 @@ import actor4j.core.actors.ResourceActor;
 import actor4j.core.balancing.ActorBalancingOnCreation;
 import actor4j.core.balancing.ActorBalancingOnRuntime;
 import actor4j.core.di.DIContainer;
-import actor4j.core.di.InjectorParam;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorFactory;
@@ -377,12 +376,8 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		InjectorParam[] params = new InjectorParam[args.length];
-		for (int i=0; i<args.length; i++)
-			params[i] = InjectorParam.createWithObj(args[i]);
-		
 		ActorCell cell = generateCell(clazz);
-		container.registerConstructorInjector(cell.id, clazz, params);
+		container.registerConstructorInjector(cell.id, clazz, args);
 		Actor actor = null;
 		try {
 			actor = (Actor)container.getInstance(cell.id);
