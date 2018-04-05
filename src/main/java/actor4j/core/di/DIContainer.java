@@ -70,7 +70,7 @@ public class DIContainer<K> {
 		
 		Class<?>[] types = new Class<?>[params.length];
 		for (int i=0; i<params.length; i++)
-			types[i] = params.getClass();
+			types[i] = params[i].getClass();
 		
 		Constructor<?> c2 = base.getConstructor(types);
 		result = c2.newInstance(params);
