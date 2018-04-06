@@ -68,7 +68,7 @@ public class ActorCell {
 	protected ActorSystemImpl system;
 	protected Actor actor;
 	
-	protected UUID id;
+	protected final UUID id;
 	
 	protected UUID parent;
 	protected Queue<UUID> children;
