@@ -17,24 +17,24 @@ package actor4j.core.utils;
 
 import java.util.UUID;
 
-import actor4j.core.actors.Actor;
+import actor4j.core.actors.ActorRef;
 import actor4j.core.messages.ActorMessage;
 
 public class HubPattern {
-	protected Actor actor;
+	protected ActorRef actorRef;
 	
 	protected ActorGroupSet ports;
 
-	public HubPattern(Actor actor) {
+	public HubPattern(ActorRef actorRef) {
 		super();
 		
-		this.actor = actor;
+		this.actorRef = actorRef;
 		
 		ports = new ActorGroupSet();
 	}
 	
-	public HubPattern(Actor actor, ActorGroup group) {
-		this(actor);
+	public HubPattern(ActorRef actorRef, ActorGroup group) {
+		this(actorRef);
 		
 		ports.addAll(group);
 	}
@@ -65,11 +65,11 @@ public class HubPattern {
 	
 	public void broadcast(ActorMessage<?> message) {
 		for (UUID dest : ports)
-			actor.send(message, dest);
+			actorRef.send(message, dest);
 	}
 	
 	public <T> void broadcast(T value, int tag) {
 		for (UUID dest : ports)
-			actor.tell(value, tag, dest);
+			actorRef.tell(value, tag, dest);
 	}
 }

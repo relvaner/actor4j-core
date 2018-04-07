@@ -20,20 +20,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
+import actor4j.core.actors.ActorRef;
 import actor4j.core.messages.FutureActorMessage;
 import actor4j.core.pattern.actors.FutureActor;
 
 public final class FuturePattern {
-	public static <T> Future<T> ask(T value, int tag, UUID dest, Actor actor) {
-		UUID mediator = actor.getSystem().addActor(() -> new FutureActor(dest, true));
+	public static <T> Future<T> ask(T value, int tag, UUID dest, ActorRef actorRef) {
+		UUID mediator = actorRef.getSystem().addActor(() -> new FutureActor(dest, true));
 		
-		return ask(value, tag, dest, mediator, actor);
+		return ask(value, tag, dest, mediator, actorRef);
 	}
 	
-	public static <T> Future<T> ask(T value, int tag, UUID dest, UUID mediator, Actor actor) {	
+	public static <T> Future<T> ask(T value, int tag, UUID dest, UUID mediator, ActorRef actorRef) {	
 		CompletableFuture<T> result = new CompletableFuture<>();
-		actor.send(new FutureActorMessage<T>(result, value, tag, actor.self(), mediator));
+		actorRef.send(new FutureActorMessage<T>(result, value, tag, actorRef.self(), mediator));
 		
 		return result;
 	}

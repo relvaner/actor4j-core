@@ -31,7 +31,7 @@ import actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.utils.ActorFactory;
 
-public abstract class Actor {
+public abstract class Actor implements ActorRef {
 	protected ActorCell cell;
 	
 	protected String name;
