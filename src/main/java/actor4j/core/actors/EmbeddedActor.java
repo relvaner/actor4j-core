@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import actor4j.core.messages.ActorMessage;
 
 public abstract class EmbeddedActor {
-	protected ActorRef host;
+	protected EmbeddedHostActor host;
 	
 	protected String name;
 	
@@ -37,11 +37,11 @@ public abstract class EmbeddedActor {
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
-	public EmbeddedActor(ActorRef host) {
+	public EmbeddedActor(EmbeddedHostActor host) {
 		this(null, host);
 	}
 	
-	public EmbeddedActor(String name, ActorRef host) {
+	public EmbeddedActor(String name, EmbeddedHostActor host) {
 		super();
 		this.name = name;
 		this.host = host;
@@ -166,6 +166,26 @@ public abstract class EmbeddedActor {
 				return result;
 			}
 		}, false);
+	}
+	
+	public void send(ActorMessage<?> message) {
+		if (host!=null)
+			host.sendWithinHost(message);
+	}
+	
+	public void send(ActorMessage<?> message, UUID dest) {
+		message.source = self();
+		message.dest   = dest;
+		send(message);
+	}
+	
+	public <T> void tell(T value, int tag, UUID dest) {
+		send(new ActorMessage<T>(value, tag, self(), dest));
+	}
+	
+	public void forward(ActorMessage<?> message, UUID dest) {
+		message.dest   = dest;
+		send(message);
 	}
 	
 	public void preStart() {

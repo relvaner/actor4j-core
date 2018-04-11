@@ -15,11 +15,28 @@
  */
 package actor4j.core.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import actor4j.core.actors.EmbeddedActor;
 
-public interface ActorEmbeddedRouter extends Map<UUID, EmbeddedActor> {
+public class ActorEmbeddedRouter extends HashMap<UUID, EmbeddedActor> {
+	protected static final long serialVersionUID = 1L;
 
+	public ActorEmbeddedRouter() {
+		super();
+	}
+
+	public ActorEmbeddedRouter(int initialCapacity, float loadFactor) {
+		super(initialCapacity, loadFactor);
+	}
+
+	public ActorEmbeddedRouter(int initialCapacity) {
+		super(initialCapacity);
+	}
+
+	public ActorEmbeddedRouter(Map<? extends UUID, ? extends EmbeddedActor> m) {
+		super(m);
+	}
 }

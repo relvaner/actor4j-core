@@ -18,7 +18,7 @@ package actor4j.core.pattern.actors;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import actor4j.core.actors.Actor;
+import actor4j.core.actors.EmbeddedHostActor;
 import actor4j.core.actors.EmbeddedActor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.messages.FutureActorMessage;
@@ -27,11 +27,11 @@ public class FutureEmbeddedActor extends EmbeddedActor {
 	protected CompletableFuture<Object> future;
 	protected UUID dest;
 	
-	public FutureEmbeddedActor(UUID dest, Actor host) {
+	public FutureEmbeddedActor(UUID dest, EmbeddedHostActor host) {
 		this(null, dest, host);
 	}
 	
-	public FutureEmbeddedActor(String name, UUID dest, Actor host) {
+	public FutureEmbeddedActor(String name, UUID dest, EmbeddedHostActor host) {
 		super(name, host);
 		this.dest = dest;
 	}

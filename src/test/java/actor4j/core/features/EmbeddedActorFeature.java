@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
+import actor4j.core.actors.EmbeddedHostActor;
 import actor4j.core.actors.EmbeddedActor;
 import actor4j.core.messages.ActorMessage;
 
@@ -40,7 +40,7 @@ public class EmbeddedActorFeature {
 		
 		ActorSystem system = new ActorSystem();
 		
-		UUID host = system.addActor(() -> new Actor("host") {
+		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
 			protected EmbeddedActor client;
 			@Override
 			public void preStart() {
