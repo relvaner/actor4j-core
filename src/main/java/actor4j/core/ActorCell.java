@@ -288,7 +288,7 @@ public class ActorCell {
 		return internal_addChild(cell);
 	}
 	
-	public List<UUID> addChild(Class<? extends Actor> clazz, int instances, Object... args) throws ActorInitializationException {
+	public List<UUID> addChild(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		List<UUID> result = new ArrayList<>(instances);
 		
 		for (int i=0; i<instances; i++)

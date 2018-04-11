@@ -249,8 +249,8 @@ public abstract class Actor implements ActorRef {
 		return cell.addChild(clazz, args);
 	}
 	
-	public List<UUID> addChild(Class<? extends Actor> clazz, int instances, Object... args) {
-		return cell.addChild(clazz, instances, args);
+	public List<UUID> addChild(int instances, Class<? extends Actor> clazz, Object... args) {
+		return cell.addChild(instances, clazz, args);
 	}
 	
 	public UUID addChild(ActorFactory factory) {
