@@ -25,7 +25,7 @@ import java.util.function.Predicate;
 import actor4j.core.messages.ActorMessage;
 
 public abstract class EmbeddedActor {
-	protected Actor host;
+	protected ActorRef host;
 	
 	protected String name;
 	
@@ -37,11 +37,11 @@ public abstract class EmbeddedActor {
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
-	public EmbeddedActor(Actor host) {
+	public EmbeddedActor(ActorRef host) {
 		this(null, host);
 	}
 	
-	public EmbeddedActor(String name, Actor host) {
+	public EmbeddedActor(String name, ActorRef host) {
 		super();
 		this.name = name;
 		this.host = host;
@@ -50,7 +50,7 @@ public abstract class EmbeddedActor {
 		behaviourStack = new ArrayDeque<>();
 	}
 	
-	public Actor host() {
+	public ActorRef host() {
 		return host;
 	}
 
