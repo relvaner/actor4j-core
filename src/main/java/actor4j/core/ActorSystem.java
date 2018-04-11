@@ -133,8 +133,8 @@ public class ActorSystem {
 		return system.addActor(clazz, args);
 	}
 	
-	public List<UUID> addActor(Class<? extends Actor> clazz, int instances, Object... args) {
-		return system.addActor(clazz, instances, args);
+	public List<UUID> addActor(int instances, Class<? extends Actor> clazz, Object... args) {
+		return system.addActor(instances, clazz, args);
 	}
 	
 	public UUID addActor(ActorFactory factory) {

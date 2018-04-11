@@ -93,6 +93,10 @@ public abstract class ActorThread extends Thread {
 		}, uuid);
 	}
 	
+	public AtomicLong getCounter() {
+		return counter;
+	}
+
 	public long getCount() {
 		return counter.longValue();
 	}
