@@ -22,14 +22,24 @@ import actor4j.core.utils.ActorEmbeddedRouter;
 
 public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	protected ActorEmbeddedRouter router;
+	protected boolean redirectEnabled;
 	
 	public EmbeddedHostActor() {
-		this(null);
+		this(null, false);
 	}
 	
 	public EmbeddedHostActor(String name) {
+		this(name, false);
+	}
+	
+	public EmbeddedHostActor(boolean redirectEnabled) {
+		this(null, redirectEnabled);
+	}
+	
+	public EmbeddedHostActor(String name, boolean redirectEnabled) {
 		super(name);
 		
+		this.redirectEnabled = redirectEnabled;
 		this.router = new ActorEmbeddedRouter();
 	}
 	
@@ -39,13 +49,15 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	
 	public UUID addEmbeddedChild(EmbeddedActor embeddedActor) {
 		router.put(embeddedActor.getId(), embeddedActor);
-		//getSystem().addRedirection(embeddedActor.getId(), self());
+		if (redirectEnabled)
+			getSystem().addRedirection(embeddedActor.getId(), self());
 		
 		return embeddedActor.getId();
 	}
 	
 	public void removeEmbeddedChild(EmbeddedActor embeddedActor) {
-		//getSystem().removeRedirection(embeddedActor.getId());
+		if (redirectEnabled)
+			getSystem().removeRedirection(embeddedActor.getId());
 	}	
 	
 	public boolean embedded(ActorMessage<?> message) {
