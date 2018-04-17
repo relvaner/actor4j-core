@@ -48,7 +48,7 @@ public abstract class PrimaryActor extends ActorWithDistributedGroup {
 	public void preStart() {
 		List<UUID> ids = null;
 
-		if (secondary!=null)
+		if (secondary!=null && instances>0)
 			// creating secondary actors
 			ids = addChild(secondary.apply(self()), instances);
 		else

@@ -128,7 +128,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		if (system.parallelismMin==1 && system.parallelismFactor==1) {
+		if (system.parallelismMin==1 && system.parallelismFactor==1 && Thread.currentThread() instanceof DefaultActorThread) {
 			((DefaultActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
 			((DefaultActorThread)Thread.currentThread()).newMessage();
 		}
