@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,73 +15,181 @@
  */
 package actor4j.core.utils;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class CacheLRUWithGC<K, E> implements Cache<K, E>  {
-	protected Map<K, E> map;
-	protected Deque<K> lru;
-	protected Map<K, Long> timestampMap;
+public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
+	protected static class Pair<V> {
+		public V value;
+		public long timestamp;
+		
+		public Pair(V value, long timestamp) {
+			this.value = value;
+			this.timestamp = timestamp;
+		}
+	}
+	
+	protected Map<K, Pair<V>> map;
+	protected SortedMap<Long, K> lru;
 	
 	protected int size;
 	
 	public CacheLRUWithGC(int size) {
 		map = new HashMap<>(size);
-		lru = new ArrayDeque<>(size);
-		timestampMap = new HashMap<>(size); 
+		lru = new TreeMap<>();
 		
 		this.size = size;
 	}
-	
-	@Override
-	public E get(K key) {
-		E result = map.get(key);
 		
-		if (result!=null) {
-			lru.remove(key);
-			lru.addLast(key);
-			timestampMap.put(key, System.currentTimeMillis());
+	public Map<K, Pair<V>> getMap() {
+		return map;
+	}
+
+	@Override
+	public V get(K key) {
+		V result = null;
+		
+		Pair<V> pair = map.get(key);
+		if (pair!=null) {
+			lru.remove(pair.timestamp);
+			pair.timestamp = System.currentTimeMillis();
+			lru.put(pair.timestamp, key);
+			result = pair.value;
 		}
 		
 		return result;
 	}
 	
 	@Override
-	public E put(K key, E value) {
-		E result = map.put(key, value);
+	public V put(K key, V value) {
+		V result = null;
 		
-		if (result==null) {
+		long timestamp = System.currentTimeMillis();
+		Pair<V> pair = map.put(key, new Pair<V>(value, timestamp));
+		if (pair==null) {
 			resize();
-			lru.addLast(key);
+			lru.put(timestamp, key);
 		}
 		else {
-			lru.remove(key);
-			lru.addLast(key);
+			lru.remove(pair.timestamp);
+			lru.put(timestamp, key);
+			result = pair.value;
 		}
-		timestampMap.put(key, System.currentTimeMillis());
 		
 		return result;
 	}
 	
 	public void remove(K key) {
 		map.remove(key);
-		timestampMap.remove(key);
 		lru.remove(key);
 	}
 	
 	public void clear() {
 		map.clear();
-		timestampMap.clear();
+		lru.clear();
+	}
+	
+	protected void resize() {
+		if (map.size()>size) {
+			long timestamp = lru.firstKey();
+			map.remove(lru.get(timestamp));
+			lru.remove(timestamp);
+		}
+	}
+	
+	@Override
+	public void gc(long maxTime) {
+		long currentTime = System.currentTimeMillis();
+		
+		Iterator<Entry<Long, K>> iterator = lru.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<Long, K> entry = iterator.next();
+			if (currentTime-entry.getKey()>maxTime) {
+				map.remove(entry.getValue());
+				iterator.remove();
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", size=" + size + "]";
+	}
+}
+/*
+public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
+	protected static class Pair<V> {
+		public V value;
+		public long timestamp;
+		
+		public Pair(V value, long timestamp) {
+			this.value = value;
+			this.timestamp = timestamp;
+		}
+	}
+	
+	protected Map<K, Pair<V>> map;
+	protected Deque<K> lru;
+	
+	protected int size;
+	
+	public CacheLRUWithGC(int size) {
+		map = new HashMap<>(size);
+		lru = new ArrayDeque<>(size);
+		
+		this.size = size;
+	}
+	
+	@Override
+	public V get(K key) {
+		V result = null;
+		
+		Pair<V> pair = map.get(key);
+		if (pair!=null) {
+			lru.remove(key);
+			lru.addLast(key);
+			pair.timestamp = System.currentTimeMillis();
+			result = pair.value;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public V put(K key, V value) {
+		V result = null;
+		
+		Pair<V> pair = map.put(key, new Pair<V>(value, System.currentTimeMillis()));
+		if (pair==null) {
+			resize();
+			lru.addLast(key);
+		}
+		else {
+			lru.remove(key);
+			lru.addLast(key);
+			result = pair.value;
+		}
+		
+		return result;
+	}
+	
+	public void remove(K key) {
+		map.remove(key);
+		lru.remove(key);
+	}
+	
+	public void clear() {
+		map.clear();
 		lru.clear();
 	}
 	
 	protected void resize() {
 		if (map.size()>size) {
 			map.remove(lru.getFirst());
-			timestampMap.remove(lru.getFirst());
 			lru.removeFirst();
 		}
 	}
@@ -93,17 +201,16 @@ public class CacheLRUWithGC<K, E> implements Cache<K, E>  {
 		Iterator<K> iterator = lru.iterator();
 		while (iterator.hasNext()) {
 			K key = iterator.next();
-			if (currentTime-timestampMap.get(key)>maxTime) {
+			if (currentTime-map.get(key).timestamp>maxTime) {
 				map.remove(key);
 				iterator.remove();
-				timestampMap.remove(key);
 			}
 		}
 	}
 
 	@Override
 	public String toString() {
-		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", timestampMap=" + timestampMap + ", size=" + size
-				+ "]";
+		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", size=" + size + "]";
 	}
 }
+*/
