@@ -15,9 +15,9 @@
  */
 package actor4j.core.utils;
 
-public interface Cache<K, E> {
-	public E get(K key);
-	public E put(K key, E value);
+public interface Cache<K, V> {
+	public V get(K key);
+	public V put(K key, V value);
 	public void remove(K key);
 	public void clear();
 	

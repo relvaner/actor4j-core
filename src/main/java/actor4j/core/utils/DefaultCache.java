@@ -15,67 +15,36 @@
  */
 package actor4j.core.utils;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CacheLRU<K, V> implements Cache<K, V> {
-	protected Map<K, V> map;
-	protected Deque<K> lru;
+public class DefaultCache<K, E> implements Cache<K, E> {
+	protected Map<K, E> map;
 	
-	protected int size;
-	
-	public CacheLRU(int size) {
-		map = new HashMap<>(size);
-		lru = new ArrayDeque<>(size);
-		
-		this.size = size;
+	public DefaultCache() {
+		map = new HashMap<>();
 	}
 	
 	@Override
-	public V get(K key) {
-		V result = map.get(key);
-		
-		if (result!=null) {
-			lru.remove(key);
-			lru.addLast(key);
-		}
-		
-		return result;
+	public E get(K key) {
+		return map.get(key);
 	}
 	
 	@Override
-	public V put(K key, V value) {
-		V result = map.put(key, value);
-		
-		if (result==null) {
-			resize();
-			lru.addLast(key);
-		}
-		else {
-			lru.remove(key);
-			lru.addLast(key);
-		}
-		
-		return result;
+	public E put(K key, E value) {
+		return map.put(key, value);
 	}
 	
 	public void remove(K key) {
 		map.remove(key);
-		lru.remove(key);
 	}
 	
 	public void clear() {
 		map.clear();
-		lru.clear();
 	}
 	
 	protected void resize() {
-		if (map.size()>size) {
-			map.remove(lru.getFirst());
-			lru.removeFirst();
-		}
+		// empty
 	}
 	
 	@Override
@@ -85,6 +54,6 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 
 	@Override
 	public String toString() {
-		return "CacheLRU [map=" + map + ", lru=" + lru + ", size=" + size + "]";
+		return "DefaultCache [map=" + map + "]";
 	}
 }
