@@ -32,7 +32,8 @@ import org.junit.runner.RunWith;
 	StatelessActorFeature.class,
 	PrimarySecondaryActorFeature.class,
 	
-	PersistenceFeature.class
+	PersistenceFeature.class,
+	CacheFeature.class
 })
 public class AllFeaturesTest {
 
