@@ -45,6 +45,11 @@ public class ActorBalancingOnRuntime {
 		lock = new ReentrantLock();
 	}
 	
+	public void reset() {
+		balancedThreadsQueue.clear();
+		pollThreadIndex.set(0);
+	}
+	
 	public void registerCell(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, ActorCell cell) {
 		try {
 			lock.lock();

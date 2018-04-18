@@ -95,9 +95,9 @@ public abstract class ActorSystemImpl {
 	protected boolean clientMode;
 	protected ActorClientRunnable clientRunnable;
 	
-	protected final CountDownLatch countDownLatch;
+	protected CountDownLatch countDownLatch;
 	
-	public final UUID USER_ID;
+	public UUID USER_ID;
 	public final UUID SYSTEM_ID;
 	public final UUID UNKNOWN_ID;
 	
@@ -153,6 +153,38 @@ public abstract class ActorSystemImpl {
 		serviceNodeName = "Default Node";
 		serviceNodes = new ArrayList<>();
 				
+		resetUserCell();
+		
+		SYSTEM_ID = internal_addCell(generateCell(new Actor("system") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+		}));
+		UNKNOWN_ID = internal_addCell(generateCell(new Actor("unknown") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+		}));
+	}
+	
+	protected void reset() {
+		aliases.clear();
+		hasAliases.clear();
+		resourceCells.clear();
+		pseudoCells.clear();
+		redirector.clear();
+		
+		messageDispatcher.reset();
+		actorBalancingOnRuntime.reset();
+		
+		bufferQueue.clear();
+		
+		resetUserCell();
+	}
+	
+	protected void resetUserCell() {
 		countDownLatch = new CountDownLatch(1);
 		
 		USER_ID = internal_addCell(generateCell(new Actor("user") {
@@ -166,18 +198,7 @@ public abstract class ActorSystemImpl {
 				countDownLatch.countDown();
 			}
 		}));
-		SYSTEM_ID = internal_addCell(generateCell(new Actor("system") {
-			@Override
-			public void receive(ActorMessage<?> message) {
-				// empty
-			}
-		}));
-		UNKNOWN_ID = internal_addCell(generateCell(new Actor("unknown") {
-			@Override
-			public void receive(ActorMessage<?> message) {
-				// empty
-			}
-		}));
+		
 	}
 	
 	public ActorCell generateCell(Actor actor) {
@@ -650,6 +671,8 @@ public abstract class ActorSystemImpl {
 						Thread.currentThread().interrupt();
 					}
 					executerService.shutdown(await);
+
+					reset();
 				}
 			});
 			

@@ -54,6 +54,14 @@ public abstract class ActorMessageDispatcher {
 		groupsDistributedMap = new ConcurrentHashMap<>();
 	}
 	
+	public void reset() {
+		threadsMap.clear();
+		threadsList.clear();
+		persistenceMap.clear();
+		groupsMap.clear();
+		groupsDistributedMap.clear();
+	}
+	
 	public Map<UUID, Long> getCellsMap() {
 		return cellsMap;
 	}

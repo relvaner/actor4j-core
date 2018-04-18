@@ -104,6 +104,13 @@ public class ActorExecuterService {
 		});
 	}
 	
+	protected void reset() {
+		actorThreads.clear();
+		actorTimers.clear();
+		
+		started.set(false);
+	}
+	
 	public SafetyManager getSafetyManager() {
 		return safetyManager;
 	}
@@ -270,6 +277,8 @@ public class ActorExecuterService {
 		
 		if (system.persistenceMode)
 			persistenceService.shutdown();
+		
+		reset();
 	}
 	
 	public long getCount() {
