@@ -32,6 +32,7 @@ package actor4j.core.safety;
 
 import java.util.UUID;
 
+//Adapted for actor4j
 public final class SafetyManager {
 	protected ErrorHandler errorHandler;
 		
