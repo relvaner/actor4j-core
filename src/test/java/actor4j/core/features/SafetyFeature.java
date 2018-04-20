@@ -26,8 +26,8 @@ import static org.junit.Assert.*;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.safety.ErrorHandler;
 import actor4j.core.utils.ActorFactory;
-import safety4j.ErrorHandler;
 
 public class SafetyFeature {
 	protected ActorSystem system;

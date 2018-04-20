@@ -20,8 +20,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import actor4j.core.messages.ActorMessage;
-import safety4j.Method;
-import safety4j.SafetyMethod;
+import actor4j.core.safety.Method;
+import actor4j.core.safety.SafetyMethod;
 
 public abstract class ActorThread extends Thread {
 	protected final UUID uuid; // for safety

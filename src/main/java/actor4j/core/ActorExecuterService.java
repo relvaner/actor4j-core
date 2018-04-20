@@ -34,8 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceService;
-import safety4j.ErrorHandler;
-import safety4j.SafetyManager;
+import actor4j.core.safety.ErrorHandler;
+import actor4j.core.safety.SafetyManager;
 
 public class ActorExecuterService {
 	protected ActorSystemImpl system;
