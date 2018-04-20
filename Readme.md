@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/relvaner/actor4j-core.svg?branch=master)](https://travis-ci.org/relvaner/actor4j-core)
 ## Actor4j Core ##
 
 This is the repository for Actor4j core.
