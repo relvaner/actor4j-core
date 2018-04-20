@@ -19,6 +19,7 @@ import actor4j.core.actors.Actor;
 import actor4j.core.actors.PersistentActor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceObject;
+import actor4j.core.persistence.ActorPersistenceService;
 import actor4j.core.persistence.Recovery;
 
 import static actor4j.core.utils.ActorLogger.*;
@@ -28,12 +29,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 
 import static org.junit.Assert.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ActorPersistenceService.class)
 public class PersistenceFeature {
 	static class MyState extends ActorPersistenceObject {
 		public String title;
@@ -123,10 +132,17 @@ public class PersistenceFeature {
 		});
 		
 		// Drop database
+		/*
 		MongoClient client = new MongoClient("localhost", 27017);
 		client.dropDatabase("actor4j-test");
 		client.close();
-		
+		*/
+		Fongo fongo = new Fongo("localhost");
+		try {
+			PowerMockito.whenNew(MongoClient.class).withArguments(Mockito.anyString(), Mockito.anyInt()).thenReturn(fongo.getMongo());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		system.persistenceMode("localhost", 27017, "actor4j-test");
 		system.start();
 		
