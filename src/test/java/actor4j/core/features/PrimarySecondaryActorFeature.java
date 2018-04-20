@@ -85,7 +85,7 @@ public class PrimarySecondaryActorFeature {
 			e.printStackTrace();
 		}
 		assertTrue(primaryReceivedFromSystem.get());
-		assertEquals(3, secondaryReceived.get());
+		assertEquals(system.getParallelismMin()*system.getParallelismFactor()-1, secondaryReceived.get());
 		assertTrue(primaryReceived.get());
 		
 		system.shutdownWithActors(true);
