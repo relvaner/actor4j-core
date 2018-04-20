@@ -25,6 +25,55 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
+	<build>
+		<plugins>
+			<plugin>
+       			<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-assembly-plugin</artifactId>
+        		<version>3.1.0</version>
+        		<configuration>
+        			<descriptorRefs>
+            			<descriptorRef>bin</descriptorRef>
+          			</descriptorRefs>
+              		<jarName>${project.artifactId}-${project.version}</jarName>
+              		<includes>
+                		<include>META-INF/LICENSE.txt</include>
+              		</includes>
+            	</configuration>
+        		<executions>
+          			<execution>
+            			<id>make-assembly</id>
+            			<phase>package</phase>
+            			<goals>
+              				<goal>single</goal>
+            			</goals>
+          			</execution>
+        		</executions>
+    		</plugin>
+    		<plugin>
+    			<groupId>org.eluder.coveralls</groupId>
+    			<artifactId>coveralls-maven-plugin</artifactId>
+    			<version>4.3.0</version>
+    			<!-- 
+    			<configuration>
+        			<repoToken></repoToken>
+    			</configuration>
+    			-->
+			</plugin>
+			<plugin>
+    			<groupId>org.codehaus.mojo</groupId>
+    			<artifactId>cobertura-maven-plugin</artifactId>
+    			<version>2.7</version>
+    			<configuration>
+        			<format>xml</format>
+        			<maxmem>256m</maxmem>
+        			<!-- aggregated reports for multi-module projects -->
+        			<aggregate>false</aggregate>
+    			</configuration>
+			</plugin>
+    	</plugins>
+    </build>
+	
 	<dependencies>
 		<dependency>
             <groupId>org.jctools</groupId>
