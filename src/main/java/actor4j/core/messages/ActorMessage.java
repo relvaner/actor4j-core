@@ -76,19 +76,19 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	}
 
 	public boolean valueAsBooolean() {
-		return (boolean)value;
+		return (Boolean)value;
 	}
 	
 	public int valueAsInt() {
-		return (int)value;
+		return (Integer)value;
 	}
 	
 	public long valueAsLong() {
-		return (long)value;
+		return (Long)value;
 	}
 	
 	public double valueAsDouble() {
-		return (double)value;
+		return (Double)value;
 	}
 	
 	public String valueAsString() {
