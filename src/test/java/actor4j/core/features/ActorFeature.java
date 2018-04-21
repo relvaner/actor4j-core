@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package actor4j.core.features;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
 
@@ -61,6 +62,89 @@ public class ActorFeature {
 			e.printStackTrace();
 		}
 		
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=2000)
+	public void test_getActorFromPath() {
+		ActorSystem system = new ActorSystem();
+		
+		AtomicReference<UUID> childA = new AtomicReference<>(null);
+		AtomicReference<UUID> childB = new AtomicReference<>(null);
+		AtomicReference<UUID> childBA = new AtomicReference<>(null);
+		AtomicReference<UUID> childBB = new AtomicReference<>(null);
+		AtomicReference<UUID> childC = new AtomicReference<>(null);
+		UUID parentA = system.addActor(() -> new Actor("parentA") {
+			@Override
+			public void preStart() {	
+				childA.set(addChild(() -> new Actor("childA") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				}));
+				childB.set(addChild(() -> new Actor("childB") {
+					@Override
+					public void preStart() {
+						childBA.set(addChild(() -> new Actor("childBA") {
+							@Override
+							public void receive(ActorMessage<?> message) {
+							}
+						}));
+						childBB.set(addChild(() -> new Actor("childBB") {
+							@Override
+							public void receive(ActorMessage<?> message) {
+							}
+						}));
+					}
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				}));
+				childC.set(addChild(() -> new Actor("childC") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				}));
+			}
+			
+			@Override
+			public void receive(ActorMessage<?> message) {
+			}
+		});
+		
+		AtomicReference<UUID> child = new AtomicReference<>(null);
+		UUID parentB = system.addActor(() -> new Actor("parentB") {
+			@Override
+			public void preStart() {	
+				child.set(addChild(() -> new Actor("child") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				}));
+			}
+			@Override
+			public void receive(ActorMessage<?> message) {
+			}
+		});
+		
+		system.start(() -> {
+			assertEquals(null, system.getActorFromPath(null));
+			assertEquals(system.USER_ID, system.getActorFromPath(""));
+			assertEquals(system.USER_ID, system.getActorFromPath("/"));
+			
+			assertEquals(parentA, system.getActorFromPath("parentA"));
+			assertEquals(parentA, system.getActorFromPath(parentA.toString()));
+			assertEquals(childA.get(), system.getActorFromPath("parentA/childA"));
+			assertEquals(childB.get(), system.getActorFromPath("parentA/childB"));
+			assertEquals(childBA.get(), system.getActorFromPath("parentA/childB/childBA"));
+			assertEquals(childBB.get(), system.getActorFromPath("parentA/childB/childBB"));
+			assertEquals(childC.get(), system.getActorFromPath("parentA/childC"));
+			
+			assertEquals(parentB, system.getActorFromPath("parentB"));
+			assertEquals(parentB, system.getActorFromPath(parentB.toString()));
+			assertEquals(child.get(), system.getActorFromPath("parentB/child"));
+			assertEquals(child.get(), system.getActorFromPath(parentB.toString()+"/"+child.toString()));
+		}, null);
 		system.shutdownWithActors(true);
 	}
 }

@@ -221,8 +221,8 @@ public class ActorSystem {
 		system.start();
 	}
 	
-	public void start(Runnable onTermination) {
-		system.start(onTermination);
+	public void start(Runnable onStartup, Runnable onTermination) {
+		system.start(onStartup, onTermination);
 	}
 	
 	public void shutdownWithActors() {

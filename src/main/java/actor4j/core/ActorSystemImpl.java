@@ -506,25 +506,31 @@ public abstract class ActorSystemImpl {
 	public UUID getActorFromPath(String path) {
 		ActorCell result = null;
 		
-		StringTokenizer tokenizer = new StringTokenizer(path, "/");
-		String token = null;
-		ActorCell parent = cells.get(USER_ID);
-		
-		while (tokenizer.hasMoreTokens()) {
-			token = tokenizer.nextToken();
+		if (path!=null) {
+			ActorCell parent = cells.get(USER_ID);
 			
-			Iterator<UUID> iterator = parent.getChildren().iterator();
-			result  = null;
-			while (iterator.hasNext()) {
-				ActorCell child = cells.get(iterator.next());
-				if (child!=null  && (token.equals(child.getActor().getName()) || token.equals(child.getId().toString()))) {
-					result = child;
-					break;
+			if (path.isEmpty() || path.equals("/"))
+				result = parent;
+			else {
+				StringTokenizer tokenizer = new StringTokenizer(path, "/");
+				String token = null;
+				while (tokenizer.hasMoreTokens()) {
+					token = tokenizer.nextToken();
+					
+					Iterator<UUID> iterator = parent.getChildren().iterator();
+					result  = null;
+					while (iterator.hasNext()) {
+						ActorCell child = cells.get(iterator.next());
+						if (child!=null  && (token.equals(child.getActor().getName()) || token.equals(child.getId().toString()))) {
+							result = child;
+							break;
+						}
+					}
+					if (result==null)
+						break;
+					parent = result;
 				}
 			}
-			if (result==null)
-				break;
-			parent = result;
 		}
 		
 		return (result!=null) ? result.getId() : null;
@@ -630,10 +636,10 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public void start() {
-		start(null);
+		start(null, null);
 	}
 	
-	public void start(Runnable onTermination) {
+	public void start(Runnable onStartup, Runnable onTermination) {
 		if (!executerService.isStarted())
 			executerService.start(new Runnable() {
 				@Override
@@ -651,6 +657,9 @@ public abstract class ActorSystemImpl {
 					ActorMessage<?> message = null;
 					while ((message=bufferQueue.poll())!=null)
 						messageDispatcher.postOuter(message);
+					
+					if (onStartup!=null)
+						onStartup.run();
 				}
 			}, onTermination);
 	}
