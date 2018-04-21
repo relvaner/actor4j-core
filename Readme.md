@@ -90,7 +90,7 @@ The structure of the `ActorMessage<T>` looks like that:
 | int | tag | tags helps for differentiating between messages  |
 | UUID | source | source of the message |
 | UUID | dest | destination of the message |
-| boolean | ref | call-by-reference or call-by-value (needs deep copy)|
+<!--| boolean | ref | call-by-reference or call-by-value (needs deep copy)|-->
 
 Tab. 1: Structure of the `ActorMessage<T>`
 
@@ -331,8 +331,10 @@ Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
 
 Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for later easy access (use of Guava Cache [[14](#14)]).
 
+<!--
 #### Note ####
 ~~An example can be found under ([Actor4j - Cluster Examples](https://github.com/relvaner/actor4j-cluster-examples))~~ and there is also a template (see [Actor4j - Web - Template](https://github.com/relvaner/actor4j-web-template)).
+-->
 
 ## Structure and behavioral analysis with an analysis tool ##
 
@@ -347,7 +349,7 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 This framework is released under an open source Apache 2.0 license.
 
 ## Announcement ##
-This framework will be currently restructured in separate repositories (former maven modules). It's currently under an prototype state.
+This software framework is currently under an prototype state.
 
 ## References ##
 [1]<a name="1"/> Lightbend (2016). Akka. http://akka.io/  
