@@ -48,6 +48,10 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 	public Map<K, Pair<V>> getMap() {
 		return map;
 	}
+	
+	public SortedMap<Long, K> getLru() {
+		return lru;
+	}
 
 	@Override
 	public V get(K key) {
@@ -56,7 +60,7 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 		Pair<V> pair = map.get(key);
 		if (pair!=null) {
 			lru.remove(pair.timestamp);
-			pair.timestamp = System.currentTimeMillis();
+			pair.timestamp = System.nanoTime();
 			lru.put(pair.timestamp, key);
 			result = pair.value;
 		}
@@ -68,7 +72,7 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 	public V put(K key, V value) {
 		V result = null;
 		
-		long timestamp = System.currentTimeMillis();
+		long timestamp = System.nanoTime();
 		Pair<V> pair = map.put(key, new Pair<V>(value, timestamp));
 		if (pair==null) {
 			resize();
@@ -108,7 +112,7 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 		Iterator<Entry<Long, K>> iterator = lru.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<Long, K> entry = iterator.next();
-			if (currentTime-entry.getKey()>maxTime) {
+			if (currentTime-entry.getKey()/1_000_000>maxTime) {
 				map.remove(entry.getValue());
 				iterator.remove();
 			}
