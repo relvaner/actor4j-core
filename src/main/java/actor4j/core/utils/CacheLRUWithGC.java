@@ -88,8 +88,9 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 	}
 	
 	public void remove(K key) {
+		Pair<V> pair = map.get(key);
+		lru.remove(pair.timestamp);
 		map.remove(key);
-		lru.remove(key);
 	}
 	
 	public void clear() {
@@ -124,97 +125,3 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", size=" + size + "]";
 	}
 }
-/*
-public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
-	protected static class Pair<V> {
-		public V value;
-		public long timestamp;
-		
-		public Pair(V value, long timestamp) {
-			this.value = value;
-			this.timestamp = timestamp;
-		}
-	}
-	
-	protected Map<K, Pair<V>> map;
-	protected Deque<K> lru;
-	
-	protected int size;
-	
-	public CacheLRUWithGC(int size) {
-		map = new HashMap<>(size);
-		lru = new ArrayDeque<>(size);
-		
-		this.size = size;
-	}
-	
-	@Override
-	public V get(K key) {
-		V result = null;
-		
-		Pair<V> pair = map.get(key);
-		if (pair!=null) {
-			lru.remove(key);
-			lru.addLast(key);
-			pair.timestamp = System.currentTimeMillis();
-			result = pair.value;
-		}
-		
-		return result;
-	}
-	
-	@Override
-	public V put(K key, V value) {
-		V result = null;
-		
-		Pair<V> pair = map.put(key, new Pair<V>(value, System.currentTimeMillis()));
-		if (pair==null) {
-			resize();
-			lru.addLast(key);
-		}
-		else {
-			lru.remove(key);
-			lru.addLast(key);
-			result = pair.value;
-		}
-		
-		return result;
-	}
-	
-	public void remove(K key) {
-		map.remove(key);
-		lru.remove(key);
-	}
-	
-	public void clear() {
-		map.clear();
-		lru.clear();
-	}
-	
-	protected void resize() {
-		if (map.size()>size) {
-			map.remove(lru.getFirst());
-			lru.removeFirst();
-		}
-	}
-	
-	@Override
-	public void gc(long maxTime) {
-		long currentTime = System.currentTimeMillis();
-		
-		Iterator<K> iterator = lru.iterator();
-		while (iterator.hasNext()) {
-			K key = iterator.next();
-			if (currentTime-map.get(key).timestamp>maxTime) {
-				map.remove(key);
-				iterator.remove();
-			}
-		}
-	}
-
-	@Override
-	public String toString() {
-		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", size=" + size + "]";
-	}
-}
-*/
