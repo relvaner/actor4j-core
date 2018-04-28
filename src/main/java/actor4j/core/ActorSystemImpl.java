@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.StringTokenizer;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
@@ -574,15 +574,15 @@ public abstract class ActorSystemImpl {
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
 			else
-				globalTimer().timer.schedule(new TimerTask() {
+				executerService.globalTimerExecuterService.schedule(new Runnable() {
 					@Override
 					public void run() {
 						if (cell.isActive()) {
 							messageDispatcher.postOuter(message);
-							cancel();
+							throw new RuntimeException("Task canceled"); // cancel
 						}
 					}
-				}, 25, 25);
+				}, 25, 25, TimeUnit.MILLISECONDS);
 		}
 		
 		return this;

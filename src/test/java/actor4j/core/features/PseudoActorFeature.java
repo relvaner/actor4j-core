@@ -21,11 +21,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.ActorTimer;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
 import actor4j.core.messages.ActorMessage;
@@ -52,13 +53,13 @@ public class PseudoActorFeature {
 			@Override
 			public Actor create() {
 				return new Actor("numberGenerator") {
-					protected ActorTimer timer;
+					protected ScheduledFuture<?> timerFuture;
 					protected int counter = 0;
 					
 					@Override
 					public void preStart() {
-						timer = system.timer()
-							.schedule(() -> new ActorMessage<Integer>(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25);
+						timerFuture = system.timer()
+							.schedule(() -> new ActorMessage<Integer>(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
 					}
 					
 					@Override
@@ -69,7 +70,7 @@ public class PseudoActorFeature {
 					
 					@Override
 					public void postStop() {
-						timer.cancel();
+						timerFuture.cancel(true);
 					}
 				};
 			}

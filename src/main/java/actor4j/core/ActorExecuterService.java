@@ -21,9 +21,7 @@ import static actor4j.core.utils.ActorUtils.actorLabel;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,14 +41,14 @@ public class ActorExecuterService {
 	protected SafetyManager safetyManager;
 	
 	protected List<ActorThread> actorThreads;
-	protected Queue<ActorTimer> actorTimers;
-	protected volatile ActorTimer globalTimer;
 	
 	protected CountDownLatch countDownLatch;
 	protected Runnable onTermination;
 	
 	protected AtomicBoolean started;
 	
+	protected ActorTimerExecuterService globalTimerExecuterService;
+	protected ActorTimerExecuterService timerExecuterService;
 	protected ExecutorService clientExecuterService;
 	protected ExecutorService resourceExecuterService;
 	
@@ -64,7 +62,6 @@ public class ActorExecuterService {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();
-		actorTimers = new ConcurrentLinkedQueue<>();
 		
 		started = new AtomicBoolean();
 		
@@ -106,7 +103,6 @@ public class ActorExecuterService {
 	
 	protected void reset() {
 		actorThreads.clear();
-		actorTimers.clear();
 		
 		started.set(false);
 	}
@@ -128,7 +124,11 @@ public class ActorExecuterService {
 			return;
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ResourceThreadFactory());
+		
+		globalTimerExecuterService = new ActorTimerExecuterService(system, 1, "actor4j-global-timer-thread");
+		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
+		
+		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ActorThreadFactory("actor4j-resource-thread"));
 		if (system.clientMode)
 			clientExecuterService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
 		
@@ -176,28 +176,15 @@ public class ActorExecuterService {
 	public boolean isStarted() {
 		return started.get();
 	}
-	
+
 	public ActorTimer timer() {
-		ActorTimer timer = new ActorTimer(system);
-		actorTimers.add(timer);
-		return timer;
+		return timerExecuterService;
 	}
 	
 	public ActorTimer globalTimer() {
-		// Double-Check-Idiom à la Bloch
-		ActorTimer tmp = globalTimer;
-		if (tmp==null) {
-			synchronized(this) {
-				tmp = globalTimer;
-				if (tmp==null) {
-					globalTimer = tmp = new ActorTimer(system);
-					actorTimers.add(globalTimer);
-				}
-			}
-		}
-		return tmp;
+		return globalTimerExecuterService;
 	}
-	
+
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
 		if (system.clientRunnable!=null)
 			clientExecuterService.submit(new Runnable() {
@@ -231,15 +218,13 @@ public class ActorExecuterService {
 	}
 	
 	public void shutdown(boolean await) {
+		globalTimerExecuterService.shutdown();
+		timerExecuterService.shutdown();
+		
 		resourceExecuterService.shutdown();
 		if (system.clientMode)
 			clientExecuterService.shutdown();
 
-		if (actorTimers.size()>0) {
-			for (ActorTimer t : actorTimers)
-				t.timer.cancel();
-		}
-		
 		if (actorThreads.size()>0) {
 			for (ActorThread t : actorThreads)
 				t.interrupt();
