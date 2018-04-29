@@ -157,6 +157,10 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public String getActorPath(UUID uuid) {
+		return system.getActorPath(uuid);
+	}
+	
 	public UUID getActorFromPath(String path) {
 		return system.getActorFromPath(path);
 	}

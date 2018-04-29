@@ -33,7 +33,9 @@ import org.junit.runner.RunWith;
 	PrimarySecondaryActorFeature.class,
 	
 	PersistenceFeature.class,
-	CacheFeature.class
+	CacheFeature.class,
+	
+	ServiceDiscoveyFeature.class
 })
 public class AllFeaturesTest {
 

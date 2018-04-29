@@ -38,7 +38,7 @@ public abstract class ActorMessageDispatcher {
 	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
 	protected Map<UUID, Integer> groupsDistributedMap;
 	
-	protected final UUID UUID_ALIAS = UUID_ZERO;
+	protected static final UUID UUID_ALIAS = UUID_ZERO;
 	
 	public ActorMessageDispatcher(ActorSystemImpl system) {
 		super();
@@ -106,5 +106,9 @@ public abstract class ActorMessageDispatcher {
 	
 	public void unregisterCell(ActorCell cell) {
 		system.actorBalancingOnRuntime.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
+	}
+	
+	public boolean isRegisteredCell(ActorCell cell) {
+		return cellsMap.containsKey(cell.getId());
 	}
 }

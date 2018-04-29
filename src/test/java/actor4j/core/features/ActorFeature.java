@@ -66,7 +66,7 @@ public class ActorFeature {
 	}
 	
 	@Test(timeout=2000)
-	public void test_getActorFromPath() {
+	public void test_getActorFromPath_getActorPath() {
 		ActorSystem system = new ActorSystem();
 		
 		AtomicReference<UUID> childA = new AtomicReference<>(null);
@@ -113,10 +113,16 @@ public class ActorFeature {
 		});
 		
 		AtomicReference<UUID> child = new AtomicReference<>(null);
+		AtomicReference<UUID> childWithoutName = new AtomicReference<>(null);
 		UUID parentB = system.addActor(() -> new Actor("parentB") {
 			@Override
 			public void preStart() {	
 				child.set(addChild(() -> new Actor("child") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				}));
+				childWithoutName.set(addChild(() -> new Actor() {
 					@Override
 					public void receive(ActorMessage<?> message) {
 					}
@@ -131,19 +137,33 @@ public class ActorFeature {
 			assertEquals(null, system.getActorFromPath(null));
 			assertEquals(system.USER_ID, system.getActorFromPath(""));
 			assertEquals(system.USER_ID, system.getActorFromPath("/"));
+			assertEquals("/", system.getActorPath(system.USER_ID));
 			
 			assertEquals(parentA, system.getActorFromPath("parentA"));
+			assertEquals(parentA, system.getActorFromPath("/parentA"));
+			assertEquals("/parentA", system.getActorPath(parentA));
 			assertEquals(parentA, system.getActorFromPath(parentA.toString()));
 			assertEquals(childA.get(), system.getActorFromPath("parentA/childA"));
+			assertEquals("/parentA/childA", system.getActorPath(childA.get()));
 			assertEquals(childB.get(), system.getActorFromPath("parentA/childB"));
+			assertEquals("/parentA/childB", system.getActorPath(childB.get()));
 			assertEquals(childBA.get(), system.getActorFromPath("parentA/childB/childBA"));
+			assertEquals("/parentA/childB/childBA", system.getActorPath(childBA.get()));
 			assertEquals(childBB.get(), system.getActorFromPath("parentA/childB/childBB"));
+			assertEquals("/parentA/childB/childBB", system.getActorPath(childBB.get()));
 			assertEquals(childC.get(), system.getActorFromPath("parentA/childC"));
+			assertEquals("/parentA/childC", system.getActorPath(childC.get()));
 			
 			assertEquals(parentB, system.getActorFromPath("parentB"));
+			assertEquals(parentB, system.getActorFromPath("/parentB"));
 			assertEquals(parentB, system.getActorFromPath(parentB.toString()));
+			assertEquals("/parentB", system.getActorPath(parentB));
 			assertEquals(child.get(), system.getActorFromPath("parentB/child"));
+			assertEquals(child.get(), system.getActorFromPath("/parentB/child"));
 			assertEquals(child.get(), system.getActorFromPath(parentB.toString()+"/"+child.toString()));
+			assertEquals("/parentB/child", system.getActorPath(child.get()));
+			
+			assertEquals("/parentB/"+childWithoutName.toString(), system.getActorPath(childWithoutName.get()));
 		}, null);
 		system.shutdownWithActors(true);
 	}

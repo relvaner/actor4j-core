@@ -92,6 +92,10 @@ public abstract class Actor implements ActorRef {
 		return cell.getId();
 	}
 	
+	public String getPath() {
+		return cell.getSystem().getActorPath(cell.getId());
+	}
+	
 	public UUID getParent() {
 		return cell.getParent();
 	}

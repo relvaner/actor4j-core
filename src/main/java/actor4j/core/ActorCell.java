@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -236,11 +237,30 @@ public class ActorCell {
 	}
 	
 	public void send(ActorMessage<?> message) {
-		system.messageDispatcher.post(message, id);
+		if (system.messagingEnabled.get())
+			system.messageDispatcher.post(message, id);
+		else
+			system.bufferQueue.offer(message.copy());
 	}
 	
 	public void send(ActorMessage<?> message, String alias) {
-		system.messageDispatcher.post(message, id, alias);
+		if (system.messagingEnabled.get())
+			system.messageDispatcher.post(message, id, alias);
+		else {
+			if (alias!=null) {
+				List<UUID> destinations = system.getActorsFromAlias(alias);
+
+				UUID dest = null;
+				if (!destinations.isEmpty()) {
+					if (destinations.size()==1)
+						dest = destinations.get(0);
+					else
+						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+				}
+				message.dest = (dest!=null) ? dest : ActorMessageDispatcher.UUID_ALIAS;
+				system.bufferQueue.offer(message.copy());
+			}
+		}
 	}
 	
 	public void send(ActorMessage<?> message, ActorServiceNode node, String path) {
@@ -248,7 +268,8 @@ public class ActorCell {
 	}
 	
 	public void priority(ActorMessage<?> message) {
-		system.messageDispatcher.postPriority(message);
+		if (system.messagingEnabled.get())
+			system.messageDispatcher.postPriority(message);
 	}
 	
 	public void unhandled(ActorMessage<?> message) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ public interface ActorRef {
 	public String getName();
 	public UUID getId();
 	public UUID self();
+	public String getPath();
 	public UUID getParent();
 	public Queue<UUID> getChildren();
 	public boolean isRoot();

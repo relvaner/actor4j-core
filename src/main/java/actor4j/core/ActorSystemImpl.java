@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
@@ -58,6 +59,7 @@ public abstract class ActorSystemImpl {
 	protected final Map<UUID, ActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
 	protected ActorMessageDispatcher messageDispatcher;
+	protected AtomicBoolean messagingEnabled;
 	protected Class<? extends ActorThread> actorThreadClass;
 	
 	protected boolean counterEnabled;
@@ -124,6 +126,8 @@ public abstract class ActorSystemImpl {
 		pseudoCells    = new ConcurrentHashMap<>();
 		redirector     = new ConcurrentHashMap<>();
 		
+		messagingEnabled = new AtomicBoolean();
+		
 		setParallelismMin(0);
 		parallelismFactor = 1;
 		
@@ -170,6 +174,8 @@ public abstract class ActorSystemImpl {
 	}
 	
 	protected void reset() {
+		messagingEnabled.set(false);
+		
 		aliases.clear();
 		hasAliases.clear();
 		resourceCells.clear();
@@ -503,6 +509,30 @@ public abstract class ActorSystemImpl {
 		return result;
 	}
 	
+	public String getActorPath(UUID uuid) {
+		String result = null;
+		
+		if (uuid!=null) {
+			if (uuid.equals(USER_ID))
+				result = "/";
+			else {
+				StringBuffer buffer = new StringBuffer();
+				ActorCell cell = cells.get(uuid);
+				if (cell.getActor()!=null)
+					buffer.append("/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
+				UUID parent = null;
+				while ((parent=cell.parent)!=null && !parent.equals(USER_ID)) {
+					cell = cells.get(parent);
+					buffer.insert(0, "/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
+				}
+				
+				result = buffer.toString();
+			}
+		}
+		
+		return result;
+	}
+	
 	public UUID getActorFromPath(String path) {
 		ActorCell result = null;
 		
@@ -537,7 +567,7 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public ActorSystemImpl send(ActorMessage<?> message) {
-		if (!executerService.isStarted()) 
+		if (!messagingEnabled.get()) 
 			bufferQueue.offer(message.copy());
 		else
 			messageDispatcher.postOuter(message);
@@ -569,7 +599,7 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
-		if (executerService.isStarted() && message!=null && message.dest!=null)  {
+		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest!=null)  {
 			ActorCell cell = cells.get(message.dest);
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
@@ -589,19 +619,19 @@ public abstract class ActorSystemImpl {
 	}
 	
 	public void sendAsServer(ActorMessage<?> message) {
-		if (!executerService.isStarted()) 
+		if (!messagingEnabled.get()) 
 			bufferQueue.offer(message.copy());
 		else
 			messageDispatcher.postServer(message);
 	}
 	
 	public void sendAsDirective(ActorMessage<?> message) {
-		if (executerService.isStarted()) 
+		if (messagingEnabled.get()) 
 			messageDispatcher.postDirective(message);
 	}
 	
 	public ActorSystemImpl broadcast(ActorMessage<?> message, ActorGroup group) {
-		if (!executerService.isStarted())
+		if (!messagingEnabled.get())
 			for (UUID id : group) {
 				message.dest = id;
 				bufferQueue.offer(message.copy());
@@ -652,7 +682,7 @@ public abstract class ActorSystemImpl {
 							cell.preStart();
 					}
 					
-					executerService.started.set(true);
+					messagingEnabled.set(true);
 					
 					ActorMessage<?> message = null;
 					while ((message=bufferQueue.poll())!=null)

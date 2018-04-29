@@ -25,20 +25,32 @@ import java.util.Set;
 import java.util.UUID;
 
 import actor4j.core.actors.Actor;
+import actor4j.core.immutable.ImmutableList;
+import actor4j.core.immutable.ImmutableObject;
 import actor4j.core.messages.ActorMessage;
 
 public class ServiceDiscoveryActor extends Actor {
 	protected Map<UUID, Service> services;
 	protected Map<String, Set<UUID>> topicsMap;
 	
+	protected String alias;
+	
 	public static final int PUBLISH_SERVICE   = 400;
 	public static final int UNPUBLISH_SERVICE = 401;
 	public static final int LOOKUP_SERVICES   = 402;
 	public static final int LOOKUP_SERVICE    = 403;
 	
-	public ServiceDiscoveryActor() {
+	public ServiceDiscoveryActor(String alias) {
+		this.alias = alias;
+		
 		services = new HashMap<>();
 		topicsMap = new HashMap<>();
+	}
+	
+	@Override
+	public void preStart() {
+		// registering alias
+		getSystem().setAlias(self(), alias);
 	}
 	
 	@Override
@@ -80,7 +92,7 @@ public class ServiceDiscoveryActor extends Actor {
 					
 				}
 				
-				tell(result, LOOKUP_SERVICES, message.source);
+				tell(new ImmutableList<>(result), LOOKUP_SERVICES, message.source);
 			}
 			else if (message.tag==LOOKUP_SERVICE && message.value instanceof String) {
 				Service result = null;
@@ -91,8 +103,8 @@ public class ServiceDiscoveryActor extends Actor {
 					if (iterator.hasNext())
 						result = services.get(iterator.next());
 				}
-				
-				tell(result, LOOKUP_SERVICE, message.source);
+			
+				tell(new ImmutableObject<>(result), LOOKUP_SERVICE, message.source);
 			}
 			else
 				unhandled(message);

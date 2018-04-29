@@ -166,7 +166,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
 	}
 
-	protected boolean isSupportedType(Class<?> type) {
+	public static boolean isSupportedType(Class<?> type) {
 		return SUPPORTED_TYPES.contains(type);
 	}
 
