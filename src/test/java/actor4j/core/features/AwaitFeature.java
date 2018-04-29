@@ -39,7 +39,7 @@ public class AwaitFeature {
 		system.setParallelismMin(1);
 	}
 		
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_await() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		

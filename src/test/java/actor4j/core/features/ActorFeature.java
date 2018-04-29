@@ -28,7 +28,7 @@ import actor4j.core.messages.ActorMessage;
 import static org.junit.Assert.*;
 
 public class ActorFeature {
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_preStart_addChild() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -65,7 +65,7 @@ public class ActorFeature {
 		system.shutdownWithActors(true);
 	}
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_getActorFromPath_getActorPath() {
 		ActorSystem system = new ActorSystem();
 		

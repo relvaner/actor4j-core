@@ -33,7 +33,7 @@ import actor4j.core.utils.ConcurrentActorGroup;
 import static org.junit.Assert.*;
 
 public class PrimarySecondaryActorFeature {
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test() {
 		ActorSystem system = new ActorSystem();
 		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());

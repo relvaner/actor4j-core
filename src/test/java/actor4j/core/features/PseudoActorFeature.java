@@ -35,7 +35,7 @@ import actor4j.core.utils.ActorFactory;
 import static org.junit.Assert.*;
 
 public class PseudoActorFeature {
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(10);
 		

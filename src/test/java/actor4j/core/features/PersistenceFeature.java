@@ -80,7 +80,7 @@ public class PersistenceFeature {
 		}
 	}
 	
-	@Test(timeout=20000)
+	@Test(timeout=30000)
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(2);
 		

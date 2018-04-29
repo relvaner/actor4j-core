@@ -39,7 +39,7 @@ public class BehaviourFeature {
 		system.setParallelismMin(1);
 	}
 		
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_become() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -78,7 +78,7 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour.get());
 	}
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_become_unbecome() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -130,7 +130,7 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour[1].get());
 	}
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_stack_become_unbecome() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -190,7 +190,7 @@ public class BehaviourFeature {
 		assertEquals(true, behaviour[1].get());
 	}
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_stack_become_unbecomeAll() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		

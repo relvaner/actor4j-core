@@ -47,7 +47,7 @@ public class UnhandledFeature {
 		system.setDebugUnhandled(true);
 	}
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		

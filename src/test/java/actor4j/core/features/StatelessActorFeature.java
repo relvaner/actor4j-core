@@ -30,7 +30,7 @@ import actor4j.core.utils.ActorGroup;
 import actor4j.core.utils.ActorGroupSet;
 
 public class StatelessActorFeature {
-	@Test(timeout=10000)
+	@Test(timeout=30000)
 	public void test() {
 		ActorSystem system = new ActorSystem();
 		system.setParallelismFactor(2);

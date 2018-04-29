@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class EmbeddedActorFeature {
 	protected final int SWAP=22;
 	
-	@Test(timeout=2000)
+	@Test(timeout=5000)
 	public void test_become_unbecome() {
 		CountDownLatch testDone = new CountDownLatch(2);
 		AtomicInteger counter = new AtomicInteger(0);
