@@ -26,12 +26,18 @@ import actor4j.core.ActorServiceNode;
 import actor4j.core.ActorSystem;
 import actor4j.core.PseudoActorCell;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.utils.ActorMessageObservable;
+import rx.Observable;
 
 public abstract class ConcurrentPseudoActor {
 	protected PseudoActor actor;
 	
 	public ConcurrentPseudoActor(String name, ActorSystem system) {
 		this(name, system, false);
+	}
+	
+	public ConcurrentPseudoActor(ActorSystem system, boolean blocking) {
+		this(null, system, blocking);
 	}
 	
 	public ConcurrentPseudoActor(String name, ActorSystem system, boolean blocking) {
@@ -99,6 +105,10 @@ public abstract class ConcurrentPseudoActor {
 	
 	public boolean runOnce() {
 		return poll(getOuterQueue());
+	}
+	
+	public Observable<ActorMessage<?>> runWithRx() {
+		return ActorMessageObservable.getMessages(getOuterQueue());
 	}
 	
 	public ActorMessage<?> await() {

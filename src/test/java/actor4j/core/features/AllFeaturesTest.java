@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 	
 	EmbeddedActorFeature.class,
 	PseudoActorFeature.class,
+	ConcurrentPseudoActorFeature.class,
 	StatelessActorFeature.class,
 	PrimarySecondaryActorFeature.class,
 	

@@ -18,6 +18,8 @@ package actor4j.core.features;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -26,6 +28,7 @@ import org.junit.Test;
 
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
+import actor4j.core.immutable.ImmutableList;
 import actor4j.core.immutable.ImmutableObject;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.service.discovery.Service;
@@ -40,30 +43,52 @@ public class ServiceDiscoveyFeature {
 		
 		system.addActor(() -> new Actor("parent") {
 			protected ServiceDiscoveryManager serviceDiscoveryManager;
-			protected UUID child;
+			protected UUID child1;
+			protected UUID child2;
 			
 			@Override
 			public void preStart() {
 				serviceDiscoveryManager = new ServiceDiscoveryManager(this, "serviceDiscovery");
 				system.addActor(ServiceDiscoveryManager.create("serviceDiscovery"));
 				
-				child = addChild(() -> new Actor("child") {
+				child1 = addChild(() -> new Actor("child1") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				});
+				child2 = addChild(() -> new Actor("child2") {
 					@Override
 					public void receive(ActorMessage<?> message) {
 					}
 				});
 				
-				serviceDiscoveryManager.publish(new Service("child", getSystem().getActorPath(child), Arrays.asList("childTopicA", "childTopicB"), "1.0.0", "description"));
+				serviceDiscoveryManager.publish(new Service("child1", getSystem().getActorPath(child1), Arrays.asList("childTopicA", "childTopicB"), "1.0.0", "description"));
+				serviceDiscoveryManager.publish(new Service("child2", getSystem().getActorPath(child2), Arrays.asList("childTopicA", "childTopicC"), "1.0.0", "description"));
 				serviceDiscoveryManager.lookupFirst("childTopicB");
+				serviceDiscoveryManager.lookup("childTopicA");
 			}
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
 				Optional<ImmutableObject<Service>> optional = serviceDiscoveryManager.lookupFirst(message);
 				if (optional.isPresent() && optional.get().get()!=null) {
-					testDone.countDown();
-					assertEquals("child", optional.get().get().getName());
+					assertEquals("child1", optional.get().get().getName());
 					assertTrue(optional.get().get().getTopics().contains("childTopicB"));
+					become((msg) -> {
+						Optional<ImmutableList<Service>> optional2 = serviceDiscoveryManager.lookup(msg);
+						if (optional2.isPresent() && !optional2.get().get().isEmpty()) {
+							Map<String, Boolean> map = new HashMap<>();
+							map.put("child1", false);
+							map.put("child2", false);
+							optional2.get().get().stream().map((s) -> s.getName()).forEach((name) -> map.put(name, true));
+							assertTrue(map.get("child1"));
+							assertTrue(map.get("child2"));
+							assertTrue(optional2.get().get().stream().map((s) -> s.getTopics().contains("childTopicA")).reduce((t1, t2) -> t1 && t2).get());
+							unbecome();
+							
+							testDone.countDown();
+						}
+					});
 				}
 			}
 		});
