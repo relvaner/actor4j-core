@@ -33,6 +33,14 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 		this.size = size;
 	}
 	
+	public Map<K, V> getMap() {
+		return map;
+	}
+
+	public Deque<K> getLru() {
+		return lru;
+	}
+
 	@Override
 	public V get(K key) {
 		V result = map.get(key);

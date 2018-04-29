@@ -25,6 +25,10 @@ public class DefaultCache<K, E> implements Cache<K, E> {
 		map = new HashMap<>();
 	}
 	
+	public Map<K, E> getMap() {
+		return map;
+	}
+
 	@Override
 	public E get(K key) {
 		return map.get(key);
