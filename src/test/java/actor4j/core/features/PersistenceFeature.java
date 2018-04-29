@@ -95,6 +95,13 @@ public class PersistenceFeature {
 				
 				saveSnapshot(null, null, new MyState("I am a state!"));
 				
+				// TODO: temporary
+				try {
+					Thread.sleep(25);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
 				persist(
 					(s) -> logger().debug(String.format("Event: %s", s)), 
 					(e) -> logger().error(String.format("Error: %s", e.getMessage())),
