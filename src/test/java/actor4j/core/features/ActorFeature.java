@@ -19,58 +19,26 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.XActorSystemImpl;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
 import static org.junit.Assert.*;
 
 public class ActorFeature {
-	@Test(timeout=5000)
-	public void test_preStart_addChild() {
-		CountDownLatch testDone = new CountDownLatch(1);
-		
-		ActorSystem system = new ActorSystem();
-		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child;
-			
-			@Override
-			public void preStart() {	
-				child = addChild(() -> new Actor("child") {
-					@Override
-					public void receive(ActorMessage<?> message) {
-						testDone.countDown();
-					}
-				});
-			}
-			
-			@Override
-			public void receive(ActorMessage<?> message) {
-				tell(null, 0, child);
-			}
-		});
-		
-		system.start();
-		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		try {
-			testDone.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		system.shutdownWithActors(true);
+	protected ActorSystem system;
+	
+	@Before
+	public void before() {
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=5000)
-	public void test_preStart_addChild_XActorSystemImpl() {
+	public void test_preStart_addChild() {
 		CountDownLatch testDone = new CountDownLatch(1);
-
-		ActorSystem system = new ActorSystem(XActorSystemImpl.class);
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child;
@@ -105,8 +73,6 @@ public class ActorFeature {
 	
 	@Test(timeout=5000)
 	public void test_getActorFromPath_getActorPath() {
-		ActorSystem system = new ActorSystem();
-		
 		AtomicReference<UUID> childA = new AtomicReference<>(null);
 		AtomicReference<UUID> childB = new AtomicReference<>(null);
 		AtomicReference<UUID> childBA = new AtomicReference<>(null);

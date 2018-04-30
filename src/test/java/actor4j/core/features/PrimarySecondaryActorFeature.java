@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
@@ -33,9 +34,15 @@ import actor4j.core.utils.ConcurrentActorGroup;
 import static org.junit.Assert.*;
 
 public class PrimarySecondaryActorFeature {
+	protected ActorSystem system;
+	
+	@Before
+	public void before() {
+		system = new ActorSystem();
+	}
+	
 	@Test(timeout=5000)
 	public void test() {
-		ActorSystem system = new ActorSystem();
 		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());
 		
 		AtomicBoolean primaryReceivedFromSystem = new AtomicBoolean(false);

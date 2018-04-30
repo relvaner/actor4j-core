@@ -17,7 +17,6 @@ package actor4j.core;
 
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
@@ -27,7 +26,6 @@ import java.util.function.Consumer;
 import actor4j.core.ActorMessageDispatcher;
 import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
-import static actor4j.core.utils.ActorUtils.*;
 
 public class XActorMessageDispatcher extends ActorMessageDispatcher {
 	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
@@ -69,26 +67,6 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 				ActorCell cell = XActorMessageDispatcher.this.system.pseudoCells.get(msg.dest);
 				if (cell!=null)
 					((PseudoActorCell)cell).getOuterQueue().offer(msg);
-			}
-		};
-		
-		// see weighted random early discard (WRED) strategy, currently not used
-		antiFloodingStrategy = new BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>>() {
-			protected Random random = new Random();
-			@Override
-			public boolean test(ActorMessage<?> message, Queue<ActorMessage<?>> queue) {
-				boolean result = false;
-				
-				if (!isDirective(message)) {
-					int bound = (int)(queue.size()/(double)system.queueSize*10);
-					if (bound>=8)
-						result = true;
-					else if (bound>=2)
-						result = (random.nextInt(10)>=10-bound);
-					//result = queue.size()>25000;
-				}
-				
-				return result;
 			}
 		};
 	}

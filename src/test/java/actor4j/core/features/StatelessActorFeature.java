@@ -21,58 +21,25 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
-import actor4j.core.XActorSystemImpl;
 import actor4j.core.actors.StatelessActor;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 import actor4j.core.utils.ActorGroupSet;
 
 public class StatelessActorFeature {
-	@Test(timeout=30000)
-	public void test() {
-		ActorSystem system = new ActorSystem();
-		system.setParallelismFactor(2);
-		
-		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());
-		
-		ActorGroup group = new ActorGroupSet();
-		system.setAlias(system.addActor(() -> new StatelessActor(group) {
-			protected boolean first = true;
-			@Override
-			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s%n", Thread.currentThread().getName(), self()));
-				if (first) {
-					testDone.countDown();
-					first=false;
-				}
-			}
-		}, system.getParallelismMin()*system.getParallelismFactor()), "instances");
-		
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				system.sendViaAlias(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, null), "instances");
-			}
-		}, 0, 50);
-		
-		system.start();
-		
-		try {
-			testDone.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		timer.cancel();
-		system.shutdownWithActors(true);
+	protected ActorSystem system;
+	
+	@Before
+	public void before() {
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=30000)
-	public void test_XActorSystemImpl() {
-		ActorSystem system = new ActorSystem(XActorSystemImpl.class);
+	public void test() {
 		system.setParallelismFactor(2);
 		
 		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());
