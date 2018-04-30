@@ -74,26 +74,26 @@ public class DefaultActorThread extends ActorThread {
 				hasNextPriority=true;
 			
 			if (system.clientMode) {
-				for (; poll(serverQueueL1) && hasNextServer<system.throughput; hasNextServer++);
+				for (; hasNextServer<system.throughput && poll(serverQueueL1); hasNextServer++);
 				if (hasNextServer<system.throughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; (message=serverQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
+					for (int j=0; j<system.getBufferQueueSize() && (message=serverQueueL2.poll())!=null; j++)
 						serverQueueL1.offer(message);
 				
-					for (; poll(serverQueueL1) && hasNextServer<system.throughput; hasNextServer++);
+					for (; hasNextServer<system.throughput && poll(serverQueueL1); hasNextServer++);
 				}
 			}
 			
-			for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
+			for (; hasNextOuter<system.throughput && poll(outerQueueL1); hasNextOuter++);
 			if (hasNextOuter<system.throughput && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getBufferQueueSize(); j++)
+				for (int j=0; j<system.getBufferQueueSize() && (message=outerQueueL2.poll())!=null; j++)
 					outerQueueL1.offer(message);
 
-				for (; poll(outerQueueL1) && hasNextOuter<system.throughput; hasNextOuter++);
+				for (; hasNextOuter<system.throughput && poll(outerQueueL1); hasNextOuter++);
 			}
 			
-			for (; poll(innerQueue) && hasNextInner<system.throughput; hasNextInner++);
+			for (; hasNextInner<system.throughput && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
 				idle++;
