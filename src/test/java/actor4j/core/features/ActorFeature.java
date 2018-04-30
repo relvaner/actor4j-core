@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
+import actor4j.core.XActorSystemImpl;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
 
@@ -33,6 +34,43 @@ public class ActorFeature {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
 		ActorSystem system = new ActorSystem();
+		
+		UUID parent = system.addActor(() -> new Actor("parent") {
+			protected UUID child;
+			
+			@Override
+			public void preStart() {	
+				child = addChild(() -> new Actor("child") {
+					@Override
+					public void receive(ActorMessage<?> message) {
+						testDone.countDown();
+					}
+				});
+			}
+			
+			@Override
+			public void receive(ActorMessage<?> message) {
+				tell(null, 0, child);
+			}
+		});
+		
+		system.start();
+		
+		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=5000)
+	public void test_preStart_addChild_XActorSystemImpl() {
+		CountDownLatch testDone = new CountDownLatch(1);
+
+		ActorSystem system = new ActorSystem(XActorSystemImpl.class);
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child;

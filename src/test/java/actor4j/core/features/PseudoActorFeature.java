@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
 import actor4j.core.ActorSystem;
+import actor4j.core.XActorSystemImpl;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
 import actor4j.core.messages.ActorMessage;
@@ -40,6 +41,75 @@ public class PseudoActorFeature {
 		CountDownLatch testDone = new CountDownLatch(10);
 		
 		ActorSystem system = new ActorSystem();
+		
+		PseudoActor main = new PseudoActor(system, false) {
+			@Override
+			public void receive(ActorMessage<?> message) {
+			}
+		};
+		
+		final int[] postconditions_numbers = new int[] { 341, 351, 451, 318, 292, 481, 240, 478, 382, 502, 158, 401, 438, 353, 165, 344, 6, 9, 18, 31, 77, 90, 45, 63, 190, 1 };
+		
+		UUID numberGenerator = system.addActor(new ActorFactory() {
+			@Override
+			public Actor create() {
+				return new Actor("numberGenerator") {
+					protected ScheduledFuture<?> timerFuture;
+					protected int counter = 0;
+					
+					@Override
+					public void preStart() {
+						timerFuture = system.timer()
+							.schedule(() -> new ActorMessage<Integer>(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+						logger().debug(String.format("numberGenerator received a message.tag (%d) from main%n", message.tag));
+						testDone.countDown();
+					}
+					
+					@Override
+					public void postStop() {
+						timerFuture.cancel(true);
+					}
+				};
+			}
+		});
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			protected int i;
+			protected int counter = 0;
+			@Override
+			public void run() {
+				main.runWithRx()
+					.take(2)
+					.forEach(msg -> { 
+						assertEquals(postconditions_numbers[counter++], msg.valueAsInt()); 
+						logger().debug("-> main received a message.value ("+msg.valueAsInt()+") from numberGenerator");
+					}); 
+					
+				main.send(new ActorMessage<>(null, i++, main.getId(), numberGenerator));
+			}
+		}, 0, 50);
+		
+		system.start();
+		
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		timer.cancel();
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=5000)
+	public void test_XActorSystemImpl() {
+		CountDownLatch testDone = new CountDownLatch(10);
+		
+		ActorSystem system = new ActorSystem(XActorSystemImpl.class);
 		
 		PseudoActor main = new PseudoActor(system, false) {
 			@Override
