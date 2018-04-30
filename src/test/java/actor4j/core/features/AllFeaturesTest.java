@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 	ConcurrentPseudoActorFeature.class,
 	StatelessActorFeature.class,
 	PrimarySecondaryActorFeature.class,
+	ResourceActorFeature.class,
 	
 	PersistenceFeature.class,
 	CacheFeature.class,
@@ -46,6 +47,7 @@ import org.junit.runner.RunWith;
 	XPseudoActorFeature.class,
 	XStatelessActorFeature.class,
 	XPrimarySecondaryActorFeature.class,
+	XResourceActorFeature.class
 })
 public class AllFeaturesTest {
 
