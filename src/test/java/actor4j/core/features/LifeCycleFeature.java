@@ -15,6 +15,8 @@
  */
 package actor4j.core.features;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,6 +26,9 @@ import org.junit.Test;
 import actor4j.core.ActorSystem;
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.supervisor.OneForAllSupervisorStrategy;
+import actor4j.core.supervisor.SupervisorStrategy;
+import actor4j.core.supervisor.SupervisorStrategyDirective;
 
 import static org.junit.Assert.*;
 
@@ -116,6 +121,96 @@ public class LifeCycleFeature {
 		system.start();
 		
 		system.send(new ActorMessage<>(null, Actor.POISONPILL, system.SYSTEM_ID, parent));
+		
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=5000)
+	public void test_stop_for_all() {
+		CountDownLatch testDone = new CountDownLatch(4);
+		ActorSystem system = new ActorSystem();
+		
+		UUID parent = system.addActor(() -> new Actor("parent") {
+			protected UUID child1;
+			protected UUID child2;
+			protected UUID child3;
+			
+			protected Set<UUID> waitForChildren;
+			
+			public SupervisorStrategy supervisorStrategy() {
+				return new OneForAllSupervisorStrategy(-1, Integer.MAX_VALUE) {
+					@Override
+					public SupervisorStrategyDirective apply(Exception e) {
+						return SupervisorStrategyDirective.STOP;
+					}
+					
+				};
+			}
+			
+			@Override
+			public void preStart() {
+				child1 = addChild(() -> new Actor("child1") {
+					@Override
+					public void postStop() {
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				});
+				child2 = addChild(() -> new Actor("child2") {
+					@Override
+					public void postStop() {
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+						throw new RuntimeException("some error in child");
+					}
+				});
+				child3 = addChild(() -> new Actor("child3") {
+					@Override
+					public void postStop() {
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				});
+				waitForChildren = new HashSet<>();
+				waitForChildren.add(child1);
+				waitForChildren.add(child2);
+				waitForChildren.add(child3);
+				
+				watch(child1);
+				watch(child2);
+				watch(child3);
+			}
+			
+			@Override
+			public void receive(ActorMessage<?> message) {
+				if (message.source==system.SYSTEM_ID)
+					tell(null, 0, child2);
+				else if (message.tag==TERMINATED) {
+					waitForChildren.remove(message.source);
+					if (waitForChildren.isEmpty())
+						testDone.countDown();
+				}
+			}
+		});
+		
+		system.start();
+		
+		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -317,6 +412,129 @@ public class LifeCycleFeature {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				throw new RuntimeException("some error");
+			}
+		});
+		
+		system.start();
+		
+		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=5000)
+	public void test_restart_for_all() {
+		CountDownLatch testDone = new CountDownLatch(9);
+		ActorSystem system = new ActorSystem();
+		
+		UUID parent = system.addActor(() -> new Actor("parent") {
+			protected UUID child2;
+			
+			public SupervisorStrategy supervisorStrategy() {
+				return new OneForAllSupervisorStrategy(-1, Integer.MAX_VALUE) {
+					@Override
+					public SupervisorStrategyDirective apply(Exception e) {
+						return SupervisorStrategyDirective.RESTART;
+					}
+					
+				};
+			}
+			
+			@Override
+			public void preStart() {
+				AtomicInteger counter = new AtomicInteger(0);
+				addChild(() -> new Actor("child1") {
+					@Override
+					public void postStop() {
+						System.out.println("child1::postStop::"+counter.get());
+						if (counter.get()==1)
+							assertEquals(2, counter.incrementAndGet());
+						testDone.countDown();
+					}
+					
+					@Override
+					public void preRestart(Exception reason) {
+						System.out.println("child1::preRestart::"+counter.get());
+						assertEquals(1, counter.incrementAndGet());
+						super.preRestart(reason);
+						testDone.countDown();
+					}
+					
+					@Override
+					public void postRestart(Exception reason) {
+						System.out.println("child1::postRestart::"+counter.get());
+						assertEquals(3, counter.incrementAndGet());
+						super.postRestart(reason);
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				});
+				child2 = addChild(() -> new Actor("child2") {
+					@Override
+					public void postStop() {
+						System.out.println("child2::postStop");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void preRestart(Exception reason) {
+						super.preRestart(reason);
+						System.out.println("child2::preRestart");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void postRestart(Exception reason) {
+						super.postRestart(reason);
+						System.out.println("child2::postRestart");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+						throw new RuntimeException("some error in child");
+					}
+				});
+				addChild(() -> new Actor("child3") {
+					@Override
+					public void postStop() {
+						System.out.println("child3::postStop");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void preRestart(Exception reason) {
+						super.preRestart(reason);
+						System.out.println("child3::preRestart");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void postRestart(Exception reason) {
+						super.postRestart(reason);
+						System.out.println("child3::postRestart");
+						testDone.countDown();
+					}
+					
+					@Override
+					public void receive(ActorMessage<?> message) {
+					}
+				});
+			}
+			
+			@Override
+			public void receive(ActorMessage<?> message) {
+				if (message.source==system.SYSTEM_ID)
+					tell(null, 0, child2);
 			}
 		});
 		
