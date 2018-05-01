@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 	ResourceActorFeature.class,
 	
 	PersistenceFeature.class,
+	ActorGroupMemberFeature.class,
 	CacheFeature.class,
 	
 	ServiceDiscoveyFeature.class,
@@ -43,12 +44,15 @@ import org.junit.runner.RunWith;
 	/*----------------------------*/
 	
 	XActorFeature.class,
+	XAwaitFeature.class,
 	XSafetyFeature.class,
 	
 	XPseudoActorFeature.class,
 	XStatelessActorFeature.class,
 	XPrimarySecondaryActorFeature.class,
-	XResourceActorFeature.class
+	XResourceActorFeature.class,
+	
+	XActorGroupMemberFeature.class
 })
 public class AllFeaturesTest {
 
