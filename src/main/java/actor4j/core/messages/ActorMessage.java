@@ -75,7 +75,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 		this.dest = dest;
 	}
 
-	public boolean valueAsBooolean() {
+	public boolean valueAsBoolean() {
 		return (Boolean)value;
 	}
 	
