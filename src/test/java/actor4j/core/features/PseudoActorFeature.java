@@ -109,4 +109,23 @@ public class PseudoActorFeature {
 		timer.cancel();
 		system.shutdownWithActors(true);
 	}
+	
+	@Test(timeout=5000)
+	public void test_await() {
+		ActorSystem system = new ActorSystem();
+		
+		PseudoActor main = new PseudoActor(system, true) {
+			@Override
+			public void receive(ActorMessage<?> message) {
+			}
+		};
+		
+		system.start();
+		
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		ActorMessage<?> message1 = main.await();
+		assertEquals(true, message1.valueAsBoolean());
+
+		system.shutdownWithActors(true);
+	}
 }

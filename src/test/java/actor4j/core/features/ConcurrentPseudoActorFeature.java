@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 
@@ -101,6 +102,45 @@ public class ConcurrentPseudoActorFeature {
 			e.printStackTrace();
 		}
 		timer.cancel();
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=10000)
+	public void test_await() {
+		ActorSystem system = new ActorSystem();
+		
+		ConcurrentPseudoActor main = new ConcurrentPseudoActor(system, true) {
+			@Override
+			public void receive(ActorMessage<?> message) {
+			}
+		};
+		
+		system.start();
+		
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		ActorMessage<?> message1 = null;
+		try {
+			message1 = main.await(5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException | TimeoutException e1) {
+			e1.printStackTrace();
+		}
+		assertEquals(true, message1.valueAsBoolean());
+		
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 1, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		boolean value = false;
+		try {
+			 value = main.await((msg) -> msg.tag==1, (msg) -> msg.valueAsBoolean(), 5000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException | TimeoutException e1) {
+			e1.printStackTrace();
+		}
+		assertTrue(value);
+
 		system.shutdownWithActors(true);
 	}
 }
