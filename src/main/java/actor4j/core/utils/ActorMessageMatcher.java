@@ -46,7 +46,7 @@ public class ActorMessageMatcher {
 		tuple.predicate = new Predicate<ActorMessage<?>>(){
 			@Override
 			public boolean test(ActorMessage<?> message) {
-				return message.source.equals(source);
+				return message.source!=null ? message.source.equals(source) : false;
 			}
 		};
 		tuple.action = action;
@@ -63,11 +63,12 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				for (UUID source : sources)
-					if (message.source.equals(source)) {
-						result = true;
-						break;
-					}
+				if (message.source!=null)
+					for (UUID source : sources)
+						if (message.source.equals(source)) {
+							result = true;
+							break;
+						}
 				return result;
 			}
 		};
@@ -122,7 +123,7 @@ public class ActorMessageMatcher {
 		tuple.predicate = new Predicate<ActorMessage<?>>(){
 			@Override
 			public boolean test(ActorMessage<?> message) {
-				return message.source.equals(source) && message.tag==tag;
+				return message.source!=null ? message.source.equals(source) && message.tag==tag : false;
 			}
 		};
 		tuple.action = action;
@@ -139,7 +140,7 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.tag==tag)
+				if (message.source!=null && message.tag==tag)
 					for (UUID source : sources)
 						if (message.source.equals(source)) {
 							result = true;
@@ -162,7 +163,7 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source.equals(source))
+				if (message.source!=null && message.source.equals(source))
 					for (int tag : tags)
 						if (message.tag==tag) {
 							result = true;
@@ -185,11 +186,12 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				for (UUID source : sources)
-					if (message.source.equals(source)) {
-						result = true;
-						break;
-					}
+				if (message.source!=null)
+					for (UUID source : sources)
+						if (message.source.equals(source)) {
+							result = true;
+							break;
+						}
 				if (result) {
 					result = false;
 					for (int tag : tags)

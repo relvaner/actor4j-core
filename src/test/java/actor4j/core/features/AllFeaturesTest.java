@@ -41,6 +41,8 @@ import org.junit.runner.RunWith;
 	
 	ServiceDiscoveyFeature.class,
 	
+	CommPatternFeature.class,
+	
 	/*----------------------------*/
 	
 	XActorFeature.class,

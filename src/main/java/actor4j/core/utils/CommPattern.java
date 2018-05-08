@@ -15,16 +15,16 @@
  */
 package actor4j.core.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import actor4j.core.actors.Actor;
+import actor4j.core.actors.ActorRef;
+import actor4j.core.immutable.ImmutableList;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.Range;
 
 public final class CommPattern {
-	protected static Range loadBalancing(int rank, int size, int arr_size) {
+	public static Range loadBalancing(int rank, int size, int arr_size) {
 		int quotient  = arr_size/size;
 		int remainder = arr_size%size;
 		
@@ -43,16 +43,16 @@ public final class CommPattern {
 		return new Range(low, high);
 	}
 	
-	public static void broadcast(ActorMessage<?> message, Actor actor, ActorGroup group) {
+	public static void broadcast(ActorMessage<?> message, ActorRef actorRef, ActorGroup group) {
 		for (UUID dest : group)
-			actor.send(message, dest);
+			actorRef.send(message, dest);
 	}
 	
-	public static <T> void scatter(List<T> list, int tag, Actor actor, ActorGroup group) {
+	public static <T> void scatter(List<T> list, int tag, ActorRef actorRef, ActorGroup group) {
 		int i=0;
 		for (UUID dest : group) {
 			Range range = loadBalancing(i, group.size(), list.size());
-			actor.send(new ActorMessage<>(new ArrayList<T>(list.subList(range.low, range.high+1)), tag, actor.self(), dest));	
+			actorRef.send(new ActorMessage<>(new ImmutableList<T>(list.subList(range.low, range.high+1)), tag, actorRef.self(), dest));	
 			i++;
 		}
 	}
