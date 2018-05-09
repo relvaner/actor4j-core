@@ -18,10 +18,13 @@ package actor4j.core.messages;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import actor4j.core.utils.Copyable;
+import actor4j.core.utils.Shareable;
+
 public class FutureActorMessage<T> extends ActorMessage<T> {
 	protected static final long serialVersionUID = -3161942153771543664L;
 	
-	public CompletableFuture<T> future;
+	public final CompletableFuture<T> future;
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest) {
 		super(value, tag, source, dest);
@@ -30,5 +33,22 @@ public class FutureActorMessage<T> extends ActorMessage<T> {
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, Enum<?> tag, UUID source, UUID dest) {
 		this(future, value, tag.ordinal(), source, dest);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActorMessage<T> copy() {
+		if (value!=null) { 
+			if (isSupportedType(value.getClass()) || value instanceof Shareable)
+				return new FutureActorMessage<T>(future, value, tag, source, dest);
+			else if (value instanceof Copyable)
+				return new FutureActorMessage<T>(future, ((Copyable<T>)value).copy(), tag, source, dest);
+			else if (value instanceof Exception)
+				return new FutureActorMessage<T>(future, value, tag, source, dest);
+			else
+				throw new IllegalArgumentException();
+		}
+		else
+			return new FutureActorMessage<T>(future, null, tag, source, dest);
 	}
 }
