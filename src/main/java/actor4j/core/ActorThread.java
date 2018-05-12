@@ -85,6 +85,7 @@ public abstract class ActorThread extends Thread {
 			
 			@Override
 			public void error(Throwable t) {
+				t.printStackTrace();
 			}
 			
 			@Override

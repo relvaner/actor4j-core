@@ -190,7 +190,12 @@ public class ActorExecuterService {
 			clientExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					system.clientRunnable.runViaAlias(message, alias);
+					try {
+						system.clientRunnable.runViaAlias(message, alias);
+					}
+					catch(Throwable t) {
+						t.printStackTrace();
+					}	
 				}
 			});
 	}
@@ -200,7 +205,12 @@ public class ActorExecuterService {
 			clientExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					system.clientRunnable.runViaPath(message, node, path);
+					try {
+						system.clientRunnable.runViaPath(message, node, path);
+					}
+					catch(Throwable t) {
+						t.printStackTrace();
+					}	
 				}
 			});
 	}
@@ -211,7 +221,12 @@ public class ActorExecuterService {
 			resourceExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
-					cell.run(message);
+					try {
+						cell.run(message);
+					}
+					catch(Throwable t) {
+						t.printStackTrace();
+					}	
 				}
 			});
 		}
