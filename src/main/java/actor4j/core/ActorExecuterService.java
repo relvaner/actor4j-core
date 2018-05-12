@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -130,7 +131,7 @@ public class ActorExecuterService {
 		
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ActorThreadFactory("actor4j-resource-thread"));
 		if (system.clientMode)
-			clientExecuterService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>());
+			clientExecuterService = Executors.newSingleThreadExecutor();
 		
 		if (system.persistenceMode) {
 			persistenceService = new ActorPersistenceService(system.wrapper, system.parallelismMin, system.parallelismFactor, system.databaseHost, system.databasePort, system.databaseName);
