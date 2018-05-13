@@ -51,9 +51,8 @@ public class ActorBalancingOnRuntime {
 	}
 	
 	public void registerCell(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, ActorCell cell) {
+		lock.lock();
 		try {
-			lock.lock();
-		
 			Actor actor = cell.getActor();
 			if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
