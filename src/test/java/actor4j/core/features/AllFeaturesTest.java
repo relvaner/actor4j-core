@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 	
 	CommPatternFeature.class,
 	FuturePatternFeature.class,
+	OptionalFeature.class,
 	
 	/*----------------------------*/
 	

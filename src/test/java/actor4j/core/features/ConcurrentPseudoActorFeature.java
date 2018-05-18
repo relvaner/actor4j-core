@@ -124,7 +124,7 @@ public class ConcurrentPseudoActorFeature {
 		} catch (InterruptedException | TimeoutException e1) {
 			e1.printStackTrace();
 		}
-		assertEquals(true, message1.valueAsBoolean());
+		assertTrue(message1.valueAsBoolean());
 		
 		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
 		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
