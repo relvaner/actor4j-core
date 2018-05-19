@@ -15,16 +15,15 @@
  */
 package actor4j.core.persistence;
 
-import java.util.Date;
 import java.util.UUID;
 
 public class ActorPersistenceObject {
 	public UUID persistenceId;
-	public Date timeStamp;
+	public long timeStamp;
 
 	public ActorPersistenceObject() {
 		super();
-		timeStamp = new Date();
+		timeStamp = System.currentTimeMillis();
 	}
 
 	@Override
