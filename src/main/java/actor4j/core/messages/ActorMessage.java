@@ -17,7 +17,6 @@ package actor4j.core.messages;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -93,10 +92,6 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	
 	public String valueAsString() {
 		return (String)value;
-	}
-	
-	public List<?> valueAsList() {
-		return (List<?>)value;
 	}
 	
 	public UUID valueAsUUID() {

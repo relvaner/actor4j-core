@@ -58,7 +58,7 @@ public class ServiceDiscoveryActor extends Actor {
 		if (message.value!=null) {
 			if (message.tag==PUBLISH_SERVICE && message.value instanceof Service) {
 				Service service = (Service)message.value;
-				services.put(service.getId(), service);
+				services.put(service.id, service);
 				if (service.topics!=null) {
 					for (String topic : service.topics) {
 						Set<UUID> ids = topicsMap.get(topic);
@@ -66,7 +66,7 @@ public class ServiceDiscoveryActor extends Actor {
 							ids = new HashSet<>();
 							topicsMap.put(topic, ids);
 						}
-						ids.add(service.getId());
+						ids.add(service.id);
 					}
 				}
 			}
@@ -76,10 +76,10 @@ public class ServiceDiscoveryActor extends Actor {
 					for (String topic : service.topics) {
 						Set<UUID> ids = topicsMap.get(topic);
 						if (ids!=null)
-							ids.remove(service.getId());
+							ids.remove(service.id);
 					}
 				}
-				services.remove(service.getId());
+				services.remove(service.id);
 			}
 			else if (message.tag==LOOKUP_SERVICES && message.value instanceof String) {
 				List<Service> result = new LinkedList<>();

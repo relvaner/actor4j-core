@@ -21,12 +21,12 @@ import java.util.UUID;
 import actor4j.core.utils.Shareable;
 
 public class Service implements Shareable {
-	protected final UUID id;
-	protected final String name; // or for nodeName
-	protected final String uri;  // or for path
-	protected final List<String> topics;
-	protected final String version;
-	protected final String description;
+	public final UUID id;
+	public final String name; // or for nodeName
+	public final String uri;  // or for path
+	public final List<String> topics;
+	public final String version;
+	public final String description;
 	
 	public Service(String name, String uri, List<String> topics, String version, String description) {
 		super();
@@ -37,31 +37,7 @@ public class Service implements Shareable {
 		this.version = version;
 		this.description = description;
 	}
-	
-	public UUID getId() {
-		return id;
-	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getUri() {
-		return uri;
-	}
-
-	public List<String> getTopics() {
-		return topics;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-	
 	public boolean isPath() {
 		return uri!=null ? uri.indexOf("http")==-1 || uri.indexOf("https")==-1 : false;
 	}

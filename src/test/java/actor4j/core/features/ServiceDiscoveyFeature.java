@@ -72,18 +72,18 @@ public class ServiceDiscoveyFeature {
 			public void receive(ActorMessage<?> message) {
 				Optional<ImmutableObject<Service>> optional = serviceDiscoveryManager.lookupFirst(message);
 				if (optional.isPresent() && optional.get().get()!=null) {
-					assertEquals("child1", optional.get().get().getName());
-					assertTrue(optional.get().get().getTopics().contains("childTopicB"));
+					assertEquals("child1", optional.get().get().name);
+					assertTrue(optional.get().get().topics.contains("childTopicB"));
 					become((msg) -> {
 						Optional<ImmutableList<Service>> optional2 = serviceDiscoveryManager.lookup(msg);
 						if (optional2.isPresent() && !optional2.get().get().isEmpty()) {
 							Map<String, Boolean> map = new HashMap<>();
 							map.put("child1", false);
 							map.put("child2", false);
-							optional2.get().get().stream().map((s) -> s.getName()).forEach((name) -> map.put(name, true));
+							optional2.get().get().stream().map((s) -> s.name).forEach((name) -> map.put(name, true));
 							assertTrue(map.get("child1"));
 							assertTrue(map.get("child2"));
-							assertTrue(optional2.get().get().stream().map((s) -> s.getTopics().contains("childTopicA")).reduce((t1, t2) -> t1 && t2).get());
+							assertTrue(optional2.get().get().stream().map((s) -> s.topics.contains("childTopicA")).reduce((t1, t2) -> t1 && t2).get());
 							unbecome();
 							
 							testDone.countDown();
