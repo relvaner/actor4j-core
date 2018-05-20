@@ -48,10 +48,9 @@ public class ResourceActorCell extends ActorCell {
 		boolean result = true;
 		
 		if (stateful) {
+			// Spinlock
+			while (!lock.compareAndSet(false, true));
 			try {
-				// Spinlock
-				while (lock.compareAndSet(false, true));
-			
 				result = (status==false) ? status=true : false;
 			
 				if (!result) {
@@ -77,10 +76,9 @@ public class ResourceActorCell extends ActorCell {
 					while ((message=queue.poll())!=null)
 						internal_receive(message);
 					
+					// Spinlock
+					while (!lock.compareAndSet(false, true));
 					try {
-						// Spinlock
-						while (lock.compareAndSet(false, true));
-					
 						if (queue.peek()==null) {
 							status = false;
 							break;
