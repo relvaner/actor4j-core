@@ -61,6 +61,12 @@ public class ActorSystem {
 		return system.getName();
 	}
 	
+	public ActorSystem serverMode() {
+		system.serverMode();
+		
+		return this;
+	}
+	
 	public ActorSystem setClientRunnable(ActorClientRunnable clientRunnable) {
 		system.setClientRunnable(clientRunnable);
 		

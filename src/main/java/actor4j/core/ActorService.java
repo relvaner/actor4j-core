@@ -27,6 +27,7 @@ public class ActorService extends ActorSystem {
 	
 	public ActorService(String name) {
 		super(name);
+		serverMode();
 	}
 	
 	public String getServiceNodeName() {

@@ -73,7 +73,7 @@ public class DefaultActorThread extends ActorThread {
 			while (poll(priorityQueue)) 
 				hasNextPriority=true;
 			
-			if (system.clientMode) {
+			if (system.serverMode) {
 				for (; hasNextServer<system.throughput && poll(serverQueueL1); hasNextServer++);
 				if (hasNextServer<system.throughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;

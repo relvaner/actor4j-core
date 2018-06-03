@@ -95,6 +95,7 @@ public abstract class ActorSystemImpl {
 	protected String serviceNodeName;
 	protected List<ActorServiceNode> serviceNodes;
 	protected boolean clientMode;
+	protected boolean serverMode;
 	protected ActorClientRunnable clientRunnable;
 	
 	protected CountDownLatch countDownLatch;
@@ -255,6 +256,14 @@ public abstract class ActorSystemImpl {
 
 	public boolean isClientMode() {
 		return clientMode;
+	}
+	
+	public boolean isServerMode() {
+		return serverMode;
+	}
+	
+	public void serverMode() {
+		serverMode = true;
 	}
 
 	public ActorSystemImpl setClientRunnable(ActorClientRunnable clientRunnable) {
