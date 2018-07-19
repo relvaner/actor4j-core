@@ -4,6 +4,9 @@
 <!-- [![gitter: actor4j/actor4j](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/actor4j/actor4j) -->
 <!-- [<img title="gitter: actor4j/actor4j" src="https://badges.gitter.im/Join Chat.svg" alt="gitter: actor4j/actor4j">](https://gitter.im/actor4j/actor4j) -->
 
+## Actor4j promotion ##
+<img src="doc/images/promo.png" alt="Representation of the basic calls to the actor4j REST API" width="686" height="486"/>
+
 ## Actor4j an actor implementation ##
 Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
