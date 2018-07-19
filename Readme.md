@@ -5,7 +5,7 @@
 <!-- [<img title="gitter: actor4j/actor4j" src="https://badges.gitter.im/Join Chat.svg" alt="gitter: actor4j/actor4j">](https://gitter.im/actor4j/actor4j) -->
 
 ## Actor4j an actor implementation ##
-Aim of this project was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
+Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
 ## Configuration, starting and stopping the actor system ##
 In `actor4j` the following important configuration options are available.
@@ -285,7 +285,7 @@ public class MyActor extends PersistentActor<MyState, MyEvent> {
 Four important actors, derived from the class `Actor`, are to be presented next. The class `Actor` is an abstract class.
 
 ### ActorGroupMember (Interface) ###
-The use of this interface signals to the `ActorSystem` that the correspondingly implemented actor is a member of a group. This is taken into account when distributing the actors to the threads. Actors belonging to a group are held together on a thread. The basic idea behind this has already been explained in our paper (see chapters results and conclusion [[?](#?)]). Inter-communication between threads is more expensive than pure intra-communication (within the same thread).
+The use of this interface signals to the `ActorSystem` that the correspondingly implemented actor is a member of a group. This is taken into account when distributing the actors to the threads. Actors belonging to a group are held together on a thread. The basic idea behind this has been explained in our paper (see chapters results and conclusion [[18](#18)]). Inter-communication between threads is more expensive than pure intra-communication (within the same thread).
 
 ### ActorWithGroup ###
 This class implements the interface `ActorGroupMember`.
@@ -369,6 +369,7 @@ This software framework is currently under an prototype state.
 [15]<a name="15"/> Lightbend (2015). Persistence.  http://doc.akka.io/docs/akka/2.4/java/persistence.html  
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
+[18]<a name="18"/> D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018.  
 
 Page to be updated 04/21/2018
 
