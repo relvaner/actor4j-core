@@ -351,6 +351,9 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 ## License ##
 This framework is released under an open source Apache 2.0 license.
 
+## Publications ##
+D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]
+
 ## Announcement ##
 This software framework is currently under an prototype state.
 
