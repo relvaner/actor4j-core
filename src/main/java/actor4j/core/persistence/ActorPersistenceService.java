@@ -36,8 +36,7 @@ public class ActorPersistenceService {
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
-		connector = new MongoDBPersistenceConnector(host, port, databaseName);
-		((MongoDBPersistenceConnector)connector).setClient(new MongoClient(host, port)); // workaround for testing purposes
+		connector = getMongoDBConnector(host, port, databaseName);
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
 			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, connector.createAdapter(parent)));
@@ -60,5 +59,14 @@ public class ActorPersistenceService {
 	public void shutdown() {
 		service.shutdownWithActors(true);
 		connector.close();
+	}
+	
+	protected PersistenceConnector getMongoDBConnector(String host, int port, String databaseName) {
+		PersistenceConnector result = null;
+		
+		result = new MongoDBPersistenceConnector(host, port, databaseName);
+		((MongoDBPersistenceConnector)result).setClient(new MongoClient(host, port)); // workaround for testing purposes
+			
+		return result;	
 	}
 }
