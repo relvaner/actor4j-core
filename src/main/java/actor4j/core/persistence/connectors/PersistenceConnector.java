@@ -15,29 +15,22 @@
  */
 package actor4j.core.persistence.connectors;
 
-import java.util.UUID;
-
 import actor4j.core.ActorSystem;
-import actor4j.core.messages.ActorMessage;
 
-public abstract class Adapter {
-	protected ActorSystem parent;
-	protected UUID id;
+public abstract class PersistenceConnector {
+	protected String host;
+	protected int port; 
+	protected String databaseName;
 	
-	protected Connector connector;
-	
-	public Adapter(ActorSystem parent, Connector connector) {
-		this.parent = parent;
-		this.connector = connector;
-	}
-
-	public UUID self() {
-		return id;
+	public PersistenceConnector(String host, int port, String databaseName) {
+		this.host = host;
+		this.port = port;
+		this.databaseName = databaseName;
 	}
 	
-	public void preStart(UUID id) {
-		this.id = id;
-	}
+	public abstract void open();
+	public abstract void close();
 	
-	public abstract void receive(ActorMessage<?> message);
+	
+	public abstract PersistenceAdapter createAdapter(ActorSystem parent);
 }

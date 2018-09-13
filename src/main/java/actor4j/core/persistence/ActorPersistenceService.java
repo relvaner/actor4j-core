@@ -20,12 +20,12 @@ import java.util.UUID;
 import actor4j.core.ActorService;
 import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
-import actor4j.core.persistence.connectors.Connector;
-import actor4j.core.persistence.connectors.MongoDBConnector;
+import actor4j.core.persistence.connectors.PersistenceConnector;
+import actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
 
 public class ActorPersistenceService {
 	protected ActorService service;
-	protected Connector connector;
+	protected PersistenceConnector connector;
 	
 	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, String host, int port, String databaseName) {
 		super();
@@ -34,7 +34,7 @@ public class ActorPersistenceService {
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
-		connector = new MongoDBConnector(host, port, databaseName);
+		connector = new MongoDBPersistenceConnector(host, port, databaseName);
 		connector.open();
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);

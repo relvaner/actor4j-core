@@ -15,22 +15,29 @@
  */
 package actor4j.core.persistence.connectors;
 
+import com.mongodb.MongoClient;
+
 import actor4j.core.ActorSystem;
 
-public abstract class Connector {
-	protected String host;
-	protected int port; 
-	protected String databaseName;
+public class MongoDBPersistenceConnector extends PersistenceConnector {
+	protected MongoClient client;
 	
-	public Connector(String host, int port, String databaseName) {
-		this.host = host;
-		this.port = port;
-		this.databaseName = databaseName;
+	public MongoDBPersistenceConnector(String host, int port, String databaseName) {
+		super(host, port, databaseName);
 	}
-	
-	public abstract void open();
-	public abstract void close();
-	
-	
-	public abstract Adapter createAdapter(ActorSystem parent);
+
+	@Override
+	public void open() {
+		client = new MongoClient(host, port);
+	}
+
+	@Override
+	public void close() {
+		client.close();
+	}
+
+	@Override
+	public PersistenceAdapter createAdapter(ActorSystem parent) {
+		return new MongoDBPersistenceAdapter(parent, this);
+	}
 }

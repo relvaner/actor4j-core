@@ -15,29 +15,29 @@
  */
 package actor4j.core.persistence.connectors;
 
-import com.mongodb.MongoClient;
+import java.util.UUID;
 
 import actor4j.core.ActorSystem;
+import actor4j.core.messages.ActorMessage;
 
-public class MongoDBConnector extends Connector {
-	protected MongoClient client;
+public abstract class PersistenceAdapter {
+	protected ActorSystem parent;
+	protected UUID id;
 	
-	public MongoDBConnector(String host, int port, String databaseName) {
-		super(host, port, databaseName);
+	protected PersistenceConnector connector;
+	
+	public PersistenceAdapter(ActorSystem parent, PersistenceConnector connector) {
+		this.parent = parent;
+		this.connector = connector;
 	}
 
-	@Override
-	public void open() {
-		client = new MongoClient(host, port);
+	public UUID self() {
+		return id;
 	}
-
-	@Override
-	public void close() {
-		client.close();
+	
+	public void preStart(UUID id) {
+		this.id = id;
 	}
-
-	@Override
-	public Adapter createAdapter(ActorSystem parent) {
-		return new MongoDBAdapter(parent, this);
-	}
+	
+	public abstract void receive(ActorMessage<?> message);
 }

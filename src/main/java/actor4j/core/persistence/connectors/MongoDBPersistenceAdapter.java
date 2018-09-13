@@ -38,12 +38,12 @@ import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
 import static actor4j.core.persistence.actor.PersistenceServiceActor.*;
 
-public class MongoDBAdapter extends Adapter {
+public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 	protected MongoDatabase database;
 	protected MongoCollection<Document> events;
 	protected MongoCollection<Document> states;
 	
-	public MongoDBAdapter(ActorSystem parent, Connector connector) {
+	public MongoDBPersistenceAdapter(ActorSystem parent, PersistenceConnector connector) {
 		super(parent, connector);
 	}
 
@@ -51,7 +51,7 @@ public class MongoDBAdapter extends Adapter {
 	public void preStart(UUID id) {
 		super.preStart(id);
 		
-		database = ((MongoDBConnector)connector).client.getDatabase(connector.databaseName);
+		database = ((MongoDBPersistenceConnector)connector).client.getDatabase(connector.databaseName);
 		events = database.getCollection("persistence.events");
 		states = database.getCollection("persistence.states");
 	}
