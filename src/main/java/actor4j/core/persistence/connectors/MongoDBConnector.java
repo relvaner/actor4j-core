@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package actor4j.core.persistence.actor;
+package actor4j.core.persistence.connectors;
 
-import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.persistence.connectors.Adapter;
+import com.mongodb.MongoClient;
 
-public class PersistenceServiceActor extends Actor {
-	protected Adapter adapter;
+import actor4j.core.ActorSystem;
+
+public class MongoDBConnector extends Connector {
+	protected MongoClient client;
 	
-	public static final int PERSIST_EVENTS = 100;
-	public static final int PERSIST_STATE  = 101;
-	public static final int RECOVER  	   = 102;
-	
-	public PersistenceServiceActor(String name, Adapter adapter) {
-		super(name);
-		this.adapter = adapter;
+	public MongoDBConnector(String host, int port, String databaseName) {
+		super(host, port, databaseName);
 	}
 
 	@Override
-	public void preStart() {
-		adapter.preStart(self());
+	public void open() {
+		client = new MongoClient(host, port);
 	}
-	
+
 	@Override
-	public void receive(ActorMessage<?> message) {
-		adapter.receive(message);
+	public void close() {
+		client.close();
+	}
+
+	@Override
+	public Adapter createAdapter(ActorSystem parent) {
+		return new MongoDBAdapter(parent, this);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@ package actor4j.core.persistence;
 
 import java.util.UUID;
 
-import com.mongodb.MongoClient;
-
 import actor4j.core.ActorService;
 import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
+import actor4j.core.persistence.connectors.Connector;
+import actor4j.core.persistence.connectors.MongoDBConnector;
 
 public class ActorPersistenceService {
 	protected ActorService service;
-	protected MongoClient client;
+	protected Connector connector;
 	
 	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, String host, int port, String databaseName) {
 		super();
@@ -34,10 +34,11 @@ public class ActorPersistenceService {
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
-		client = new MongoClient(host, port);
+		connector = new MongoDBConnector(host, port, databaseName);
+		connector.open();
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
-			UUID id = service.addActor(() -> new PersistenceServiceActor(parent, alias, client, databaseName));
+			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, connector.createAdapter(parent)));
 			service.setAlias(id, alias);
 		}
 	}
@@ -56,6 +57,6 @@ public class ActorPersistenceService {
 	
 	public void shutdown() {
 		service.shutdownWithActors(true);
-		client.close();
+		connector.close();
 	}
 }

@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package actor4j.core.persistence.actor;
+package actor4j.core.persistence.connectors;
 
-import actor4j.core.actors.Actor;
+import java.util.UUID;
+
+import actor4j.core.ActorSystem;
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.persistence.connectors.Adapter;
 
-public class PersistenceServiceActor extends Actor {
-	protected Adapter adapter;
+public abstract class Adapter {
+	protected ActorSystem parent;
+	protected UUID id;
 	
-	public static final int PERSIST_EVENTS = 100;
-	public static final int PERSIST_STATE  = 101;
-	public static final int RECOVER  	   = 102;
+	protected Connector connector;
 	
-	public PersistenceServiceActor(String name, Adapter adapter) {
-		super(name);
-		this.adapter = adapter;
+	public Adapter(ActorSystem parent, Connector connector) {
+		this.parent = parent;
+		this.connector = connector;
 	}
 
-	@Override
-	public void preStart() {
-		adapter.preStart(self());
+	public UUID self() {
+		return id;
 	}
 	
-	@Override
-	public void receive(ActorMessage<?> message) {
-		adapter.receive(message);
+	public void preStart(UUID id) {
+		this.id = id;
 	}
+	
+	public abstract void receive(ActorMessage<?> message);
 }
