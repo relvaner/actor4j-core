@@ -17,6 +17,8 @@ package actor4j.core.persistence;
 
 import java.util.UUID;
 
+import com.mongodb.MongoClient;
+
 import actor4j.core.ActorService;
 import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
@@ -35,7 +37,7 @@ public class ActorPersistenceService {
 		service.setParallelismFactor(parallelismFactor);
 		
 		connector = new MongoDBPersistenceConnector(host, port, databaseName);
-		connector.open();
+		((MongoDBPersistenceConnector)connector).setClient(new MongoClient(host, port)); // workaround for testing purposes
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
 			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, connector.createAdapter(parent)));
