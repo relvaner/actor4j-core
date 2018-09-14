@@ -21,6 +21,7 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceObject;
 import actor4j.core.persistence.ActorPersistenceService;
 import actor4j.core.persistence.Recovery;
+import actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
 
 import static actor4j.core.utils.ActorLogger.*;
 
@@ -145,7 +146,7 @@ public class PersistenceFeature {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		system.persistenceMode("localhost", 27017, "actor4j-test");
+		system.persistenceMode(new MongoDBPersistenceConnector(new MongoClient("localhost", 27017), "actor4j-test"));
 		system.start();
 		
 		system.sendWhenActive(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, id));

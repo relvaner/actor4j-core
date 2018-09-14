@@ -17,26 +17,25 @@ package actor4j.core.persistence;
 
 import java.util.UUID;
 
-import com.mongodb.MongoClient;
-
 import actor4j.core.ActorService;
 import actor4j.core.ActorSystem;
 import actor4j.core.persistence.actor.PersistenceServiceActor;
 import actor4j.core.persistence.connectors.PersistenceConnector;
-import actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
 
 public class ActorPersistenceService {
 	protected ActorService service;
 	protected PersistenceConnector connector;
 	
-	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, String host, int port, String databaseName) {
+	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, PersistenceConnector connector) {
 		super();
+		
+		this.connector = connector;
 
 		service = new ActorService("actor4j-persistence-service");
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
-		connector = getMongoDBConnector(host, port, databaseName);
+		connector.open();
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
 			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, connector.createAdapter(parent)));
@@ -59,14 +58,5 @@ public class ActorPersistenceService {
 	public void shutdown() {
 		service.shutdownWithActors(true);
 		connector.close();
-	}
-	
-	protected PersistenceConnector getMongoDBConnector(String host, int port, String databaseName) {
-		PersistenceConnector result = null;
-		
-		result = new MongoDBPersistenceConnector(host, port, databaseName);
-		((MongoDBPersistenceConnector)result).setClient(new MongoClient(host, port)); // workaround for testing purposes
-			
-		return result;	
 	}
 }

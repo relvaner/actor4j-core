@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import actor4j.core.actors.Actor;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.connectors.PersistenceConnector;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
 
@@ -117,8 +118,8 @@ public class ActorSystem {
 		return this;
 	}
 	
-	public ActorSystem persistenceMode(String databaseHost, int databasePort, String databaseName) {
-		system.persistenceMode(databaseHost, databasePort, databaseName);
+	public ActorSystem persistenceMode(PersistenceConnector persistenceConnector) {
+		system.persistenceMode(persistenceConnector);
 		
 		return this;
 	}

@@ -34,11 +34,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
 import actor4j.core.actors.ResourceActor;
+import actor4j.core.actors.VersionNumber;
 import actor4j.core.balancing.ActorBalancingOnCreation;
 import actor4j.core.balancing.ActorBalancingOnRuntime;
 import actor4j.core.di.DIContainer;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
+import actor4j.core.persistence.connectors.PersistenceConnector;
 import actor4j.core.utils.ActorFactory;
 import actor4j.core.utils.ActorGroup;
 
@@ -86,10 +88,7 @@ public abstract class ActorSystemImpl {
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected String databaseHost;
-	protected int databasePort;
-	protected String databaseName;
-	
+	protected PersistenceConnector persistenceConnector;
 	protected boolean persistenceMode;
 	
 	protected String serviceNodeName;
@@ -148,10 +147,6 @@ public abstract class ActorSystemImpl {
 		actorBalancingOnRuntime = new ActorBalancingOnRuntime();
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
-		
-		databaseHost = "localhost";
-		databasePort = 27017;
-		databaseName = "actor4j";
 		
 		persistenceMode = false;
 		
@@ -337,11 +332,9 @@ public abstract class ActorSystemImpl {
 	public boolean isPersistenceMode() {
 		return persistenceMode;
 	}
-
-	public void persistenceMode(String databaseHost, int databasePort, String databaseName) {
-		this.databaseHost = databaseHost;
-		this.databasePort = databasePort;
-		this.databaseName = databaseName;
+	
+	public void persistenceMode(PersistenceConnector persistenceConnector) {
+		this.persistenceConnector = persistenceConnector;
 		this.persistenceMode = true;
 	}
 
