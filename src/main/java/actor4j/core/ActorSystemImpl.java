@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
 import actor4j.core.actors.ResourceActor;
-import actor4j.core.actors.VersionNumber;
+
 import actor4j.core.balancing.ActorBalancingOnCreation;
 import actor4j.core.balancing.ActorBalancingOnRuntime;
 import actor4j.core.di.DIContainer;
@@ -470,7 +470,7 @@ public abstract class ActorSystemImpl {
 			return false;
 		}
 		return cells.containsKey(key);
-	}
+	}		
 	
 	public ActorSystemImpl setAlias(UUID id, String alias) {
 		Queue<UUID> queue = null;
