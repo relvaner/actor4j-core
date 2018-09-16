@@ -48,6 +48,7 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	}
 	
 	public UUID addEmbeddedChild(EmbeddedActor embeddedActor) {
+		embeddedActor.host = this;
 		router.put(embeddedActor.getId(), embeddedActor);
 		if (redirectEnabled)
 			getSystem().addRedirection(embeddedActor.getId(), self());
@@ -56,6 +57,7 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	}
 	
 	public void removeEmbeddedChild(EmbeddedActor embeddedActor) {
+		embeddedActor.host = null;
 		if (redirectEnabled)
 			getSystem().removeRedirection(embeddedActor.getId());
 	}	
@@ -66,6 +68,20 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 		EmbeddedActor embeddedActor = router.get(message.dest);
 		if (embeddedActor!=null)
 			result = embeddedActor.embedded(message);
+		else if (message.dest.equals(self()))
+			receive(message);
+		
+		return result;
+	}
+	
+	public <T> boolean embedded(T value, int tag, UUID dest) {
+		boolean result = false;
+		
+		EmbeddedActor embeddedActor = router.get(dest);
+		if (embeddedActor!=null)
+			result = embeddedActor.embedded(value, tag, dest);
+		else if (dest.equals(self()))
+			receive(new ActorMessage<T>(value, tag, self(), dest));
 		
 		return result;
 	}
@@ -74,6 +90,8 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 		EmbeddedActor embeddedActor = router.get(message.dest);
 		if (embeddedActor!=null)
 			embeddedActor.embedded(message.copy());
+		else if (message.dest.equals(self()))
+			receive(message.copy());
 	}
 	
 	@Override

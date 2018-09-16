@@ -66,6 +66,10 @@ public abstract class EmbeddedActor {
 		return id;
 	}
 	
+	public UUID getParent() {
+		return host.getId();
+	}
+	
 	public boolean isActive() {
 		return active;
 	}
@@ -86,6 +90,10 @@ public abstract class EmbeddedActor {
 		}
 		
 		return result;
+	}
+	
+	public <T> boolean embedded(T value, int tag, UUID dest) {
+		return embedded(new ActorMessage<T>(value, tag, self(), dest));
 	}
 	
 	public abstract boolean receive(ActorMessage<?> message);
