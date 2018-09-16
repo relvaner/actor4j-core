@@ -16,14 +16,29 @@
 package actor4j.core.actors;
 
 public abstract class ResourceActor extends Actor {
+	protected final boolean bulk;
+	
 	public ResourceActor() {
-		super();
+		this(null, false);
 	}
 	
 	public ResourceActor(String name) {
-		super(name);
+		this(name, false);
 	}
 	
+	public ResourceActor(boolean bulk) {
+		this(null, bulk);
+	}
+	
+	public ResourceActor(String name, boolean bulk) {
+		super(name);
+		this.bulk = bulk;
+	}
+	
+	public boolean isBulk() {
+		return bulk;
+	}
+
 	public void before() {
 		// empty
 	}

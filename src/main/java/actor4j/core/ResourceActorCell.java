@@ -15,6 +15,8 @@
  */
 package actor4j.core;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import actor4j.core.actors.Actor;
 import actor4j.core.actors.ResourceActor;
 import actor4j.core.annotations.Stateless;
+import actor4j.core.immutable.ImmutableList;
 import actor4j.core.messages.ActorMessage;
 
 public class ResourceActorCell extends ActorCell {
@@ -29,6 +32,7 @@ public class ResourceActorCell extends ActorCell {
 	protected volatile boolean status; // volatile not necessary!
 	protected AtomicBoolean lock;
 	protected Queue<ActorMessage<?>> queue;
+	protected boolean bulk;
 
 	public ResourceActorCell(ActorSystemImpl system, Actor actor) {
 		super(system, actor);
@@ -40,6 +44,7 @@ public class ResourceActorCell extends ActorCell {
 			stateful = true;
 			lock   	 = new AtomicBoolean(false);
 			queue  	 = new ConcurrentLinkedQueue<>();
+			bulk     = ((ResourceActor)actor).isBulk();
 		}
 		super.preStart();
 	}
@@ -69,12 +74,22 @@ public class ResourceActorCell extends ActorCell {
 		try {
 			before();
 			
-			internal_receive(message);
+			if (!bulk)
+				internal_receive(message);
 			
 			if (stateful) {
 				while (true) {
-					while ((message=queue.poll())!=null)
-						internal_receive(message);
+					if (!bulk) {
+						while ((message=queue.poll())!=null)
+							internal_receive(message);
+					}
+					else {
+						List<ActorMessage<?>> bulkList = new LinkedList<>();
+						bulkList.add(message);
+						while ((message=queue.poll())!=null)
+							bulkList.add(message);
+						internal_receive(new ActorMessage<>(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID, id));
+					}
 					
 					// Spinlock
 					while (!lock.compareAndSet(false, true));
