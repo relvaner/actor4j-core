@@ -145,7 +145,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 			else if (value instanceof Exception)
 				return new ActorMessage<T>(value, tag, source, dest);
 			else
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
 			return new ActorMessage<T>(null, tag, source, dest);
