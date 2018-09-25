@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import actor4j.core.utils.Utils;
 
 public class RemoteActorMessage<T> extends ActorMessage<T> {
-	protected static final long serialVersionUID = 6359184340878978613L;
-	
 	public RemoteActorMessage(T value, int tag, UUID source, UUID dest) {
 		super(value, tag, source, dest);
 	}

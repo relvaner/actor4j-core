@@ -22,8 +22,6 @@ import actor4j.core.utils.Copyable;
 import actor4j.core.utils.Shareable;
 
 public class FutureActorMessage<T> extends ActorMessage<T> {
-	protected static final long serialVersionUID = -3161942153771543664L;
-	
 	public final CompletableFuture<T> future;
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest) {
