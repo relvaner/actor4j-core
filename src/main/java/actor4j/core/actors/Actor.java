@@ -130,52 +130,72 @@ public abstract class Actor implements ActorRef {
 		cell.unbecomeAll();
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
 				if (message.source.equals(source)) {
 					action.accept(message);
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+		await(source, action, true);
+	}
+	
+	public void await(final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
 				if (message.tag==tag) {
 					action.accept(message);
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
+		await(tag, action, true);
+	}
+	
+	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
 				if (message.source.equals(source) && message.tag==tag) {
 					action.accept(message);
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+		await(source, tag, action, true);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
 				if (predicate.test(message)) {
 					action.accept(message);
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 			}
-		}, false);
+		}, replace);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+		await(predicate, action, true);
 	}
 	
 	public void send(ActorMessage<?> message) {
