@@ -41,13 +41,17 @@ public abstract class EmbeddedActor {
 		this(null, host);
 	}
 	
-	public EmbeddedActor(String name, EmbeddedHostActor host) {
+	public EmbeddedActor(String name, EmbeddedHostActor host, UUID id) {
 		super();
 		this.name = name;
 		this.host = host;
-		id = UUID.randomUUID();
+		this.id = id;
 		active = true;
 		behaviourStack = new ArrayDeque<>();
+	}
+	
+	public EmbeddedActor(String name, EmbeddedHostActor host) {
+		this(name, host, UUID.randomUUID());
 	}
 	
 	public ActorRef host() {
@@ -116,7 +120,7 @@ public abstract class EmbeddedActor {
 		behaviourStack.clear();
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -124,14 +128,19 @@ public abstract class EmbeddedActor {
 				if (message.source.equals(source)) {
 					action.accept(message);
 					result = true;
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 				return result;
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+		await(source, action, true);
+	}
+	
+	public void await(final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -139,14 +148,19 @@ public abstract class EmbeddedActor {
 				if (message.tag==tag) {
 					action.accept(message);
 					result = true;
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 				return result;
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
+		await(tag, action, true);
+	}
+	
+	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -154,14 +168,19 @@ public abstract class EmbeddedActor {
 				if (message.source.equals(source) && message.tag==tag) {
 					action.accept(message);
 					result = true;
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 				return result;
 			}
-		}, false);
+		}, replace);
 	}
 	
-	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+		await(source, tag, action, true);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -169,11 +188,16 @@ public abstract class EmbeddedActor {
 				if (predicate.test(message)) {
 					action.accept(message);
 					result = true;
-					unbecome();
+					if (!replace)
+						unbecome();
 				}
 				return result;
 			}
-		}, false);
+		}, replace);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+		await(predicate, action, true);
 	}
 	
 	public void send(ActorMessage<?> message) {

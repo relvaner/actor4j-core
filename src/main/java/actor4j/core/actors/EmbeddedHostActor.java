@@ -20,7 +20,7 @@ import java.util.UUID;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorEmbeddedRouter;
 
-public abstract class EmbeddedHostActor extends Actor implements ActorRef {
+public abstract class EmbeddedHostActor extends Actor {
 	protected ActorEmbeddedRouter router;
 	protected boolean redirectEnabled;
 	
@@ -58,6 +58,7 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	
 	public void removeEmbeddedChild(EmbeddedActor embeddedActor) {
 		embeddedActor.host = null;
+		router.remove(embeddedActor.id);
 		if (redirectEnabled)
 			getSystem().removeRedirection(embeddedActor.getId());
 	}	
@@ -97,6 +98,7 @@ public abstract class EmbeddedHostActor extends Actor implements ActorRef {
 	@Override
 	public void postStop() {
 		for (EmbeddedActor embeddedActor : router.values())
-			removeEmbeddedChild(embeddedActor);
+			if (redirectEnabled)
+				getSystem().removeRedirection(embeddedActor.getId());
 	}
 }
