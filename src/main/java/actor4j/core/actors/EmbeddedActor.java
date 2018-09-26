@@ -128,8 +128,6 @@ public abstract class EmbeddedActor {
 				if (message.source.equals(source)) {
 					action.accept(message);
 					result = true;
-					if (!replace)
-						unbecome();
 				}
 				return result;
 			}
@@ -148,8 +146,6 @@ public abstract class EmbeddedActor {
 				if (message.tag==tag) {
 					action.accept(message);
 					result = true;
-					if (!replace)
-						unbecome();
 				}
 				return result;
 			}
@@ -168,8 +164,6 @@ public abstract class EmbeddedActor {
 				if (message.source.equals(source) && message.tag==tag) {
 					action.accept(message);
 					result = true;
-					if (!replace)
-						unbecome();
 				}
 				return result;
 			}
@@ -188,8 +182,6 @@ public abstract class EmbeddedActor {
 				if (predicate.test(message)) {
 					action.accept(message);
 					result = true;
-					if (!replace)
-						unbecome();
 				}
 				return result;
 			}

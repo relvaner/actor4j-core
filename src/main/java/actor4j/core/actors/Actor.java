@@ -136,8 +136,6 @@ public abstract class Actor implements ActorRef {
 			public void accept(ActorMessage<?> message) {
 				if (message.source.equals(source)) {
 					action.accept(message);
-					if (!replace)
-						unbecome();
 				}
 			}
 		}, replace);
@@ -153,8 +151,6 @@ public abstract class Actor implements ActorRef {
 			public void accept(ActorMessage<?> message) {
 				if (message.tag==tag) {
 					action.accept(message);
-					if (!replace)
-						unbecome();
 				}
 			}
 		}, replace);
@@ -170,8 +166,6 @@ public abstract class Actor implements ActorRef {
 			public void accept(ActorMessage<?> message) {
 				if (message.source.equals(source) && message.tag==tag) {
 					action.accept(message);
-					if (!replace)
-						unbecome();
 				}
 			}
 		}, replace);
@@ -187,8 +181,6 @@ public abstract class Actor implements ActorRef {
 			public void accept(ActorMessage<?> message) {
 				if (predicate.test(message)) {
 					action.accept(message);
-					if (!replace)
-						unbecome();
 				}
 			}
 		}, replace);

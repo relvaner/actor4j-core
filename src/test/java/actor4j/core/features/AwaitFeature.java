@@ -55,6 +55,7 @@ public class AwaitFeature {
 						@Override
 						public void accept(ActorMessage<?> t) {
 							postconditions[0].set(true);
+							unbecome();
 						}
 					};
 					
