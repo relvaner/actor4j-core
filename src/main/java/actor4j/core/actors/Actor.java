@@ -231,7 +231,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction) {
-		send(new ActorMessage<T>(value, tag, self(), dest, interaction, null));
+		send(new ActorMessage<T>(value, tag, self(), dest, interaction, null, null));
 	}
 	
 	public <T> void tell(T value, int tag, String alias) {

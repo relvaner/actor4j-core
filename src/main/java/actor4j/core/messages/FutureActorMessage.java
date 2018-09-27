@@ -24,13 +24,13 @@ import actor4j.core.utils.Shareable;
 public class FutureActorMessage<T> extends ActorMessage<T> {
 	public final CompletableFuture<T> future;
 	
-	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest, UUID interaction, String ontology) {
-		super(value, tag, source, dest, interaction, ontology);
+	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String ontology) {
+		super(value, tag, source, dest, interaction, protocol, ontology);
 		this.future = future;
 	}
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest) {
-		this(future, value, tag, source, dest, null, null);
+		this(future, value, tag, source, dest, null, null, null);
 	}
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, Enum<?> tag, UUID source, UUID dest) {
@@ -39,7 +39,7 @@ public class FutureActorMessage<T> extends ActorMessage<T> {
 	
 	@Override
 	protected ActorMessage<T> weakCopy() {
-		return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, ontology);
+		return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, protocol, ontology);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -47,15 +47,15 @@ public class FutureActorMessage<T> extends ActorMessage<T> {
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, ontology);
+				return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, protocol, ontology);
 			else if (value instanceof Copyable)
-				return new FutureActorMessage<T>(future, ((Copyable<T>)value).copy(), tag, source, dest, interaction, ontology);
+				return new FutureActorMessage<T>(future, ((Copyable<T>)value).copy(), tag, source, dest, interaction, protocol, ontology);
 			else if (value instanceof Exception)
-				return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, ontology);
+				return new FutureActorMessage<T>(future, value, tag, source, dest, interaction, protocol, ontology);
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new FutureActorMessage<T>(future, null, tag, source, dest, interaction, ontology);
+			return new FutureActorMessage<T>(future, null, tag, source, dest, interaction, protocol, ontology);
 	}
 }
