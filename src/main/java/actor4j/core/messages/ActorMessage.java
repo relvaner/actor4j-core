@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,17 +33,21 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	public int tag;
 	public UUID source;
 	public UUID dest;
-	/*
-	 	public boolean byRef; 
-	 */
 	
-	public ActorMessage(T value, int tag, UUID source, UUID dest) {
-		super();
-		
+	public UUID interactionId;
+	public String ontology;
+	
+	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interactionId, String ontology) {
 		this.value = value;
 		this.tag = tag;
 		this.source = source;
 		this.dest = dest;
+		this.interactionId = interactionId;
+		this.ontology = ontology;
+	}
+
+	public ActorMessage(T value, int tag, UUID source, UUID dest) {
+		this(value, tag, source, dest, null, null);
 	}
 
 	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
@@ -58,6 +62,14 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 		this.value = value;
 	}
 	
+	public int getTag() {
+		return tag;
+	}
+
+	public void setTag(int tag) {
+		this.tag = tag;
+	}
+
 	public UUID getSource() {
 		return source;
 	}
@@ -72,6 +84,22 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 
 	public void setDest(UUID dest) {
 		this.dest = dest;
+	}
+	
+	public UUID getInteractionId() {
+		return interactionId;
+	}
+
+	public void setInteractionId(UUID interactionId) {
+		this.interactionId = interactionId;
+	}
+
+	public String getOntology() {
+		return ontology;
+	}
+
+	public void setOntology(String ontology) {
+		this.ontology = ontology;
 	}
 
 	public boolean valueAsBoolean() {
@@ -125,30 +153,23 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	}
 	
 	protected ActorMessage<T> weakCopy() {
-		return new ActorMessage<T>(value, tag, source, dest);
+		return new ActorMessage<T>(value, tag, source, dest, interactionId, ontology);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public ActorMessage<T> copy() {
-		/*
-			if (value!=null && !byRef && value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);	
-			else 
-				return new ActorMessage<T>(value, tag, source, dest);
-		 */
-		
 		if (value!=null) { 
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new ActorMessage<T>(value, tag, source, dest);
+				return new ActorMessage<T>(value, tag, source, dest, interactionId, ontology);
 			else if (value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest);
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest, interactionId, ontology);
 			else if (value instanceof Exception)
-				return new ActorMessage<T>(value, tag, source, dest);
+				return new ActorMessage<T>(value, tag, source, dest, interactionId, ontology);
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new ActorMessage<T>(null, tag, source, dest);
+			return new ActorMessage<T>(null, tag, source, dest, interactionId, ontology);
 	}
 	
 	@Override
@@ -158,9 +179,9 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 
 	@Override
 	public String toString() {
-		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
+		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
+				+ ", interactionId=" + interactionId + ", ontology=" + ontology + "]";
 	}
-
 	public static boolean isSupportedType(Class<?> type) {
 		return SUPPORTED_TYPES.contains(type);
 	}

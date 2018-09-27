@@ -20,7 +20,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import actor4j.core.messages.ActorMessage;
-import actor4j.core.messages.ActorMessageWithId;
 import actor4j.core.utils.ActorMessageMatcher;
 
 public class HandlerActor extends EmbeddedHostActor {
@@ -50,8 +49,8 @@ public class HandlerActor extends EmbeddedHostActor {
 			unhandled(message);
 	}
 	
-	public void handle(ActorMessageWithId<?> message, BiConsumer<ActorMessage<?>, EmbeddedActor> handler, Predicate<ActorMessage<?>> done) {
-		UUID id = ((ActorMessageWithId<?>)message).id;
+	public void handle(ActorMessage<?> message, BiConsumer<ActorMessage<?>, EmbeddedActor> handler, Predicate<ActorMessage<?>> done) {
+		UUID id = message.interactionId;
 		EmbeddedActor embeddedActor = router.get(id);
 		if (embeddedActor!=null)
 			embeddedActor.embedded(message);

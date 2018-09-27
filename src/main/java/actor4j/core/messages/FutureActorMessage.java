@@ -23,14 +23,23 @@ import actor4j.core.utils.Shareable;
 
 public class FutureActorMessage<T> extends ActorMessage<T> {
 	public final CompletableFuture<T> future;
+	
+	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest, UUID interactionId, String ontology) {
+		super(value, tag, source, dest, interactionId, ontology);
+		this.future = future;
+	}
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, int tag, UUID source, UUID dest) {
-		super(value, tag, source, dest);
-		this.future = future;
+		this(future, value, tag, source, dest, null, null);
 	}
 
 	public FutureActorMessage(CompletableFuture<T> future, T value, Enum<?> tag, UUID source, UUID dest) {
 		this(future, value, tag.ordinal(), source, dest);
+	}
+	
+	@Override
+	protected ActorMessage<T> weakCopy() {
+		return new FutureActorMessage<T>(future, value, tag, source, dest, interactionId, ontology);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -38,15 +47,15 @@ public class FutureActorMessage<T> extends ActorMessage<T> {
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new FutureActorMessage<T>(future, value, tag, source, dest);
+				return new FutureActorMessage<T>(future, value, tag, source, dest, interactionId, ontology);
 			else if (value instanceof Copyable)
-				return new FutureActorMessage<T>(future, ((Copyable<T>)value).copy(), tag, source, dest);
+				return new FutureActorMessage<T>(future, ((Copyable<T>)value).copy(), tag, source, dest, interactionId, ontology);
 			else if (value instanceof Exception)
-				return new FutureActorMessage<T>(future, value, tag, source, dest);
+				return new FutureActorMessage<T>(future, value, tag, source, dest, interactionId, ontology);
 			else
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new FutureActorMessage<T>(future, null, tag, source, dest);
+			return new FutureActorMessage<T>(future, null, tag, source, dest, interactionId, ontology);
 	}
 }

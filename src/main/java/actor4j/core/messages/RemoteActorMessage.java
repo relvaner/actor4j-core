@@ -25,7 +25,11 @@ public class RemoteActorMessage<T> extends ActorMessage<T> {
 	public RemoteActorMessage(T value, int tag, UUID source, UUID dest) {
 		super(value, tag, source, dest);
 	}
-	
+		
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interactionId, String ontology) {
+		super(value, tag, source, dest, interactionId, ontology);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <C> C convertValue(Class<T> clazz) {
 		return (C)(new ObjectMapper().convertValue(value, clazz));
