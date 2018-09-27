@@ -94,6 +94,7 @@ The structure of the `ActorMessage<T>` looks like that:
 | UUID | dest | destination of the message |
 ||||
 | UUID | interaction | associated interaction |
+| String | protocol | interaction protocol |
 | String | ontology | ontology of the message |
 <!--| boolean | ref | call-by-reference or call-by-value (needs deep copy)|-->
 
@@ -379,5 +380,5 @@ This software framework is currently under an prototype state.
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 [18]<a name="18"/> D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
 
-Page to be updated 04/21/2018
+Page to be updated 09/27/2018
 
