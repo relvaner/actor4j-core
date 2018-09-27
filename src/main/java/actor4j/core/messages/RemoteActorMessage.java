@@ -26,8 +26,8 @@ public class RemoteActorMessage<T> extends ActorMessage<T> {
 		super(value, tag, source, dest);
 	}
 		
-	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interactionId, String ontology) {
-		super(value, tag, source, dest, interactionId, ontology);
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String ontology) {
+		super(value, tag, source, dest, interaction, ontology);
 	}
 
 	@SuppressWarnings("unchecked")

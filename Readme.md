@@ -92,6 +92,9 @@ The structure of the `ActorMessage<T>` looks like that:
 | int | tag | tags helps for differentiating between messages  |
 | UUID | source | source of the message |
 | UUID | dest | destination of the message |
+||||
+| UUID | interaction | associated interaction |
+| String | ontology | ontology of the message |
 <!--| boolean | ref | call-by-reference or call-by-value (needs deep copy)|-->
 
 Tab. 1: Structure of the `ActorMessage<T>`
