@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/relvaner/actor4j-core.svg?branch=master)](https://travis-ci.org/relvaner/actor4j-core)
 [![Coverage Status](https://coveralls.io/repos/github/relvaner/actor4j-core/badge.svg?branch=master)](https://coveralls.io/github/relvaner/actor4j-core?branch=master)
+[![License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/)
 <!-- [![gitter: actor4j/actor4j](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/actor4j/actor4j) -->
 <!-- [<img title="gitter: actor4j/actor4j" src="https://badges.gitter.im/Join Chat.svg" alt="gitter: actor4j/actor4j">](https://gitter.im/actor4j/actor4j) -->
 
