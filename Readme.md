@@ -7,6 +7,21 @@
 ## Actor4j promotion ##
 <img src="doc/images/promo.png" alt="Representation of the basic calls to the actor4j REST API" width="686" height="486"/>
 
+## Use Cases ##
+
+- Multi-agent systems
+- Simulations
+- Business logic (for Client-Server architectures) inclusively caching/database access
+- Caching (see [Volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
+- In-memory database (see [IMDB [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access/imdb))
+- Messaging (see [Publish-Subscribe [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
+- Reactive Streams ([see Publisher, Subscriber and Proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
+- Internet of Things
+- Function (here actor) as a Service in combination with Vert.x (see [Template](https://github.com/relvaner/relvaner-vertx-template))
+- Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
+
+>The realized solutions are conceptualizations that require further completion. For any inquiries, I'm willing to help.
+
 ## Actor4j an actor implementation ##
 Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
