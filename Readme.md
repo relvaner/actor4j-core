@@ -9,7 +9,7 @@
 
 ## Use Cases ##
 
-- Multi-agent systems
+- Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
 - Simulations
 - Business logic (for Client-Server architectures) inclusively caching/database access
 - Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
