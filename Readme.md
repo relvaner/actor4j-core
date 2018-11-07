@@ -12,12 +12,13 @@
 - Multi-agent systems
 - Simulations
 - Business logic (for Client-Server architectures) inclusively caching/database access
-- Caching (see [Volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
+- Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
 - In-memory database (see [IMDB [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access/imdb))
 - Messaging (see [Publish-Subscribe [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
-- Reactive Streams ([see Publisher, Subscriber and Proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
-- Internet of Things
-- Function (here actor) as a Service in combination with Vert.x (see [Template](https://github.com/relvaner/relvaner-vertx-template))
+- Reactive Streams ([see publisher, subscriber and proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
+- Reactive System (responsive, elastic, resilient and message driven)
+- Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
+- Function (here actor) as a Service in combination with Vert.x (see [template](https://github.com/relvaner/relvaner-vertx-template))
 - Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
 
 >The realized solutions are conceptualizations that require further completion. For any inquiries, I'm willing to help.
