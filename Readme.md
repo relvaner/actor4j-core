@@ -17,7 +17,7 @@
 - Messaging (see [Publish-Subscribe [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
 - Reactive Streams ([see publisher, subscriber and proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
 - Reactive System (responsive, elastic, resilient and message driven)
-- Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
+- Internet of Things, especially also as Digital Twins ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
 - Function (here actor) as a Service in combination with Vert.x (see [template](https://github.com/relvaner/relvaner-vertx-template))
 - Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
 
