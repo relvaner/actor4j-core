@@ -23,6 +23,14 @@
 
 >The realized solutions are conceptualizations that require further completion. For any inquiries, I'm willing to help.
 
+## Actor Model in Practice ##
+
+- Using Erlang: e.g., WhatsApp, RabbitMQ (AMQP), CouchDB
+- Using Akka: [Case Studies by Lightbend](https://www.lightbend.com/case-studies)
+- Using JADE for multi-agent systems: e.g., [[20](#20)]
+- [India's Aadhaar program](https://uidai.gov.in/) (source: [The Actor Model and the Queue or “Batch is the New Black” by James Whitehead II](https://www.usenix.org/conference/lisa17/conference-program/presentation/whitehead))
+- "Deutscher Wetterdienst" (Germany's National Meteorological Service) [[19](#19)]
+
 ## Actor4j an actor implementation ##
 Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
@@ -396,6 +404,7 @@ This software framework is currently under an prototype state.
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 [18]<a name="18"/> D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
-
-Page to be updated 09/27/2018
+[19]<a name="19"/> M. Lehmann and M. Werner, “Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst,” in JavaSPEKTRUM 3/2016, 2016
+[20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.
+Page to be updated 12/17/2018
 
