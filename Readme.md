@@ -404,7 +404,8 @@ This software framework is currently under an prototype state.
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
 [18]<a name="18"/> D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
-[19]<a name="19"/> M. Lehmann and M. Werner, “Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst,” in JavaSPEKTRUM 3/2016, 2016
+[19]<a name="19"/> M. Lehmann and M. Werner, “Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst,” in JavaSPEKTRUM 3/2016, 2016  
 [20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.
+
 Page to be updated 12/17/2018
 
