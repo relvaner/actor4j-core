@@ -7,6 +7,13 @@
 ## Actor4j promotion ##
 <img src="doc/images/promo.png" alt="Representation of the basic calls to the actor4j REST API" width="686" height="486"/>
 
+## What is an actor? ##
+
+Three axioms from Carl Hewitt [[22](#22)], "when an actor receives a message":
+>(1) "it can create some more actors"
+>(2) "it can send messsages to actors that it has addresses before"
+>(3) "it can designate what it's going to do with the next message it receives"
+
 ## Use Cases ##
 
 - Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
@@ -407,10 +414,11 @@ This software framework is currently under an prototype state.
 [15]<a name="15"/> Lightbend (2015). Persistence.  http://doc.akka.io/docs/akka/2.4/java/persistence.html  
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
-[18]<a name="18"/> D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
-[19]<a name="19"/> M. Lehmann and M. Werner, “Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst,” in JavaSPEKTRUM 3/2016, 2016  
+[18]<a name="18"/> D. A. Bauer and J. Mäkiö, "Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing," AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
+[19]<a name="19"/> M. Lehmann and M. Werner, "Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst," in JavaSPEKTRUM 3/2016, 2016  
 [20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.  
-[21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.
+[21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.  
+[22]<a name="22"/> Lang.NEXT 2012. Hewitt, Meijer and Szyperski: The Actor Model (everything you wanted to know, but were afraid to ask). https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask
 
 Page to be updated 12/17/2018
 
