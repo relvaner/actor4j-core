@@ -10,8 +10,8 @@
 ## What is an actor? ##
 
 Three axioms from Carl Hewitt [[22](#22)], "when an actor receives a message":
->(1) "it can create some more actors"
->(2) "it can send messsages to actors that it has addresses before"
+>(1) "it can create some more actors"  
+>(2) "it can send messsages to actors that it has addresses before"  
 >(3) "it can designate what it's going to do with the next message it receives"
 
 ## Use Cases ##
