@@ -9,7 +9,7 @@
 
 ## What is an actor? ##
 
-There are three axioms for actors from Carl Hewitt [[22](#22)]. "When an Actor receives a message, it can concurrenlty:
+There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an Actor receives a message, it can concurrenlty:
  - send messages to addresses of Actors that it has
  - create new Actors
  - designate how to handle the next message it receives." [[23](#23)]
