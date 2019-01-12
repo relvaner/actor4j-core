@@ -9,10 +9,10 @@
 
 ## What is an actor? ##
 
-Three axioms from Carl Hewitt [[22](#22)], "when an actor receives a message":
->(1) "it can create some more actors"  
->(2) "it can send messsages to actors that it has addresses before"  
->(3) "it can designate what it's going to do with the next message it receives"
+There are three axioms for actors from Carl Hewitt [[22](#22)]. "When an Actor receives a message, it can concurrenlty:
+ - send messages to addresses of Actors that it has
+ - create new Actors
+ - designate how to handle the next message it receives." [[23](#23)]
 
 ## Use Cases ##
 
@@ -418,7 +418,8 @@ This software framework is currently under an prototype state.
 [19]<a name="19"/> M. Lehmann and M. Werner, "Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst," in JavaSPEKTRUM 3/2016, 2016  
 [20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.  
 [21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.  
-[22]<a name="22"/> Lang.NEXT 2012. Hewitt, Meijer and Szyperski: The Actor Model (everything you wanted to know, but were afraid to ask). https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask
+[22]<a name="22"/> Lang.NEXT 2012. Hewitt, Meijer and Szyperski: The Actor Model (everything you wanted to know, but were afraid to ask). https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask  
+[23]<a name="23"/> Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. Carl Hewitt. Creator of Actor Model. Concurrency and Strong Types for IoT. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html
 
 Page to be updated 12/17/2018
 
