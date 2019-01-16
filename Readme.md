@@ -14,6 +14,9 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
  - create new Actors
  - designate how to handle the next message it receives." [[23](#23)]
 
+Compact Explanation:
+>One actor is no actor. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be excuted in parallel, but the same actor only once at the same time. This avoids corruption in state. They can hold state and share there sate over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change there behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by there asynchronuos message passing, often realized over lock-free queues. Lock-free programming is a difficult job.
+
 ## Use Cases ##
 
 - Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
@@ -41,6 +44,7 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
 
 >**Why using the Actor Model?**
 - Video: [Vaughn Vernon - The Language of Actors](https://www.youtube.com/watch?v=T7M2kkjKxHg)
+- Text: [Lightbend - What problems does the actor model solve?](https://doc.akka.io/docs/akka/2.5.3/scala/guide/actors-intro.html)
 
 ## Actor4j an actor implementation ##
 Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
