@@ -7,9 +7,7 @@
 ## Actor4j promotion ##
 <img src="doc/images/promo.png" alt="Representation of the basic calls to the actor4j REST API" width="686" height="486"/>
 
-<!--
->Novel thread pool architecture introduced for improving the performance of the message passing between the actors. Actors in this implementation don't have their own queue, it's located on their belonging thread (use of multiple task-specific queues), that are used together. By this, double queueing is avoided  (worker-queue of the thread + message queue for every actor). Additionally differentiating between intra-thread and inter-thread communication, this leads to a better performance and was shown in our research paper [[18](#18)]. Actors on the same thread don't even need any synchronization protection mechanism, this is one of the key-advantages of this implementation. This results in a significant performance boost, and can lead to an unlimited speedup, only limited by the numbers of cores.
--->
+>Novel thread pool architecture introduced for improving the performance of the message passing between the actors. Actors in this implementation don't have their own queue, it's located on their belonging thread (use of multiple task-specific queues), that are used together. By this, double queueing is avoided  (worker-queue of the thread + message queue for every actor). Additionally differentiating between intra-thread and inter-thread communication, this leads to a better performance and was shown in our research paper [[18](#18)]. Actors on the same thread don't even need any kind of synchronization protection mechanism for communicating between each other, this is one of the key-advantages of this implementation. This results in a significant performance boost, and can lead to a near unlimited speedup, only limited by the numbers of cores.
 
 ## What is an actor? ##
 
