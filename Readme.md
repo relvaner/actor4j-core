@@ -7,6 +7,10 @@
 ## Actor4j promotion ##
 <img src="doc/images/promo.png" alt="Representation of the basic calls to the actor4j REST API" width="686" height="486"/>
 
+<!--
+>Novel thread pool architecture introduced for improving the performance of the message passing between the actors. Actors in this implementation don't have their own queue, it's located on their belonging thread (use of multiple task-specific queues), that are used together. By this, double queueing is avoided  (worker-queue of the thread + message queue for every actor). Additionally differentiating between intra-thread and inter-thread communication, this leads to a better performance and was shown in our research paper [[18](#18)]. Actors on the same thread don't even need any synchronization protection mechanism, this is one of the key-advantages of this implementation. This results in a significant performance boost, and can lead to an unlimited speedup, only limited by the numbers of cores.
+-->
+
 ## What is an actor? ##
 
 There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an Actor receives a message, it can concurrenlty:
@@ -15,7 +19,7 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
  - designate how to handle the next message it receives." [[23](#23)]
 
 Compact Explanation:
->One actor is no actor. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be excuted in parallel, but the same actor only once at the same time. This avoids corruption in state. They can hold state and share there sate over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change there behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by there asynchronuos message passing, often realized over lock-free queues. Lock-free programming is a difficult job too.
+>One actor is no actor. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time. This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues. Lock-free programming is a difficult job too.
 
 ## Use Cases ##
 
@@ -425,5 +429,5 @@ This software framework is currently under an prototype state.
 [22]<a name="22"/> Lang.NEXT 2012. Hewitt, Meijer and Szyperski: The Actor Model (everything you wanted to know, but were afraid to ask). https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask  
 [23]<a name="23"/> Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. Carl Hewitt. Creator of Actor Model. Concurrency and Strong Types for IoT. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html
 
-Page to be updated 12/17/2018
+Page to be updated 1/16/2019
 
