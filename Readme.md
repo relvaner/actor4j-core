@@ -18,7 +18,7 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
 
 Compact Explanation:
 
-One actor is no actor [[22](#22)]. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time. This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues. Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
+One actor is no actor [[22](#22)]. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time ("processed in a single isolated step" [[24](#24)]). This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues. Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
 
 >Of course, it can be tried alternatively to solve the problem by making a classical map-reduce-approach. The disadvantage is that it must go always through all layers [[23](#23)] of the system for every iteration of computation (coarse granulation in time, lock-step computation). This is not necessary in a network of loosely coupled objects (here actors), interacting events will be processed always near in time and are accurate (finer granulation in time).
 
@@ -34,7 +34,7 @@ One actor is no actor [[22](#22)]. They come always in groups, they want to coll
 - Reactive Streams ([see publisher, subscriber and proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
 - Reactive System (responsive, elastic, resilient and message driven)
 - Internet of Things, especially also as Digital Twins ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
-- Function (here actor) as a Service in combination with Vert.x (see [template](https://github.com/relvaner/relvaner-vertx-template))
+- Function (here actor) as a Service in combination with Vert.x (future work)
 - Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
 
 >The realized solutions are conceptualizations that require further completion. For any inquiries, I'm willing to help.
@@ -428,7 +428,8 @@ This software framework is currently under an prototype state.
 [20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.  
 [21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.  
 [22]<a name="22"/> Hewitt, Meijer and Szyperski (2012): The Actor Model (everything you wanted to know, but were afraid to ask). Lang.NEXT 2012. https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask  
-[23]<a name="23"/> Carl Hewitt (2017). Creator of Actor Model. Concurrency and Strong Types for IoT. Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html
+[23]<a name="23"/> Carl Hewitt (2017). Creator of Actor Model. Concurrency and Strong Types for IoT. Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html  
+[24]<a name="24"/> J. de Koster, T. van Cutsem and  W. de Meuter, "43 years of actors: a taxonomy of actor models and their key properties," AGERE 2016: Proceedings of the 6th International Workshop on Programming Based on Actors, Agents, and Decentralized Control, 2016, pp. 31-40.
 
 Page to be updated 1/16/2019
 
