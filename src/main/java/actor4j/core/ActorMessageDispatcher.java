@@ -24,19 +24,23 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import actor4j.core.annotations.concurrent.Readonly;
 import actor4j.core.messages.ActorMessage;
 import actor4j.core.persistence.ActorPersistenceService;
 
 public abstract class ActorMessageDispatcher {
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	
-	protected Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
-	protected Map<Long, ActorThread> threadsMap;
-	protected List<Long> threadsList;
-	protected Map<Long, String> persistenceMap;
+	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
+	@Readonly
+	protected final Map<Long, ActorThread> threadsMap;
+	@Readonly
+	protected final List<Long> threadsList;
+	@Readonly
+	protected final Map<Long, String> persistenceMap;
 	
-	protected Map<UUID, Long> groupsMap; // GroupID -> ThreadID
-	protected Map<UUID, Integer> groupsDistributedMap;
+	protected final Map<UUID, Long> groupsMap; // GroupID -> ThreadID
+	protected final Map<UUID, Integer> groupsDistributedMap;
 	
 	protected static final UUID UUID_ALIAS = UUID_ZERO;
 	

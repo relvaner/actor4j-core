@@ -30,7 +30,7 @@ import actor4j.core.supervisor.SupervisorStrategy;
 import actor4j.core.supervisor.SupervisorStrategyDirective;
 
 public class ActorStrategyOnFailure {
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	
 	public ActorStrategyOnFailure(ActorSystemImpl system) {
 		this.system = system;

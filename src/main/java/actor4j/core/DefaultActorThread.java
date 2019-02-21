@@ -27,15 +27,15 @@ import org.jctools.queues.MpscArrayQueue;
 import actor4j.core.messages.ActorMessage;
 
 public class DefaultActorThread extends ActorThread {
-	protected Queue<ActorMessage<?>> directiveQueue;
-	protected Queue<ActorMessage<?>> priorityQueue;
-	protected Queue<ActorMessage<?>> innerQueue;
-	protected Queue<ActorMessage<?>> outerQueueL2;
-	protected Queue<ActorMessage<?>> outerQueueL1;
-	protected Queue<ActorMessage<?>> serverQueueL2;
-	protected Queue<ActorMessage<?>> serverQueueL1;
+	protected final Queue<ActorMessage<?>> directiveQueue;
+	protected final Queue<ActorMessage<?>> priorityQueue;
+	protected final Queue<ActorMessage<?>> innerQueue;
+	protected final Queue<ActorMessage<?>> outerQueueL2;
+	protected final Queue<ActorMessage<?>> outerQueueL1;
+	protected final Queue<ActorMessage<?>> serverQueueL2;
+	protected final Queue<ActorMessage<?>> serverQueueL1;
 	
-	protected AtomicBoolean newMessage;
+	protected final AtomicBoolean newMessage;
 	
 	public DefaultActorThread(ActorSystemImpl system) {
 		super(system);

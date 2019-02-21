@@ -37,16 +37,16 @@ import actor4j.core.safety.ErrorHandler;
 import actor4j.core.safety.SafetyManager;
 
 public class ActorExecuterService {
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	
-	protected SafetyManager safetyManager;
+	protected final SafetyManager safetyManager;
 	
-	protected List<ActorThread> actorThreads;
+	protected final List<ActorThread> actorThreads;
 	
 	protected CountDownLatch countDownLatch;
 	protected Runnable onTermination;
 	
-	protected AtomicBoolean started;
+	protected final AtomicBoolean started;
 	
 	protected ActorTimerExecuterService globalTimerExecuterService;
 	protected ActorTimerExecuterService timerExecuterService;

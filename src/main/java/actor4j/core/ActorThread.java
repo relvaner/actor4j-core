@@ -26,9 +26,9 @@ import actor4j.core.safety.SafetyMethod;
 public abstract class ActorThread extends Thread {
 	protected final UUID uuid; // for safety
 	
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	
-	protected AtomicLong counter;
+	protected final AtomicLong counter;
 	protected Runnable onTermination;
 	
 	protected static int index;

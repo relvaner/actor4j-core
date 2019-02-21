@@ -60,9 +60,9 @@ public abstract class ActorSystemImpl {
 	protected final Map<UUID, Boolean> resourceCells;
 	protected final Map<UUID, ActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
-	protected ActorMessageDispatcher messageDispatcher;
+	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
 	protected AtomicBoolean messagingEnabled;
-	protected Class<? extends ActorThread> actorThreadClass;
+	protected /*quasi final*/ Class<? extends ActorThread> actorThreadClass;
 	
 	protected boolean counterEnabled;
 	

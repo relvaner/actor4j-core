@@ -30,13 +30,13 @@ import actor4j.core.messages.ActorMessage;
 import static actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerServer;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
 	
-	protected Consumer<ActorMessage<?>> consumerPseudo;
+	protected final Consumer<ActorMessage<?>> consumerPseudo;
 	
-	protected BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
+	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
 	public DefaultActorMessageDispatcher(ActorSystemImpl system) {
 		super(system);

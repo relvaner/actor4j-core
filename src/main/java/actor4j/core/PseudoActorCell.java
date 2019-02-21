@@ -39,10 +39,10 @@ import rx.Observable;
 import static actor4j.core.utils.ActorUtils.*;
 
 public class PseudoActorCell extends ActorCell {
-	protected Queue<ActorMessage<?>> outerQueueL2;
-	protected Queue<ActorMessage<?>> outerQueueL1;
+	protected final Queue<ActorMessage<?>> outerQueueL2;
+	protected final Queue<ActorMessage<?>> outerQueueL1;
 	
-	protected Observable<ActorMessage<?>> rxOuterQueueL1;
+	protected final Observable<ActorMessage<?>> rxOuterQueueL1;
 	
 	public PseudoActorCell(ActorSystem wrapper, Actor actor, boolean blocking) {
 		super(wrapper.system, actor);

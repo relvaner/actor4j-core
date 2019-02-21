@@ -54,9 +54,9 @@ import static actor4j.core.utils.ActorUtils.*;
 
 public class ActorCell {
 	static class PersistenceTuple {
-		protected Consumer<ActorPersistenceObject> onSuccess;
-		protected Consumer<Exception> onFailure;
-		protected List<ActorPersistenceObject> objects;
+		protected final Consumer<ActorPersistenceObject> onSuccess;
+		protected final Consumer<Exception> onFailure;
+		protected final List<ActorPersistenceObject> objects;
 		
 		public PersistenceTuple(Consumer<ActorPersistenceObject> onSuccess, Consumer<Exception> onFailure, List<ActorPersistenceObject> objects) {
 			super();
@@ -66,28 +66,28 @@ public class ActorCell {
 		}
 	}
 	
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	protected Actor actor;
 	
 	protected final UUID id;
 	
 	protected UUID parent;
-	protected Queue<UUID> children;
+	protected final Queue<UUID> children;
 	
-	protected AtomicBoolean active;
+	protected final AtomicBoolean active;
 	
-	protected Deque<Consumer<ActorMessage<?>>> behaviourStack;
+	protected final Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
-	protected RestartProtocol restartProtocol;
-	protected StopProtocol stopProtocol;
-	protected RecoverProtocol recoverProtocol;
+	protected final RestartProtocol restartProtocol;
+	protected final StopProtocol stopProtocol;
+	protected final RecoverProtocol recoverProtocol;
 	
-	protected Queue<UUID> deathWatcher;
+	protected final Queue<UUID> deathWatcher;
 	
-	protected Function<ActorMessage<?>, Boolean> processedDirective;
+	protected final Function<ActorMessage<?>, Boolean> processedDirective;
 	protected boolean activeDirectiveBehaviour;
 	
-	protected Queue<PersistenceTuple> persistenceTuples;
+	protected final Queue<PersistenceTuple> persistenceTuples;
 			
 	public ActorCell(ActorSystemImpl system, Actor actor) {
 		super();

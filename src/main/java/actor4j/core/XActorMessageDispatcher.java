@@ -28,11 +28,11 @@ import actor4j.core.ActorSystemImpl;
 import actor4j.core.messages.ActorMessage;
 
 public class XActorMessageDispatcher extends ActorMessageDispatcher {
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerServer;
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
-	protected BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerServer;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
+	protected final BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
 	
-	protected Consumer<ActorMessage<?>> consumerPseudo;
+	protected final Consumer<ActorMessage<?>> consumerPseudo;
 	
 	protected BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	

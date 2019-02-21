@@ -26,9 +26,9 @@ import actor4j.core.messages.ActorMessage;
 import actor4j.core.utils.ActorGroup;
 
 public class ActorTimerExecuterService implements ActorTimer {
-	protected ActorSystemImpl system;
+	protected final ActorSystemImpl system;
 	
-	protected ScheduledExecutorService timerExecuterService;
+	protected final ScheduledExecutorService timerExecuterService;
 	
 	public ActorTimerExecuterService(ActorSystemImpl system, int corePoolSize, String threadName) {
 		super();

@@ -29,19 +29,19 @@ import org.jctools.queues.MpscLinkedQueue8;
 import actor4j.core.messages.ActorMessage;
 
 public class XActorThread extends ActorThread {
-	protected Queue<ActorMessage<?>> directiveQueue;
-	protected Queue<ActorMessage<?>> priorityQueue;
-	protected Queue<ActorMessage<?>> innerQueueL2;
-	protected Queue<ActorMessage<?>> innerQueueL1;
-	protected Queue<ActorMessage<?>> outerQueueL2B;
-	protected Queue<ActorMessage<?>> outerQueueL2A;
-	protected Queue<ActorMessage<?>> outerQueueL1;
-	protected Queue<ActorMessage<?>> serverQueueL2;
-	protected Queue<ActorMessage<?>> serverQueueL1;
+	protected final Queue<ActorMessage<?>> directiveQueue;
+	protected final Queue<ActorMessage<?>> priorityQueue;
+	protected final Queue<ActorMessage<?>> innerQueueL2;
+	protected final Queue<ActorMessage<?>> innerQueueL1;
+	protected final Queue<ActorMessage<?>> outerQueueL2B;
+	protected final Queue<ActorMessage<?>> outerQueueL2A;
+	protected final Queue<ActorMessage<?>> outerQueueL1;
+	protected final Queue<ActorMessage<?>> serverQueueL2;
+	protected final Queue<ActorMessage<?>> serverQueueL1;
 	
-	protected AtomicBoolean antiFloodingEnabled;
+	protected final AtomicBoolean antiFloodingEnabled;
 	
-	protected AtomicBoolean newMessage;
+	protected final AtomicBoolean newMessage;
 	
 	public XActorThread(ActorSystemImpl system) {
 		super(system);
