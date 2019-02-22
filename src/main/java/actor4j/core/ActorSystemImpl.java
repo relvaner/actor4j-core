@@ -131,12 +131,12 @@ public abstract class ActorSystemImpl {
 		setParallelismMin(0);
 		parallelismFactor = 1;
 		
-		idle = 100000;
+		idle = 100_000;
 		threadMode = ActorThreadMode.PARK;
 		sleepTime = 25;
 		
-		queueSize       = 50000;
-		bufferQueueSize = 10000;
+		queueSize       = 50_000;
+		bufferQueueSize = 10_000;
 		
 		throughput = 100;
 		

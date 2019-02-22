@@ -101,6 +101,7 @@ public class CommPatternFeature {
 				child = addChild(() -> new Actor("child") {
 					@Override
 					public void receive(ActorMessage<?> message) {
+						@SuppressWarnings("unchecked")
 						ImmutableList<String> list = (ImmutableList<String>)message.value;
 						assertEquals("Hello", list.get().get(0));
 						assertEquals("World!", list.get().get(1));
