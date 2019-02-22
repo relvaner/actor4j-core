@@ -56,20 +56,20 @@ public class XActorThread extends ActorThread {
 		innerQueueL2   = new LinkedList<>();
 		innerQueueL1   = new CircularFifoQueue<>(system.getQueueSize());
 		
-		antiFloodingEnabled = new AtomicBoolean(false);
+		antiFloodingEnabled = new AtomicBoolean(true);
 		
 		newMessage = new AtomicBoolean(true);
 	}
 	
 	public void innerQueue(ActorMessage<?> message) {
-		if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty()) && !antiFloodingEnabled.get())
+		if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty()) && antiFloodingEnabled.get())
 			innerQueueL2.offer(message);
 		else
 			innerQueueL1.offer(message);
 	}
 	
 	public void outerQueue(ActorMessage<?> message) {
-		if ((((MpscArrayQueue<ActorMessage<?>>)outerQueueL2A).size()==system.getQueueSize() || !outerQueueL2B.isEmpty()) && !antiFloodingEnabled.get())
+		if ((((MpscArrayQueue<ActorMessage<?>>)outerQueueL2A).size()==system.getQueueSize() || !outerQueueL2B.isEmpty()) && antiFloodingEnabled.get())
 			outerQueueL2B.offer(message);
 		else
 			outerQueueL2A.offer(message);
