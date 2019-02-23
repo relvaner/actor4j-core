@@ -44,8 +44,6 @@ public class XActorThread extends ActorThread {
 	protected final XAntiFloodingTimer innerQueueAntiFloodingTimer;
 	protected final XAntiFloodingTimer outerQueueAntiFloodingTimer;
 	
-	protected final AtomicBoolean antiFloodingEnabled;
-	
 	protected final AtomicBoolean newMessage;
 	
 	public XActorThread(ActorSystemImpl system) {
@@ -61,16 +59,14 @@ public class XActorThread extends ActorThread {
 		innerQueueL2   = new LinkedList<>();
 		innerQueueL1   = new CircularFifoQueue<>(system.getQueueSize());
 		
-		innerQueueAntiFloodingTimer = new XAntiFloodingTimer(-1/*system.getQueueSize()*2*/, 5_000/*30_000*/);
-		outerQueueAntiFloodingTimer = new XAntiFloodingTimer(-1/*system.getQueueSize()*2*/, 5_000/*30_000*/);
-		
-		antiFloodingEnabled = new AtomicBoolean(false);
+		innerQueueAntiFloodingTimer = ((XActorSystemImpl)system).factoryAntiFloodingTimer.get();
+		outerQueueAntiFloodingTimer = ((XActorSystemImpl)system).factoryAntiFloodingTimer.get();
 		
 		newMessage = new AtomicBoolean(true);
 	}
 	
 	public void innerQueue(ActorMessage<?> message) {
-		if (!antiFloodingEnabled.get()) {
+		if (!((XActorSystemImpl)system).antiFloodingEnabled.get()) {
 			if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty())) {
 				if (isDirective(message) || innerQueueAntiFloodingTimer.isInTimeRange())
 					innerQueueL2.offer(message);
@@ -82,22 +78,10 @@ public class XActorThread extends ActorThread {
 		}
 		else
 			innerQueueL1.offer(message);
-		/*
-		if (!antiFloodingEnabled.get()) {
-			if (innerQueueAntiFloodingTimer.isInTimeRange() && (((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty()))
-					innerQueueL2.offer(message);
-			else {
-				innerQueueAntiFloodingTimer.inactive();
-				innerQueueL1.offer(message);
-			}
-		}
-		else
-			innerQueueL1.offer(message);
-		*/
 	}
 	
 	public void outerQueue(ActorMessage<?> message) {
-		if (!antiFloodingEnabled.get()) {
+		if (!((XActorSystemImpl)system).antiFloodingEnabled.get()) {
 			if (outerQueueL2A.size()>=system.getQueueSize() || !outerQueueL2B.isEmpty()) {
 				if (isDirective(message) || outerQueueAntiFloodingTimer.isInTimeRange())
 					outerQueueL2B.offer(message);
@@ -109,18 +93,6 @@ public class XActorThread extends ActorThread {
 		}
 		else
 			outerQueueL2A.offer(message);
-		/*
-		if (!antiFloodingEnabled.get()) {
-			if (outerQueueAntiFloodingTimer.isInTimeRange() && (outerQueueL2A.size()>=system.getQueueSize() || !outerQueueL2B.isEmpty()))
-				outerQueueL2B.offer(message);
-			else {
-				outerQueueAntiFloodingTimer.inactive();
-				outerQueueL2A.offer(message);
-			}
-		}
-		else
-			outerQueueL2A.offer(message);
-		*/
 	}
 	
 	@Override

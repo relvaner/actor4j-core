@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,13 @@
  */
 package actor4j.core;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+
 public class XActorSystemImpl extends DefaultActorSystemImpl {
+	protected final AtomicBoolean antiFloodingEnabled;
+	protected /*quasi final*/ Supplier<XAntiFloodingTimer> factoryAntiFloodingTimer;
+	
 	public XActorSystemImpl(ActorSystem wrapper) {
 		this(null, wrapper);
 	}
@@ -23,7 +29,20 @@ public class XActorSystemImpl extends DefaultActorSystemImpl {
 	public XActorSystemImpl(String name, ActorSystem wrapper) {
 		super(name, wrapper);
 		
+		antiFloodingEnabled = new AtomicBoolean(false);
+		
 		messageDispatcher = new XActorMessageDispatcher(this);
 		actorThreadClass = XActorThread.class;
+	}
+	
+	public void setFactoryAntiFloodingTimer(Supplier<XAntiFloodingTimer> factoryAntiFloodingTimer) {
+		this.factoryAntiFloodingTimer = factoryAntiFloodingTimer;
+	}
+
+	@Override
+	public void start(Runnable onStartup, Runnable onTermination) {
+		if (factoryAntiFloodingTimer==null)
+			factoryAntiFloodingTimer =  () -> new XAntiFloodingTimer(queueSize*2, 5_000);
+		super.start(onStartup, onTermination);
 	}
 }
