@@ -132,10 +132,12 @@ public class DefaultActorThread extends ActorThread {
 		return priorityQueue;
 	}
 
+	@Override
 	public Queue<ActorMessage<?>> getInnerQueue() {
 		return innerQueue;
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getOuterQueue() {
 		return outerQueueL2;
 	}

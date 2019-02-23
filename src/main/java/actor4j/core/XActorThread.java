@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package actor4j.core;
+
+import static actor4j.core.utils.ActorUtils.isDirective;
 
 import java.util.ArrayDeque;
 import java.util.LinkedList;
@@ -39,6 +41,9 @@ public class XActorThread extends ActorThread {
 	protected final Queue<ActorMessage<?>> serverQueueL2;
 	protected final Queue<ActorMessage<?>> serverQueueL1;
 	
+	protected final XAntiFloodingTimer innerQueueAntiFloodingTimer;
+	protected final XAntiFloodingTimer outerQueueAntiFloodingTimer;
+	
 	protected final AtomicBoolean antiFloodingEnabled;
 	
 	protected final AtomicBoolean newMessage;
@@ -56,23 +61,66 @@ public class XActorThread extends ActorThread {
 		innerQueueL2   = new LinkedList<>();
 		innerQueueL1   = new CircularFifoQueue<>(system.getQueueSize());
 		
-		antiFloodingEnabled = new AtomicBoolean(true);
+		innerQueueAntiFloodingTimer = new XAntiFloodingTimer(-1/*system.getQueueSize()*2*/, 5_000/*30_000*/);
+		outerQueueAntiFloodingTimer = new XAntiFloodingTimer(-1/*system.getQueueSize()*2*/, 5_000/*30_000*/);
+		
+		antiFloodingEnabled = new AtomicBoolean(false);
 		
 		newMessage = new AtomicBoolean(true);
 	}
 	
 	public void innerQueue(ActorMessage<?> message) {
-		if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty()) && antiFloodingEnabled.get())
-			innerQueueL2.offer(message);
+		if (!antiFloodingEnabled.get()) {
+			if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty())) {
+				if (isDirective(message) || innerQueueAntiFloodingTimer.isInTimeRange())
+					innerQueueL2.offer(message);
+			}
+			else {
+				innerQueueAntiFloodingTimer.inactive();
+				innerQueueL1.offer(message);
+			}
+		}
 		else
 			innerQueueL1.offer(message);
+		/*
+		if (!antiFloodingEnabled.get()) {
+			if (innerQueueAntiFloodingTimer.isInTimeRange() && (((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty()))
+					innerQueueL2.offer(message);
+			else {
+				innerQueueAntiFloodingTimer.inactive();
+				innerQueueL1.offer(message);
+			}
+		}
+		else
+			innerQueueL1.offer(message);
+		*/
 	}
 	
 	public void outerQueue(ActorMessage<?> message) {
-		if ((((MpscArrayQueue<ActorMessage<?>>)outerQueueL2A).size()==system.getQueueSize() || !outerQueueL2B.isEmpty()) && antiFloodingEnabled.get())
-			outerQueueL2B.offer(message);
+		if (!antiFloodingEnabled.get()) {
+			if (outerQueueL2A.size()>=system.getQueueSize() || !outerQueueL2B.isEmpty()) {
+				if (isDirective(message) || outerQueueAntiFloodingTimer.isInTimeRange())
+					outerQueueL2B.offer(message);
+			}
+			else {
+				outerQueueAntiFloodingTimer.inactive();
+				outerQueueL2A.offer(message);
+			}
+		}
 		else
 			outerQueueL2A.offer(message);
+		/*
+		if (!antiFloodingEnabled.get()) {
+			if (outerQueueAntiFloodingTimer.isInTimeRange() && (outerQueueL2A.size()>=system.getQueueSize() || !outerQueueL2B.isEmpty()))
+				outerQueueL2B.offer(message);
+			else {
+				outerQueueAntiFloodingTimer.inactive();
+				outerQueueL2A.offer(message);
+			}
+		}
+		else
+			outerQueueL2A.offer(message);
+		*/
 	}
 	
 	@Override
@@ -169,11 +217,13 @@ public class XActorThread extends ActorThread {
 	public Queue<ActorMessage<?>> getPriorityQueue() {
 		return priorityQueue;
 	}
-
+	
+	@Override
 	public Queue<ActorMessage<?>> getInnerQueue() {
 		return innerQueueL1;
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getOuterQueue() {
 		return outerQueueL2A;
 	}

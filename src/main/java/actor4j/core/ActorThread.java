@@ -102,6 +102,10 @@ public abstract class ActorThread extends Thread {
 		return counter.longValue();
 	}
 	
+	public abstract Queue<ActorMessage<?>> getInnerQueue();
+	
+	public abstract Queue<ActorMessage<?>> getOuterQueue();
+	
 	public UUID getUUID() {
 		return uuid;
 	}

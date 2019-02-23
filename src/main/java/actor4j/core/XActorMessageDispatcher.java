@@ -16,11 +16,9 @@
 package actor4j.core;
 
 import java.util.List;
-import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 import actor4j.core.ActorMessageDispatcher;
@@ -33,8 +31,6 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 	protected final BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
 	
 	protected final Consumer<ActorMessage<?>> consumerPseudo;
-	
-	protected BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
 	public XActorMessageDispatcher(ActorSystemImpl system) {
 		super(system);

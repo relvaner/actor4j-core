@@ -33,14 +33,14 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 	public List<Integer> getWorkerInnerQueueSizes() {
 		List<Integer> list = new ArrayList<>();
 		for (ActorThread t : executerService.getActorThreads())
-			list.add(((DefaultActorThread)t).getInnerQueue().size());
+			list.add(t.getInnerQueue().size());
 		return list;
 	}
 	
 	public List<Integer> getWorkerOuterQueueSizes() {
 		List<Integer> list = new ArrayList<>();
 		for (ActorThread t : executerService.getActorThreads())
-			list.add(((DefaultActorThread)t).getOuterQueue().size());
+			list.add(t.getOuterQueue().size());
 		return list;
 	}
 }
