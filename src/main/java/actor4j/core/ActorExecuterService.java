@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ package actor4j.core;
 import static actor4j.core.utils.ActorLogger.logger;
 import static actor4j.core.utils.ActorUtils.actorLabel;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -41,9 +39,7 @@ public class ActorExecuterService {
 	
 	protected final SafetyManager safetyManager;
 	
-	protected final List<ActorThread> actorThreads;
-	
-	protected CountDownLatch countDownLatch;
+	protected ActorThreadPool actorThreadPool;
 	protected Runnable onTermination;
 	
 	protected final AtomicBoolean started;
@@ -61,8 +57,6 @@ public class ActorExecuterService {
 		super();
 		
 		this.system = system;
-		
-		actorThreads = new ArrayList<>();
 		
 		started = new AtomicBoolean();
 		
@@ -103,17 +97,11 @@ public class ActorExecuterService {
 	}
 	
 	protected void reset() {
-		actorThreads.clear();
-		
 		started.set(false);
 	}
 	
 	public SafetyManager getSafetyManager() {
 		return safetyManager;
-	}
-
-	public List<ActorThread> getActorThreads() {
-		return actorThreads;
 	}
 
 	public void run(Runnable onStartup) {
@@ -140,28 +128,7 @@ public class ActorExecuterService {
 		
 		this.onTermination = onTermination;
 		
-		countDownLatch = new CountDownLatch(system.parallelismMin*system.parallelismFactor);
-		for (int i=0; i<system.parallelismMin*system.parallelismFactor; i++) {
-			try {
-				Constructor<? extends ActorThread> c2 = system.actorThreadClass.getConstructor(ActorSystemImpl.class);
-				ActorThread t = c2.newInstance(system);
-			
-				t.onTermination = new Runnable() {
-					@Override
-					public void run() {
-						countDownLatch.countDown();
-					}
-				};
-				actorThreads.add(t);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		system.messageDispatcher.beforeRun(actorThreads);
-		for (ActorThread t : actorThreads)
-			t.start();
+		actorThreadPool = new ActorThreadPool(system);
 		
 		/*
 		 * necessary before executing onStartup; 
@@ -240,41 +207,8 @@ public class ActorExecuterService {
 		resourceExecuterService.shutdown();
 		if (system.clientMode)
 			clientExecuterService.shutdown();
-
-		if (actorThreads.size()>0) {
-			for (ActorThread t : actorThreads)
-				t.interrupt();
-		}
 		
-		if (onTermination!=null || await) {
-			Thread waitOnTermination = new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						countDownLatch.await();
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-					
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-					
-					if (onTermination!=null)
-						onTermination.run();
-				}
-			});
-			
-			waitOnTermination.start();
-			if (await)
-				try {
-					waitOnTermination.join();
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt();
-				}
-		}
+		actorThreadPool.shutdown(onTermination, await);
 		
 		if (system.persistenceMode)
 			persistenceService.shutdown();
@@ -283,16 +217,9 @@ public class ActorExecuterService {
 	}
 	
 	public long getCount() {
-		long sum = 0;
-		for (ActorThread t : actorThreads)
-			sum += t.getCount();
-		
-		return sum;
+		return actorThreadPool!=null ? actorThreadPool.getCount() : 0;
 	}
 	public List<Long> getCounts() {
-		List<Long> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getCount());
-		return list;
+		return actorThreadPool!=null ? actorThreadPool.getCounts() : new ArrayList<>();
 	}
 }

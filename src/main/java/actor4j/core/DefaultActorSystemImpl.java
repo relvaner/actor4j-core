@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package actor4j.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultActorSystemImpl extends ActorSystemImpl {
@@ -31,16 +30,10 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
-		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : executerService.getActorThreads())
-			list.add(t.getInnerQueue().size());
-		return list;
+		return executerService.actorThreadPool.getWorkerInnerQueueSizes();
 	}
 	
 	public List<Integer> getWorkerOuterQueueSizes() {
-		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : executerService.getActorThreads())
-			list.add(t.getOuterQueue().size());
-		return list;
+		return executerService.actorThreadPool.getWorkerOuterQueueSizes();
 	}
 }
