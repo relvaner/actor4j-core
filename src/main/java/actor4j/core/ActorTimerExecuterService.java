@@ -34,7 +34,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 		super();
 		
 		this.system = system;
-		this.timerExecuterService = new ScheduledThreadPoolExecutor(corePoolSize, new ActorThreadFactory(threadName));
+		this.timerExecuterService = new ScheduledThreadPoolExecutor(corePoolSize, new DefaultThreadFactory(threadName));
 	}
 	
 	public ActorTimerExecuterService(ActorSystemImpl system, int corePoolSize) {

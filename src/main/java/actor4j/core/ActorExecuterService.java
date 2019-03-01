@@ -117,7 +117,7 @@ public class ActorExecuterService {
 		globalTimerExecuterService = new ActorTimerExecuterService(system, 1, "actor4j-global-timer-thread");
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new ActorThreadFactory("actor4j-resource-thread"));
+		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
 		if (system.clientMode)
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		

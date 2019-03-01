@@ -37,8 +37,8 @@ public class DefaultActorThread extends ActorThread {
 	
 	protected final AtomicBoolean newMessage;
 	
-	public DefaultActorThread(ActorSystemImpl system) {
-		super(system);
+	public DefaultActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+		super(group, name, system);
 		
 		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
 		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize());

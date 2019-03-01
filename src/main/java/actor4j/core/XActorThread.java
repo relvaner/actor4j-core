@@ -46,8 +46,8 @@ public class XActorThread extends ActorThread {
 	
 	protected final AtomicBoolean newMessage;
 	
-	public XActorThread(ActorSystemImpl system) {
-		super(system);
+	public XActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+		super(group, name, system);
 		
 		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
 		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize());

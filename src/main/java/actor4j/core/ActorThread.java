@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,8 @@ public abstract class ActorThread extends Thread {
 	protected final AtomicLong counter;
 	protected Runnable onTermination;
 	
-	protected static int index;
-	
-	public ActorThread(ActorSystemImpl system) {
-		super("actor4j-worker-thread-"+index);
-		index++;
+	public ActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+		super(group, name);
 		
 		this.system = system;
 		uuid = UUID.randomUUID();

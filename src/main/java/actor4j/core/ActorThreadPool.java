@@ -15,7 +15,6 @@
  */
 package actor4j.core;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -33,11 +32,10 @@ public class ActorThreadPool {
 		actorThreads = new ArrayList<>();
 		
 		countDownLatch = new CountDownLatch(system.parallelismMin*system.parallelismFactor);
+		ActorThreadFactory actorThreadFactory = new ActorThreadFactory(system.name);
 		for (int i=0; i<system.parallelismMin*system.parallelismFactor; i++) {
 			try {
-				Constructor<? extends ActorThread> c2 = system.actorThreadClass.getConstructor(ActorSystemImpl.class);
-				ActorThread t = c2.newInstance(system);
-			
+				ActorThread t = actorThreadFactory.newThread(system);
 				t.onTermination = new Runnable() {
 					@Override
 					public void run() {
