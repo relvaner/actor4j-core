@@ -105,10 +105,6 @@ public class ActorThreadPool {
 		return actorThreadPoolHandler.postInnerOuter(message, source);
 	}
 	
-	public boolean postInner(ActorMessage<?> message) {
-		return actorThreadPoolHandler.postInner(message);
-	}
-	
 	public boolean postOuter(ActorMessage<?> message) {
 		return actorThreadPoolHandler.postOuter(message);
 	}

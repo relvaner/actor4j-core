@@ -102,8 +102,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		if (!system.executerService.actorThreadPool.postInner(message))
-			system.executerService.actorThreadPool.postInnerOuter(message, source);
+		system.executerService.actorThreadPool.postInnerOuter(message, source);
 	}
 	
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {

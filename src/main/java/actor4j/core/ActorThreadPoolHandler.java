@@ -84,25 +84,6 @@ public class ActorThreadPoolHandler {
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
-		Long id_source = cellsMap.get(source);
-		Long id_dest   = cellsMap.get(message.dest);
-		
-		if (id_dest!=null) {
-			ActorThread t = threadsMap.get(id_dest);
-			
-			if (id_source!=null && id_source.equals(id_dest)
-					&& Thread.currentThread().getId()==id_source.longValue())
-				t.innerQueue(message.copy());
-			else
-				t.outerQueue(message.copy());
-			
-			t.newMessage();
-		}	
-		
-		return id_dest!=null;
-	}
-	
-	public boolean postInner(ActorMessage<?> message) {
 		boolean result = false;
 		
 		if (system.parallelismMin==1 && system.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
@@ -110,6 +91,23 @@ public class ActorThreadPoolHandler {
 			t.innerQueue(message.copy());
 			t.newMessage();
 			result = true;
+		}
+		else {
+			Long id_source = cellsMap.get(source);
+			Long id_dest   = cellsMap.get(message.dest);
+		
+			if (id_dest!=null) {
+				ActorThread t = threadsMap.get(id_dest);
+				
+				if (id_source!=null && id_source.equals(id_dest)
+						&& Thread.currentThread().getId()==id_source.longValue())
+					t.innerQueue(message.copy());
+				else
+					t.outerQueue(message.copy());
+				
+				t.newMessage();
+				result = true;
+			}	
 		}
 		
 		return result;
