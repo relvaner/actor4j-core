@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,38 +30,12 @@ import actor4j.core.messages.ActorMessage;
 import static actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
-	protected final BiConsumer<Long, ActorMessage<?>> biconsumerServer;
-	protected final BiConsumer<Long, ActorMessage<?>> biconsumerPriority;
-	protected final BiConsumer<Long, ActorMessage<?>> biconsumerDirective;
-	
 	protected final Consumer<ActorMessage<?>> consumerPseudo;
 	
 	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
 	public DefaultActorMessageDispatcher(ActorSystemImpl system) {
 		super(system);
-		
-		biconsumerServer = new BiConsumer<Long, ActorMessage<?>>() {
-			@Override
-			public void accept(Long id_dest, ActorMessage<?> msg) {
-				((DefaultActorThread)threadsMap.get(id_dest)).serverQueueL2.offer(msg);
-				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
-			}
-		};
-		biconsumerPriority = new BiConsumer<Long, ActorMessage<?>>() {
-			@Override
-			public void accept(Long id_dest, ActorMessage<?> msg) {
-				((DefaultActorThread)threadsMap.get(id_dest)).priorityQueue.offer(msg);
-				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
-			}
-		};
-		biconsumerDirective = new BiConsumer<Long, ActorMessage<?>>() {
-			@Override
-			public void accept(Long id_dest, ActorMessage<?> msg) {
-				((DefaultActorThread)threadsMap.get(id_dest)).directiveQueue.offer(msg);
-				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
-			}
-		};
 		
 		consumerPseudo = new Consumer<ActorMessage<?>>() {
 			@Override
@@ -128,24 +102,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		if (system.parallelismMin==1 && system.parallelismFactor==1 && Thread.currentThread() instanceof DefaultActorThread) {
-			((DefaultActorThread)Thread.currentThread()).innerQueue.offer(message.copy());
-			((DefaultActorThread)Thread.currentThread()).newMessage();
-		}
-		else {
-			Long id_source = cellsMap.get(source);
-			Long id_dest   = cellsMap.get(message.dest);
-			
-			if (id_dest!=null) {
-				if (id_source!=null && id_source.equals(id_dest)
-						&& Thread.currentThread().getId()==id_source.longValue())
-					((DefaultActorThread)threadsMap.get(id_dest)).innerQueue.offer(message.copy());
-				else
-					((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
-				
-				((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
-			}	
-		}
+		if (!system.executerService.actorThreadPool.postInner(message))
+			system.executerService.actorThreadPool.postInnerOuter(message, source);
 	}
 	
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
@@ -156,7 +114,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			system.executerService.clientViaPath(message, node, path);
 	}
 	
-	protected void postQueue(ActorMessage<?> message, BiConsumer<Long, ActorMessage<?>> biconsumer) {
+	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
 		if (message==null)
 			throw new NullPointerException();
 		
@@ -169,10 +127,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		Long id_dest = cellsMap.get(message.dest);
-		if (id_dest!=null)
-			biconsumer.accept(id_dest, message.copy());
-		else 
+		if (!system.executerService.actorThreadPool.postQueue(message, biconsumer)) 
 			consumerPseudo.accept(message.copy());
 	}
 	
@@ -190,34 +145,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		Long id_dest = cellsMap.get(message.dest);
-		if (id_dest!=null) {
-			((DefaultActorThread)threadsMap.get(id_dest)).outerQueueL2.offer(message.copy());
-			((DefaultActorThread)threadsMap.get(id_dest)).newMessage();
-		}
-		else 
+		if (!system.executerService.actorThreadPool.postOuter(message))
 			consumerPseudo.accept(message.copy());
 	}
 	
 	@Override
 	public void postServer(ActorMessage<?> message) {
-		postQueue(message, biconsumerServer);
+		postQueue(message, (t, msg) -> ((DefaultActorThread)t).serverQueue(message));
 	}
 	
 	@Override
 	public void postPriority(ActorMessage<?> message) {
-		postQueue(message, biconsumerPriority);
+		postQueue(message, (t, msg) -> ((DefaultActorThread)t).priorityQueue(message));
 	}
 	
 	@Override
 	public void postDirective(ActorMessage<?> message) {
-		postQueue(message, biconsumerDirective);
+		postQueue(message, (t, msg) -> ((DefaultActorThread)t).directiveQueue(message));
 	}
 
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		Long id_source = cellsMap.get(message.source);
-		message.dest = system.executerService.persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
-		system.executerService.persistenceService.getService().send(message.copy());
+		system.executerService.actorThreadPool.postPersistence(message);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,31 @@ public class DefaultActorThread extends ActorThread {
 		innerQueue     = new CircularFifoQueue<>(system.getQueueSize());
 		
 		newMessage = new AtomicBoolean(true);
+	}
+	
+	@Override
+	public void directiveQueue(ActorMessage<?> message) {
+		directiveQueue.offer(message);
+	}
+	
+	@Override
+	public void priorityQueue(ActorMessage<?> message) {
+		priorityQueue.offer(message);
+	}
+	
+	@Override
+	public void serverQueue(ActorMessage<?> message) {
+		serverQueueL2.offer(message);
+	}
+	
+	@Override
+	public void outerQueue(ActorMessage<?> message) {
+		outerQueueL2.offer(message);
+	}
+	
+	@Override
+	public void innerQueue(ActorMessage<?> message) {
+		innerQueue.offer(message);
 	}
 	
 	@Override
@@ -119,30 +144,34 @@ public class DefaultActorThread extends ActorThread {
 		}		
 	}
 	
+	@Override
 	protected void newMessage() {
 		if (system.threadMode==ActorThreadMode.PARK && newMessage.compareAndSet(false, true))
 			LockSupport.unpark(this);
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getDirectiveQueue() {
 		return directiveQueue;
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getPriorityQueue() {
 		return priorityQueue;
 	}
-
+	
 	@Override
-	public Queue<ActorMessage<?>> getInnerQueue() {
-		return innerQueue;
+	public Queue<ActorMessage<?>> getServerQueue() {
+		return serverQueueL2;
 	}
 	
 	@Override
 	public Queue<ActorMessage<?>> getOuterQueue() {
 		return outerQueueL2;
 	}
-	
-	public Queue<ActorMessage<?>> getServerQueue() {
-		return serverQueueL2;
+
+	@Override
+	public Queue<ActorMessage<?>> getInnerQueue() {
+		return innerQueue;
 	}
 }

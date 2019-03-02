@@ -65,21 +65,22 @@ public class XActorThread extends ActorThread {
 		newMessage = new AtomicBoolean(true);
 	}
 	
-	public void innerQueue(ActorMessage<?> message) {
-		if (!((XActorSystemImpl)system).antiFloodingEnabled.get()) {
-			if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty())) {
-				if (isDirective(message) || innerQueueAntiFloodingTimer.isInTimeRange())
-					innerQueueL2.offer(message);
-			}
-			else {
-				innerQueueAntiFloodingTimer.inactive();
-				innerQueueL1.offer(message);
-			}
-		}
-		else
-			innerQueueL1.offer(message);
+	@Override
+	public void directiveQueue(ActorMessage<?> message) {
+		directiveQueue.offer(message);
 	}
 	
+	@Override
+	public void priorityQueue(ActorMessage<?> message) {
+		priorityQueue.offer(message);
+	}
+	
+	@Override
+	public void serverQueue(ActorMessage<?> message) {
+		serverQueueL2.offer(message);
+	}
+	
+	@Override
 	public void outerQueue(ActorMessage<?> message) {
 		if (!((XActorSystemImpl)system).antiFloodingEnabled.get()) {
 			if (outerQueueL2A.size()>=system.getQueueSize() || !outerQueueL2B.isEmpty()) {
@@ -93,6 +94,22 @@ public class XActorThread extends ActorThread {
 		}
 		else
 			outerQueueL2A.offer(message);
+	}
+	
+	@Override
+	public void innerQueue(ActorMessage<?> message) {
+		if (!((XActorSystemImpl)system).antiFloodingEnabled.get()) {
+			if ((((CircularFifoQueue<ActorMessage<?>>)innerQueueL1).isAtFullCapacity() || !innerQueueL2.isEmpty())) {
+				if (isDirective(message) || innerQueueAntiFloodingTimer.isInTimeRange())
+					innerQueueL2.offer(message);
+			}
+			else {
+				innerQueueAntiFloodingTimer.inactive();
+				innerQueueL1.offer(message);
+			}
+		}
+		else
+			innerQueueL1.offer(message);
 	}
 	
 	@Override
@@ -177,22 +194,25 @@ public class XActorThread extends ActorThread {
 		}		
 	}
 	
+	@Override
 	protected void newMessage() {
 		if (system.threadMode==ActorThreadMode.PARK && newMessage.compareAndSet(false, true))
 			LockSupport.unpark(this);
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getDirectiveQueue() {
 		return directiveQueue;
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getPriorityQueue() {
 		return priorityQueue;
 	}
 	
 	@Override
-	public Queue<ActorMessage<?>> getInnerQueue() {
-		return innerQueueL1;
+	public Queue<ActorMessage<?>> getServerQueue() {
+		return serverQueueL2;
 	}
 	
 	@Override
@@ -200,7 +220,8 @@ public class XActorThread extends ActorThread {
 		return outerQueueL2A;
 	}
 	
-	public Queue<ActorMessage<?>> getServerQueue() {
-		return serverQueueL2;
+	@Override
+	public Queue<ActorMessage<?>> getInnerQueue() {
+		return innerQueueL1;
 	}
 }

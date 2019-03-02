@@ -67,7 +67,19 @@ public abstract class ActorThread extends Thread {
 		return result;
 	}
 	
+	public abstract void directiveQueue(ActorMessage<?> message);
+	
+	public abstract void priorityQueue(ActorMessage<?> message);
+	
+	public abstract void serverQueue(ActorMessage<?> message);
+	
+	public abstract void outerQueue(ActorMessage<?> message);
+	
+	public abstract void innerQueue(ActorMessage<?> message);
+	
 	public abstract void onRun();
+	
+	protected abstract void newMessage();
 		
 	@Override
 	public void run() {
@@ -98,6 +110,12 @@ public abstract class ActorThread extends Thread {
 	public long getCount() {
 		return counter.longValue();
 	}
+	
+	public abstract Queue<ActorMessage<?>> getDirectiveQueue();
+	
+	public abstract Queue<ActorMessage<?>> getPriorityQueue();
+	
+	public abstract Queue<ActorMessage<?>> getServerQueue();
 	
 	public abstract Queue<ActorMessage<?>> getInnerQueue();
 	

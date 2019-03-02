@@ -17,12 +17,17 @@ package actor4j.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.BiConsumer;
+
+import actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPool {
 	protected final ActorSystemImpl system;
 	
 	protected final List<ActorThread> actorThreads;
+	protected final ActorThreadPoolHandler actorThreadPoolHandler;
 	
 	protected final CountDownLatch countDownLatch;
 	
@@ -30,6 +35,7 @@ public class ActorThreadPool {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();
+		actorThreadPoolHandler = new ActorThreadPoolHandler(system);
 		
 		countDownLatch = new CountDownLatch(system.parallelismMin*system.parallelismFactor);
 		ActorThreadFactory actorThreadFactory = new ActorThreadFactory(system.name);
@@ -49,7 +55,7 @@ public class ActorThreadPool {
 			}
 		}
 		
-		system.messageDispatcher.beforeRun(actorThreads);
+		actorThreadPoolHandler.beforeRun(actorThreads);
 		for (ActorThread t : actorThreads)
 			t.start();
 	}
@@ -89,6 +95,30 @@ public class ActorThreadPool {
 					Thread.currentThread().interrupt();
 				}
 		}
+	}
+	
+	public ActorThreadPoolHandler getActorThreadPoolHandler() {
+		return actorThreadPoolHandler;
+	}
+	
+	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
+		return actorThreadPoolHandler.postInnerOuter(message, source);
+	}
+	
+	public boolean postInner(ActorMessage<?> message) {
+		return actorThreadPoolHandler.postInner(message);
+	}
+	
+	public boolean postOuter(ActorMessage<?> message) {
+		return actorThreadPoolHandler.postOuter(message);
+	}
+	
+	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
+		return actorThreadPoolHandler.postQueue(message, biconsumer);
+	}
+	
+	public void postPersistence(ActorMessage<?> message) {
+		actorThreadPoolHandler.postPersistence(message);
 	}
 	
 	public long getCount() {

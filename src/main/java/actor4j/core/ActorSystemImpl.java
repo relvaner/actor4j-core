@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ import actor4j.core.actors.Actor;
 import actor4j.core.actors.PseudoActor;
 import actor4j.core.actors.ResourceActor;
 
-import actor4j.core.balancing.ActorBalancingOnCreation;
-import actor4j.core.balancing.ActorBalancingOnRuntime;
 import actor4j.core.di.DIContainer;
 import actor4j.core.exceptions.ActorInitializationException;
 import actor4j.core.messages.ActorMessage;
@@ -82,9 +80,6 @@ public abstract class ActorSystemImpl {
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
 	protected final ActorExecuterService executerService;
-	
-	protected final ActorBalancingOnCreation actorBalancingOnCreation;
-	protected final ActorBalancingOnRuntime actorBalancingOnRuntime;
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
@@ -143,9 +138,6 @@ public abstract class ActorSystemImpl {
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
 		
-		actorBalancingOnCreation = new ActorBalancingOnCreation();
-		actorBalancingOnRuntime = new ActorBalancingOnRuntime();
-		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
 		persistenceMode = false;
@@ -177,9 +169,6 @@ public abstract class ActorSystemImpl {
 		resourceCells.clear();
 		pseudoCells.clear();
 		redirector.clear();
-		
-		messageDispatcher.reset();
-		actorBalancingOnRuntime.reset();
 		
 		bufferQueue.clear();
 		
