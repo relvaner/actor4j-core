@@ -76,7 +76,7 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		system.executerService.actorThreadPool.postInnerOuter(message, source);
+		system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source);
 	}
 	
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
@@ -100,7 +100,7 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		if (!system.executerService.actorThreadPool.postQueue(message, biconsumer)) 
+		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
 			consumerPseudo.accept(message.copy());
 	}
 	
@@ -118,7 +118,7 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 			return;
 		}
 		
-		if (!system.executerService.actorThreadPool.postOuter(message))
+		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message))
 			consumerPseudo.accept(message.copy());
 	}
 	
@@ -139,6 +139,6 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		system.executerService.actorThreadPool.postPersistence(message);
+		system.executerService.actorThreadPool.actorThreadPoolHandler.postPersistence(message);
 	}
 }
