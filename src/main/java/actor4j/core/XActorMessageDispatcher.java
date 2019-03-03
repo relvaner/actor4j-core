@@ -124,17 +124,17 @@ public class XActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void postServer(ActorMessage<?> message) {
-		postQueue(message, (t, msg) -> ((XActorThread)t).serverQueue(message));
+		postQueue(message, (t, msg) -> t.serverQueue(message));
 	}
 	
 	@Override
 	public void postPriority(ActorMessage<?> message) {
-		postQueue(message, (t, msg) -> ((XActorThread)t).priorityQueue(message));
+		postQueue(message, (t, msg) -> t.priorityQueue(message));
 	}
 	
 	@Override
 	public void postDirective(ActorMessage<?> message) {
-		postQueue(message, (t, msg) -> ((XActorThread)t).directiveQueue(message));
+		postQueue(message, (t, msg) -> t.directiveQueue(message));
 	}
 
 	@Override
