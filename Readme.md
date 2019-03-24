@@ -18,9 +18,9 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
 
 Compact Explanation:
 
-One actor is no actor [[22](#22)]. They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time ("processed in a single isolated step" [[24](#24)]). This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues. Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
+"One actor is no actor" [[22](#22)]. "They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time ('processed in a single isolated step' [[24](#24)]). This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues" (Preprint Version, INDIN2019). Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
 
->Of course, it can be tried alternatively to solve the problem by making a classical map-reduce-approach. The disadvantage is that it must go always through all layers [[23](#23)] of the system for every iteration of computation (coarse granulation in time, lock-step computation). This is not necessary in a network of loosely coupled objects (here actors), interacting events will be processed always near in time and are accurate (finer granulation in time).
+Of course, it can be tried alternatively to solve the problem by making a classical map-reduce-approach. The disadvantage is that it must go always through all layers [[23](#23)] of the system for every iteration of computation (coarse granulation in time, lock-step computation). This is not necessary in a network of loosely coupled objects (here actors), interacting events will be processed always near in time and are accurate (finer granulation in time).
 
 ## Use Cases ##
 
@@ -47,7 +47,7 @@ One actor is no actor [[22](#22)]. They come always in groups, they want to coll
 - [India's Aadhaar program](https://uidai.gov.in/) (source: [The Actor Model and the Queue or “Batch is the New Black” by James Whitehead II](https://www.usenix.org/conference/lisa17/conference-program/presentation/whitehead))
 - "Deutscher Wetterdienst" (Germany's National Meteorological Service) [[19](#19)]
 
->**Why using the Actor Model?**
+**Why using the Actor Model?**
 - Video: [Vaughn Vernon - The Language of Actors](https://www.youtube.com/watch?v=T7M2kkjKxHg)
 - Text: [Lightbend - What problems does the actor model solve?](https://doc.akka.io/docs/akka/2.5.3/scala/guide/actors-intro.html)
 
