@@ -262,7 +262,8 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void setAlias(String alias) {
-		cell.getSystem().setAlias(self(), alias);
+		if (alias!=null && !alias.isEmpty())
+			cell.getSystem().setAlias(self(), alias);
 	}
 	
 	public UUID addChild(Class<? extends Actor> clazz, Object... args) {

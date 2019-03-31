@@ -462,16 +462,18 @@ public abstract class ActorSystemImpl {
 	}		
 	
 	public ActorSystemImpl setAlias(UUID id, String alias) {
-		Queue<UUID> queue = null;
-		if ((queue=aliases.get(alias))==null) {
-			queue = new ConcurrentLinkedQueue<>();
-			queue.add(id);
-			aliases.put(alias, queue);
-			hasAliases.put(id, alias);
-		}	
-		else {
-			queue.add(id);
-			hasAliases.put(id, alias);
+		if (id!=null && alias!=null && !alias.isEmpty()) {
+			Queue<UUID> queue = null;
+			if ((queue=aliases.get(alias))==null) {
+				queue = new ConcurrentLinkedQueue<>();
+				queue.add(id);
+				aliases.put(alias, queue);
+				hasAliases.put(id, alias);
+			}	
+			else {
+				queue.add(id);
+				hasAliases.put(id, alias);
+			}
 		}
 		
 		return this;
@@ -587,6 +589,24 @@ public abstract class ActorSystemImpl {
 		}
 		
 		return this;
+	}
+	
+	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias) {
+		boolean result = false;
+		
+		List<UUID> destinations = getActorsFromAlias(alias);
+		if (!destinations.isEmpty()) {
+			if (destinations.size()==1)
+				message.dest = destinations.get(0);
+			else 
+				message.dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+			if (message.dest!=null) {
+				sendAsServer(message);
+				result = true;
+			}
+		}
+		
+		return result;
 	}
 	
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {

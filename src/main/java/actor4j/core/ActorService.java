@@ -50,6 +50,10 @@ public class ActorService extends ActorSystem {
 		return system.getActorsFromAlias(alias);
 	}
 	
+	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias) {
+		return system.sendViaAliasAsServer(message, alias);
+	}
+	
 	public void sendAsServer(ActorMessage<?> message) {
 		system.sendAsServer(message);
 	}
