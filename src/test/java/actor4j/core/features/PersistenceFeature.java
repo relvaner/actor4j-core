@@ -59,7 +59,8 @@ public class PersistenceFeature {
 
 		@Override
 		public String toString() {
-			return "MyState [persistenceId=" + persistenceId + ", timeStamp=" + timeStamp + ", title=" + title + "]";
+			return "MyState [title=" + title + ", persistenceId=" + persistenceId + ", timeStamp=" + timeStamp
+					+ ", index=" + index + "]";
 		}
 	}
 	
@@ -77,7 +78,8 @@ public class PersistenceFeature {
 
 		@Override
 		public String toString() {
-			return "MyEvent [persistenceId=" + persistenceId + ", timeStamp=" + timeStamp + ", title=" + title + "]";
+			return "MyEvent [title=" + title + ", persistenceId=" + persistenceId + ", timeStamp=" + timeStamp
+					+ ", index=" + index + "]";
 		}
 	}
 	
@@ -91,15 +93,25 @@ public class PersistenceFeature {
 		UUID id = system.addActor(() -> new PersistentActor<MyState, MyEvent>("example") {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				MyEvent event1 = new MyEvent("I am the first event!");
-				MyEvent event2 = new MyEvent("I am the second event!");
+				saveSnapshot(null, null, new MyState("I am the first state!"));
 				
-				saveSnapshot(null, null, new MyState("I am a state!"));
+				MyEvent event1 = new MyEvent("I am the first event!");
 				
 				persist(
 					(s) -> logger().debug(String.format("Event: %s", s)), 
 					(e) -> logger().error(String.format("Error: %s", e.getMessage())),
-					event1, event2);
+					event1);
+				
+				saveSnapshot(null, null, new MyState("I am the second state!"));
+				
+				MyEvent event2 = new MyEvent("I am the second event!");
+				MyEvent event3 = new MyEvent("I am the third event!");
+				MyEvent event4 = new MyEvent("I am the fourth event!");
+				
+				persist(
+						(s) -> logger().debug(String.format("Event: %s", s)), 
+						(e) -> logger().error(String.format("Error: %s", e.getMessage())),
+						event2, event3, event4);
 				
 				if (first.getAndSet(false))
 					tell(null, Actor.RESTART, self());
@@ -114,12 +126,11 @@ public class PersistenceFeature {
 					if (first.get())
 						assertEquals("{\"state\":{}}", json);
 					else {
-						assertEquals("I am a state!", obj.state.title);
-						/*
-						assertTrue(obj.events.size()==2);
-						assertEquals("I am the first event!", obj.events.get(0).title);
-						assertEquals("I am the second event!", obj.events.get(1).title);
-						*/
+						assertEquals("I am the second state!", obj.state.title);
+						assertTrue(obj.events.size()==3);
+						assertEquals("I am the second event!", obj.events.get(0).title);
+						assertEquals("I am the third event!", obj.events.get(1).title);
+						assertEquals("I am the fourth event!", obj.events.get(2).title);
 					}
 					testDone.countDown();
 				}

@@ -43,6 +43,9 @@ public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 	protected MongoCollection<Document> events;
 	protected MongoCollection<Document> states;
 	
+	protected long lastTimeStamp;
+	protected int indexIfEqualTimeStamp;
+	
 	public MongoDBPersistenceAdapter(ActorSystem parent, PersistenceConnector connector) {
 		super(parent, connector);
 	}
@@ -54,6 +57,19 @@ public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 		database = ((MongoDBPersistenceConnector)connector).client.getDatabase(connector.databaseName);
 		events = database.getCollection("persistence.events");
 		states = database.getCollection("persistence.states");
+		
+		lastTimeStamp = -1;
+		indexIfEqualTimeStamp =  0;
+	}
+	
+	public void checkTimeStamp(Document document) {
+		long timestamp = (long)document.get("timeStamp");
+		if (timestamp==lastTimeStamp)
+			document.put("index", ++indexIfEqualTimeStamp);
+		else {
+			lastTimeStamp = timestamp;
+			indexIfEqualTimeStamp = 0;
+		}
 	}
 
 	@Override
@@ -63,12 +79,14 @@ public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 				JSONArray array = new JSONArray(message.valueAsString());
 				if (array.length()==1) {
 					Document document = Document.parse(array.get(0).toString());
+					checkTimeStamp(document);
 					events.insertOne(document);
 				}
 				else {
 					List<WriteModel<Document>> requests = new ArrayList<WriteModel<Document>>();
 					for (Object obj : array) {
 						Document document = Document.parse(obj.toString());
+						checkTimeStamp(document);
 						requests.add(new InsertOneModel<Document>(document));
 					}
 					events.bulkWrite(requests);
@@ -83,6 +101,7 @@ public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 		else if (message.tag==PERSIST_STATE){
 			try {
 				Document document = Document.parse(message.valueAsString());
+				checkTimeStamp(document);
 				states.insertOne(document);
 				parent.send(new ActorMessage<Object>(null, INTERNAL_PERSISTENCE_SUCCESS, self(), message.source));
 			}
@@ -96,25 +115,37 @@ public class MongoDBPersistenceAdapter extends PersistenceAdapter {
 				JSONObject obj = new JSONObject();
 				Document document = null;
 				
-				FindIterable<Document> statesIterable = states.find(new Document("persistenceId", message.valueAsString())).sort(new Document("timeStamp", -1)).limit(1);
+				FindIterable<Document> statesIterable = states.find(new Document("persistenceId", message.valueAsString())).sort(new Document("timeStamp", -1).append("index", -1)).limit(1);
 				document = statesIterable.first();
 				if (document!=null) {
 					JSONObject stateValue = new JSONObject(document.toJson());
 					stateValue.remove("_id");
-					long timeStamp = stateValue.getJSONObject("timeStamp").getLong("$numberLong");
-					stateValue.put("timeStamp", timeStamp);
+					long stateTimeStamp = stateValue.getJSONObject("timeStamp").getLong("$numberLong");
+					int stateIndex = stateValue.getInt("index");
+					stateValue.put("timeStamp", stateTimeStamp);
 					obj.put("state", stateValue);
 					
-					FindIterable<Document> eventsIterable = events.find(new Document("persistenceId", message.valueAsString()).append("timeStamp", new Document("$gte", timeStamp))).sort(new Document("timeStamp", -1));
+					FindIterable<Document> eventsIterable = events
+							.find(new Document("persistenceId", message.valueAsString()).append("timeStamp", new Document("$gte", stateTimeStamp)))
+							.sort(new Document("timeStamp", 1).append("index", 1));
 					JSONArray array = new JSONArray();
 					MongoCursor<Document> cursor = eventsIterable.iterator();
 					while (cursor.hasNext()) {
 						document = cursor.next();
 						JSONObject eventValue = new JSONObject(document.toJson());
 						eventValue.remove("_id");
-						timeStamp = eventValue.getJSONObject("timeStamp").getLong("$numberLong");
-						eventValue.put("timeStamp", timeStamp);
-						array.put(eventValue);
+						long timeStamp = eventValue.getJSONObject("timeStamp").getLong("$numberLong");
+						int index = eventValue.getInt("index");
+						if (timeStamp==stateTimeStamp) {
+							if (index>stateIndex) {
+								eventValue.put("timeStamp", timeStamp);
+								array.put(eventValue);
+							}
+						}
+						else {
+							eventValue.put("timeStamp", timeStamp);
+							array.put(eventValue);
+						}
 					}
 					cursor.close();
 					obj.put("events", array);
