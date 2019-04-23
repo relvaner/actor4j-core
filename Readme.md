@@ -18,14 +18,14 @@ There are three axioms for actors written by Carl Hewitt [[22](#22)]. "When an A
 
 Compact Explanation:
 
-"One actor is no actor" [[22](#22)]. "They come always in groups, they want to collaborate. They do this over the messaging approach. Like in reality they have asynchronous behaviour. This avoids blocking behaviour on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time ('processed in a single isolated step' [[24](#24)]). This avoids corruption in state. They can hold state and share their state over (im)mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they got. Complex systems of concurrent interacting objects (here the actors) avoids the need of expensive locking and potential deadlocks by their asynchronous message passing, often realized over lock-free queues" (Preprint Version, INDIN2019). Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
+"One actor is no actor" [[22](#22)]. "Actors come always in groups, and collaborate through messaging. In the reality, they have asynchronous behavior. This avoids blocking behavior on the side of the caller. Actors can be executed in parallel, but the same actor only once at the same time [('processed in a single isolated step' [[24](#24)]), A/N]. This avoids corruption in state. They can hold state and share their state over (im) mutable messages. Actors can be passive, reactive or even proactive. They can change their behavior over time, often as a result of the messages they receive" (Preprint Version, INDIN2019). "Actors avoids the need for expensive locking and potential deadlocks [5] [[[24](#24)], A/N] through their asynchronous message passing, often realized over lock-free queues in a concurrent environment" (Preprint Version, INDIN2019). Lock-free programming is a difficult job too. A system of actors is in its nature independent of a global clock (no lock-step computation) [[23](#23)].
 
 Of course, it can be tried alternatively to solve the problem by making a classical map-reduce-approach. The disadvantage is that it must go always through all layers [[23](#23)] of the system for every iteration of computation (coarse granulation in time, lock-step computation). This is not necessary in a network of loosely coupled objects (here actors), interacting events will be processed always near in time and are accurate (finer granulation in time).
 
 ## Use Cases ##
 
 - Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
-- Simulations
+- Simulations, Games
 - Business Process Modeling (BPM): e.g., [[21](#21)]
 - Business logic (for Client-Server architectures) inclusively caching/database access 
 - Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
