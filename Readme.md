@@ -374,13 +374,15 @@ Enclosed two scruffy class diagrams maked with `yuml.me`, have fun!
 
 ## Cluster configuration ##
 
-In the cluster, `actor4j` can also be operated. A tomcat server is generally used as the front end. A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible as a client. The websocket approach is similar to the REST API (see Fig. 5).
+In a cluster, `actor4j` can also be operated. A tomcat server is in generally used. A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible over a client API. The websocket approach is similar to the REST API (see Fig. 5).
 
 <img src="doc/images/rest api.png" alt="Representation of the basic calls to the actor4j REST API" width="730" height="64"/>
 
 Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
 
-Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for later easy access (use of Guava Cache [[14](#14)]).
+Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for a later easy access (usage of Guava Cache [[14](#14)]).
+
+> Currently, there is worked on a new cluster architecture, that is using Actor4j and Vert.x together, with a focus on a container-based environment.
 
 <!--
 #### Note ####
