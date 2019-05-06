@@ -25,7 +25,8 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 ## Use Cases ##
 
 - Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
-- Simulations, Games
+- Simulations
+- Games (e.g., MMOG, MMORPG, Halo Xbox game [[25](#25)])
 - Business Process Modeling (BPM): e.g., [[21](#21)]
 - Business logic (for Client-Server architectures) inclusively caching/database access 
 - Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
@@ -33,7 +34,8 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 - Messaging (see [Publish-Subscribe [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
 - Reactive Streams ([see publisher, subscriber and proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
 - Reactive System (responsive, elastic, resilient and message driven)
-- Internet of Things, especially also as Digital Twins ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
+- Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
+- Digital representatives of devices (e.g., Device Shadows, AWS IoT)
 - Function (here actor) as a Service in combination with Vert.x (future work)
 - Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
 
@@ -431,7 +433,8 @@ This software framework is currently under an prototype state.
 [21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.  
 [22]<a name="22"/> Hewitt, Meijer and Szyperski (2012): The Actor Model (everything you wanted to know, but were afraid to ask). Lang.NEXT 2012. https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask  
 [23]<a name="23"/> Carl Hewitt (2017). Creator of Actor Model. Concurrency and Strong Types for IoT. Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html  
-[24]<a name="24"/> J. de Koster, T. van Cutsem and  W. de Meuter, "43 years of actors: a taxonomy of actor models and their key properties," AGERE 2016: Proceedings of the 6th International Workshop on Programming Based on Actors, Agents, and Decentralized Control, 2016, pp. 31-40.
+[24]<a name="24"/> J. de Koster, T. van Cutsem and  W. de Meuter, "43 years of actors: a taxonomy of actor models and their key properties," AGERE 2016: Proceedings of the 6th International Workshop on Programming Based on Actors, Agents, and Decentralized Control, 2016, pp. 31-40.  
+[25] Microsoft (2010). Orleans – Virtual Actors. https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/
 
-Page to be updated 1/16/2019
+Page to be updated 05/06/2019
 
