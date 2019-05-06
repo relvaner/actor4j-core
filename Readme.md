@@ -434,7 +434,7 @@ This software framework is currently under an prototype state.
 [22]<a name="22"/> Hewitt, Meijer and Szyperski (2012): The Actor Model (everything you wanted to know, but were afraid to ask). Lang.NEXT 2012. https://channel9.msdn.com/Shows/Going+Deep/Hewitt-Meijer-and-Szyperski-The-Actor-Model-everything-you-wanted-to-know-but-were-afraid-to-ask  
 [23]<a name="23"/> Carl Hewitt (2017). Creator of Actor Model. Concurrency and Strong Types for IoT. Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html  
 [24]<a name="24"/> J. de Koster, T. van Cutsem and  W. de Meuter, "43 years of actors: a taxonomy of actor models and their key properties," AGERE 2016: Proceedings of the 6th International Workshop on Programming Based on Actors, Agents, and Decentralized Control, 2016, pp. 31-40.  
-[25] Microsoft (2010). Orleans – Virtual Actors. https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/
+[25]<a name="25"/> Microsoft (2010). Orleans – Virtual Actors. https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/
 
 Page to be updated 05/06/2019
 
