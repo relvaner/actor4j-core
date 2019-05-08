@@ -26,7 +26,7 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 
 - Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
 - Simulations
-- Games (e.g., MMOG, MMORPG, Halo Xbox game [[25](#25)])
+- Games (e.g., MMOG, MMORPG)
 - Business Process Modeling (BPM): e.g., [[21](#21)]
 - Business logic (for Client-Server architectures) inclusively caching/database access 
 - Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
@@ -46,6 +46,7 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 - Using Erlang: e.g., WhatsApp, RabbitMQ (AMQP), CouchDB
 - Using Akka: [Case Studies by Lightbend](https://www.lightbend.com/case-studies)
 - Using JADE for multi-agent systems: e.g., [[20](#20)]
+- Using Orleans: e.g., Halo Xbox game [[25](#25)]
 - [India's Aadhaar program](https://uidai.gov.in/) (source: [The Actor Model and the Queue or “Batch is the New Black” by James Whitehead II](https://www.usenix.org/conference/lisa17/conference-program/presentation/whitehead))
 - "Deutscher Wetterdienst" (Germany's National Meteorological Service) [[19](#19)]
 
