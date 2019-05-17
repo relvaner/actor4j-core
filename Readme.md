@@ -372,8 +372,8 @@ Fig. 4: Class diagram to the core components of `actor4j`
 #### Note ####
 
 Enclosed two scruffy class diagrams maked with `yuml.me`, have fun!
-* [Class diagram - top down](https://raw.githubusercontent.com/relvaner/actor4j-doc/master/doc/images/cd_top_down.png)
-* [Class diagram - left to right](https://raw.githubusercontent.com/relvaner/actor4j-doc/master/doc/images/cd_left_right.png)
+* [Class diagram - top down](https://raw.githubusercontent.com/relvaner/actor4j-core/master/doc/images/cd_top_down.png)
+* [Class diagram - left to right](https://raw.githubusercontent.com/relvaner/actor4j-core/master/doc/images/cd_left_right.png)
 
 ## Cluster configuration ##
 
