@@ -43,7 +43,7 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 
 ## Actor Model in Practice ##
 
-- Using Erlang: e.g., WhatsApp, RabbitMQ (AMQP), CouchDB
+- Using Erlang: e.g., WhatsApp, RabbitMQ (AMQP), CouchDB, Amazon SimpleDB
 - Using Akka: [Case Studies by Lightbend](https://www.lightbend.com/case-studies)
 - Using JADE for multi-agent systems: e.g., [[20](#20)]
 - Using Orleans: e.g., Halo Xbox game [[25](#25)]
