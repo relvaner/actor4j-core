@@ -23,10 +23,10 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.utils.FuturePattern;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.FuturePattern;
 
 import static org.junit.Assert.*;
 

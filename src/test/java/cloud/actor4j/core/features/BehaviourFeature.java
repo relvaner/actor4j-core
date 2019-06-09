@@ -25,10 +25,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.utils.ActorFactory;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorFactory;
 
 public class BehaviourFeature {
 	protected ActorSystem system;

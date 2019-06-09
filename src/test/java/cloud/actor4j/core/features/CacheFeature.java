@@ -17,9 +17,9 @@ package cloud.actor4j.core.features;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.utils.CacheLRU;
-import cloud.actor4j.core.utils.CacheLRUWithGC;
-import cloud.actor4j.core.utils.DefaultCache;
+import io.actor4j.core.utils.CacheLRU;
+import io.actor4j.core.utils.CacheLRUWithGC;
+import io.actor4j.core.utils.DefaultCache;
 
 import static org.junit.Assert.*;
 

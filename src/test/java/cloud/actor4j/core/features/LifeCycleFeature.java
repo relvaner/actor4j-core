@@ -23,12 +23,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.supervisor.OneForAllSupervisorStrategy;
-import cloud.actor4j.core.supervisor.SupervisorStrategy;
-import cloud.actor4j.core.supervisor.SupervisorStrategyDirective;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
+import io.actor4j.core.supervisor.SupervisorStrategy;
+import io.actor4j.core.supervisor.SupervisorStrategyDirective;
 
 import static org.junit.Assert.*;
 

@@ -21,12 +21,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.EmbeddedActor;
-import cloud.actor4j.core.actors.EmbeddedHostActor;
-import cloud.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.EmbeddedActor;
+import io.actor4j.core.actors.EmbeddedHostActor;
+import io.actor4j.core.messages.ActorMessage;
 
-import static cloud.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.utils.ActorLogger.logger;
 import static org.junit.Assert.*;
 
 public class EmbeddedActorFeature {

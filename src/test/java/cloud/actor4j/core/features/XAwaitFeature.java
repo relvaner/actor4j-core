@@ -17,8 +17,8 @@ package cloud.actor4j.core.features;
 
 import org.junit.Before;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.XActorSystemImpl;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.XActorSystemImpl;
 
 public class XAwaitFeature extends AwaitFeature {
 	@Before

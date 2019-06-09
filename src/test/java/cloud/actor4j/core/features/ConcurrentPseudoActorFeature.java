@@ -25,13 +25,13 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.actors.ConcurrentPseudoActor;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.utils.ActorFactory;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.actors.ConcurrentPseudoActor;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorFactory;
 
-import static cloud.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.utils.ActorLogger.logger;
 import static org.junit.Assert.*;
 
 public class ConcurrentPseudoActorFeature {

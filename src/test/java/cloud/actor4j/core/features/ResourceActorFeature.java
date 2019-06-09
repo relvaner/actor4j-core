@@ -21,11 +21,11 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.Before;
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.actors.ResourceActor;
-import cloud.actor4j.core.annotations.Stateless;
-import cloud.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.annotations.Stateless;
+import io.actor4j.core.messages.ActorMessage;
 
 public class ResourceActorFeature {
 	@Stateless

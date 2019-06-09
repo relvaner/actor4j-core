@@ -25,11 +25,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Before;
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.PrimaryActor;
-import cloud.actor4j.core.actors.SecondaryActor;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.utils.ConcurrentActorGroup;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.PrimaryActor;
+import io.actor4j.core.actors.SecondaryActor;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ConcurrentActorGroup;
 
 import static org.junit.Assert.*;
 

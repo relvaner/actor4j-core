@@ -25,14 +25,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Before;
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.ActorWithDistributedGroup;
-import cloud.actor4j.core.actors.ActorWithGroup;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.utils.ActorGroup;
-import cloud.actor4j.core.utils.ActorGroupSet;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.ActorWithDistributedGroup;
+import io.actor4j.core.actors.ActorWithGroup;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorGroupSet;
 
-import static cloud.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.utils.ActorLogger.logger;
 import static org.junit.Assert.*;
 
 public class ActorGroupMemberFeature {

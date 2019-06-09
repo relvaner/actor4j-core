@@ -26,13 +26,13 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
-import cloud.actor4j.core.ActorSystem;
-import cloud.actor4j.core.actors.Actor;
-import cloud.actor4j.core.immutable.ImmutableList;
-import cloud.actor4j.core.immutable.ImmutableObject;
-import cloud.actor4j.core.messages.ActorMessage;
-import cloud.actor4j.core.service.discovery.Service;
-import cloud.actor4j.core.service.discovery.ServiceDiscoveryManager;
+import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.immutable.ImmutableList;
+import io.actor4j.core.immutable.ImmutableObject;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.service.discovery.Service;
+import io.actor4j.core.service.discovery.ServiceDiscoveryManager;
 
 public class ServiceDiscoveyFeature {
 	@Test(timeout=5000)
