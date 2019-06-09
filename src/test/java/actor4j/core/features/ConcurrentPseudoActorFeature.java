@@ -15,8 +15,6 @@
  */
 package actor4j.core.features;
 
-import static actor4j.core.utils.ActorLogger.logger;
-
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -27,12 +25,13 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
-import actor4j.core.actors.ConcurrentPseudoActor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorFactory;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.Actor;
+import cloud.actor4j.core.actors.ConcurrentPseudoActor;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.utils.ActorFactory;
 
+import static cloud.actor4j.core.utils.ActorLogger.logger;
 import static org.junit.Assert.*;
 
 public class ConcurrentPseudoActorFeature {

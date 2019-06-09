@@ -15,7 +15,7 @@
  */
 package actor4j.core.features;
 
-import static actor4j.core.utils.ActorLogger.logger;
+import static cloud.actor4j.core.utils.ActorLogger.logger;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,11 +24,11 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.Before;
 import org.junit.Test;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.StatelessActor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorGroup;
-import actor4j.core.utils.ActorGroupSet;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.StatelessActor;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.utils.ActorGroup;
+import cloud.actor4j.core.utils.ActorGroupSet;
 
 public class StatelessActorFeature {
 	protected ActorSystem system;

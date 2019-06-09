@@ -17,8 +17,8 @@ package actor4j.core.features;
 
 import org.junit.Before;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.XActorSystemImpl;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.XActorSystemImpl;
 
 public class XStatelessActorFeature extends StatelessActorFeature {
 	@Before

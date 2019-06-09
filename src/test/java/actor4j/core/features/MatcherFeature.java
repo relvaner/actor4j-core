@@ -24,8 +24,8 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorMessageMatcher;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.utils.ActorMessageMatcher;
 
 public class MatcherFeature {
 	protected ActorMessageMatcher matcher;

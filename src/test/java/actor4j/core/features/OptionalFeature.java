@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import actor4j.core.utils.ActorOptional;
+import cloud.actor4j.core.utils.ActorOptional;
 
 public class OptionalFeature {
 	@Test

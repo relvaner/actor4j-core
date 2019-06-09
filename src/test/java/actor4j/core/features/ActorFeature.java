@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.Before;
 import org.junit.Test;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.Actor;
+import cloud.actor4j.core.messages.ActorMessage;
 
 import static org.junit.Assert.*;
 

@@ -27,15 +27,14 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static cloud.actor4j.core.utils.ActorLogger.logger;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.utils.ActorFactory;
-
-import static actor4j.core.utils.ActorLogger.logger;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.Actor;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.utils.ActorFactory;
 
 public class UnhandledFeature {
 	protected ActorSystem system;

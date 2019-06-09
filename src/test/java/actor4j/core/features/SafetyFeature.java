@@ -23,11 +23,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.safety.ErrorHandler;
-import actor4j.core.utils.ActorFactory;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.Actor;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.safety.ErrorHandler;
+import cloud.actor4j.core.utils.ActorFactory;
 
 public class SafetyFeature {
 	protected ActorSystem system;

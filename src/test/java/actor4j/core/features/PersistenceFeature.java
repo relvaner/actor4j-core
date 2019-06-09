@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 package actor4j.core.features;
-import actor4j.core.ActorSystem;
-import actor4j.core.actors.Actor;
-import actor4j.core.actors.PersistentActor;
-import actor4j.core.messages.ActorMessage;
-import actor4j.core.persistence.ActorPersistenceObject;
-import actor4j.core.persistence.ActorPersistenceService;
-import actor4j.core.persistence.Recovery;
-import actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
-
-import static actor4j.core.utils.ActorLogger.*;
+import cloud.actor4j.core.ActorSystem;
+import cloud.actor4j.core.actors.Actor;
+import cloud.actor4j.core.actors.PersistentActor;
+import cloud.actor4j.core.messages.ActorMessage;
+import cloud.actor4j.core.persistence.ActorPersistenceObject;
+import cloud.actor4j.core.persistence.ActorPersistenceService;
+import cloud.actor4j.core.persistence.Recovery;
+import cloud.actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
@@ -40,6 +38,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 
+import static cloud.actor4j.core.utils.ActorLogger.*;
 import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
