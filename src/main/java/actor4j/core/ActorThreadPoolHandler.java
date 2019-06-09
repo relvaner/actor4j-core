@@ -124,6 +124,17 @@ public class ActorThreadPoolHandler {
 		return id_dest!=null;
 	}
 	
+	public boolean postServer(ActorMessage<?> message) {
+		Long id_dest = cellsMap.get(message.dest);
+		if (id_dest!=null) {
+			ActorThread t = threadsMap.get(id_dest);
+			t.serverQueue(message.copy());
+			t.newMessage();
+		}
+		
+		return id_dest!=null;
+	}
+	
 	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
 		Long id_dest = cellsMap.get(message.dest);
 		if (id_dest!=null) {

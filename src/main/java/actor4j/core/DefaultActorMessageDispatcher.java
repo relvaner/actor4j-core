@@ -150,9 +150,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void postServer(ActorMessage<?> message) {
+		if (message==null)
+			throw new NullPointerException();
+		
+		UUID redirect = system.redirector.get(message.dest);
+		if (redirect!=null) 
+			message.dest = redirect;
+		
+		if (system.resourceCells.containsKey(message.dest)) {
+			system.executerService.resource(message.copy());
+			return;
+		}
+		
+		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message))
+			consumerPseudo.accept(message.copy());
+	}
+	/*
+	@Override
+	public void postServer(ActorMessage<?> message) {
 		postQueue(message, (t, msg) -> t.serverQueue(message));
 	}
-	
+	*/
 	@Override
 	public void postPriority(ActorMessage<?> message) {
 		postQueue(message, (t, msg) -> t.priorityQueue(message));
