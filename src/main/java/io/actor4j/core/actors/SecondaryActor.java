@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.actors;
 
+import static io.actor4j.core.actors.ActorWithCache.SUBSCRIBE_SECONDARY;
+
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -38,5 +40,9 @@ public abstract class SecondaryActor extends ActorWithDistributedGroup {
 	
 	public <T> void publish(T value, int tag) {
 		tell(value, tag, primary);
+	}
+	
+	public void subscribeAsSecondary() {
+		tell(null, SUBSCRIBE_SECONDARY, primary);
 	}
 }
