@@ -21,7 +21,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 
 public abstract class SecondaryActor extends ActorWithDistributedGroup {
-	protected final UUID primary;
+	protected /*final*/ UUID primary;
 	
 	public SecondaryActor(ActorGroup group, UUID primary) {
 		this(null, group, primary);
