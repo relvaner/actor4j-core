@@ -202,6 +202,10 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public UUID getRedirectionDestination(UUID source) {
+		return system.getRedirectionDestination(source);
+	}
+	
 	public ActorSystem addRedirection(UUID source, UUID dest) {
 		system.addRedirection(source, dest);
 		

@@ -655,6 +655,10 @@ public abstract class ActorSystemImpl {
 		return this;
 	}
 	
+	public UUID getRedirectionDestination(UUID source) {
+		return redirector.get(source);
+	}
+	
 	public void addRedirection(UUID source, UUID dest) {
 		redirector.put(source, dest);
 	}
