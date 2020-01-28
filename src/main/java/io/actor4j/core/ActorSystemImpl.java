@@ -40,6 +40,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
@@ -58,7 +59,7 @@ public abstract class ActorSystemImpl {
 	protected final Map<UUID, ActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
-	protected AtomicBoolean messagingEnabled;
+	protected final AtomicBoolean messagingEnabled;
 	protected /*quasi final*/ Class<? extends ActorThread> actorThreadClass;
 	
 	protected boolean counterEnabled;
@@ -429,6 +430,39 @@ public abstract class ActorSystemImpl {
 		for (int i=0; i<instances; i++)
 			result.add(addActor(factory));
 			
+		return result;
+	}
+	
+	public boolean updateActors(String alias, ActorFactory factory) {
+		return updateActors(alias, factory, 1);
+	}
+	
+	public boolean updateActors(String alias, ActorFactory factory, int instances) {
+		boolean result = false;
+		if (instances>0) {
+			List<UUID> oldActors = getActorsFromAlias(alias);
+			/*
+			if (oldActors.size()>0 && getCells().get(oldActors.get(0)).actor instanceof VersionNumber) {	
+				Actor newActor = factory.create();
+				if (newActor instanceof VersionNumber) {
+					long oldActorsVersionNumber = ((VersionNumber)getCells().get(oldActors.get(0)).actor).versionNumber();
+					long newActorsVersionNumber = ((VersionNumber)newActor).versionNumber();
+						
+					if (newActorsVersionNumber<=oldActorsVersionNumber)
+						return false;
+				}
+				else
+					return false;
+			}
+			*/
+			
+			List<UUID> newActors = addActor(factory, instances);
+			setAlias(newActors, alias);
+			if (oldActors.size()>0)
+				broadcast(new ActorMessage<Object>(null, Actor.STOP, SYSTEM_ID, null), new ActorGroupSet(oldActors));
+			result = true;
+		}
+		
 		return result;
 	}
 	
