@@ -19,7 +19,6 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceObject;
-import io.actor4j.core.persistence.ActorPersistenceService;
 import io.actor4j.core.persistence.Recovery;
 import io.actor4j.core.persistence.connectors.MongoDBPersistenceConnector;
 
@@ -27,23 +26,17 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
+
+import de.bwaldvogel.mongo.MongoServer;
+import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import static io.actor4j.core.utils.ActorLogger.*;
 import static org.junit.Assert.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ActorPersistenceService.class)
 public class PersistenceFeature {
 	static class MyState extends ActorPersistenceObject {
 		public String title;
@@ -83,7 +76,7 @@ public class PersistenceFeature {
 		}
 	}
 	
-	@Ignore("Works only until MongoDB Java Driver 3.6.4, with Fongo 2.2.0-RC2")
+	//@Ignore("Works only until MongoDB Java Driver 3.6.4, with Fongo 2.2.0-RC2")
 	@Test(timeout=30000)
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(2);
@@ -152,13 +145,10 @@ public class PersistenceFeature {
 		client.dropDatabase("actor4j-test");
 		client.close();
 		*/
-		Fongo fongo = new Fongo("localhost");
-		try {
-			PowerMockito.whenNew(MongoClient.class).withArguments(Mockito.anyString(), Mockito.anyInt()).thenReturn(fongo.getMongo());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		system.persistenceMode(new MongoDBPersistenceConnector(new MongoClient("localhost", 27017), "actor4j-test"));
+		MongoServer mongoServer = new MongoServer(new MemoryBackend());
+		mongoServer.bind("localhost", 27027);
+		
+		system.persistenceMode(new MongoDBPersistenceConnector(new MongoClient("localhost", 27027), "actor4j-test"));
 		system.start();
 		
 		system.sendWhenActive(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, id));
@@ -170,5 +160,6 @@ public class PersistenceFeature {
 		}
 		
 		system.shutdownWithActors(true);
+		mongoServer.shutdown();
 	}
 }

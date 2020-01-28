@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 	AwaitFeature.class,
 	MatcherFeature.class,
 	SafetyFeature.class,
-	UnhandledFeature.class,
+	/*UnhandledFeature.class,*/
 	
 	EmbeddedActorFeature.class,
 	PseudoActorFeature.class,
