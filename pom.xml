@@ -1,5 +1,5 @@
 <!--
-   Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+   Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,85 +15,55 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   	<modelVersion>4.0.0</modelVersion>
+  	
   	<groupId>io.actor4j</groupId>
   	<artifactId>actor4j-core</artifactId>
   	<version>1.0.0</version>
+  	<packaging>jar</packaging>
   	
-  	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-  		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	
 	<name>actor4j-core</name>
 	<description>Actor4j is an actor-oriented Java framework.</description>
 	<url>https://github.com/relvaner/actor4j-core</url>
 	<inceptionYear>2015</inceptionYear>
 	
-	<developers>
-		<developer>
-			<name>David A. Bauer</name>
-		</developer>
-	</developers>
-	
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
+			<name>The Apache License, Version 2.0</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	
+	<developers>
+		<developer>
+			<name>David A. Bauer</name>
+			<email>relvaner.github@gmail.com</email>
+		</developer>
+	</developers>
+	
 	<scm>
-		<url>https://svn.apache.org/viewvc/maven</url>
+		<connection>scm:git:git://github.com/relvaner/actor4j-core.git</connection>
+		<developerConnection>scm:git:git@github.com:relvaner/actor4j-core.git</developerConnection>
+		<url>https://github.com/relvaner/actor4j-core/tree/master</url>
 	</scm>
 	
-	<build>
-		<plugins>
-			<plugin>
-       			<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-assembly-plugin</artifactId>
-        		<version>3.2.0</version>
-        		<configuration>
-        			<descriptorRefs>
-            			<descriptorRef>bin</descriptorRef>
-          			</descriptorRefs>
-              		<jarName>${project.artifactId}-${project.version}</jarName>
-              		<includes>
-                		<include>META-INF/LICENSE.txt</include>
-              		</includes>
-            	</configuration>
-        		<executions>
-          			<execution>
-            			<id>make-assembly</id>
-            			<phase>package</phase>
-            			<goals>
-              				<goal>single</goal>
-            			</goals>
-          			</execution>
-        		</executions>
-    		</plugin>
-    		<plugin>
-    			<groupId>org.eluder.coveralls</groupId>
-    			<artifactId>coveralls-maven-plugin</artifactId>
-    			<version>4.3.0</version>
-			</plugin>
-			<plugin>
-    			<groupId>org.jacoco</groupId>
-    			<artifactId>jacoco-maven-plugin</artifactId>
-    			<version>0.8.5</version>
-    			<executions>
-        			<execution>
-            			<id>prepare-agent</id>
-            			<goals>
-                			<goal>prepare-agent</goal>
-            			</goals>
-        			</execution>
-    			</executions>
-			</plugin>
-    	</plugins>
-    </build>
-    
+	<distributionManagement>
+		<snapshotRepository>
+    		<id>ossrh</id>
+    		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  		</snapshotRepository>
+  		<repository>
+    		<id>ossrh</id>
+    		<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  		</repository>
+	</distributionManagement>
+	
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+  		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	    
 	<dependencies>
 		<dependency>
             <groupId>org.jctools</groupId>
@@ -105,6 +75,7 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>4.4</version>
 		</dependency>
+		
 		<dependency>
       		<groupId>com.fasterxml.jackson.jaxrs</groupId>
       		<artifactId>jackson-jaxrs-json-provider</artifactId>
@@ -146,5 +117,68 @@
 		</dependency>
     </dependencies>
     
-    <packaging>jar</packaging>
+    <build>
+		<plugins>
+    		<plugin>
+      			<groupId>org.apache.maven.plugins</groupId>
+      			<artifactId>maven-source-plugin</artifactId>
+      			<version>3.2.1</version>
+      			<executions>
+        			<execution>
+          				<id>attach-sources</id>
+          				<goals>
+            				<goal>jar-no-fork</goal>
+          				</goals>
+        			</execution>
+      			</executions>
+    		</plugin>
+    		<plugin>
+      			<groupId>org.apache.maven.plugins</groupId>
+      			<artifactId>maven-javadoc-plugin</artifactId>
+      			<version>3.1.1</version>
+      			<executions>
+        			<execution>
+          				<id>attach-javadocs</id>
+          				<goals>
+            				<goal>jar</goal>
+          				</goals>
+        			</execution>
+      			</executions>
+    		</plugin>
+    		
+    		<plugin>
+      			<groupId>org.apache.maven.plugins</groupId>
+      			<artifactId>maven-gpg-plugin</artifactId>
+      			<version>1.6</version>
+      			<executions>
+        			<execution>
+          				<id>sign-artifacts</id>
+          				<phase>verify</phase>
+          				<goals>
+            				<goal>sign</goal>
+          				</goals>
+        			</execution>
+      			</executions>
+    		</plugin>
+    		
+    		<plugin>
+    			<groupId>org.eluder.coveralls</groupId>
+    			<artifactId>coveralls-maven-plugin</artifactId>
+    			<version>4.3.0</version>
+			</plugin>
+			<plugin>
+    			<groupId>org.jacoco</groupId>
+    			<artifactId>jacoco-maven-plugin</artifactId>
+    			<version>0.8.5</version>
+    			<executions>
+        			<execution>
+            			<id>prepare-agent</id>
+            			<goals>
+                			<goal>prepare-agent</goal>
+            			</goals>
+        			</execution>
+    			</executions>
+			</plugin>
+    	</plugins>
+    </build>
 </project>
