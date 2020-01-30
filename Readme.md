@@ -57,6 +57,18 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 ## Actor4j an actor implementation ##
 Aim of this project [[18](#18)] was to enhance the performance in message passing. As a reference implementation `Akka` [[1](#1)] was used. Results of the research shown that intra-thread-communication is much better than inter-thread-communication. You can group actors, so they are bound to the same thread, for instance. Message queues of the actors are outsourced to the thread. The **four principles of reactive manifesto** [[2](#2)] and the **four semantic properties** [[3](#3)] of actor systems have been applied. The actor system is from extern accessible by the REST-API or by a websocket. Between the server nodes (cluster configuration) are websockets for message transfer established. Time consuming tasks can be outsourced to `ResourceActor's`, which are executed by an extra `ThreadPool`. So the responsiveness of the actor system therfore will not tangented.
 
+## Installation ##
+
+You can add the following Maven dependency to your pom.xml file:
+
+```xml
+		<dependency>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-core</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+```
+
 ## Configuration, starting and stopping the actor system ##
 In `actor4j` the following important configuration options are available.
 ```java
