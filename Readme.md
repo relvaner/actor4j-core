@@ -65,7 +65,7 @@ You can add the following Maven dependency to your pom.xml file:
 		<dependency>
 			<groupId>io.actor4j</groupId>
 			<artifactId>actor4j-core</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.2</version>
 		</dependency>
 ```
 

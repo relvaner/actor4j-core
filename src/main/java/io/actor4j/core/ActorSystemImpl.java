@@ -41,7 +41,6 @@ import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
-import io.actor4j.core.utils.ActorLogger;
 
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
@@ -160,8 +159,6 @@ public abstract class ActorSystemImpl {
 				// empty
 			}
 		}));
-		
-		ActorLogger.init();
 	}
 	
 	protected void reset() {
@@ -192,7 +189,6 @@ public abstract class ActorSystemImpl {
 				countDownLatch.countDown();
 			}
 		}));
-		
 	}
 	
 	public ActorCell generateCell(Actor actor) {

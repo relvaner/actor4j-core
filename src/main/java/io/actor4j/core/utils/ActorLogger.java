@@ -27,8 +27,8 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 public class ActorLogger {
-	protected static volatile ActorLogger actorLogger;
-	protected static final Object lock = new Object();
+	private static volatile ActorLogger actorLogger;
+	private static final Object lock = new Object();
 	
 	protected final LoggerContext loggerContext;
 	protected final LoggerConfig loggerConfig;
@@ -43,10 +43,10 @@ public class ActorLogger {
 		Configuration config = loggerContext.getConfiguration();
 
 		Appender consoleAppender = ConsoleAppender.newBuilder()
-				.setName(CONSOLE_APPENDER_NAME)
-				.setLayout(PatternLayout.newBuilder().withPattern(LAYOUT_CONSOLE).build())
-				.setConfiguration(config)
-				.build();
+			.setName(CONSOLE_APPENDER_NAME)
+			.setLayout(PatternLayout.newBuilder().withPattern(LAYOUT_CONSOLE).build())
+			.setConfiguration(config)
+			.build();
 		consoleAppender.start();
 	    AppenderRef[] appenderRefs = new AppenderRef[]{AppenderRef.createAppenderRef(CONSOLE_APPENDER_NAME, null, null)};
 	    loggerConfig = LoggerConfig.createLogger(false, Level.DEBUG, LOGGER_NAME, "true", appenderRefs, null, config, null);
@@ -57,25 +57,27 @@ public class ActorLogger {
 		loggerContext.updateLoggers(config);
 	}
 	
-	public static void init() {
+	protected static ActorLogger getInstance() {
 		// uses Double-Check-Idiom a la Bloch
-		Object temp = actorLogger;
-		if (temp==null) {
+		ActorLogger result = actorLogger;
+		if (result==null) {
 			synchronized (lock) {
-				temp = actorLogger;
-				if (temp==null) {
-					actorLogger = new ActorLogger();
+				result = actorLogger;
+				if (result==null) {
+					actorLogger = result = new ActorLogger();
 				}
 			}
 		}
+		
+		return result;
 	}
 	
 	public static Logger logger() {
-		return actorLogger.loggerContext.getLogger(LOGGER_NAME);
+		return getInstance().loggerContext.getLogger(LOGGER_NAME);
 	}
 	
 	public static void setLevel(Level level) { 
-		actorLogger.loggerConfig.setLevel(level);
-		actorLogger.loggerContext.updateLoggers();
+		getInstance().loggerConfig.setLevel(level);
+		getInstance().loggerContext.updateLoggers();
 	}
 }
