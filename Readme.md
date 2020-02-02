@@ -417,9 +417,9 @@ Fig. 6: Representation of the analysis tool for `actor4j`
 This framework is released under an open source Apache 2.0 license.
 
 ## Publications ##
-D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]
+D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing,” AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, Barcelona, Spain 2018, pp. 125-134, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087
 
-D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki-Espoo, 2019, Accepted: 3. May 2019. 
+D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki, Finland 2019, pp. 79-86, [Online]. Available from: https://doi.org/10.1109/INDIN41052.2019.8972075
 
 ## Announcement ##
 This software framework is currently under an prototype state.
@@ -442,7 +442,7 @@ This software framework is currently under an prototype state.
 [15]<a name="15"/> Lightbend (2015). Persistence.  http://doc.akka.io/docs/akka/2.4/java/persistence.html  
 [16]<a name="16"/> Martin Fowler (2005). Event Sourcing. http://martinfowler.com/eaaDev/EventSourcing.html  
 [17]<a name="17"/> MongoDB Inc (2016). MongoDB. https://www.mongodb.com/  
-[18]<a name="18"/> D. A. Bauer and J. Mäkiö, "Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing," AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, 2018, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087 [retrieved: August, 2018]   
+[18]<a name="18"/> D. A. Bauer and J. Mäkiö, "Actor4j: A Software Framework for the Actor Model Focusing on the Optimization of Message Passing," AICT 2018: The Fourteenth Advanced International Conference on Telecommunications, IARIA, Barcelona, Spain 2018, pp. 125-134, [Online]. Available from: http://www.thinkmind.org/download.php?articleid=aict_2018_8_10_10087   
 [19]<a name="19"/> M. Lehmann and M. Werner, "Gut Wetter machen! Java, Play und Akka für meteorologische Anwendungen beim Deutschen Wetterdienst," in JavaSPEKTRUM 3/2016, 2016  
 [20]<a name="20"/> N. Rodrigues, A. Pereira, P. Leitão, "Adaptive Multi-agent System for a Washing Machine Production Line", Industrial Applications of Holonics and Multi-agent Systems, vol. 8062, pp. 212-223, 2013.  
 [21]<a name="21"/> M. Geisriegler, M. Kolodiy, S. Stani and R. Singer, "Actor Based Business Process Modeling and Execution: A Reference Implementation Based on Ontology Models and Microservices," 2017 43rd Euromicro Conference on Software Engineering and Advanced Applications (SEAA), Vienna, 2017, pp. 359-362.  
@@ -450,7 +450,7 @@ This software framework is currently under an prototype state.
 [23]<a name="23"/> Carl Hewitt (2017). Creator of Actor Model. Concurrency and Strong Types for IoT. Erlang & Elixir Factory San Francisco Bay Area 2017 Conference. http://www.erlang-factory.com/sfbay2017/carl-hewitt.html  
 [24]<a name="24"/> J. de Koster, T. van Cutsem and  W. de Meuter, "43 years of actors: a taxonomy of actor models and their key properties," AGERE 2016: Proceedings of the 6th International Workshop on Programming Based on Actors, Agents, and Decentralized Control, 2016, pp. 31-40.  
 [25]<a name="25"/> Microsoft (2010). Orleans – Virtual Actors. https://www.microsoft.com/en-us/research/project/orleans-virtual-actors/  
-[26]<a name="26"/> D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki-Espoo, 2019, Accepted: 3. May 2019.
+[26]<a name="26"/> D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki, Finland 2019, pp. 79-86, https://doi.org/10.1109/INDIN41052.2019.8972075  
 
-Page to be updated 05/06/2019
+Page to be updated 02/02/2020
 
