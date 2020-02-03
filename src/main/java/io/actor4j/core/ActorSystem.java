@@ -15,6 +15,7 @@
  */
 package io.actor4j.core;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
+import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 
@@ -150,6 +152,14 @@ public class ActorSystem {
 	
 	public List<UUID> addActor(ActorFactory factory, int instances) {
 		return system.addActor(factory, instances);
+	}
+	
+	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
+		system.deployPods(jarFile, podConfiguration);
+	}
+	
+	public void undeployPods(String domain) {
+		system.undeployPods(domain);
 	}
 	
 	public ActorSystem setAlias(UUID id, String alias) {

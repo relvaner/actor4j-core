@@ -15,6 +15,7 @@
  */
 package io.actor4j.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -38,24 +39,32 @@ import io.actor4j.core.di.DIContainer;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
+import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.PodReplicationController;
+import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
+import io.actor4j.core.utils.PodActorFactory;
 
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
-public abstract class ActorSystemImpl {
+public abstract class ActorSystemImpl implements ActorPodService {
 	protected final ActorSystem wrapper;
 	
 	protected final String name;
 	
 	protected final DIContainer<UUID> container;
+	protected final PodReplicationController podReplicationController;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
 	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
 	protected final Map<UUID, String> hasAliases;
 	protected final Map<UUID, Boolean> resourceCells;
+	protected final Map<UUID, Boolean> podCells;
+	protected final Map<String, Queue<UUID>> podDomains; // PodActorCellDomain -> ActorCellID
 	protected final Map<UUID, ActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
@@ -113,11 +122,14 @@ public abstract class ActorSystemImpl {
 		this.wrapper = wrapper;
 		
 		container      = DIContainer.create();
+		podReplicationController = new PodReplicationController(this);
 		
 		cells          = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceCells  = new ConcurrentHashMap<>();
+		podCells       = new ConcurrentHashMap<>();
+		podDomains     = new ConcurrentHashMap<>();
 		pseudoCells    = new ConcurrentHashMap<>();
 		redirector     = new ConcurrentHashMap<>();
 		
@@ -194,6 +206,8 @@ public abstract class ActorSystemImpl {
 	public ActorCell generateCell(Actor actor) {
 		if (actor instanceof ResourceActor)
 			return new ResourceActorCell(this, actor);
+		else if (actor instanceof PodActor)
+			return new PodActorCell(this, actor);
 		else
 			return new ActorCell(this, actor);
 	}
@@ -201,6 +215,8 @@ public abstract class ActorSystemImpl {
 	public ActorCell generateCell(Class<? extends Actor> clazz) {
 		if (clazz==ResourceActor.class)
 			return new ResourceActorCell(this, null);
+		else if (clazz==PodActor.class)
+			return new PodActorCell(this, null);
 		else
 			return new ActorCell(this, null);
 	}
@@ -225,6 +241,14 @@ public abstract class ActorSystemImpl {
 		return resourceCells;
 	}
 	
+	public Map<UUID, Boolean> getPodCells() {
+		return podCells;
+	}
+
+	public Map<String, Queue<UUID>> getPodDomains() {
+		return podDomains;
+	}
+
 	public Map<String, Queue<UUID>> getAliases() {
 		return aliases;
 	}
@@ -371,6 +395,8 @@ public abstract class ActorSystemImpl {
 			cells.put(cell.id, cell);
 			if (actor instanceof ResourceActor)
 				resourceCells.put(cell.id, false);
+			else if (actor instanceof PodActor)
+				podCells.put(cell.id, false);
 			if (executerService.isStarted()) {
 				messageDispatcher.registerCell(cell);
 				/* preStart */
@@ -432,6 +458,38 @@ public abstract class ActorSystemImpl {
 		return result;
 	}
 	
+	public void setPodDomain(UUID id, String domain) {
+		if (id!=null && domain!=null && !domain.isEmpty()) {
+			Queue<UUID> queue = null;
+			if ((queue=podDomains.get(domain))==null) {
+				queue = new ConcurrentLinkedQueue<>();
+				queue.add(id);
+				podDomains.put(domain, queue);
+			}	
+			else {
+				queue.add(id);
+			}
+		}
+	}
+	
+	@Override
+	public UUID addPodActor(PodActorFactory factory, PodContext context) {
+		PodActorCell cell = (PodActorCell)generateCell(factory.create());
+		cell.context = context;
+		setPodDomain(cell.id, context.getDomain());
+		container.registerFactoryInjector(cell.id, factory);
+		
+		return user_addCell(cell);
+	}
+	
+	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
+		podReplicationController.deployPods(jarFile, podConfiguration);
+	}
+	
+	public void undeployPods(String domain) {
+		podReplicationController.undeployPods(domain);
+	}
+	
 	public boolean updateActors(String alias, ActorFactory factory) {
 		return updateActors(alias, factory, 1);
 	}
@@ -468,6 +526,7 @@ public abstract class ActorSystemImpl {
 	protected void removeActor(UUID id) {	
 		cells.remove(id);
 		resourceCells.remove(id);
+		podCells.remove(id);
 		pseudoCells.remove(id);
 		
 		container.unregister(id);

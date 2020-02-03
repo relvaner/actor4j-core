@@ -56,7 +56,11 @@ import org.junit.runner.RunWith;
 	XPrimarySecondaryActorFeature.class,
 	XResourceActorFeature.class,
 	
-	XActorGroupMemberFeature.class
+	XActorGroupMemberFeature.class,
+	
+	/*----------------------------*/
+	
+	PodFeature.class
 })
 public class AllFeaturesTest {
 
