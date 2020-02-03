@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package io.actor4j.core.actors;
 import java.util.LinkedList;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.ActorMessageObservable;
-import rx.Observable;
+import io.actor4j.core.utils.ActorMessageFlowable;
+import io.reactivex.Flowable;
 
 public abstract class ActorWithRxStash extends Actor {
-	protected Observable<ActorMessage<?>> rxStash;
+	protected Flowable<ActorMessage<?>> rxStash;
 	
 	public ActorWithRxStash() {
 		this(null);
@@ -32,7 +32,7 @@ public abstract class ActorWithRxStash extends Actor {
 		super(name);
 		
 		stash   = new LinkedList<>();
-		rxStash = ActorMessageObservable.getMessages(stash);
+		rxStash = ActorMessageFlowable.getMessages(stash);
 	}
 	
 	public ActorMessage<?> unstash() {

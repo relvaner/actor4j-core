@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
-import rx.Observable;
+import io.reactivex.Flowable;
 
 public abstract class PseudoActor extends ActorWithRxStash {
 	public PseudoActor(ActorSystem system, boolean blocking) {
@@ -48,7 +48,7 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		return ((PseudoActorCell)cell).runOnce();
 	}
 	
-	public Observable<ActorMessage<?>> runWithRx() {
+	public Flowable<ActorMessage<?>> runWithRx() {
 		return ((PseudoActorCell)cell).runWithRx();
 	}
 	

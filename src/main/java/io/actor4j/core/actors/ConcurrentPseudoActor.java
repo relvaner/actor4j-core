@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.ActorMessageObservable;
-import rx.Observable;
+import io.actor4j.core.utils.ActorMessageFlowable;
+import io.reactivex.Flowable;
 
 public abstract class ConcurrentPseudoActor {
 	protected PseudoActor actor;
@@ -107,8 +107,8 @@ public abstract class ConcurrentPseudoActor {
 		return poll(getOuterQueue());
 	}
 	
-	public Observable<ActorMessage<?>> runWithRx() {
-		return ActorMessageObservable.getMessages(getOuterQueue());
+	public Flowable<ActorMessage<?>> runWithRx() {
+		return ActorMessageFlowable.getMessages(getOuterQueue());
 	}
 	
 	public ActorMessage<?> await() {

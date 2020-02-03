@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,14 +35,14 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
-import io.actor4j.core.utils.ActorMessageObservable;
-import rx.Observable;
+import io.actor4j.core.utils.ActorMessageFlowable;
+import io.reactivex.Flowable;
 
 public class PseudoActorCell extends ActorCell {
 	protected final Queue<ActorMessage<?>> outerQueueL2;
 	protected final Queue<ActorMessage<?>> outerQueueL1;
 	
-	protected final Observable<ActorMessage<?>> rxOuterQueueL1;
+	protected final Flowable<ActorMessage<?>> rxOuterQueueL1;
 	
 	public PseudoActorCell(ActorSystem wrapper, Actor actor, boolean blocking) {
 		super(wrapper.system, actor);
@@ -53,7 +53,7 @@ public class PseudoActorCell extends ActorCell {
 			outerQueueL2 = new MpscArrayQueue<>(system.getQueueSize());
 		
 		outerQueueL1 = new LinkedList<>();
-		rxOuterQueueL1 = ActorMessageObservable.getMessages(outerQueueL1);
+		rxOuterQueueL1 = ActorMessageFlowable.getMessages(outerQueueL1);
 	}
 	
 	public UUID system_addCell(ActorCell cell) {
@@ -122,7 +122,7 @@ public class PseudoActorCell extends ActorCell {
 		return poll(outerQueueL1);
 	}
 		
-	public Observable<ActorMessage<?>> runWithRx() {
+	public Flowable<ActorMessage<?>> runWithRx() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
