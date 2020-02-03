@@ -26,13 +26,6 @@ public class MongoDBPersistenceConnector extends PersistenceConnector {
 		super(host, port, databaseName);
 	}
 	
-	// workaround for testing
-	public MongoDBPersistenceConnector(MongoClient client, String databaseName) {
-		super(client.getAddress().getHost(), client.getAddress().getPort(), databaseName);
-		
-		this.client = client;
-	}
-	
 	@Override
 	public void open() {
 		if (client==null)

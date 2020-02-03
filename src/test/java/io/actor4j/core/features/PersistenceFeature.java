@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package io.actor4j.core.features;
+
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistentActor;
@@ -29,7 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.mongodb.MongoClient;
 
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
@@ -148,7 +148,7 @@ public class PersistenceFeature {
 		MongoServer mongoServer = new MongoServer(new MemoryBackend());
 		mongoServer.bind("localhost", 27027);
 		
-		system.persistenceMode(new MongoDBPersistenceConnector(new MongoClient("localhost", 27027), "actor4j-test"));
+		system.persistenceMode(new MongoDBPersistenceConnector("localhost", 27027, "actor4j-test"));
 		system.start();
 		
 		system.sendWhenActive(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, id));
