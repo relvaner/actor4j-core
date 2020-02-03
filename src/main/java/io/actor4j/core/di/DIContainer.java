@@ -89,7 +89,8 @@ public class DIContainer<K> {
 				if (entry.getConstructorInjector().getParams()!=null)
 					result = buildInstance(entry.getBase(), entry.getConstructorInjector().getParams());
 				else
-					result = entry.getBase().newInstance();
+					// https://docs.oracle.com/javase/9/docs/api/java/lang/Class.html#newInstance--
+					result = entry.getBase().getDeclaredConstructor().newInstance();
 			}
 		}
 		
