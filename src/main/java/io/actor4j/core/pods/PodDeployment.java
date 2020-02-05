@@ -16,7 +16,7 @@
 
 package io.actor4j.core.pods;
 
-import static io.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.utils.ActorLogger.systemLogger;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,11 +26,10 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 import io.actor4j.core.ActorPodService;
-import io.actor4j.core.ActorSystemImpl;
 
 public class PodDeployment {
 	public static void deployPods(File jarFile, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
-		logger().info(String.format("%s - System [Replication]: Domain '%s' deploying", ((ActorSystemImpl)service).getName(), podConfiguration.getDomain()));
+		systemLogger().info(String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
 		
 		Class<?> clazz;
 		try {
@@ -60,7 +59,7 @@ public class PodDeployment {
 							));
 					if (i==0)
 						primaryReplica = false;
-					logger().info(String.format("%s - System [Replication]: Pod (%s, %s) deployed", ((ActorSystemImpl)service).getName(), domain, clazz.getName()));
+					systemLogger().info(String.format("[REPLICATION] Pod (%s, %s) deployed", domain, clazz.getName()));
 				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -82,7 +81,7 @@ public class PodDeployment {
 									primaryShardIds.get(i),
 									true
 								));
-						logger().info(String.format("%s - System [Replication]: Pod-Shard (%s, %s, PRIMARY, %s) deployed", ((ActorSystemImpl)service).getName(), podConfiguration.getDomain(), clazz.getName(), primaryShardIds.get(i)));
+						systemLogger().info(String.format("[REPLICATION] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), clazz.getName(), primaryShardIds.get(i)));
 					}
 				List<String> secondaryShardIds = podSystemConfiguration.getSecondaryShardIds();
 				if (secondaryShardIds!=null)
@@ -98,7 +97,7 @@ public class PodDeployment {
 											secondaryShardIds.get(i),
 											false
 										));
-								logger().info(String.format("%s - System [Replication]: Pod-Shard (%s, %s, SECONDARY, %s) deployed", ((ActorSystemImpl)service).getName(), podConfiguration.getDomain(), clazz.getName(), secondaryShardIds.get(i)));
+								systemLogger().info(String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.getDomain(), clazz.getName(), secondaryShardIds.get(i)));
 							}
 					}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException

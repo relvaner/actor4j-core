@@ -49,7 +49,7 @@ public class StatelessActorFeature {
 			protected boolean first = true;
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s%n", Thread.currentThread().getName(), self()));
+				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					testDone.countDown();
 					first=false;

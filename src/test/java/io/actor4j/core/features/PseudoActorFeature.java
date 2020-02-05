@@ -69,7 +69,7 @@ public class PseudoActorFeature {
 					
 					@Override
 					public void receive(ActorMessage<?> message) {
-						logger().debug(String.format("numberGenerator received a message.tag (%d) from main%n", message.tag));
+						logger().debug(String.format("numberGenerator received a message.tag (%d) from main", message.tag));
 						testDone.countDown();
 					}
 					

@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.utils.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
@@ -68,27 +68,23 @@ public class ActorExecuterService {
 			public void handle(Throwable t, String message, UUID uuid) {
 				if (message!=null) {
 					if (message.equals("initialization")) {
-						logger().error(
-							String.format("%s - Safety (%s) - Exception in initialization of an actor", 
-								system.name, Thread.currentThread().getName()));
+						systemLogger().error(
+							String.format("[SAFETY] Exception in initialization of an actor"));
 					}
 					else if (message.equals("actor") || message.equals("resource")) {
 						Actor actor = system.cells.get(uuid).actor;
-							logger().error(
-								String.format("%s - Safety (%s) - Exception in actor: %s", 
-									system.name, Thread.currentThread().getName(), actorLabel(actor)));
+						systemLogger().error(
+								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 					else if (message.equals("pseudo")) {
 						Actor actor = system.pseudoCells.get(uuid).actor;
-							logger().error(
-								String.format("%s - Safety (%s) - Exception in actor: %s", 
-									system.name, Thread.currentThread().getName(), actorLabel(actor)));
+						systemLogger().error(
+								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 				}
 				else {
-					logger().fatal(
-						String.format("%s - Safety (%s) - Exception in ActorThread", 
-								system.name, Thread.currentThread().getName()));
+					systemLogger().fatal(
+						String.format("[SAFETY] Exception in ActorThread"));
 				}
 				
 				t.printStackTrace();

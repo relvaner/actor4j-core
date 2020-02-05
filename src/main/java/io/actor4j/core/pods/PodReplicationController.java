@@ -44,13 +44,13 @@ public class PodReplicationController {
 	}
 	
 	public void undeployPods(String domain) {
-		logger().info(String.format("%s - System [Replication]: Domain '%s' undeploying", system.getName(), domain));
+		systemLogger().info(String.format("[REPLICATION] Domain '%s' undeploying", domain));
 		
 		Queue<UUID> queue = system.getPodDomains().get(domain);
 		Iterator<UUID> iterator = queue.iterator();
 		while (iterator.hasNext()) {
 			UUID id = iterator.next();
-			logger().info(String.format("%s - System [Replication]: PodActor (%s, %s) stopping", system.getName(), domain, id));
+			systemLogger().info(String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 			system.send(new ActorMessage<>(null, STOP, system.SYSTEM_ID, id));
 			iterator.remove();
 		}
