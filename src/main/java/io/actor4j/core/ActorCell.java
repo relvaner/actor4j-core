@@ -277,12 +277,12 @@ public class ActorCell {
 			Actor sourceActor = system.cells.get(message.source).actor;
 			if (sourceActor!=null)
 				systemLogger().warn(
-					String.format("actor (%s) - Unhandled message (%s) from source (%s)",
+					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from source (%s)",
 						actorLabel(actor), message.toString(), actorLabel(sourceActor)
 					));
 			else
 				systemLogger().warn(
-					String.format("actor (%s) - Unhandled message (%s) from unavaible source (???)",
+					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from unavaible source (???)",
 						actorLabel(actor), message.toString()
 					));
 		}

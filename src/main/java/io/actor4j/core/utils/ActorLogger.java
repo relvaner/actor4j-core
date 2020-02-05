@@ -39,8 +39,8 @@ public class ActorLogger {
 	public static final String SYSTEM_CONSOLE_APPENDER_NAME = "actor4j-system-console-appender";
 	public static final String USER_CONSOLE_APPENDER_NAME = "actor4j-user-console-appender";
 	
-	protected final String LAYOUT_CONSOLE_SYSTEM = "[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [SYSTEM] [%t] %-40C -> %L : %m%n";
-	protected final String LAYOUT_CONSOLE_USER   = "[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [USER  ] [%t] %-40C -> %L : %m%n";
+	protected final String LAYOUT_CONSOLE_SYSTEM = "[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [SYSTEM] [%t] %-40C -> %L %m%n";
+	protected final String LAYOUT_CONSOLE_USER   = "[%-5p] %d{yyyy-MM-dd HH:mm:ss.SSS} [USER  ] [%t] %-40C -> %L [MESSAGE] %m%n";
 	
 	// @See: https://logging.apache.org/log4j/2.x/manual/customconfig.html
 	private ActorLogger() {

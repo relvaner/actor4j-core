@@ -179,6 +179,11 @@
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
               		<jarName>${project.artifactId}-${project.version}</jarName>
+              		<archive>
+            			<manifestEntries>
+                			<Multi-Release>true</Multi-Release>
+            			</manifestEntries>
+        			</archive>
               		<includes>
                 		<include>META-INF/LICENSE.txt</include>
               		</includes>
