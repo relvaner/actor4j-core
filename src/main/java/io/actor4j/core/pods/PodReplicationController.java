@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.actor4j.core.pods;
 
 import java.io.File;
@@ -41,6 +40,12 @@ public class PodReplicationController {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
 		if (podSystemConfiguration!=null)
 			PodDeployment.deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
+	}
+	
+	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
+		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
+		if (podSystemConfiguration!=null)
+			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
 	}
 	
 	public void undeployPods(String domain) {

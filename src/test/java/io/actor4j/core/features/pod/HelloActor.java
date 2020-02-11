@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.features.pod;
 
-import static io.actor4j.core.utils.ActorLogger.systemLogger;
+import java.util.UUID;
 
-import io.actor4j.core.actors.Actor;
+import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.actors.PodChildActor;
 
-public class PodActorCell extends ActorCell {
-	protected volatile PodContext context;
-	
-	public PodActorCell(ActorSystemImpl system, Actor actor) {
-		super(system, actor);
+import static io.actor4j.core.utils.ActorLogger.*;
+
+public class HelloActor extends PodChildActor {
+	public HelloActor(UUID groupId, PodContext context) {
+		super(groupId, context);
 	}
-	
-	public PodContext getContext() {
-		return context;
-	}
-	
+
 	@Override
 	public void preStart() {
-		systemLogger().info(String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
-		super.preStart();
+		setAlias("hello"+groupId);
+	}
+
+	@Override
+	public void receive(ActorMessage<?> message) {
+		logger().debug(message.value);
+		tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, groupId:%s]", 
+				message.value, 
+				context.getDomain(),
+				context.isPrimaryReplica(),
+				groupId)
+				, 42, message.source, message.interaction);
 	}
 }

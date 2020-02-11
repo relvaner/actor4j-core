@@ -28,8 +28,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,6 +91,9 @@ public class ActorCell {
 	protected boolean activeDirectiveBehaviour;
 	
 	protected final Queue<PersistenceTuple> persistenceTuples;
+	
+	protected final AtomicLong requestRate;
+	protected final /*thread-safe*/SynchronizedDescriptiveStatistics processingTimeStatistics; 
 			
 	public ActorCell(ActorSystemImpl system, Actor actor) {
 		super();
@@ -158,6 +164,9 @@ public class ActorCell {
 		};
 		
 		persistenceTuples = new LinkedList<>();
+		
+		requestRate = new AtomicLong(0);
+		processingTimeStatistics = new SynchronizedDescriptiveStatistics();
 	}
 	
 	public ActorSystemImpl getSystem() {
@@ -435,5 +444,9 @@ public class ActorCell {
 			result = ((PersistenceId)actor).persistenceId();
 		
 		return result;
+	}
+
+	public AtomicLong getRequestRate() {
+		return requestRate;
 	}
 }

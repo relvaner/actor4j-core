@@ -66,7 +66,7 @@ public class PodDeployment {
 				e.printStackTrace();
 			}	
 	}
-
+	
 	public static void deployPodsAsShards(Class<?> clazz, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
 		if (clazz!=null)
 			try {
@@ -104,5 +104,68 @@ public class PodDeployment {
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 			}	
+	}
+	
+	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
+		systemLogger().info(String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
+		
+		if (podSystemConfiguration.getCurrentShardCount()==1)
+			deployPods(factory, podSystemConfiguration.currentReplicaCount, podConfiguration.getDomain(), service);
+		else
+			deployPodsAsShards(factory, podConfiguration, podSystemConfiguration, service);		
+	}
+	
+	public static void deployPods(PodFactory factory, int instances, String domain, ActorPodService service) {
+		if (factory!=null) {
+			boolean primaryReplica = true;
+			for (int i=0; i<instances; i++) {
+				Pod pod = factory.create();
+				pod.register(service, 
+						new PodContext(
+							domain,
+							false,
+							null,
+							primaryReplica
+						));
+				if (i==0)
+					primaryReplica = false;
+				systemLogger().info(String.format("[REPLICATION] Pod (%s, %s) deployed", domain, pod.getClass().getName()));
+			}			
+		}
+	}
+
+	public static void deployPodsAsShards(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
+		if (factory!=null) {
+			List<String> primaryShardIds = podSystemConfiguration.getPrimaryShardIds();
+			if (primaryShardIds!=null)
+				for (int i=0; i<primaryShardIds.size(); i++) {
+					Pod pod = factory.create();
+					pod.register(service, 
+							new PodContext(
+								podConfiguration.getDomain(), 
+								true,
+								primaryShardIds.get(i),
+								true
+							));
+					systemLogger().info(String.format("[REPLICATION] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), primaryShardIds.get(i)));
+				}
+			List<String> secondaryShardIds = podSystemConfiguration.getSecondaryShardIds();
+			if (secondaryShardIds!=null)
+				for (int i=0; i<secondaryShardIds.size(); i++) {
+					int count = podSystemConfiguration.getSecondaryShardCounts().get(i);
+					if (count>0)
+						for (int j=0; j<count; j++) {
+							Pod pod = factory.create();
+							pod.register(service,
+									new PodContext(
+										podConfiguration.getDomain(), 
+										true,
+										secondaryShardIds.get(i),
+										false
+									));
+							systemLogger().info(String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), secondaryShardIds.get(i)));
+						}
+				}
+		}	
 	}
 }

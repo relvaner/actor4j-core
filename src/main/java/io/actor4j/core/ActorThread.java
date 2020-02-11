@@ -17,6 +17,7 @@ package io.actor4j.core;
 
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -28,6 +29,8 @@ public abstract class ActorThread extends Thread {
 	
 	protected final ActorSystemImpl system;
 	
+	protected final AtomicBoolean threadLoad;
+	protected final AtomicBoolean processingTimeEnabled;
 	protected final AtomicLong counter;
 	protected Runnable onTermination;
 	
@@ -37,12 +40,21 @@ public abstract class ActorThread extends Thread {
 		this.system = system;
 		uuid = UUID.randomUUID();
 		
+		threadLoad = new AtomicBoolean(false);
+		processingTimeEnabled = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
 	}
 	
 	protected void safetyMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
-			cell.internal_receive(message);
+			if (processingTimeEnabled.get()) {
+				long startTime = System.nanoTime();
+				cell.internal_receive(message);
+				long stopTime = System.nanoTime();
+				cell.processingTimeStatistics.addValue(stopTime-startTime);
+			}
+			else
+				cell.internal_receive(message);
 		}
 		catch(Exception e) {
 			system.executerService.safetyManager.notifyErrorHandler(e, "actor", cell.id);
@@ -56,8 +68,10 @@ public abstract class ActorThread extends Thread {
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
 			ActorCell cell = system.cells.get(message.dest);
-			if (cell!=null)
+			if (cell!=null) {
+				cell.requestRate.getAndIncrement();
 				safetyMethod(message, cell);
+			}
 			if (system.counterEnabled)
 				counter.getAndIncrement();
 			

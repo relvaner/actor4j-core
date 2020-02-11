@@ -41,6 +41,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.PodReplicationController;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.ActorFactory;
@@ -77,6 +78,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected int parallelismFactor;
 	
 	protected final int idle;
+	protected final int load;
 	protected ActorThreadMode threadMode;
 	protected long sleepTime;
 	
@@ -139,6 +141,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		parallelismFactor = 1;
 		
 		idle = 100_000;
+		load = 100_000;
 		threadMode = ActorThreadMode.PARK;
 		sleepTime = 25;
 		
@@ -484,6 +487,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
 		podReplicationController.deployPods(jarFile, podConfiguration);
+	}
+	
+	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
+		podReplicationController.deployPods(factory, podConfiguration);
 	}
 	
 	public void undeployPods(String domain) {

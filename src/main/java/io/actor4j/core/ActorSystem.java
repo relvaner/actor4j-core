@@ -24,6 +24,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 
@@ -156,6 +157,10 @@ public class ActorSystem {
 	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
 		system.deployPods(jarFile, podConfiguration);
+	}
+	
+	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
+		system.deployPods(factory, podConfiguration);
 	}
 	
 	public void undeployPods(String domain) {

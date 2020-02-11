@@ -84,6 +84,7 @@ public class DefaultActorThread extends ActorThread {
 		int hasNextOuter;
 		int hasNextInner;
 		int idle = 0;
+		int load = 0;
 		
 		while (!isInterrupted()) {
 			hasNextDirective = false;
@@ -121,6 +122,10 @@ public class DefaultActorThread extends ActorThread {
 			for (; hasNextInner<system.throughput && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
+				if (idle==0) {
+					load = 0;
+					threadLoad.set(false);
+				}
 				idle++;
 				if (idle>system.idle) {
 					idle = 0;
@@ -139,8 +144,13 @@ public class DefaultActorThread extends ActorThread {
 						yield();
 				}
 			}
-			else
+			else {
 				idle = 0;
+				if (load>system.load)
+					threadLoad.set(true);
+				else
+					load++;
+			}
 		}		
 	}
 	

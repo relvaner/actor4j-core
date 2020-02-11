@@ -15,25 +15,12 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.utils.ActorLogger.systemLogger;
-
-import io.actor4j.core.actors.Actor;
-import io.actor4j.core.pods.PodContext;
-
-public class PodActorCell extends ActorCell {
-	protected volatile PodContext context;
-	
-	public PodActorCell(ActorSystemImpl system, Actor actor) {
-		super(system, actor);
+public class DefaultPodReplicationControllerThread extends PodReplicationControllerThread {
+	public DefaultPodReplicationControllerThread(ThreadGroup group, String name, ActorSystemImpl system) {
+		super(group, name, system);
 	}
-	
-	public PodContext getContext() {
-		return context;
-	}
-	
+
 	@Override
-	public void preStart() {
-		systemLogger().info(String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
-		super.preStart();
+	public void onRun() {
 	}
 }

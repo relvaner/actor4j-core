@@ -81,6 +81,10 @@ public class ActorExecuterService {
 						systemLogger().error(
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
+					else if (message.equals("replication")) {
+						systemLogger().fatal(
+								String.format("[SAFETY] Exception in PodReplicationControllerThread"));
+					}
 				}
 				else {
 					systemLogger().fatal(
