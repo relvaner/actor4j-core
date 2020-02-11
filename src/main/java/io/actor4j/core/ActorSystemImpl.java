@@ -59,6 +59,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected final DIContainer<UUID> container;
 	protected final PodReplicationController podReplicationController;
+	protected /*quasi final*/ Class<? extends PodReplicationControllerRunnable> podReplicationControllerRunnableClass;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
 	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
@@ -81,6 +82,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected final int load;
 	protected ActorThreadMode threadMode;
 	protected long sleepTime;
+	protected long horizontalPodAutoscalerSyncTime;
 	
 	protected boolean debugUnhandled;
 	
@@ -125,6 +127,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		container      = DIContainer.create();
 		podReplicationController = new PodReplicationController(this);
+		podReplicationControllerRunnableClass = DefaultPodReplicationControllerRunnable.class;
 		
 		cells          = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
@@ -144,6 +147,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		load = 100_000;
 		threadMode = ActorThreadMode.PARK;
 		sleepTime = 25;
+		horizontalPodAutoscalerSyncTime = 15_000;
 		
 		queueSize       = 50_000;
 		bufferQueueSize = 10_000;

@@ -15,12 +15,19 @@
  */
 package io.actor4j.core;
 
-public class DefaultPodReplicationControllerThread extends PodReplicationControllerThread {
-	public DefaultPodReplicationControllerThread(ThreadGroup group, String name, ActorSystemImpl system) {
-		super(group, name, system);
+import static io.actor4j.core.utils.ActorLogger.systemLogger;
+
+public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
+	public DefaultPodReplicationControllerRunnable(ActorSystemImpl system) {
+		super(system);
 	}
 
 	@Override
 	public void onRun() {
+		horizontalPodAutoscaler();
+	}
+	
+	public void horizontalPodAutoscaler() {
+		systemLogger().debug(String.format("[REPLICATION][AUTOSCALER] sync"));
 	}
 }

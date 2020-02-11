@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@ package io.actor4j.core;
 import static io.actor4j.core.utils.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -50,6 +53,9 @@ public class ActorExecuterService {
 	protected ExecutorService resourceExecuterService;
 	
 	protected ActorPersistenceService persistenceService;
+	
+	protected ScheduledExecutorService podReplicationControllerExecuterService;
+	protected PodReplicationControllerRunnable podReplicationControllerRunnable;
 	
 	protected int maxResourceThreads;
 	
@@ -130,6 +136,17 @@ public class ActorExecuterService {
 		
 		actorThreadPool = new ActorThreadPool(system);
 		
+		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
+		try {
+			Constructor<? extends PodReplicationControllerRunnable> constructor;
+			constructor = system.podReplicationControllerRunnableClass.getConstructor(ActorSystemImpl.class);
+			podReplicationControllerRunnable = constructor.newInstance(system);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (podReplicationControllerRunnable!=null)
+			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.horizontalPodAutoscalerSyncTime, system.horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
+		
 		/*
 		 * necessary before executing onStartup; 
 		 * creating of childrens in Actor::preStart: childrens needs to register at the dispatcher
@@ -201,6 +218,8 @@ public class ActorExecuterService {
 	}
 	
 	public void shutdown(boolean await) {
+		podReplicationControllerExecuterService.shutdown();
+		
 		globalTimerExecuterService.shutdown();
 		timerExecuterService.shutdown();
 		

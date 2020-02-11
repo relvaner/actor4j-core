@@ -20,15 +20,15 @@ import java.util.UUID;
 import io.actor4j.core.safety.Method;
 import io.actor4j.core.safety.SafetyMethod;
 
-public abstract class PodReplicationControllerThread extends Thread {
+public abstract class PodReplicationControllerRunnable implements Runnable {
 	protected final UUID uuid; // for safety
 	
 	protected final ActorSystemImpl system;
 	
 	protected Runnable onTermination;
 	
-	public PodReplicationControllerThread(ThreadGroup group, String name, ActorSystemImpl system) {
-		super(group, name);
+	public PodReplicationControllerRunnable(ActorSystemImpl system) {
+		super();
 		
 		this.system = system;
 		uuid = UUID.randomUUID();
