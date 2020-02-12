@@ -19,8 +19,10 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.ActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
@@ -31,19 +33,25 @@ import static io.actor4j.core.actors.Actor.*;
 public class PodReplicationController {
 	protected final ActorSystemImpl system;
 	
+	protected final Map<String, PodReplicationTuple> podReplicationMap;
+	
 	public PodReplicationController(ActorSystemImpl system) {
 		super();
 		this.system = system;
+		
+		podReplicationMap = new ConcurrentHashMap<>();
 	}
 
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
+		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration, jarFile.getAbsolutePath()));
 		if (podSystemConfiguration!=null)
 			PodDeployment.deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
 	}
 	
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
+		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration));
 		if (podSystemConfiguration!=null)
 			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
 	}
@@ -90,5 +98,17 @@ public class PodReplicationController {
 		}
 		
 		return result;
+	}
+	
+	public Map<String, PodReplicationTuple> getPodReplicationMap() {
+		return podReplicationMap;
+	}
+
+	public void increasePods(String domain) {
+		
+	}
+	
+	public void decreasePods(String domain) {
+		
 	}
 }

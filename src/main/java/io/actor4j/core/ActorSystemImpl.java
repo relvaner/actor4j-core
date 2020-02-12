@@ -83,6 +83,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected ActorThreadMode threadMode;
 	protected long sleepTime;
 	protected long horizontalPodAutoscalerSyncTime;
+	protected long horizontalPodAutoscalerMeasurementTime;
 	
 	protected boolean debugUnhandled;
 	
@@ -148,6 +149,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		threadMode = ActorThreadMode.PARK;
 		sleepTime = 25;
 		horizontalPodAutoscalerSyncTime = 15_000;
+		horizontalPodAutoscalerMeasurementTime = 2_000;
 		
 		queueSize       = 50_000;
 		bufferQueueSize = 10_000;
