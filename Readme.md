@@ -148,6 +148,8 @@ forward(ActorMessage<?> message, UUID dest)
 priority(ActorMessage<?> message, UUID dest)
 ```
 
+Messages that can be exchanged between the actors are of the `ActorMessage<T>` type. A message (see Table 1) consists of the object to be transferred (payload of the message), a tag that helps for differentiating between messages, the sender address of the message, the receiver address of the message, an interaction ID for messages related to an interaction protocol (conversation) and the ontology, the knowledge model for the domain of the message. Methods for sending messages within the actor can be called (see above).
+
 The structure of the `ActorMessage<T>` looks like that:
 
 | Type | Name | Description |
