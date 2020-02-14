@@ -77,7 +77,7 @@ ActorSystem system = new ActorSystem();
 system
 	.setParallelismMin(1)
 	.setParallelismFactor(1);
-	.softMode(); // or .hardMode();
+	//.parkMode() [default] or .softMode() [using sleep() on idle] or .hardMode();
 ```
 On the one hand, the number of threads can be set with `setParallelismMin` and the scaling factor with `setParallelismFactor`:
 
@@ -133,15 +133,19 @@ public class MyActor extends Actor {
 /* Adapted for actor4j according to [4] */
 ```
 
-Messages can be sent using the `send` method. The following methods are available. `Tell` offers a similar syntax to `Akka`. A message can also be forwarded (`forward`). Aliases are among other things available to access a remote actor in a simplified manner.
+Messages can be sent using the `send` method. The following methods are available. `Tell` offers a similar syntax to `Akka`. A message can also be forwarded (`forward`). Aliases are among other things available to access a remote actor in a simplified manner. Messages can be sent also with `priority` (will be delivered with priority).
 ```java
 send(ActorMessage<?> message)
 send(ActorMessage<?> message, UUID dest)
 sendViaPath(ActorMessage<?> message, String path)
 sendViaAlias(ActorMessage<?> message, String alias)
 tell(T value, int tag, UUID dest)
+tell(T value, int tag, UUID dest, UUID interaction)
+tell(T value, int tag, String alias)
+tell(T value, int tag, String alias, UUID interaction)
 
 forward(ActorMessage<?> message, UUID dest)
+priority(ActorMessage<?> message, UUID dest)
 ```
 
 The structure of the `ActorMessage<T>` looks like that:
