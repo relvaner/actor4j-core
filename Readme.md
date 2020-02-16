@@ -297,12 +297,13 @@ An `ActorInitializationException` is thrown if an error occurs during the instan
 
 Fig. 3: Extended representation of the life cycle of an actor (cp. [[5](#5)])
 
-`Actor4j` currently supports seven directives: `RESUME`, `STOP`, `RESTART`, `ESCALATE`, `RECOVER`, `ACTIVATE` and `DEACTIVATE` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
+`Actor4j` currently supports eight directives: `RESUME`, `STOP`, `TERMINATED`, `RESTART`, `ESCALATE`, `RECOVER`, `ACTIVATE` and `DEACTIVATE` (see also Fig. 3). Stopping and restarting of the actors is asynchronous.
 
 * `RESUME`: In this case, the supervisor remains passive. The actor can continue its activities undisturbed [[5](#5)].
 * `STOP`:
   * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of `watch`, to observe that all children have terminated.
   * Call of `postStop`.
+* `TERMINATED`: Actor is stopped.
 * `RESTART`:
   * `PreRestart` is called at the current instance.
   * To all children the message `STOP` is sent (recursive process, if the children also have children) so that they can terminate. Use of `watch`, to observe that all children have terminated.
@@ -363,7 +364,7 @@ The use of this interface signals to the `ActorSystem` that the correspondingly 
 This class implements the interface `ActorGroupMember`.
 
 ### ResourceActor ###
-Workload tasks should not be performed within the `ActorSystem`. Because they block the reactive system and it is no longer responsive. Therefore the class `ResorceActor` is provided. These special actors are executed in a separate thread pool, thus avoiding disturbances within the `ActorSystem`. It should distinguish stateless (`@Stateless`) and stateful (`@Stateful`) actors. The advantage of this distinction lies in the fact that stateless actors can be executed in parallel.
+Workload tasks should not be performed within the `ActorSystem`. Because they block the reactive system and it is no longer responsive. Therefore the class `ResourceActor` is provided. These special actors are executed in a separate thread pool, thus avoiding disturbances within the `ActorSystem`. It should distinguish stateless (`@Stateless`) and stateful (`@Stateful`) actors. The advantage of this distinction lies in the fact that stateless actors can be executed in parallel.
 
 ### ActorWithRxStash ###
 The `ActorWithRxStash` class implements the queue `stash`, from the class `Actor`. With `stash`, messages can be temporarily stored, which are not to be processed immediately. `RxStash` provides access to `stash` as an observer by using `RxJava` [[9](#9)]. This allows a comfortable access to `stash` (filters, transformations, aggregators, etc.).
