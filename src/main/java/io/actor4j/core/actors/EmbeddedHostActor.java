@@ -80,7 +80,7 @@ public abstract class EmbeddedHostActor extends Actor {
 		
 		EmbeddedActor embeddedActor = router.get(dest);
 		if (embeddedActor!=null)
-			result = embeddedActor.embedded(value, tag, dest);
+			result = embeddedActor.embedded(value, tag, self(), dest);
 		else if (dest.equals(self()))
 			receive(new ActorMessage<T>(value, tag, self(), dest));
 		
