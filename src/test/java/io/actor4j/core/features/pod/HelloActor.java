@@ -30,7 +30,7 @@ public class HelloActor extends PodChildActor {
 
 	@Override
 	public void preStart() {
-		setAlias("hello"+groupId);
+		setAlias("hello");
 	}
 
 	@Override

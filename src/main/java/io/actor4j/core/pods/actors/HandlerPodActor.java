@@ -25,20 +25,20 @@ import io.actor4j.core.pods.PodContext;
 public abstract class HandlerPodActor extends PodChildActor {
 	protected String alias;
 	protected Map<UUID, ActorMessage<?>> map;
-	
+
 	public HandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(groupId, context);
 		this.alias = alias;
-		
+
 		this.map = new HashMap<>();
 	}
 	
 	@Override
 	public void preStart() {
 		if (context.isShard())
-			setAlias(alias+context.getShardId());
+			setAlias(alias+context.getShardId(), false);
 		else
-			setAlias(alias);
+			setAlias(alias, false);
 	}
 	
 	@Override

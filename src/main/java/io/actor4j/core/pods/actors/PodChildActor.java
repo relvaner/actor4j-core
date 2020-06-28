@@ -35,4 +35,21 @@ public abstract class PodChildActor extends Actor implements ActorGroupMember {
 	public UUID getGroupId() {
 		return groupId;
 	}
+	
+	@Override
+	public void setAlias(String alias) {
+		setAlias(alias, true);
+	}
+	
+	public void setAlias(String alias, boolean absolute) {
+		if (alias!=null && !alias.isEmpty())
+			if (absolute)
+				super.setAlias(alias+groupId);
+			else
+				super.setAlias(alias);
+	}
+	
+	public String getAbsoluteAlias(String alias) {
+		return alias+groupId;
+	}
 }
