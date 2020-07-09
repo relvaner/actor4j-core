@@ -36,7 +36,7 @@ public class ActorWithCache<K, V> extends Actor {
 	public static final int CAS     = checkTag(307); // CompareAndSet
 	public static final int CAU     = checkTag(308); // CompareAndUpdate
 	
-	public static final int SUBSCRIBE_SECONDARY = 309;
+	public static final int SUBSCRIBE_SECONDARY = checkTag(309);
 	
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);

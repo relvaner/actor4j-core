@@ -47,6 +47,7 @@
 || CLEAR                        | 306 |
 || CAS                          | 307 |
 || CAU                          | 308 |
+|| SUBSCRIBE_SECONDARY          | 309 |
 | DataAccessActor |||
 || HAS_ONE                      | 315 |
 || INSERT_ONE                   | 316 |
