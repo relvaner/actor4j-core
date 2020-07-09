@@ -19,20 +19,22 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Cache;
 import io.actor4j.core.utils.CacheLRUWithGC;
 
+import static io.actor4j.core.utils.ActorUtils.*;
+
 public class ActorWithCache<K, V> extends Actor {
 	protected int cacheSize;
 	protected Cache<K, V> cache;
 	
-	public static final int GC      = 300;
+	public static final int GC      = checkTag(300);
 	public static final int EVICT   = GC;
-	public static final int GET     = 301;
-	public static final int SET     = 302;
-	public static final int UPDATE  = 303;
-	public static final int DEL     = 304;
-	public static final int DEL_ALL = 305;
-	public static final int CLEAR   = 306;
-	public static final int CAS     = 307; // CompareAndSet
-	public static final int CAU     = 308; // CompareAndUpdate
+	public static final int GET     = checkTag(301);
+	public static final int SET     = checkTag(302);
+	public static final int UPDATE  = checkTag(303);
+	public static final int DEL     = checkTag(304);
+	public static final int DEL_ALL = checkTag(305);
+	public static final int CLEAR   = checkTag(306);
+	public static final int CAS     = checkTag(307); // CompareAndSet
+	public static final int CAU     = checkTag(308); // CompareAndUpdate
 	
 	public static final int SUBSCRIBE_SECONDARY = 309;
 	

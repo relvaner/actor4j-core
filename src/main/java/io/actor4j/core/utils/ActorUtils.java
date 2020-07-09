@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,18 @@
  */
 package io.actor4j.core.utils;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 
+import static io.actor4j.core.utils.ActorLogger.systemLogger;
+
 public final class ActorUtils {
+	public static final Set<Integer> actorTags = new HashSet<>();
+	
 	public static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 	
 	public static String actorLabel(ActorRef actorRef) {
@@ -29,5 +35,14 @@ public final class ActorUtils {
 	
 	public static boolean isDirective(ActorMessage<?> message) {
 		return message.tag<0;
+	}
+	
+	public static int checkTag(int tag) {
+		if (tag<0)
+			systemLogger().fatal(String.format("Tags below zero are system tags: %s", tag));
+		else if (!actorTags.add(tag))
+			systemLogger().error(String.format("Tag already exists: %s", tag));
+		
+		return tag;
 	}
 }
