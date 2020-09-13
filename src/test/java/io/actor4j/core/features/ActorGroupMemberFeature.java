@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package io.actor4j.core.features;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.actors.ActorWithBothGroups;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.actors.ActorWithGroup;
 import io.actor4j.core.messages.ActorMessage;
@@ -45,7 +47,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorGroupMember() {
-		int instances = 5;
+		int instances = system.getParallelismMin()+1;
 		CountDownLatch testDone = new CountDownLatch(instances*2);
 		AtomicReference<String> threadName1 = new AtomicReference<>("");
 		AtomicReference<String> threadName2 = new AtomicReference<>("");
@@ -132,6 +134,78 @@ public class ActorGroupMemberFeature {
 		try {
 			testDone.await();
 			assertEquals(instances, map.size());
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		timer.cancel();
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=30000)
+	public void test_ActorWithBothGroups_with_ActorWithGroup() {
+		int instances = system.getParallelismMin();
+		CountDownLatch testDone = new CountDownLatch(instances+instances*instances);
+		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
+		Map<UUID, String> threadMap = new ConcurrentHashMap<UUID, String>();
+		
+		ActorGroup distributedGroup = new ActorGroupSet();
+		system.setAlias(system.addActor(() -> new ActorWithBothGroups(distributedGroup) {
+			protected ActorGroup group = new ActorGroupSet();
+			protected boolean first = true;
+			@Override
+			public void preStart() {
+				system.setAlias(system.addActor(() -> new ActorWithGroup(group) {
+					protected boolean first_child = true;
+					@Override
+					public void receive(ActorMessage<?> message) {
+						logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+						if (first_child) {
+							if (!threadMap.containsKey(groupId))
+								threadMap.put(groupId, Thread.currentThread().getName());
+							else
+								assertEquals(threadMap.get(groupId), Thread.currentThread().getName());
+							testDone.countDown();
+							first_child=false;
+						}
+					}
+				}, instances), "instances_child");
+			}
+			@Override
+			public void receive(ActorMessage<?> message) {
+				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				if (first) {
+					if (map.get(Thread.currentThread().getName())==null)
+						map.put(Thread.currentThread().getName(), true);
+					testDone.countDown();
+					first=false;
+					
+					if (!threadMap.containsKey(getGroupId()))
+						threadMap.put(getGroupId(), Thread.currentThread().getName());
+					else
+						assertEquals(threadMap.get(getGroupId()), Thread.currentThread().getName());
+				}
+			}
+			@Override
+			public UUID getGroupId() {
+				return group.getId();
+			}
+		}, instances), "instances");
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				system.sendViaAlias(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, null), "instances");
+				system.sendViaAlias(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, null), "instances_child");
+			}
+		}, 0, 50);
+		
+		system.start();
+		
+		try {
+			testDone.await();
+			assertEquals(instances, map.size());
+			assertEquals(instances, threadMap.size());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

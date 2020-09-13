@@ -18,5 +18,5 @@ package io.actor4j.core.actors;
 import java.util.UUID;
 
 public interface ActorDistributedGroupMember {
-	public UUID getGroupId();
+	public UUID getDistributedGroupId();
 }

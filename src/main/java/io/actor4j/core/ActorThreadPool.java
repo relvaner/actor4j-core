@@ -55,7 +55,7 @@ public class ActorThreadPool {
 			}
 		}
 		
-		actorThreadPoolHandler.beforeRun(actorThreads);
+		actorThreadPoolHandler.beforeStart(actorThreads);
 		for (ActorThread t : actorThreads)
 			t.start();
 	}

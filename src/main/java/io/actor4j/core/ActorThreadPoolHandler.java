@@ -24,8 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.annotations.concurrent.Readonly;
-import io.actor4j.core.balancing.ActorBalancingOnCreation;
-import io.actor4j.core.balancing.ActorBalancingOnRuntime;
+import io.actor4j.core.balancing.ActorLoadBalancingBeforeStart;
+import io.actor4j.core.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceService;
 
@@ -41,10 +41,10 @@ public class ActorThreadPoolHandler {
 	protected final Map<Long, String> persistenceMap;
 	
 	protected final Map<UUID, Long> groupsMap; // GroupID -> ThreadID
-	protected final Map<UUID, Integer> groupsDistributedMap;
+	protected final Map<UUID, Integer> groupsDistributedMap; // GroupID -> ThreadIndex
 	
-	protected final ActorBalancingOnCreation actorBalancingOnCreation;
-	protected final ActorBalancingOnRuntime actorBalancingOnRuntime;
+	protected final ActorLoadBalancingBeforeStart actorLoadBalancingBeforeStart;
+	protected final ActorLoadBalancingAfterStart actorLoadBalancingAfterStart;
 	
 	public ActorThreadPoolHandler(ActorSystemImpl system) {
 		super();
@@ -59,8 +59,8 @@ public class ActorThreadPoolHandler {
 		groupsMap = new ConcurrentHashMap<>();
 		groupsDistributedMap = new ConcurrentHashMap<>();
 		
-		actorBalancingOnCreation = new ActorBalancingOnCreation();
-		actorBalancingOnRuntime = new ActorBalancingOnRuntime();
+		actorLoadBalancingBeforeStart = new ActorLoadBalancingBeforeStart();
+		actorLoadBalancingAfterStart = new ActorLoadBalancingAfterStart();
 	}
 	
 	public Map<UUID, Long> getCellsMap() {
@@ -71,8 +71,8 @@ public class ActorThreadPoolHandler {
 		return threadsMap;
 	}
 	
-	public void beforeRun(List<ActorThread> actorThreads) {
-		actorBalancingOnCreation.balance(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.cells);
+	public void beforeStart(List<ActorThread> actorThreads) {
+		actorLoadBalancingBeforeStart.registerCells(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.cells);
 		
 		int i=0;
 		for(ActorThread t : actorThreads) {
@@ -153,11 +153,11 @@ public class ActorThreadPoolHandler {
 	}
 	
 	public void registerCell(ActorCell cell) {
-		actorBalancingOnRuntime.registerCell(cellsMap, threadsList, threadsMap, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public void unregisterCell(ActorCell cell) {
-		actorBalancingOnRuntime.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public boolean isRegisteredCell(ActorCell cell) {
