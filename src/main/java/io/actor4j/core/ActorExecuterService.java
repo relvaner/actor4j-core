@@ -109,6 +109,10 @@ public class ActorExecuterService {
 	public SafetyManager getSafetyManager() {
 		return safetyManager;
 	}
+	
+	public ActorThreadPool getActorThreadPool() {
+		return actorThreadPool;
+	}
 
 	public void run(Runnable onStartup) {
 		start(onStartup, null);

@@ -71,6 +71,10 @@ public class ActorThreadPoolHandler {
 		return threadsMap;
 	}
 	
+	public List<Long> getThreadsList() {
+		return threadsList;
+	}
+
 	public void beforeStart(List<ActorThread> actorThreads) {
 		actorLoadBalancingBeforeStart.registerCells(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.cells);
 		
