@@ -47,6 +47,8 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorGroupMember() {
+		system.setParallelismMin(3); /* temporary solution */
+		
 		int instances = system.getParallelismMin()+1;
 		CountDownLatch testDone = new CountDownLatch(instances*2);
 		AtomicReference<String> threadName1 = new AtomicReference<>("");
@@ -102,6 +104,8 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorDistributedGroupMember() {
+		system.setParallelismMin(3); /* temporary solution */
+		
 		int instances = system.getParallelismMin();
 		CountDownLatch testDone = new CountDownLatch(instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
@@ -130,7 +134,7 @@ public class ActorGroupMemberFeature {
 		}, 0, 50);
 		
 		system.start();
-		
+				
 		try {
 			testDone.await();
 			assertEquals(instances, map.size());
@@ -143,6 +147,8 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorWithBothGroups_with_ActorWithGroup() {
+		system.setParallelismMin(3); /* temporary solution */
+		
 		int instances = system.getParallelismMin();
 		CountDownLatch testDone = new CountDownLatch(instances+instances*instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
@@ -190,7 +196,7 @@ public class ActorGroupMemberFeature {
 				return group.getId();
 			}
 		}, instances), "instances");
-		
+
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
@@ -201,7 +207,7 @@ public class ActorGroupMemberFeature {
 		}, 0, 50);
 		
 		system.start();
-		
+
 		try {
 			testDone.await();
 			assertEquals(instances, map.size());

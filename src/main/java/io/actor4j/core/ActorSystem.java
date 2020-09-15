@@ -38,6 +38,11 @@ public class ActorSystem {
 		this(null, DefaultActorSystemImpl.class);
 	}
 	
+	public ActorSystem(boolean unbounded) {
+		this(null, DefaultActorSystemImpl.class);
+		((DefaultActorSystemImpl)system).setActorThreadClass(unbounded);
+	}
+	
 	public ActorSystem(Class<? extends ActorSystemImpl> clazz) {
 		this(null, clazz);
 	}

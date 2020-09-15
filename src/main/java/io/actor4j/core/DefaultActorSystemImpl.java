@@ -21,12 +21,19 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 	public DefaultActorSystemImpl(ActorSystem wrapper) {
 		this(null, wrapper);
 	}
-	
+
 	public DefaultActorSystemImpl(String name, ActorSystem wrapper) {
 		super(name, wrapper);
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
-		actorThreadClass  = DefaultActorThread.class;
+		setActorThreadClass(true);
+	}
+	
+	public void setActorThreadClass(boolean unbounded) {
+		if (unbounded)
+			actorThreadClass  = UnboundedActorThread.class;
+		else
+			actorThreadClass  = BoundedActorThread.class;
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {

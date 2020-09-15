@@ -15,41 +15,33 @@
  */
 package io.actor4j.core;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
-import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.jctools.queues.MpscArrayQueue;
-
 import io.actor4j.core.messages.ActorMessage;
 
-public class DefaultActorThread extends ActorThread {
-	protected final Queue<ActorMessage<?>> directiveQueue;
-	protected final Queue<ActorMessage<?>> priorityQueue;
-	protected final Queue<ActorMessage<?>> innerQueue;
-	protected final Queue<ActorMessage<?>> outerQueueL2;
-	protected final Queue<ActorMessage<?>> outerQueueL1;
-	protected final Queue<ActorMessage<?>> serverQueueL2;
-	protected final Queue<ActorMessage<?>> serverQueueL1;
+public abstract class DefaultActorThread extends ActorThread {
+	protected Queue<ActorMessage<?>> directiveQueue;
+	protected Queue<ActorMessage<?>> priorityQueue;
+	protected Queue<ActorMessage<?>> innerQueue;
+	protected Queue<ActorMessage<?>> outerQueueL2;
+	protected Queue<ActorMessage<?>> outerQueueL1;
+	protected Queue<ActorMessage<?>> serverQueueL2;
+	protected Queue<ActorMessage<?>> serverQueueL1;
 	
 	protected final AtomicBoolean newMessage;
 	
 	public DefaultActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
 		super(group, name, system);
 		
-		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
-		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize());
-		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize());
-		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize());
-		outerQueueL2   = new MpscArrayQueue<>(system.getQueueSize());
-		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize());
-		innerQueue     = new CircularFifoQueue<>(system.getQueueSize());
+		configQueues();
 		
 		newMessage = new AtomicBoolean(true);
 	}
+	
+	
+	public abstract void configQueues();
 	
 	@Override
 	public void directiveQueue(ActorMessage<?> message) {

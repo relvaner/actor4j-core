@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jctools.queues.MpscArrayQueue;
-import org.jctools.queues.MpscLinkedQueue8;
+import org.jctools.queues.MpscLinkedQueue;
 
 import io.actor4j.core.messages.ActorMessage;
 
@@ -49,15 +49,18 @@ public class XActorThread extends ActorThread {
 	public XActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
 		super(group, name, system);
 		
-		directiveQueue = new MpscArrayQueue<>(system.getQueueSize());
-		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize());
-		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize());
-		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize());
-		outerQueueL2B  = new MpscLinkedQueue8<>(); 
-		outerQueueL2A  = new MpscArrayQueue<>(system.getQueueSize());
-		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize());
-		innerQueueL2   = new LinkedList<>();
-		innerQueueL1   = new CircularFifoQueue<>(system.getQueueSize());
+		directiveQueue = new MpscLinkedQueue<>(); /* unbounded */
+		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize()); /* unbounded */
+		
+		serverQueueL2  = new MpscArrayQueue<>(system.getQueueSize()); /* bounded */
+		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
+		
+		outerQueueL2B  = new MpscLinkedQueue<>(); /* unbounded */
+		outerQueueL2A  = new MpscArrayQueue<>(system.getQueueSize()); /* bounded */
+		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
+		
+		innerQueueL2   = new LinkedList<>(); /* unbounded */
+		innerQueueL1   = new CircularFifoQueue<>(system.getQueueSize()); /* bounded */
 		
 		innerQueueAntiFloodingTimer = ((XActorSystemImpl)system).factoryAntiFloodingTimer.get();
 		outerQueueAntiFloodingTimer = ((XActorSystemImpl)system).factoryAntiFloodingTimer.get();
