@@ -30,6 +30,7 @@ import io.actor4j.core.ActorThread;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
+import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
 
 public class ActorLoadBalancingAfterStart {
 	protected AtomicInteger i;
@@ -58,7 +59,7 @@ public class ActorLoadBalancingAfterStart {
 		lock.lock();
 		try {
 			Actor actor = cell.getActor();
-			if (actor instanceof ActorDistributedGroupMember) {
+			if (actor instanceof ActorDistributedGroupMember && !(actor instanceof ActorIgnoreDistributedGroupMember)) {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
