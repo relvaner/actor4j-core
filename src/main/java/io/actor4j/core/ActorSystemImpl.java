@@ -39,6 +39,7 @@ import io.actor4j.core.di.DIContainer;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
+import io.actor4j.core.pods.Database;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
@@ -99,6 +100,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected PersistenceConnector persistenceConnector;
 	protected boolean persistenceMode;
+	
+	protected Database<?> podDatabase;
 	
 	protected String serviceNodeName;
 	protected List<ActorServiceNode> serviceNodes;
@@ -357,6 +360,18 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public void persistenceMode(PersistenceConnector persistenceConnector) {
 		this.persistenceConnector = persistenceConnector;
 		this.persistenceMode = true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getPodDatabase() {
+		if (podDatabase!=null)
+			return (T)podDatabase.getClient();
+		else
+			return null;
+	}
+	
+	public void setPodDatabase(Database<?> podDatabase) {
+		this.podDatabase = podDatabase;
 	}
 
 	public int getQueueSize() {

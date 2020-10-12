@@ -52,4 +52,8 @@ public abstract class PodChildActor extends Actor implements ActorGroupMember {
 	public String getAbsoluteAlias(String alias) {
 		return alias+groupId;
 	}
+	
+	public <T> T getPodDatabase() {
+		return getSystem().getPodDatabase();
+	}
 }

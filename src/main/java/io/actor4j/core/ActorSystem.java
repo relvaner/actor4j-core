@@ -23,6 +23,7 @@ import java.util.UUID;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
+import io.actor4j.core.pods.Database;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
@@ -128,6 +129,16 @@ public class ActorSystem {
 	
 	public ActorSystem persistenceMode(PersistenceConnector persistenceConnector) {
 		system.persistenceMode(persistenceConnector);
+		
+		return this;
+	}
+	
+	public <T> T getPodDatabase() {
+		return system.getPodDatabase();
+	}
+	
+	public ActorSystem setPodDatabase(Database<?> podDatabase) {
+		system.setPodDatabase(podDatabase);
 		
 		return this;
 	}

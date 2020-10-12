@@ -52,4 +52,8 @@ public class PodContext {
 	public boolean isPrimaryReplica() {
 		return primaryReplica;
 	}
+	
+	public boolean hasPrimaryReplica() {
+		return true; // temporary
+	}
 }
