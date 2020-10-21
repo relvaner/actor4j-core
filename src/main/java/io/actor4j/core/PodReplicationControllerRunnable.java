@@ -17,11 +17,11 @@ package io.actor4j.core;
 
 import java.util.UUID;
 
-import io.actor4j.core.safety.Method;
-import io.actor4j.core.safety.SafetyMethod;
+import io.actor4j.core.failsafe.Method;
+import io.actor4j.core.failsafe.FailsafeMethod;
 
 public abstract class PodReplicationControllerRunnable implements Runnable {
-	protected final UUID uuid; // for safety
+	protected final UUID uuid; // for failsafe
 	
 	protected final ActorSystemImpl system;
 	
@@ -38,7 +38,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		SafetyMethod.runAndCatchThrowable(system.executerService.safetyManager, "replication", new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.executerService.failsafeManager, "replication", new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();
