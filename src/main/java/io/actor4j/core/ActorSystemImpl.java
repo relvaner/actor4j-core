@@ -451,7 +451,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			cell.actor = actor;
 		} catch (Exception e) {
 			e.printStackTrace();
-			executerService.safetyManager.notifyErrorHandler(new ActorInitializationException(), "initialization", null);
+			executerService.failsafeManager.notifyErrorHandler(new ActorInitializationException(), "initialization", null);
 		}
 		
 		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;

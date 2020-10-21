@@ -20,9 +20,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import io.actor4j.core.failsafe.Method;
+import io.actor4j.core.failsafe.FailsafeMethod;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.safety.Method;
-import io.actor4j.core.safety.SafetyMethod;
 
 public abstract class ActorThread extends Thread {
 	protected final UUID uuid; // for safety
@@ -45,7 +45,7 @@ public abstract class ActorThread extends Thread {
 		counter = new AtomicLong(0);
 	}
 	
-	protected void safetyMethod(ActorMessage<?> message, ActorCell cell) {
+	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
 			if (processingTimeEnabled.get()) {
 				long startTime = System.nanoTime();
@@ -57,7 +57,7 @@ public abstract class ActorThread extends Thread {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.executerService.safetyManager.notifyErrorHandler(e, "actor", cell.id);
+			system.executerService.failsafeManager.notifyErrorHandler(e, "actor", cell.id);
 			system.actorStrategyOnFailure.handle(cell, e);
 		}	
 	}
@@ -70,7 +70,7 @@ public abstract class ActorThread extends Thread {
 			ActorCell cell = system.cells.get(message.dest);
 			if (cell!=null) {
 				cell.requestRate.getAndIncrement();
-				safetyMethod(message, cell);
+				failsafeMethod(message, cell);
 			}
 			if (system.counterEnabled)
 				counter.getAndIncrement();
@@ -97,7 +97,7 @@ public abstract class ActorThread extends Thread {
 		
 	@Override
 	public void run() {
-		SafetyMethod.runAndCatchThrowable(system.executerService.safetyManager, new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.executerService.failsafeManager, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

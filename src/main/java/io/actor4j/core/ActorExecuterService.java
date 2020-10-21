@@ -32,15 +32,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.failsafe.ErrorHandler;
+import io.actor4j.core.failsafe.FailsafeManager;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceService;
-import io.actor4j.core.safety.ErrorHandler;
-import io.actor4j.core.safety.SafetyManager;
 
 public class ActorExecuterService {
 	protected final ActorSystemImpl system;
 	
-	protected final SafetyManager safetyManager;
+	protected final FailsafeManager failsafeManager;
 	
 	protected ActorThreadPool actorThreadPool;
 	protected Runnable onTermination;
@@ -68,8 +68,8 @@ public class ActorExecuterService {
 		
 		maxResourceThreads = 200;
 		
-		safetyManager = new SafetyManager();
-		safetyManager.setErrorHandler(new ErrorHandler() {
+		failsafeManager = new FailsafeManager();
+		failsafeManager.setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				if (message!=null) {
@@ -106,8 +106,8 @@ public class ActorExecuterService {
 		started.set(false);
 	}
 	
-	public SafetyManager getSafetyManager() {
-		return safetyManager;
+	public FailsafeManager getFailsafeManager() {
+		return failsafeManager;
 	}
 	
 	public ActorThreadPool getActorThreadPool() {

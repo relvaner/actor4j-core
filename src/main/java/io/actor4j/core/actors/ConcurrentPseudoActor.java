@@ -61,12 +61,12 @@ public abstract class ConcurrentPseudoActor {
 		return actor.getId();
 	}
 	
-	protected void safetyMethod(ActorMessage<?> message) {
+	protected void failsafeMethod(ActorMessage<?> message) {
 		try {
 			receive(message);
 		}
 		catch(Exception e) {
-			actor.cell.getSystem().getExecuterService().getSafetyManager().notifyErrorHandler(e, "pseudo", actor.getId());
+			actor.cell.getSystem().getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", actor.getId());
 			actor.cell.getSystem().getActorStrategyOnFailure().handle(actor.cell, e);
 		}	
 	}
@@ -76,7 +76,7 @@ public abstract class ConcurrentPseudoActor {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			safetyMethod(message);
+			failsafeMethod(message);
 			result = true;
 		} 
 		

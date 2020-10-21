@@ -25,11 +25,11 @@ import static org.junit.Assert.*;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.failsafe.ErrorHandler;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.safety.ErrorHandler;
 import io.actor4j.core.utils.ActorFactory;
 
-public class SafetyFeature {
+public class FailsafeFeature {
 	protected ActorSystem system;
 
 	@Before
@@ -45,7 +45,7 @@ public class SafetyFeature {
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
-				return new Actor("SafetyFeatureActor") {
+				return new Actor("FailsafeFeatureActor") {
 					@Override
 					public void receive(ActorMessage<?> message) {
 						throw new NullPointerException();
@@ -66,8 +66,8 @@ public class SafetyFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = system.underlyingImpl().getExecuterService().getSafetyManager().getErrorHandler();
-		system.underlyingImpl().getExecuterService().getSafetyManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = system.underlyingImpl().getExecuterService().getFailsafeManager().getErrorHandler();
+		system.underlyingImpl().getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				errorHandler.handle(t, message, uuid);
@@ -90,7 +90,7 @@ public class SafetyFeature {
 	}
 	
 	public static void main(String[] args) {
-		SafetyFeature safetyFeature = new SafetyFeature();
+		FailsafeFeature safetyFeature = new FailsafeFeature();
 		safetyFeature.before();
 		safetyFeature.test();
 	}

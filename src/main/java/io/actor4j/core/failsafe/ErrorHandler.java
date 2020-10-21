@@ -1,6 +1,6 @@
 /*
- * safety4j - Safety Library
- * Copyright (c) 2014-2017, David A. Bauer
+ * failsafe4j - Failsafe Library
+ * Copyright (c) 2014-2020, David A. Bauer
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,10 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.actor4j.core.safety;
+package io.actor4j.core.failsafe;
 
 import java.util.UUID;
 
-//Adapted for actor4j
-public final class SafetyManager {
-	protected ErrorHandler errorHandler;
-		
-	public ErrorHandler getErrorHandler() {
-		return errorHandler;
-	}
-
-	public void setErrorHandler(ErrorHandler errorHandler) {
-		this.errorHandler = errorHandler;
-	}
-	
-	public synchronized void notifyErrorHandler(Throwable t, String message, UUID uuid) {
-		if (errorHandler!=null)
-			errorHandler.handle(t, message, uuid);
-	}
+public interface ErrorHandler {
+	public void handle(Throwable t, String message, UUID uuid);
 }

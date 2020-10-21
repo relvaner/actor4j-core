@@ -1,6 +1,6 @@
 /*
- * safety4j - Safety Library
- * Copyright (c) 2014-2017, David A. Bauer
+ * failsafe4j - Failsafe Library
+ * Copyright (c) 2014-2020, David A. Bauer
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package io.actor4j.core.safety;
+package io.actor4j.core.failsafe;
 
 import java.util.UUID;
 
-public final class SafetyMethod {
-	public static void run(final SafetyManager safetyManager, final String message, final Method method, UUID uuid) {
+public final class FailsafeMethod {
+	public static void run(final FailsafeManager safetyManager, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Exception exception = null;
 		
@@ -56,7 +56,7 @@ public final class SafetyMethod {
 			safetyManager.notifyErrorHandler(exception, message, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final SafetyManager safetyManager, final String message, final Method method, UUID uuid) {
+	public static void runAndCatchThrowable(final FailsafeManager safetyManager, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Throwable throwable = null;
 		
@@ -79,11 +79,11 @@ public final class SafetyMethod {
 			safetyManager.notifyErrorHandler(throwable, message, uuid);
 	}
 	
-	public static void run(final SafetyManager safetyManager, final Method method, UUID uuid) {
+	public static void run(final FailsafeManager safetyManager, final Method method, UUID uuid) {
 		run(safetyManager, null, method, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final SafetyManager safetyManager, final Method method, UUID uuid) {
+	public static void runAndCatchThrowable(final FailsafeManager safetyManager, final Method method, UUID uuid) {
 		runAndCatchThrowable(safetyManager, null, method, uuid);
 	}
 }

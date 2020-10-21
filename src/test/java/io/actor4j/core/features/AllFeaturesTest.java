@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 	BehaviourFeature.class,
 	AwaitFeature.class,
 	MatcherFeature.class,
-	SafetyFeature.class,
+	FailsafeFeature.class,
 	/*UnhandledFeature.class,*/
 	
 	EmbeddedActorFeature.class,
@@ -49,7 +49,7 @@ import org.junit.runner.RunWith;
 	
 	XActorFeature.class,
 	XAwaitFeature.class,
-	XSafetyFeature.class,
+	XFailsafeFeature.class,
 	
 	XPseudoActorFeature.class,
 	XStatelessActorFeature.class,

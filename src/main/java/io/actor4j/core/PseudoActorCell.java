@@ -60,12 +60,12 @@ public class PseudoActorCell extends ActorCell {
 		return system.system_addCell(cell);
 	}
 
-	protected void safetyMethod(ActorMessage<?> message) {
+	protected void failsafeMethod(ActorMessage<?> message) {
 		try {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			system.executerService.safetyManager.notifyErrorHandler(e, "pseudo", id);
+			system.executerService.failsafeManager.notifyErrorHandler(e, "pseudo", id);
 			system.actorStrategyOnFailure.handle(this, e);
 		}	
 	}
@@ -75,7 +75,7 @@ public class PseudoActorCell extends ActorCell {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			safetyMethod(message);
+			failsafeMethod(message);
 			result = true;
 		} 
 		
