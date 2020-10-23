@@ -230,8 +230,16 @@ public abstract class Actor implements ActorRef {
 		send(new ActorMessage<T>(value, tag, self(), dest));
 	}
 	
+	public <T> void tell(T value, int tag, UUID dest, String domain) {
+		send(new ActorMessage<T>(value, tag, self(), dest, domain));
+	}
+	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction) {
-		send(new ActorMessage<T>(value, tag, self(), dest, interaction, null, null));
+		send(new ActorMessage<T>(value, tag, self(), dest, interaction));
+	}
+	
+	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol) {
+		send(new ActorMessage<T>(value, tag, self(), dest, interaction, protocol));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain) {
@@ -243,7 +251,11 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction) {
-		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, null, null), alias);
+		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction), alias);
+	}
+	
+	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol) {
+		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, protocol), alias);
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain) {

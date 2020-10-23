@@ -22,12 +22,46 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.actor4j.core.utils.Utils;
 
 public class RemoteActorMessage<T> extends ActorMessage<T> {
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
+		super(value, tag, source, dest, domain);
+	}
+
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol,
+			String domain) {
+		super(value, tag, source, dest, interaction, protocol, domain);
+	}
+
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		super(value, tag, source, dest, interaction, protocol);
+	}
+
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
+		super(value, tag, source, dest, interaction);
+	}
+
 	public RemoteActorMessage(T value, int tag, UUID source, UUID dest) {
 		super(value, tag, source, dest);
 	}
-		
-	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+	
+	public RemoteActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+		super(value, tag, source, dest, domain);
+	}
+
+	public RemoteActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol,
+			String domain) {
 		super(value, tag, source, dest, interaction, protocol, domain);
+	}
+
+	public RemoteActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		super(value, tag, source, dest, interaction, protocol);
+	}
+
+	public RemoteActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+		super(value, tag, source, dest, interaction);
+	}
+
+	public RemoteActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
+		super(value, tag, source, dest);
 	}
 
 	@SuppressWarnings("unchecked")

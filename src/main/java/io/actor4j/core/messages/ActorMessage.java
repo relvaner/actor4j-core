@@ -51,9 +51,37 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	public ActorMessage(T value, int tag, UUID source, UUID dest) {
 		this(value, tag, source, dest, null, null, null);
 	}
+	
+	public ActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
+		this(value, tag, source, dest, null, null, domain);
+	}
+	
+	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
+		this(value, tag, source, dest, interaction, null, null);
+	}
+	
+	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		this(value, tag, source, dest, interaction, protocol, null);
+	}
 
 	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
 		this(value, tag.ordinal(), source, dest);
+	}
+	
+	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+		this(value, tag.ordinal(), source, dest, domain);
+	}
+	
+	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+		this(value, tag.ordinal(), source, dest, interaction);
+	}
+	
+	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		this(value, tag.ordinal(), source, dest, interaction, protocol);
+	}
+	
+	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+		this(value, tag.ordinal(), source, dest, interaction, protocol, domain);
 	}
 	
 	public T getValue() {
