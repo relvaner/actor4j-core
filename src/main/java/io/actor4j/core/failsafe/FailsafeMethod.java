@@ -33,7 +33,7 @@ package io.actor4j.core.failsafe;
 import java.util.UUID;
 
 public final class FailsafeMethod {
-	public static void run(final FailsafeManager safetyManager, final String message, final Method method, UUID uuid) {
+	public static void run(final FailsafeManager failsafeManager, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Exception exception = null;
 		
@@ -53,10 +53,10 @@ public final class FailsafeMethod {
 		}
 		
 		if (error)
-			safetyManager.notifyErrorHandler(exception, message, uuid);
+			failsafeManager.notifyErrorHandler(exception, message, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FailsafeManager safetyManager, final String message, final Method method, UUID uuid) {
+	public static void runAndCatchThrowable(final FailsafeManager failsafeManager, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Throwable throwable = null;
 		
@@ -76,14 +76,14 @@ public final class FailsafeMethod {
 		}
 		
 		if (error)
-			safetyManager.notifyErrorHandler(throwable, message, uuid);
+			failsafeManager.notifyErrorHandler(throwable, message, uuid);
 	}
 	
-	public static void run(final FailsafeManager safetyManager, final Method method, UUID uuid) {
-		run(safetyManager, null, method, uuid);
+	public static void run(final FailsafeManager failsafeManager, final Method method, UUID uuid) {
+		run(failsafeManager, null, method, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FailsafeManager safetyManager, final Method method, UUID uuid) {
-		runAndCatchThrowable(safetyManager, null, method, uuid);
+	public static void runAndCatchThrowable(final FailsafeManager failsafeManager, final Method method, UUID uuid) {
+		runAndCatchThrowable(failsafeManager, null, method, uuid);
 	}
 }
