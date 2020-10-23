@@ -25,7 +25,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.ActorSystemImpl;
+import io.actor4j.core.function.Procedure;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.utils.ActorLogger.*;
 import static io.actor4j.core.actors.Actor.*;
@@ -68,6 +71,36 @@ public class PodReplicationController {
 			iterator.remove();
 		}
 		system.getPodDomains().remove(domain);
+	}
+	
+	public void updatePods(File jarFile, PodConfiguration podConfiguration) {
+		updatePods(podConfiguration.domain, () -> deployPods(jarFile, podConfiguration));
+	}
+	
+	public void updatePods(String domain, PodFactory factory, PodConfiguration podConfiguration) {
+		updatePods(podConfiguration.domain, () -> deployPods(factory, podConfiguration));
+	}
+	
+	protected void updatePods(String domain, Procedure deployPods) {
+		systemLogger().info(String.format("[REPLICATION] Domain '%s' updating", domain));
+		
+		ActorGroup oldPods = new ActorGroupSet();
+		Queue<UUID> queue = system.getPodDomains().get(domain);
+		Iterator<UUID> iterator = queue.iterator();
+		while (iterator.hasNext()) {
+			UUID id = iterator.next();
+			oldPods.add(id);
+			iterator.remove();
+		}
+		system.getPodDomains().remove(domain);
+		
+		if (deployPods!=null)
+			deployPods.apply();
+		
+		if (oldPods.size()>0) {
+			systemLogger().info(String.format("[REPLICATION] Outdated PodActor(s) (%s, %s) stopping", domain, oldPods));
+			system.broadcast(new ActorMessage<Object>(null, STOP, system.SYSTEM_ID, null), oldPods);
+		}
 	}
 	
 	public static PodSystemConfiguration scalingAlgorithm(PodConfiguration podConfiguration) {
