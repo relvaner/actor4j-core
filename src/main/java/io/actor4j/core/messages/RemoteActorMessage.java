@@ -26,8 +26,8 @@ public class RemoteActorMessage<T> extends ActorMessage<T> {
 		super(value, tag, source, dest);
 	}
 		
-	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String ontology) {
-		super(value, tag, source, dest, interaction, protocol, ontology);
+	public RemoteActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+		super(value, tag, source, dest, interaction, protocol, domain);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -58,9 +58,10 @@ public class RemoteActorMessage<T> extends ActorMessage<T> {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest + "]";
+		return "RemoteActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
+				+ ", interaction=" + interaction + ", protocol=" + protocol + ", domain=" + domain + "]";
 	}
 }

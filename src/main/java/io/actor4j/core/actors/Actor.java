@@ -234,12 +234,20 @@ public abstract class Actor implements ActorRef {
 		send(new ActorMessage<T>(value, tag, self(), dest, interaction, null, null));
 	}
 	
+	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain) {
+		send(new ActorMessage<T>(value, tag, self(), dest, interaction, protocol, domain));
+	}
+	
 	public <T> void tell(T value, int tag, String alias) {
 		sendViaAlias(new ActorMessage<T>(value, tag, self(), null), alias);
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction) {
 		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, null, null), alias);
+	}
+	
+	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain) {
+		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, protocol, domain), alias);
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {

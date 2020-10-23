@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,16 +36,16 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	
 	public UUID interaction;
 	public String protocol;
-	public String ontology;
+	public String domain;
 	
-	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String ontology) {
+	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
 		this.value = value;
 		this.tag = tag;
 		this.source = source;
 		this.dest = dest;
 		this.interaction = interaction;
 		this.protocol = protocol;
-		this.ontology = ontology;
+		this.domain = domain;
 	}
 
 	public ActorMessage(T value, int tag, UUID source, UUID dest) {
@@ -104,12 +104,12 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 		this.protocol = protocol;
 	}
 
-	public String getOntology() {
-		return ontology;
+	public String getDomain() {
+		return domain;
 	}
 
-	public void setOntology(String ontology) {
-		this.ontology = ontology;
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 
 	public boolean valueAsBoolean() {
@@ -163,23 +163,23 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	}
 	
 	protected ActorMessage<T> weakCopy() {
-		return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, ontology);
+		return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, ontology);
+				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 			else if (value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest, interaction, protocol, ontology);
+				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest, interaction, protocol, domain);
 			else if (value instanceof Exception)
-				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, ontology);
+				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new ActorMessage<T>(null, tag, source, dest, interaction, protocol, ontology);
+			return new ActorMessage<T>(null, tag, source, dest, interaction, protocol, domain);
 	}
 	
 	@Override
@@ -190,7 +190,7 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 	@Override
 	public String toString() {
 		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
-				+ ", interaction=" + interaction + ", protocol=" + protocol + ", ontology=" + ontology + "]";
+				+ ", interaction=" + interaction + ", protocol=" + protocol + ", domain=" + domain + "]";
 	}
 
 	public static boolean isSupportedType(Class<?> type) {
