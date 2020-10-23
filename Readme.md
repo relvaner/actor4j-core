@@ -141,14 +141,16 @@ sendViaPath(ActorMessage<?> message, String path)
 sendViaAlias(ActorMessage<?> message, String alias)
 tell(T value, int tag, UUID dest)
 tell(T value, int tag, UUID dest, UUID interaction)
+tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain)
 tell(T value, int tag, String alias)
 tell(T value, int tag, String alias, UUID interaction)
+tell(T value, int tag, String alias, UUID interaction, String protocol, String domain)
 
 forward(ActorMessage<?> message, UUID dest)
 priority(ActorMessage<?> message, UUID dest)
 ```
 
-Messages that can be exchanged between the actors are of the `ActorMessage<T>` type. A message (see Table 1) consists of the object to be transferred (payload of the message), a tag that helps for differentiating between messages, the sender address of the message, the receiver address of the message, an interaction ID for messages related to an interaction protocol (conversation) and the ontology, the knowledge model for the domain of the message. Methods for sending messages within the actor can be called (see above).
+Messages that can be exchanged between the actors are of the `ActorMessage<T>` type. A message (see Table 1) consists of the object to be transferred (payload of the message), a tag that helps for differentiating between messages, the sender address of the message, the receiver address of the message, an interaction ID for messages related to an interaction protocol (conversation) and the associated domain of the message. Methods for sending messages within the actor can be called (see above).
 
 The structure of the `ActorMessage<T>` looks like that:
 
@@ -161,7 +163,7 @@ The structure of the `ActorMessage<T>` looks like that:
 ||||
 | UUID | interaction | associated interaction |
 | String | protocol | interaction protocol |
-| String | ontology | ontology of the message |
+| String | domain | domain of the message |
 <!--| boolean | ref | call-by-reference or call-by-value (needs deep copy)|-->
 
 Tab. 1: Structure of the `ActorMessage<T>`
