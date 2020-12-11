@@ -96,8 +96,8 @@ public abstract class EmbeddedActor {
 		return result;
 	}
 	
-	public <T> boolean embedded(T value, int tag, UUID source, UUID dest) {
-		return embedded(new ActorMessage<T>(value, tag, source, dest));
+	public <T> boolean embedded(T value, int tag, UUID dest) {
+		return embedded(new ActorMessage<T>(value, tag, getParent(), dest));
 	}
 	
 	public abstract boolean receive(ActorMessage<?> message);
