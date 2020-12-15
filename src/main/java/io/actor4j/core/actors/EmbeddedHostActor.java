@@ -47,6 +47,10 @@ public abstract class EmbeddedHostActor extends Actor {
 		return router;
 	}
 	
+	public boolean isEmbedded(UUID id) {
+		return router.get(id)!=null;
+	}
+	
 	public UUID addEmbeddedChild(EmbeddedActor embeddedActor) {
 		embeddedActor.host = this;
 		router.put(embeddedActor.getId(), embeddedActor);
@@ -80,7 +84,7 @@ public abstract class EmbeddedHostActor extends Actor {
 		
 		EmbeddedActor embeddedActor = router.get(dest);
 		if (embeddedActor!=null)
-			result = embeddedActor.embedded(value, tag, self(), dest);
+			result = embeddedActor.embedded(value, tag, dest);
 		else if (dest.equals(self()))
 			receive(new ActorMessage<T>(value, tag, self(), dest));
 		
