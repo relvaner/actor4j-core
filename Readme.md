@@ -24,20 +24,20 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 
 ## Use Cases ##
 
-- Multi-agent systems (see also [FIPA Interaction Protocols [actor4j-fipa]](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
+- Multi-agent systems (see also [FIPA Interaction Protocols @actor4j-fipa](https://github.com/relvaner/actor4j-fipa/tree/master/src/main/java/actor4j/core/protocols/fipa))
 - Simulations
 - Games (e.g., MMOG, MMORPG)
 - Business Process Modeling (BPM): e.g., [[21](#21)]
 - Business logic (for Client-Server architectures) inclusively caching/database access 
-- Caching (see [volatile and persistent caching [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
-- In-memory database (see [IMDB [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access/imdb))
-- Messaging (see [Publish-Subscribe [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
-- Reactive Streams ([see publisher, subscriber and proccessor [actor4j-data]](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
+- Caching (see [volatile and persistent caching @actor4j-data](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access))
+- In-memory database (see [IMDB @actor4j-data](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/data/access/imdb))
+- Messaging (see [Publish-Subscribe @actor4j-data](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/publish/subscribe))
+- Reactive Streams ([see publisher, subscriber and proccessor @actor4j-data](https://github.com/relvaner/actor4j-data/tree/master/src/main/java/actor4j/core/reactive/streams))
 - Reactive System (responsive, elastic, resilient and message driven)
-- Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP [actor4j-web]](https://github.com/relvaner/actor4j-web))
+- Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP @actor4j-web](https://github.com/relvaner/actor4j-web))
 - Digital representatives of devices (e.g., Device Shadows, AWS IoT)
 - Function (here actor) as a Service in combination with Vert.x (future work)
-- Batch-processing and stream-processing (see [Nodes4j](https://github.com/relvaner/nodes4j-core))
+- Batch-processing and stream-processing (see [@nodes4j-core](https://github.com/relvaner/nodes4j-core))
 
 >The realized solutions are conceptualizations that require further completion. For any inquiries, I'm willing to help.
 
