@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,12 @@ import io.actor4j.core.utils.Shareable;
 
 public class ImmutableList<T> implements Shareable {
 	protected final List<T> list;
+	
+	public ImmutableList() {
+		super();
+		
+		this.list = Collections.emptyList();
+	}
 	
 	public ImmutableList(List<T> list) {
 		super();

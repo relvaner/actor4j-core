@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,12 @@ import io.actor4j.core.utils.Shareable;
 
 public class ImmutableMap<K, V> implements Shareable {
 	protected final Map<K, V> map;
+	
+	public ImmutableMap() {
+		super();
+		
+		this.map = Collections.emptyMap();
+	}
 	
 	public ImmutableMap(Map<K, V> map) {
 		super();
