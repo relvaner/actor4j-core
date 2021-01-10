@@ -27,7 +27,7 @@ import io.actor4j.core.utils.Copyable;
 import io.actor4j.core.utils.Shareable;
 
 public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<ActorMessage<T>> {
-	private static Set<Class<?>> SUPPORTED_TYPES;
+	public static Set<Class<?>> SUPPORTED_TYPES;
 	
 	public T value;
 	public int tag;
