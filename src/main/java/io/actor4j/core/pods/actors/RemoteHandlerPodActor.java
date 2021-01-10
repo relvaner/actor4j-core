@@ -49,7 +49,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 					internal_callback(message, remoteMessage);
 				}
 				else {
-					UUID interaction = UUID.randomUUID();
+					UUID interaction = message.interaction!=null ? message.interaction : UUID.randomUUID();
 					remoteMap.put(interaction, (RemotePodMessage)message.value); 
 					handle((RemotePodMessage)message.value, interaction);
 				}
@@ -58,7 +58,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 				super.receive(message);
 		}
 		else
-			unhandled(message);
+			super.receive(message);
 	}
 	
 	protected void internal_callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
