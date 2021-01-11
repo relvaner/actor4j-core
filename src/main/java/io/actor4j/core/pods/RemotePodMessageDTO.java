@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ public class RemotePodMessageDTO {
 	public final int tag;
 	public final String alias;
 	
+	public final Object authentication;
+	
 	public final boolean reply;
 	
 	public RemotePodMessageDTO() {
@@ -28,19 +30,22 @@ public class RemotePodMessageDTO {
 		this.payload = null;
 		this.tag = 0;
 		this.alias = null;
+		this.authentication = null;
 		this.reply = false;
 	}
 	
-	public RemotePodMessageDTO(Object payload, int tag, String alias, boolean reply) {
+	public RemotePodMessageDTO(Object payload, int tag, String alias, Object authentication, boolean reply) {
 		super();
 		this.payload = payload;
 		this.tag = tag;
 		this.alias = alias;
+		this.authentication = authentication;
 		this.reply = reply;
 	}
 
 	@Override
 	public String toString() {
-		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", reply=" + reply + "]";
+		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", authentication="
+				+ authentication + ", reply=" + reply + "]";
 	}
 }
