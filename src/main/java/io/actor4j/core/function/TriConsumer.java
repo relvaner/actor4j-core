@@ -15,7 +15,18 @@
  */
 package io.actor4j.core.function;
 
+import java.util.Objects;
+
 @FunctionalInterface
-public interface Procedure {
-	public void apply();
+public interface TriConsumer<T, U, V> {
+	void accept(T t, U u, V v);
+
+    default TriConsumer<T, U, V> andThen(TriConsumer<? super T, ? super U, ? super V> after) {
+        Objects.requireNonNull(after);
+
+        return (t, r, v) -> {
+            accept(t, r, v);
+            after.accept(t, r, v);
+        };
+    }
 }
