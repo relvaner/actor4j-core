@@ -26,8 +26,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import io.actor4j.core.ActorMessageDispatcher;
-import io.actor4j.core.ActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {

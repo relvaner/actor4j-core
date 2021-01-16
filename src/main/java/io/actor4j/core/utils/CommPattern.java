@@ -21,7 +21,6 @@ import java.util.UUID;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.Range;
 
 public final class CommPattern {
 	public static Range loadBalancing(int rank, int size, int arr_size) {

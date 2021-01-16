@@ -35,8 +35,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.di.DIContainer;
-import io.actor4j.core.di.DIMapEntry;
-import io.actor4j.core.di.FactoryInjector;
 
 // Adapted for actor4j
 public class DIContainer<K> {

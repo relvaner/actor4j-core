@@ -21,8 +21,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import io.actor4j.core.ActorMessageDispatcher;
-import io.actor4j.core.ActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 
 public class XActorMessageDispatcher extends ActorMessageDispatcher {

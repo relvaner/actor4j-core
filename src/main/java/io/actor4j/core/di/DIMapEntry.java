@@ -30,9 +30,6 @@
  */
 package io.actor4j.core.di;
 
-import io.actor4j.core.di.ConstructorInjector;
-import io.actor4j.core.di.FactoryInjector;
-
 // Adapted for actor4j
 public class DIMapEntry {
 	protected Class<?> base;
