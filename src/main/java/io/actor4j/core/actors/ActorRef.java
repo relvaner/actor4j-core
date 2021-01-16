@@ -41,10 +41,17 @@ public interface ActorRef {
 	public void sendViaAlias(ActorMessage<?> message, String alias);
 	public void send(ActorMessage<?> message, UUID dest);
 	public <T> void tell(T value, int tag, UUID dest);
+	public <T> void tell(T value, int tag, UUID dest, String domain);
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction);
+	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol);
+	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain);
 	public <T> void tell(T value, int tag, String alias);
+	public <T> void tell(T value, int tag, String alias, UUID interaction);
+	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol);
+	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain);
 	public void forward(ActorMessage<?> message, UUID dest);
 	public void priority(ActorMessage<?> message);
+	public void priority(ActorMessage<?> message, UUID dest);
 	public <T> void priority(T value, int tag, UUID dest);
 	
 	public void watch(UUID dest);
