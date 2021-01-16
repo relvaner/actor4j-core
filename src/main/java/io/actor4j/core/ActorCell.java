@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceObject;
@@ -304,9 +305,31 @@ public class ActorCell {
 		return cell.id;
 	}
 	
+	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		ActorCell cell = system.generateCell(clazz);
+		system.container.registerConstructorInjector(cell.id, clazz, args);
+		try {
+			Actor child = (Actor)system.container.getInstance(cell.id);
+			cell.actor = child;
+		} catch (Exception e) {
+			throw new ActorInitializationException();
+		}
+		
+		return internal_addChild(cell);
+	}
+	
+	public List<UUID> addChild(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addChild(clazz, args));
+		
+		return result;
+	}
+	
 	public UUID addChild(ActorFactory factory) {
 		ActorCell cell = system.generateCell(factory.create());
-		system.container.register(cell.id, factory);
+		system.container.registerFactoryInjector(cell.id, factory);
 		
 		return internal_addChild(cell);
 	}

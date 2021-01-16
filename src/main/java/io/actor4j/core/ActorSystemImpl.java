@@ -36,6 +36,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.di.DIContainer;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.Database;
@@ -50,6 +51,7 @@ import io.actor4j.core.utils.ActorGroupSet;
 import io.actor4j.core.utils.PodActorFactory;
 
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
+import static io.actor4j.core.utils.ActorUtils.*;
 
 public abstract class ActorSystemImpl implements ActorPodService {
 	protected final ActorSystem wrapper;
@@ -440,9 +442,33 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return internal_addCell(cell);
 	}
 	
+	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		ActorCell cell = generateCell(clazz);
+		container.registerConstructorInjector(cell.id, clazz, args);
+		Actor actor = null;
+		try {
+			actor = (Actor)container.getInstance(cell.id);
+			cell.actor = actor;
+		} catch (Exception e) {
+			e.printStackTrace();
+			executerService.failsafeManager.notifyErrorHandler(new ActorInitializationException(), "initialization", null);
+		}
+		
+		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;
+	}
+	
+	public List<UUID> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addActor(clazz, args));
+		
+		return result;	
+	}
+	
 	public UUID addActor(ActorFactory factory) {
 		ActorCell cell = generateCell(factory.create());
-		container.register(cell.id, factory);
+		container.registerFactoryInjector(cell.id, factory);
 		
 		return user_addCell(cell);
 	}
@@ -475,7 +501,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		PodActorCell cell = (PodActorCell)generateCell(factory.create());
 		cell.context = context;
 		setPodDomain(cell.id, context.getDomain());
-		container.register(cell.id, factory);
+		container.registerFactoryInjector(cell.id, factory);
 		
 		return user_addCell(cell);
 	}

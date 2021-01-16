@@ -30,6 +30,37 @@
  */
 package io.actor4j.core.di;
 
-public interface FactoryInjector<T> {
-	public T create();
+// Adapted for actor4j
+public class DIMapEntry {
+	protected Class<?> base;
+	protected ConstructorInjector constructorInjector;
+	protected FactoryInjector<?> factoryInjector;
+	
+	public DIMapEntry() {
+		constructorInjector = new ConstructorInjector();
+	}
+
+	public Class<?> getBase() {
+		return base;
+	}
+
+	public void setBase(Class<?> base) {
+		this.base = base;
+	}
+
+	public ConstructorInjector getConstructorInjector() {
+		return constructorInjector;
+	}
+
+	public void setConstructorInjector(ConstructorInjector constructorInjector) {
+		this.constructorInjector = constructorInjector;
+	}
+
+	public FactoryInjector<?> getFactoryInjector() {
+		return factoryInjector;
+	}
+
+	public void setFactoryInjector(FactoryInjector<?> factoryInjector) {
+		this.factoryInjector = factoryInjector;
+	}
 }

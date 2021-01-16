@@ -30,6 +30,19 @@
  */
 package io.actor4j.core.di;
 
-public interface FactoryInjector<T> {
-	public T create();
+// Adapted for actor4j
+public class ConstructorInjector {
+	protected Object[] params;
+	
+	public ConstructorInjector() {
+		super();
+	}
+
+	public Object[] getParams() {
+		return params;
+	}
+
+	public void setParams(Object[] params) {
+		this.params = params;
+	}
 }

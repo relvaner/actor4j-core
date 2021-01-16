@@ -1,48 +1,101 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * tools4j - Java Library
+ * Copyright (c) 2008-2017, David A. Bauer
+ * All rights reserved.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package io.actor4j.core.di;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.di.DIContainer;
 
+// Adapted for actor4j
 public class DIContainer<K> {
-	protected Map<K, FactoryInjector<?>> diMap;
+	protected Map<K, DIMapEntry> diMap;
 	
 	public DIContainer() {
 		diMap = new ConcurrentHashMap<>();
 	}
 
+	public void registerConstructorInjector(K key, Class<?> base, Object... params) {
+		DIMapEntry entry = diMap.get(key);
+		if (entry==null)
+			entry = new DIMapEntry();
+		entry.setBase(base);
+		entry.getConstructorInjector().setParams(params);
+		
+		diMap.put(key, entry);
+	}
+	
+	public void registerFactoryInjector(K key, FactoryInjector<?> factoryInjector) {
+		DIMapEntry entry = diMap.get(key);
+		if (entry==null)
+			entry = new DIMapEntry();
+		entry.setFactoryInjector(factoryInjector);
+		
+		diMap.put(key, entry);
+	}
+	
+	protected Object buildInstance(Class<?> base, Object[] params) throws Exception {
+		Object result = null;
+		
+		Class<?>[] types = new Class<?>[params.length];
+		for (int i=0; i<params.length; i++)
+			types[i] = params[i].getClass();
+		
+		Constructor<?> c2 = base.getConstructor(types);
+		result = c2.newInstance(params);
+		
+		return result;
+	}
+	
 	public Object getInstance(K key) throws Exception {
 		Object result = null;
 		
-		FactoryInjector<?> factoryInjector = diMap.get(key);
-		if (factoryInjector!=null) {
-			result = factoryInjector.create();
+		DIMapEntry entry = diMap.get(key);
+		if (entry!=null) {
+			if (entry.getFactoryInjector()!=null)
+				result = entry.getFactoryInjector().create();
+			else {
+				if (entry.getConstructorInjector().getParams()!=null)
+					result = buildInstance(entry.getBase(), entry.getConstructorInjector().getParams());
+				else
+					// https://docs.oracle.com/javase/9/docs/api/java/lang/Class.html#newInstance--
+					result = entry.getBase().getDeclaredConstructor().newInstance();
+			}
 		}
 		
 		return result;
 	}
 	
-	public void register(K key, FactoryInjector<?> factoryInjector) {
-		diMap.put(key, factoryInjector);
-	}
-	
-	public FactoryInjector<?> unregister(K key) {
+	public DIMapEntry unregister(K key) {
 		return diMap.remove(key);
 	}
 	
