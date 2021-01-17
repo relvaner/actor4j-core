@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.features;
 
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,9 +25,11 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.features.actor.ReflectionActor;
 import io.actor4j.core.messages.ActorMessage;
 
 import static org.junit.Assert.*;
+import static io.actor4j.core.logging.user.ActorLogger.logger;
 
 public class ActorFeature {
 	protected ActorSystem system;
@@ -34,6 +37,31 @@ public class ActorFeature {
 	@Before
 	public void before() {
 		system = new ActorSystem();
+	}
+	
+	@Test(timeout=5000)
+	public void test_instantiation_reflection() {
+		logger().debug("workaround - FATAL StatusLogger Interrupted before Log4j Providers could be loaded.");
+		
+		UUID id = system.addActor(ReflectionActor.class, 42, "43", true, Arrays.asList("44", "45", 46), 99);
+		
+		system.start();
+		
+		try {
+			ReflectionActor.testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		Actor actor = system.underlyingImpl().getCells().get(id).getActor();
+		
+		assertEquals(42, ((ReflectionActor)actor).value1);
+		assertEquals("43", ((ReflectionActor)actor).value2);
+		assertEquals(true, ((ReflectionActor)actor).value3);
+		assertEquals(Arrays.asList("44", "45", 46), ((ReflectionActor)actor).value4);
+		assertEquals(Integer.valueOf(99), ((ReflectionActor)actor).value5);
+		
+		system.shutdownWithActors(true);
 	}
 	
 	@Test(timeout=5000)
