@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.logging.system;
 
-import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
-	public DefaultPodReplicationControllerRunnable(ActorSystemImpl system) {
-		super(system);
-	}
-
-	@Override
-	public void onRun() {
-		horizontalPodAutoscaler();
+public class ActorLogger {
+	private static final Logger logger;
+	
+	static {
+		logger = LoggerFactory.getLogger(ActorLogger.class);
 	}
 	
-	public void horizontalPodAutoscaler() {
-		systemLogger().debug(String.format("[REPLICATION][AUTOSCALER] sync"));
+	public static Logger systemLogger() {
+		return logger;
 	}
 }

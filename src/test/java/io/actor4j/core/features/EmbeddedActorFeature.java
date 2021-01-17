@@ -26,7 +26,7 @@ import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
 import io.actor4j.core.messages.ActorMessage;
 
-import static io.actor4j.core.utils.ActorLogger.logger;
+import static io.actor4j.core.logging.user.ActorLogger.logger;
 import static org.junit.Assert.*;
 
 public class EmbeddedActorFeature {

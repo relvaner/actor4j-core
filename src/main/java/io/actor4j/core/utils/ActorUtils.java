@@ -15,14 +15,14 @@
  */
 package io.actor4j.core.utils;
 
+import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
-
-import static io.actor4j.core.utils.ActorLogger.systemLogger;
 
 public final class ActorUtils {
 	public static final Set<Integer> actorTags = new HashSet<>();
@@ -39,7 +39,7 @@ public final class ActorUtils {
 	
 	public static int checkTag(int tag) {
 		if (tag<0)
-			systemLogger().fatal(String.format("Tags below zero are system tags: %s", tag));
+			systemLogger().error(String.format("[FATAL] Tags below zero are system tags: %s", tag));
 		else if (!actorTags.add(tag))
 			systemLogger().error(String.format("Tag already exists: %s", tag));
 		

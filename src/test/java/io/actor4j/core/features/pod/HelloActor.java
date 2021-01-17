@@ -15,13 +15,13 @@
  */
 package io.actor4j.core.features.pod;
 
+import static io.actor4j.core.logging.user.ActorLogger.*;
+
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodChildActor;
-
-import static io.actor4j.core.utils.ActorLogger.*;
 
 public class HelloActor extends PodChildActor {
 	public HelloActor(UUID groupId, PodContext context) {
@@ -35,7 +35,7 @@ public class HelloActor extends PodChildActor {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		logger().debug(message.value);
+		logger().debug(message.value.toString());
 		tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, groupId:%s]", 
 				message.value, 
 				context.getDomain(),

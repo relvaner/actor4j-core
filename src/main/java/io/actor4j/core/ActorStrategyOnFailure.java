@@ -15,9 +15,9 @@
  */
 package io.actor4j.core;
 
+import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.supervisor.SupervisorStrategyDirective.*;
-import static io.actor4j.core.utils.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.Iterator;

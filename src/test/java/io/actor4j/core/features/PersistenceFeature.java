@@ -34,7 +34,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import static io.actor4j.core.utils.ActorLogger.*;
+import static io.actor4j.core.logging.user.ActorLogger.*;
 import static org.junit.Assert.*;
 
 public class PersistenceFeature {

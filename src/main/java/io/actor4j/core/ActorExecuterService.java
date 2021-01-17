@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.utils.ActorLogger.systemLogger;
+import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.lang.reflect.Constructor;
@@ -88,13 +88,13 @@ public class ActorExecuterService {
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 					else if (message.equals("replication")) {
-						systemLogger().fatal(
-								String.format("[SAFETY] Exception in PodReplicationControllerThread"));
+						systemLogger().error(
+								String.format("[SAFETY][FATAL] Exception in PodReplicationControllerThread"));
 					}
 				}
 				else {
-					systemLogger().fatal(
-						String.format("[SAFETY] Exception in ActorThread"));
+					systemLogger().error(
+						String.format("[SAFETY][FATAL] Exception in ActorThread"));
 				}
 				
 				t.printStackTrace();
