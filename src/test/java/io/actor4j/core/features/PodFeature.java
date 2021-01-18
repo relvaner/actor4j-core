@@ -45,7 +45,7 @@ public class PodFeature {
 		system = new ActorSystem();
 	}
 	
-	//@Test(timeout=5000)
+	@Test(timeout=5000)
 	public void test_ExampleReplicationWithActorPod() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -78,7 +78,7 @@ public class PodFeature {
 		system.shutdownWithActors(true);
 	}
 	
-	//@Test(timeout=5000)
+	@Test(timeout=5000)
 	public void test_ExampleReplicationWithActorPod_more() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
@@ -128,7 +128,7 @@ public class PodFeature {
 		system.shutdownWithActors(true);
 	}
 	
-	//@Test(timeout=5000)
+	@Test(timeout=5000)
 	public void test_ExampleReplicationWithActorPod_more_undeploy() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
