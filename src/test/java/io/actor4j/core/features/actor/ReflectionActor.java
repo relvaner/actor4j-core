@@ -16,6 +16,7 @@
 package io.actor4j.core.features.actor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import io.actor4j.core.actors.Actor;
@@ -29,6 +30,8 @@ public class ReflectionActor extends Actor {
 	public boolean value3;
 	public List<String> value4;
 	public Integer value5;
+	public Map<Integer, String> value6;
+	public double value7;
 	
 	public ReflectionActor(int value1, String value2, boolean value3, List<String> value4, Integer value5) {
 		super();
@@ -37,6 +40,18 @@ public class ReflectionActor extends Actor {
 		this.value3 = value3;
 		this.value4 = value4;
 		this.value5 = value5;
+	}
+	
+	public ReflectionActor(int value1, String value2) {
+		super();
+		this.value1 = value1;
+		this.value2 = value2;
+	}
+	
+	public ReflectionActor(Map<Integer, String> value6, double value7) {
+		super();
+		this.value6 = value6;
+		this.value7 = value7;
 	}
 	
 	@Override
