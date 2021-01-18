@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package io.actor4j.core.actors;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -67,6 +68,21 @@ public class HandlerActor extends EmbeddedHostActor {
 			embeddedActor.embedded(message);
 		}
 		if (done.test(message))
+			removeEmbeddedChild(embeddedActor);
+	}
+	
+	public void handle(ActorMessage<?> message, BiFunction<EmbeddedHostActor, UUID, EmbeddedActor> factory) {
+		boolean done = false;
+		UUID id = message.interaction;
+		EmbeddedActor embeddedActor = router.get(id);
+		if (embeddedActor!=null)
+			done = embeddedActor.embedded(message);
+		else {
+			embeddedActor = factory.apply(this, id);
+			addEmbeddedChild(embeddedActor);
+			done = embeddedActor.embedded(message);
+		}
+		if (done)
 			removeEmbeddedChild(embeddedActor);
 	}
 }

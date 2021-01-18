@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -120,75 +119,80 @@ public abstract class EmbeddedActor {
 		behaviourStack.clear();
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final Predicate<ActorMessage<?>> action, boolean replace) {
+		become(new Predicate<ActorMessage<?>>() {
+			@Override
+			public boolean test(ActorMessage<?> message) {
+				return action.test(message);
+			}
+		}, replace);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> action) {
+		await(action, true);
+	}
+	
+	public void await(final UUID source, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source.equals(source)) {
-					action.accept(message);
-					result = true;
-				}
+				if (message.source.equals(source))
+					result = action.test(message);
 				return result;
 			}
 		}, replace);
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final Predicate<ActorMessage<?>> action) {
 		await(source, action, true);
 	}
 	
-	public void await(final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final int tag, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.tag==tag) {
-					action.accept(message);
-					result = true;
-				}
+				if (message.tag==tag)
+					result = action.test(message);
 				return result;
 			}
 		}, replace);
 	}
 	
-	public void await(final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final int tag, final Predicate<ActorMessage<?>> action) {
 		await(tag, action, true);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final UUID source, final int tag, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source.equals(source) && message.tag==tag) {
-					action.accept(message);
-					result = true;
-				}
+				if (message.source.equals(source) && message.tag==tag)
+					result = action.test(message);
 				return result;
 			}
 		}, replace);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final UUID source, final int tag, final Predicate<ActorMessage<?>> action) {
 		await(source, tag, action, true);
 	}
 	
-	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final Predicate<ActorMessage<?>> predicate, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (predicate.test(message)) {
-					action.accept(message);
-					result = true;
-				}
+				if (predicate.test(message))
+					result = action.test(message);
 				return result;
 			}
 		}, replace);
 	}
 	
-	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
+	public void await(final Predicate<ActorMessage<?>> predicate, final Predicate<ActorMessage<?>> action) {
 		await(predicate, action, true);
 	}
 	
