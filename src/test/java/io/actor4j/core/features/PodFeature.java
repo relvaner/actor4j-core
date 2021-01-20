@@ -31,8 +31,12 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.features.pod.ExampleReplicationWithActorPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
+import io.actor4j.core.features.pod.ExampleReplicationWithRemoteFunctionPod;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.RemotePodMessage;
+import io.actor4j.core.pods.RemotePodMessageDTO;
+import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
 import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.logging.user.ActorLogger.*;
@@ -472,6 +476,44 @@ public class PodFeature {
 		});
 		system.start();
 		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		system.shutdownWithActors(true);
+	}
+	
+	@Test(timeout=5000)
+	public void test_factory_ExampleReplicationWithRemoteFunctionPod_and_ExampleReplicationWithFunctionPod() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		
+		system.deployPods(
+				() -> new ExampleReplicationWithFunctionPod(), 
+				new PodConfiguration("ExampleReplicationWithFunctionPod", ExampleReplicationWithFunctionPod.class.getName(), 1, 1));
+		system.deployPods(
+				() -> new ExampleReplicationWithRemoteFunctionPod(), 
+				new PodConfiguration("ExampleReplicationWithRemoteFunctionPod", ExampleReplicationWithRemoteFunctionPod.class.getName(), 1, 1));
+		
+		UUID client = system.addActor(() -> new Actor(){
+			@Override
+			public void receive(ActorMessage<?> message) {
+				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value));
+				
+				assertEquals(42, message.tag);
+				assertTrue(message.value!=null);
+				assertTrue(message.value instanceof String);
+				assertTrue(message.valueAsString().startsWith("Hello Test!"));
+				testDone.countDown();
+			}
+		});
+		system.start();
+		
+		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(new ActorMessage<>(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
+		
+		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", null, true), client.toString());
+		system.sendViaAlias(new ActorMessage<>(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {
 			testDone.await();

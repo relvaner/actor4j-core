@@ -18,6 +18,7 @@ package io.actor4j.core.pods.functions;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.utils.Pair;
 
 public abstract class PodFunction {
 	protected ActorRef host;
@@ -29,5 +30,5 @@ public abstract class PodFunction {
 		this.context = context;
 	}
 	
-	public abstract void handle(ActorMessage<?> message);
+	public abstract Pair<Object, Integer> handle(ActorMessage<?> message);
 }

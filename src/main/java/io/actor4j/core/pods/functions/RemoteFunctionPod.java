@@ -15,23 +15,31 @@
  */
 package io.actor4j.core.pods.functions;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
 import io.actor4j.core.utils.Pair;
 
-public abstract class RemoteFunctionPod extends FunctionPod {
+public abstract class RemoteFunctionPod extends ActorPod {
 	@Override
 	public PodActor create() {
 		return new PodActor() {
-			protected PodFunction podFunction;
 			protected PodRemoteFunction podRemoteFunction;
+			
+			protected Map<UUID, RemotePodMessage> remoteMap;
 			
 			@Override
 			public void preStart() {
+				remoteMap = new HashMap<>();
+				
 				if (getContext().isShard())
 					setAlias(domain()+getContext().getShardId());
 				else
@@ -42,26 +50,50 @@ public abstract class RemoteFunctionPod extends FunctionPod {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.value!=null && message.value instanceof RemotePodMessage) {
-					Pair<Object, Integer> result = podRemoteFunction.handle((RemotePodMessage)message.value);
-					internal_callback((RemotePodMessage)message.value, result);
+				RemotePodMessage remoteMessage = null;
+				if (message.interaction!=null)
+					remoteMessage = remoteMap.get(message.interaction);
+				
+				if (remoteMessage!=null || message.value instanceof RemotePodMessage) {
+					Pair<Object, Integer> result = null;
+					if (remoteMessage!=null) {
+						result = podRemoteFunction.handle(message);
+						if (result!=null) {
+							remoteMap.remove(message.interaction);
+							internal_callback(remoteMessage, result);
+						}	
+					}
+					else {
+						UUID interaction = message.interaction!=null ? message.interaction : UUID.randomUUID();
+						result = podRemoteFunction.handle((RemotePodMessage)message.value, interaction);
+						if (result!=null)
+							internal_callback((RemotePodMessage)message.value, result);
+						else
+							remoteMap.put(interaction, (RemotePodMessage)message.value);
+					}	
 				}
-				else
-					podFunction.handle(message);
+				else {
+					Pair<Object, Integer> result = podRemoteFunction.handle(message);
+					if (result!=null)
+						internal_callback(this, message, result);
+				}
 			}
 			
 			@Override
 			public void register() {
-				podFunction = createFunction(this, getContext());
-				podRemoteFunction = createRemoteFunction(this, getContext());
+				podRemoteFunction = createFunction(this, getContext());
 			}				
 		};
+	}
+	
+	protected void internal_callback(ActorRef host, ActorMessage<?> message, Pair<Object, Integer> result) {
+		host.tell(result.a, result.b, message.source, message.interaction, message.protocol, message.domain);
 	}
 	
 	protected void internal_callback(RemotePodMessage remoteMessage, Pair<Object, Integer> result) {
 		if (remoteMessage.remotePodMessageDTO.reply && RemoteHandlerPodActor.internal_server_callback!=null)
 			RemoteHandlerPodActor.internal_server_callback.accept(remoteMessage.replyAddress, result.a, result.b);
 	}
-
-	public abstract PodRemoteFunction createRemoteFunction(ActorRef host, PodContext context);
+	
+	public abstract PodRemoteFunction createFunction(ActorRef host, PodContext context);
 }

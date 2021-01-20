@@ -15,42 +15,36 @@
  */
 package io.actor4j.core.features.pod;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import java.util.UUID;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.pods.functions.FunctionPod;
-import io.actor4j.core.pods.functions.PodFunction;
+import io.actor4j.core.pods.RemotePodMessage;
+import io.actor4j.core.pods.functions.PodRemoteFunction;
+import io.actor4j.core.pods.functions.RemoteFunctionPod;
 import io.actor4j.core.utils.Pair;
 
-public class ExampleReplicationWithFunctionPod extends FunctionPod {
+public class ExampleReplicationWithRemoteFunctionPod extends RemoteFunctionPod {
 	@Override
-	public PodFunction createFunction(ActorRef host, PodContext context) {
-			return new PodFunction(host, context) {
+	public PodRemoteFunction createFunction(ActorRef host, PodContext context) {
+			ExampleReplicationWithRemoteFunctionImpl functionImpl = new ExampleReplicationWithRemoteFunctionImpl(host, context);
+		
+			return new PodRemoteFunction(host, context) {
 				@Override
 				public Pair<Object, Integer> handle(ActorMessage<?> message) {
-					logger().debug(message.value.toString());
-					
-					/*
-					host.tell(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
-							message.value, 
-							context.getDomain(),
-							context.isPrimaryReplica())
-							, 42, message.source, message.interaction);
-					return null;
-					*/
-					
-					return Pair.of(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
-							message.value, 
-							context.getDomain(),
-							context.isPrimaryReplica()), 42);
+					return functionImpl.handle(message);
+				}
+
+				@Override
+				public Pair<Object, Integer> handle(RemotePodMessage remoteMessage, UUID interaction) {
+					return functionImpl.handle(new ActorMessage<>(remoteMessage.remotePodMessageDTO.payload, remoteMessage.remotePodMessageDTO.tag, host.self(), null, interaction, "", ""));
 				}
 			};
 	}
 
 	@Override
 	public String domain() {
-		return "ExampleReplicationWithFunctionPod";
+		return "ExampleReplicationWithRemoteFunctionPod";
 	}
 }
