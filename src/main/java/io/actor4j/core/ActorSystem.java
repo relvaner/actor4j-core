@@ -195,6 +195,14 @@ public class ActorSystem {
 		return this;
 	}
 	
+	public UUID getActorFromAlias(String alias) {
+		return system.getActorFromAlias(alias);
+	}
+	
+	public List<UUID> getActorsFromAlias(String alias) {
+		return system.getActorsFromAlias(alias);
+	}
+	
 	public String getActorPath(UUID uuid) {
 		return system.getActorPath(uuid);
 	}
