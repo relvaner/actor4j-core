@@ -119,19 +119,6 @@ public abstract class EmbeddedActor {
 		behaviourStack.clear();
 	}
 	
-	public void await(final Predicate<ActorMessage<?>> action, boolean replace) {
-		become(new Predicate<ActorMessage<?>>() {
-			@Override
-			public boolean test(ActorMessage<?> message) {
-				return action.test(message);
-			}
-		}, replace);
-	}
-	
-	public void await(final Predicate<ActorMessage<?>> action) {
-		await(action, true);
-	}
-	
 	public void await(final UUID source, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
