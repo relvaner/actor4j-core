@@ -18,9 +18,9 @@ package io.actor4j.core.persistence.connectors;
 import io.actor4j.core.ActorSystem;
 
 public abstract class PersistenceConnector {
-	protected String host;
-	protected int port; 
-	protected String databaseName;
+	protected final String host;
+	protected final int port; 
+	protected final String databaseName;
 	
 	public PersistenceConnector(String host, int port, String databaseName) {
 		this.host = host;
@@ -28,9 +28,20 @@ public abstract class PersistenceConnector {
 		this.databaseName = databaseName;
 	}
 	
+	public String getHost() {
+		return host;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
 	public abstract void open();
 	public abstract void close();
-	
 	
 	public abstract PersistenceAdapter createAdapter(ActorSystem parent);
 }

@@ -35,7 +35,6 @@ import org.junit.runner.RunWith;
 	PrimarySecondaryActorFeature.class,
 	ResourceActorFeature.class,
 	
-	PersistenceFeature.class,
 	ActorGroupMemberFeature.class,
 	CacheFeature.class,
 	
