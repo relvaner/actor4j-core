@@ -41,7 +41,6 @@ import org.junit.runner.RunWith;
 	ServiceDiscoveyFeature.class,
 	
 	CommPatternFeature.class,
-	FuturePatternFeature.class,
 	OptionalFeature.class,
 	
 	/*----------------------------*/
