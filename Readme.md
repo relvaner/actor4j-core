@@ -29,10 +29,10 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 - Games (e.g., MMOG, MMORPG)
 - Business Process Modeling (BPM): e.g., [[21](#21)]
 - Business logic (for Client-Server architectures) inclusively caching/database access 
-- Caching (see [volatile and persistent caching @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data))
-- In-memory database (see [IMDB @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data))
-- Messaging (see [Publish-Subscribe @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data))
-- Reactive Streams ([see publisher, subscriber and proccessor @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data))
+- Caching (see [volatile and persistent caching @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data#caching))
+- In-memory database (see [IMDB @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data#example-with-volatilepersistent-caching))
+- Messaging (see [Publish-Subscribe @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data#example-with-publish-subscribe))
+- Reactive Streams ([see publisher, subscriber and proccessor @actor4j-data](https://github.com/relvaner/actor4j/tree/master/actor4j-data#reactive-streams))
 - Reactive System (responsive, elastic, resilient and message driven)
 - Internet of Things ([interfaces for REST, Websocket, gRPC, CoAP, MQTT, AMQP @actor4j-web](https://github.com/relvaner/actor4j/tree/master/actor4j-web))
 - Digital representatives of devices (e.g., Device Shadows, AWS IoT)
