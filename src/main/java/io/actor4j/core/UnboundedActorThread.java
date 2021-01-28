@@ -17,9 +17,8 @@ package io.actor4j.core;
 
 import java.util.ArrayDeque;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
-
-import org.jctools.queues.MpscLinkedQueue;
 
 public class UnboundedActorThread extends DefaultActorThread {
 	public UnboundedActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
@@ -28,13 +27,13 @@ public class UnboundedActorThread extends DefaultActorThread {
 
 	@Override
 	public void configQueues() {
-		directiveQueue = new MpscLinkedQueue<>(); /* unbounded */
+		directiveQueue = new ConcurrentLinkedQueue<>(); /* unbounded */
 		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize()); /* unbounded */
 		
-		serverQueueL2  = new MpscLinkedQueue<>(); /* unbounded */
+		serverQueueL2  = new ConcurrentLinkedQueue<>(); /* unbounded */
 		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
 		
-		outerQueueL2   = new MpscLinkedQueue<>(); /* unbounded */
+		outerQueueL2   = new ConcurrentLinkedQueue<>(); /* unbounded */
 		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
 		
 		innerQueue     = new LinkedList<>(); /* unbounded */

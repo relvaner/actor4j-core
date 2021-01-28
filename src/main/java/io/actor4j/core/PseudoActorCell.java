@@ -23,13 +23,12 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import org.jctools.queues.MpscArrayQueue;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.exceptions.ActorInitializationException;
@@ -50,7 +49,7 @@ public class PseudoActorCell extends ActorCell {
 		if (blocking)
 			outerQueueL2 = new LinkedBlockingQueue<>();
 		else
-			outerQueueL2 = new MpscArrayQueue<>(system.getQueueSize());
+			outerQueueL2 = new ConcurrentLinkedQueue<>();
 		
 		outerQueueL1 = new LinkedList<>();
 		rxOuterQueueL1 = ActorMessageFlowable.getMessages(outerQueueL1);
