@@ -264,6 +264,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public Map<String, Queue<UUID>> getAliases() {
 		return aliases;
 	}
+	
+	public Map<UUID, UUID> getRedirector() {
+		return redirector;
+	}
 
 	public ActorMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
@@ -328,6 +332,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return this;
 	}
 	
+	public int getIdle() {
+		return idle;
+	}
+
+	public int getLoad() {
+		return load;
+	}
+
 	public ActorThreadMode getThreadMode() {
 		return threadMode;
 	}

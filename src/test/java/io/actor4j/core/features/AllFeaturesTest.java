@@ -43,21 +43,6 @@ import org.junit.runner.RunWith;
 	CommPatternFeature.class,
 	OptionalFeature.class,
 	
-	/*----------------------------*/
-	
-	XActorFeature.class,
-	XAwaitFeature.class,
-	XFailsafeFeature.class,
-	
-	XPseudoActorFeature.class,
-	XStatelessActorFeature.class,
-	XPrimarySecondaryActorFeature.class,
-	XResourceActorFeature.class,
-	
-	XActorGroupMemberFeature.class,
-	
-	/*----------------------------*/
-	
 	PodFeature.class
 })
 public class AllFeaturesTest {
