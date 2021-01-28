@@ -112,6 +112,10 @@ public abstract class Actor implements ActorRef {
 		return cell.isRootInUser();
 	}
 	
+	public ActorMessage<?> unstash() {
+		return stash!=null ? stash.poll() : null;
+	}
+	
 	public abstract void receive(ActorMessage<?> message);
 	
 	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {

@@ -19,13 +19,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
-import io.reactivex.Flowable;
 
-public abstract class PseudoActor extends ActorWithRxStash {
+public abstract class PseudoActor extends Actor {
 	public PseudoActor(ActorSystem system, boolean blocking) {
 		this(null, system, blocking);
 	}
@@ -48,8 +48,8 @@ public abstract class PseudoActor extends ActorWithRxStash {
 		return ((PseudoActorCell)cell).runOnce();
 	}
 	
-	public Flowable<ActorMessage<?>> runWithRx() {
-		return ((PseudoActorCell)cell).runWithRx();
+	public Stream<ActorMessage<?>> stream() {
+		return ((PseudoActorCell)cell).stream();
 	}
 	
 	public ActorMessage<?> await() {

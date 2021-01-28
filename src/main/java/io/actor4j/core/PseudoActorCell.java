@@ -29,19 +29,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
-import io.actor4j.core.utils.ActorMessageFlowable;
-import io.reactivex.Flowable;
 
 public class PseudoActorCell extends ActorCell {
 	protected final Queue<ActorMessage<?>> outerQueueL2;
 	protected final Queue<ActorMessage<?>> outerQueueL1;
-	
-	protected final Flowable<ActorMessage<?>> rxOuterQueueL1;
 	
 	public PseudoActorCell(ActorSystem wrapper, Actor actor, boolean blocking) {
 		super(wrapper.system, actor);
@@ -52,7 +49,6 @@ public class PseudoActorCell extends ActorCell {
 			outerQueueL2 = new ConcurrentLinkedQueue<>();
 		
 		outerQueueL1 = new LinkedList<>();
-		rxOuterQueueL1 = ActorMessageFlowable.getMessages(outerQueueL1);
 	}
 	
 	public UUID system_addCell(ActorCell cell) {
@@ -121,7 +117,7 @@ public class PseudoActorCell extends ActorCell {
 		return poll(outerQueueL1);
 	}
 		
-	public Flowable<ActorMessage<?>> runWithRx() {
+	public Stream<ActorMessage<?>> stream() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
@@ -129,7 +125,7 @@ public class PseudoActorCell extends ActorCell {
 				outerQueueL1.offer(message);
 		}
 		
-		return rxOuterQueueL1;
+		return outerQueueL1.stream();
 	}
 	
 	public ActorMessage<?> await() {

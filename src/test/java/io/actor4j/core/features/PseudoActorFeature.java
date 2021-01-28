@@ -87,12 +87,13 @@ public class PseudoActorFeature {
 			protected int counter = 0;
 			@Override
 			public void run() {
-				main.runWithRx()
-					.take(2)
+				main.stream()
+					.skip(counter).limit(1)
 					.forEach(msg -> { 
-						assertEquals(postconditions_numbers[counter++], msg.valueAsInt()); 
+						assertEquals(postconditions_numbers[counter], msg.valueAsInt()); 
 						logger().debug("-> main received a message.value ("+msg.valueAsInt()+") from numberGenerator");
-					}); 
+					});
+				counter++;
 					
 				main.send(new ActorMessage<>(null, i++, main.getId(), numberGenerator));
 			}
