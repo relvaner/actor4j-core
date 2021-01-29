@@ -22,7 +22,7 @@ public class DefaultActorThreadFactory extends DefaultThreadFactory {
     }
 
     public ActorThread newThread(ActorSystemImpl system) {
-    	ActorThread t = system.actorThreadFactory.apply(group, name, system);
+    	ActorThread t = system.actorThreadFactory.apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
     	
     	if (t.isDaemon())
     		t.setDaemon(false);
