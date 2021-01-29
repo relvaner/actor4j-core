@@ -38,10 +38,10 @@ public class ActorThreadPool {
 		actorThreadPoolHandler = new ActorThreadPoolHandler(system);
 		
 		countDownLatch = new CountDownLatch(system.parallelismMin*system.parallelismFactor);
-		ActorThreadFactory actorThreadFactory = new ActorThreadFactory(system.name);
+		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.name);
 		for (int i=0; i<system.parallelismMin*system.parallelismFactor; i++) {
 			try {
-				ActorThread t = actorThreadFactory.newThread(system);
+				ActorThread t = defaultActorThreadFactory.newThread(system);
 				t.onTermination = new Runnable() {
 					@Override
 					public void run() {

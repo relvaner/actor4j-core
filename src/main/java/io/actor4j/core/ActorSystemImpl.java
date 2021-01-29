@@ -70,7 +70,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected final Map<UUID, UUID> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
 	protected final AtomicBoolean messagingEnabled;
-	protected /*quasi final*/ Class<? extends ActorThread> actorThreadClass;
+	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
 	
 	protected boolean counterEnabled;
 	
@@ -271,12 +271,12 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return messageDispatcher;
 	}
 	
-	public Class<? extends ActorThread> getActorThreadClass() {
-		return actorThreadClass;
+	public ActorThreadFactory getActorThreadFactory() {
+		return actorThreadFactory;
 	}
 
-	public void setActorThreadClass(Class<? extends ActorThread> actorThreadClass) {
-		this.actorThreadClass = actorThreadClass;
+	public void setActorThreadFactory(ActorThreadFactory actorThreadFactory) {
+		this.actorThreadFactory = actorThreadFactory;
 	}
 
 	public ActorStrategyOnFailure getActorStrategyOnFailure() {

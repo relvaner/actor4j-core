@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.function;
 
-import io.actor4j.core.function.TriFunction;
+import java.util.Objects;
+import java.util.function.Function;
 
-public interface ActorThreadFactory extends TriFunction<ThreadGroup, String, ActorSystemImpl, ActorThread> {
+@FunctionalInterface
+public interface TriFunction<T, U, V, R> {
+	R apply(T t, U u, V v);
+
+    default <W> TriFunction<T, U, V, W> andThen(Function<? super R, ? extends W> after) {
+        Objects.requireNonNull(after);
+        return (T t, U u, V v) -> after.apply(apply(t, u, v));
+    }
 }

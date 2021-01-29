@@ -26,7 +26,7 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 		super(name, wrapper);
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
-		actorThreadClass  = DefaultUnboundedActorThread.class;
+		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system);
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
