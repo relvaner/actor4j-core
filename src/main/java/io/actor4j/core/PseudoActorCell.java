@@ -230,6 +230,14 @@ public class PseudoActorCell extends ActorCell {
 	public Queue<ActorMessage<?>> getOuterQueue() {
 		return outerQueueL2;
 	}
+
+	public Queue<ActorMessage<?>> getOuterQueueL2() {
+		return outerQueueL2;
+	}
+	
+	public Queue<ActorMessage<?>> getOuterQueueL1() {
+		return outerQueueL1;
+	}
 	
 	public void reset() {
 		outerQueueL2.clear();
