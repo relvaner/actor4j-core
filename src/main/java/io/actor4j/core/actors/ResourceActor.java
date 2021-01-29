@@ -16,25 +16,35 @@
 package io.actor4j.core.actors;
 
 public abstract class ResourceActor extends Actor {
+	protected final boolean stateful;
 	protected final boolean bulk;
 	
 	public ResourceActor() {
-		this(null, false);
+		this(null, false, false);
 	}
 	
 	public ResourceActor(String name) {
-		this(name, false);
+		this(name, false, false);
 	}
 	
 	public ResourceActor(boolean bulk) {
-		this(null, bulk);
+		this(null, true, bulk);
 	}
 	
 	public ResourceActor(String name, boolean bulk) {
+		this(name, true, bulk);
+	}
+	
+	public ResourceActor(String name, boolean stateful, boolean bulk) {
 		super(name);
+		this.stateful = stateful;
 		this.bulk = bulk;
 	}
 	
+	public boolean isStateful() {
+		return stateful;
+	}
+
 	public boolean isBulk() {
 		return bulk;
 	}

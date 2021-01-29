@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
-import io.actor4j.core.annotations.Stateless;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -40,7 +39,7 @@ public class ResourceActorCell extends ActorCell {
 	
 	@Override
 	public void preStart() {
-		if (!actor.getClass().isAnnotationPresent(Stateless.class)) {
+		if (actor instanceof ResourceActor && ((ResourceActor)actor).isStateful()) {
 			stateful = true;
 			lock   	 = new AtomicBoolean(false);
 			queue  	 = new ConcurrentLinkedQueue<>();

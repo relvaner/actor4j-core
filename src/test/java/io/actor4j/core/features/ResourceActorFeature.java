@@ -24,11 +24,9 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
-import io.actor4j.core.annotations.Stateless;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ResourceActorFeature {
-	@Stateless
 	protected static class StatelessResourceActor extends ResourceActor {
 		public StatelessResourceActor() {
 			super();
