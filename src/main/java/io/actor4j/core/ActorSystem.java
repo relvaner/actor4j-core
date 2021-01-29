@@ -16,7 +16,6 @@
 package io.actor4j.core;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,27 +34,21 @@ public class ActorSystem {
 	public final UUID SYSTEM_ID;
 	
 	public ActorSystem() {
-		this(null, DefaultActorSystemImpl.class);
+		this(null, (n, wrapper) -> new DefaultActorSystemImpl(n, wrapper));
 	}
 	
-	public ActorSystem(Class<? extends ActorSystemImpl> clazz) {
-		this(null, clazz);
+	public ActorSystem(ActorSystemImplFactory factory) {
+		this(null, factory);
 	}
 	
 	public ActorSystem(String name) {
-		this(name, DefaultActorSystemImpl.class);
+		this(name, (n, wrapper) -> new DefaultActorSystemImpl(n, wrapper));
 	}
 	
-	public ActorSystem(String name, Class<? extends ActorSystemImpl> clazz) {
+	public ActorSystem(String name, ActorSystemImplFactory factory) {
 		super();
 		
-		try {
-			Constructor<? extends ActorSystemImpl> c2 = clazz.getConstructor(String.class, ActorSystem.class);
-			system = c2.newInstance(name, this);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+		system = factory.apply(name, this);
 		
 		USER_ID    = system.USER_ID;
 		SYSTEM_ID  = system.SYSTEM_ID;
