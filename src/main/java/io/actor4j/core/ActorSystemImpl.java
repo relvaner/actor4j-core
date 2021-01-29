@@ -272,6 +272,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public ActorMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
 	}
+	
+	public Class<? extends ActorThread> getActorThreadClass() {
+		return actorThreadClass;
+	}
+
+	public void setActorThreadClass(Class<? extends ActorThread> actorThreadClass) {
+		this.actorThreadClass = actorThreadClass;
+	}
 
 	public ActorStrategyOnFailure getActorStrategyOnFailure() {
 		return actorStrategyOnFailure;

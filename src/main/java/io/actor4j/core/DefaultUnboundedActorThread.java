@@ -20,8 +20,8 @@ import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-public class UnboundedActorThread extends DefaultActorThread {
-	public UnboundedActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+public class DefaultUnboundedActorThread extends DefaultActorThread {
+	public DefaultUnboundedActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
 		super(group, name, system);
 	}
 
