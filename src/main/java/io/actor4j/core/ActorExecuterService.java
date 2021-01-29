@@ -18,7 +18,6 @@ package io.actor4j.core;
 import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -141,13 +140,8 @@ public class ActorExecuterService {
 		actorThreadPool = new ActorThreadPool(system);
 		
 		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
-		try {
-			Constructor<? extends PodReplicationControllerRunnable> constructor;
-			constructor = system.podReplicationControllerRunnableClass.getConstructor(ActorSystemImpl.class);
-			podReplicationControllerRunnable = constructor.newInstance(system);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		podReplicationControllerRunnable = system.podReplicationControllerRunnableFactory.apply(system);
+		
 		if (podReplicationControllerRunnable!=null)
 			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.horizontalPodAutoscalerSyncTime, system.horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
 		
