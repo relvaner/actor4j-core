@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.UUID;
 
-import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.Database;
@@ -148,14 +147,6 @@ public class ActorSystem {
 		system.addServiceNode(serviceNode);
 		
 		return this;
-	}
-	
-	public UUID addActor(Class<? extends Actor> clazz, Object... args) {
-		return system.addActor(clazz, args);
-	}
-	
-	public List<UUID> addActor(int instances, Class<? extends Actor> clazz, Object... args) {
-		return system.addActor(instances, clazz, args);
 	}
 	
 	public UUID addActor(ActorFactory factory) {

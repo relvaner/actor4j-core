@@ -294,14 +294,6 @@ public abstract class Actor implements ActorRef {
 			cell.getSystem().setAlias(self(), alias);
 	}
 	
-	public UUID addChild(Class<? extends Actor> clazz, Object... args) {
-		return cell.addChild(clazz, args);
-	}
-	
-	public List<UUID> addChild(int instances, Class<? extends Actor> clazz, Object... args) {
-		return cell.addChild(instances, clazz, args);
-	}
-	
 	public UUID addChild(ActorFactory factory) {
 		return cell.addChild(factory);
 	}

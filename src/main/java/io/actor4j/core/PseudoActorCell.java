@@ -32,7 +32,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -203,11 +202,6 @@ public class PseudoActorCell extends ActorCell {
 	
 	@Override
 	public UUID internal_addChild(ActorCell cell) {
-		return null;
-	}
-	
-	@Override
-	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		return null;
 	}
 	

@@ -15,9 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,11 +24,9 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.features.actor.ReflectionActor;
 import io.actor4j.core.messages.ActorMessage;
 
 import static org.junit.Assert.*;
-import static io.actor4j.core.logging.user.ActorLogger.logger;
 
 public class ActorFeature {
 	protected ActorSystem system;
@@ -39,43 +34,6 @@ public class ActorFeature {
 	@Before
 	public void before() {
 		system = new ActorSystem();
-	}
-	
-	@Test(timeout=5000)
-	public void test_instantiation_reflection() {
-		logger().debug("workaround - FATAL StatusLogger Interrupted before Log4j Providers could be loaded.");
-		
-		UUID id1 = system.addActor(ReflectionActor.class, 42, "43", true, Arrays.asList("44", "45", 46), 99);
-		UUID id2 = system.addActor(ReflectionActor.class, 45, "49");
-		Map<Integer, String> map = new HashMap<>();
-		map.put(99, "98");
-		UUID id3 = system.addActor(ReflectionActor.class, map, 42.345);
-		
-		system.start();
-		
-		try {
-			ReflectionActor.testDone.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		Actor actor1 = system.underlyingImpl().getCells().get(id1).getActor();
-		Actor actor2 = system.underlyingImpl().getCells().get(id2).getActor();
-		Actor actor3 = system.underlyingImpl().getCells().get(id3).getActor();
-		
-		assertEquals(42, ((ReflectionActor)actor1).value1);
-		assertEquals("43", ((ReflectionActor)actor1).value2);
-		assertEquals(true, ((ReflectionActor)actor1).value3);
-		assertEquals(Arrays.asList("44", "45", 46), ((ReflectionActor)actor1).value4);
-		assertEquals(Integer.valueOf(99), ((ReflectionActor)actor1).value5);
-		
-		assertEquals(45, ((ReflectionActor)actor2).value1);
-		assertEquals("49", ((ReflectionActor)actor2).value2);
-		
-		assertEquals("98", ((ReflectionActor)actor3).value6.get(99));
-		assertEquals(42.345, ((ReflectionActor)actor3).value7, 0.001);
-		
-		system.shutdownWithActors(true);
 	}
 	
 	@Test(timeout=5000)

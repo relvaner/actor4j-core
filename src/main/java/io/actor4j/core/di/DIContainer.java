@@ -15,104 +15,34 @@
  */
 package io.actor4j.core.di;
 
-import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.di.DIContainer;
-import io.actor4j.core.utils.Utils;
 
-// Adapted for actor4j
 public class DIContainer<K> {
-	protected Map<K, DIMapEntry> diMap;
+	protected Map<K, FactoryInjector<?>> diMap;
 	
 	public DIContainer() {
 		diMap = new ConcurrentHashMap<>();
 	}
-
-	public void registerConstructorInjector(K key, Class<?> base, Object... params) {
-		DIMapEntry entry = diMap.get(key);
-		if (entry==null)
-			entry = new DIMapEntry();
-		entry.setBase(base);
-		entry.getConstructorInjector().setParams(params);
-		
-		diMap.put(key, entry);
-	}
 	
-	public void registerFactoryInjector(K key, FactoryInjector<?> factoryInjector) {
-		DIMapEntry entry = diMap.get(key);
-		if (entry==null)
-			entry = new DIMapEntry();
-		entry.setFactoryInjector(factoryInjector);
-		
-		diMap.put(key, entry);
-	}
-	
-	protected Object buildInstance(Class<?> base, Object[] params) throws Exception {
-		Object result = null;
-		
-		Class<?>[] paramsTypes = new Class<?>[params.length];
-		for (int i=0; i<params.length; i++)
-			paramsTypes[i] = params[i].getClass();
-		
-		Constructor<?> foundConstructor = null;
-		for (Constructor<?> constructor : base.getDeclaredConstructors()) {
-			Class<?>[] types = constructor.getParameterTypes();
-			if (types.length!=paramsTypes.length)
-				continue;
-			boolean found = true;
-			for (int i=0; i<types.length; i++) {
-				Class<?> type = types[i];
-				if (type.isPrimitive()) {
-					if (!Utils.getPrimitiveWrapper(type).equals(paramsTypes[i]))
-						found = false;
-				}
-				else if (type.isInterface()) {
-					if (!type.isAssignableFrom(paramsTypes[i]))
-						found = false;
-				}
-				else if (!type.equals(paramsTypes[i]))
-					found = false;
-
-				if (!found)
-					break;
-			}
-			
-			if (found) {
-				foundConstructor = constructor;
-				break;
-			}
-		}
-			
-		if (foundConstructor!=null)
-			result = foundConstructor.newInstance(params);
-		else
-			throw new NoSuchMethodException();
-		
-		return result;
+	public void register(K key, FactoryInjector<?> factoryInjector) {
+		diMap.put(key, factoryInjector);
 	}
 	
 	public Object getInstance(K key) throws Exception {
 		Object result = null;
 		
-		DIMapEntry entry = diMap.get(key);
-		if (entry!=null) {
-			if (entry.getFactoryInjector()!=null)
-				result = entry.getFactoryInjector().create();
-			else {
-				if (entry.getConstructorInjector().getParams()!=null)
-					result = buildInstance(entry.getBase(), entry.getConstructorInjector().getParams());
-				else
-					// https://docs.oracle.com/javase/9/docs/api/java/lang/Class.html#newInstance--
-					result = entry.getBase().getDeclaredConstructor().newInstance();
-			}
+		FactoryInjector<?> factoryInjector = diMap.get(key);
+		if (factoryInjector!=null) {
+			result = factoryInjector.create();
 		}
 		
 		return result;
 	}
 	
-	public DIMapEntry unregister(K key) {
+	public FactoryInjector<?> unregister(K key) {
 		return diMap.remove(key);
 	}
 	
