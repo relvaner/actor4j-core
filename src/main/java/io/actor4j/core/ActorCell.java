@@ -32,13 +32,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.exceptions.ActorKilledException;
+import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceObject;
 import io.actor4j.core.persistence.actor.PersistenceServiceActor;
@@ -379,13 +377,9 @@ public class ActorCell {
 			for (ActorPersistenceObject obj : list)
 				obj.persistenceId = persistenceId();
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
-			try {
-				system.messageDispatcher.postPersistence(new ActorMessage<String>(new ObjectMapper().writeValueAsString(events), PersistenceServiceActor.PERSIST_EVENTS, id, null));
-				persistenceTuples.offer(tuple);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				onFailure.accept(e);
-			}
+			system.messageDispatcher.postPersistence(new ActorMessage<ImmutableList<E>>(new ImmutableList<E>(Arrays.asList(events)), PersistenceServiceActor.PERSIST_EVENTS, id, null));
+			persistenceTuples.offer(tuple);
+			
 		}
 	}
 	
@@ -396,13 +390,8 @@ public class ActorCell {
 			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
-			try {
-				system.messageDispatcher.postPersistence(new ActorMessage<String>(new ObjectMapper().writeValueAsString(state), PersistenceServiceActor.PERSIST_STATE, id, null));
-				persistenceTuples.offer(tuple);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-				onFailure.accept(e);
-			}
+			system.messageDispatcher.postPersistence(new ActorMessage<S>(state, PersistenceServiceActor.PERSIST_STATE, id, null));
+			persistenceTuples.offer(tuple);
 		}
 	}
 	
