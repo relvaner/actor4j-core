@@ -36,6 +36,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.di.DIContainer;
+import io.actor4j.core.di.DefaultDIContainer;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.Database;
@@ -56,7 +57,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected final String name;
 	
-	protected final DIContainer<UUID> container;
+	protected /*quasi final*/ DIContainer<UUID> container;
 	protected final PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	
@@ -127,7 +128,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		this.wrapper = wrapper;
 		
-		container      = DIContainer.create();
+		container      = DefaultDIContainer.create();
 		podReplicationController = new PodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
 		

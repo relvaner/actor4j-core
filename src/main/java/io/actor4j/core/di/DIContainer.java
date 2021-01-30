@@ -15,38 +15,8 @@
  */
 package io.actor4j.core.di;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import io.actor4j.core.di.DIContainer;
-
-public class DIContainer<K> {
-	protected Map<K, FactoryInjector<?>> diMap;
-	
-	public DIContainer() {
-		diMap = new ConcurrentHashMap<>();
-	}
-	
-	public void register(K key, FactoryInjector<?> factoryInjector) {
-		diMap.put(key, factoryInjector);
-	}
-	
-	public Object getInstance(K key) throws Exception {
-		Object result = null;
-		
-		FactoryInjector<?> factoryInjector = diMap.get(key);
-		if (factoryInjector!=null) {
-			result = factoryInjector.create();
-		}
-		
-		return result;
-	}
-	
-	public FactoryInjector<?> unregister(K key) {
-		return diMap.remove(key);
-	}
-	
-	public static <K> DIContainer<K> create() {
-		return new DIContainer<>();
-	}
+public interface DIContainer<K> {
+	public void register(K key, FactoryInjector<?> factoryInjector);
+	public Object getInstance(K key) throws Exception;
+	public void unregister(K key);
 }
