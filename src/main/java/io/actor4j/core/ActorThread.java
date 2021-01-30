@@ -51,7 +51,7 @@ public abstract class ActorThread extends Thread {
 				long startTime = System.nanoTime();
 				cell.internal_receive(message);
 				long stopTime = System.nanoTime();
-				cell.processingTimeStatistics.addValue(stopTime-startTime);
+				cell.processingTimeStatistics.offer(stopTime-startTime);
 			}
 			else
 				cell.internal_receive(message);
