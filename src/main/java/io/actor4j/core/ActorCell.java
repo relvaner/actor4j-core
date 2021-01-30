@@ -296,7 +296,7 @@ public class ActorCell {
 		}
 	}
 	
-	protected UUID internal_addChild(ActorCell cell) {
+	public UUID internal_addChild(ActorCell cell) {
 		cell.parent = id;
 		children.add(cell.id);
 		system.internal_addCell(cell);
