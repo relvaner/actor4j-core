@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.logging.user;
+package io.actor4j.core.logging;
 
-import io.actor4j.core.logging.Logger;
-import io.actor4j.core.logging.LoggerImpl;
+public interface Logger {
+	public void error(String msg);
+	public void warn(String msg);
+	public void info(String msg);
+	public void debug(String msg);
+	public void trace(String msg);
 
-public class ActorLogger {
-	public static final Logger logger = new LoggerImpl("USER");
+	public void error(String format, Object... arguments);
+	public void warn(String format, Object... arguments);
+	public void info(String format, Object... arguments);
+	public void debug(String format, Object... arguments);
+	public void trace(String format, Object... arguments);
 	
-	public static Logger logger() {
-		return logger;
-	}
+	public void setLevel(int level);
 }

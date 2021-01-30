@@ -13,15 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.logging.user;
+package io.actor4j.core.logging;
 
-import io.actor4j.core.logging.Logger;
-import io.actor4j.core.logging.LoggerImpl;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ActorLogger {
-	public static final Logger logger = new LoggerImpl("USER");
+public class Level {
+	public static final Map<Integer, String> LEVEL_AS_STRING;
 	
-	public static Logger logger() {
-		return logger;
+	public static final int ERROR = 1000;
+	public static final int WARN  = 900;
+	public static final int INFO  = 800;
+	public static final int DEBUG = 700;
+	public static final int TRACE = 500;
+	
+	static {
+		LEVEL_AS_STRING = new HashMap<>();
+		
+		LEVEL_AS_STRING.put(ERROR, "ERROR");
+		LEVEL_AS_STRING.put(WARN, "WARN");
+		LEVEL_AS_STRING.put(INFO, "INFO");
+		LEVEL_AS_STRING.put(DEBUG, "DEBUG");
+		LEVEL_AS_STRING.put(TRACE, "TRACE");
 	}
 }
