@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.utils;
 
-import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
+import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
 
 import java.util.HashSet;
 import java.util.Set;

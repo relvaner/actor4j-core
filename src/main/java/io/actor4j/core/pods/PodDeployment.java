@@ -16,7 +16,7 @@
 
 package io.actor4j.core.pods;
 
-import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
+import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

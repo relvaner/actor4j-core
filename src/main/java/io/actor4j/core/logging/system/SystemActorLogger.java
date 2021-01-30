@@ -18,7 +18,7 @@ package io.actor4j.core.logging.system;
 import io.actor4j.core.logging.Logger;
 import io.actor4j.core.logging.LoggerImpl;
 
-public class ActorLogger {
+public class SystemActorLogger {
 	public static Logger logger = new LoggerImpl("SYSTEM");
 	
 	public static Logger systemLogger() {

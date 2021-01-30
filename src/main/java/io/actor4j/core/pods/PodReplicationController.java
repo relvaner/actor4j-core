@@ -31,7 +31,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.actors.Actor.*;
-import static io.actor4j.core.logging.system.ActorLogger.*;
+import static io.actor4j.core.logging.system.SystemActorLogger.*;
 
 public class PodReplicationController {
 	protected final ActorSystemImpl system;

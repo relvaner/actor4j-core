@@ -46,7 +46,7 @@ import io.actor4j.core.protocols.StopProtocol;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
-import static io.actor4j.core.logging.system.ActorLogger.systemLogger;
+import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
