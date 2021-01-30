@@ -33,7 +33,7 @@ public class ActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = new ActorSystem("ActorFeature");
 	}
 	
 	@Test(timeout=5000)

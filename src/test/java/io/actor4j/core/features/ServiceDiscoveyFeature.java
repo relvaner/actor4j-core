@@ -39,7 +39,7 @@ public class ServiceDiscoveyFeature {
 	public void test_discovery() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = new ActorSystem("ServiceDiscoveyFeature");
 		
 		system.addActor(() -> new Actor("parent") {
 			protected ServiceDiscoveryManager serviceDiscoveryManager;

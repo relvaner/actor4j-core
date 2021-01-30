@@ -47,7 +47,7 @@ public class PodFeature {
 
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = new ActorSystem("PodFeature");
 	}
 	
 	@Test(timeout=5000)

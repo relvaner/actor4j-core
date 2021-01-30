@@ -42,7 +42,7 @@ public class ActorGroupMemberFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = new ActorSystem("ActorGroupMemberFeature");
 	}
 	
 	@Test(timeout=30000)

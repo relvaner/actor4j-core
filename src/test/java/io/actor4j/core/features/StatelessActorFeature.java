@@ -35,7 +35,7 @@ public class StatelessActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = new ActorSystem("StatelessActorFeature");
 	}
 	
 	@Test(timeout=30000)

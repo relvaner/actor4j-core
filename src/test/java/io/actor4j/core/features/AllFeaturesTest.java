@@ -16,6 +16,11 @@
 package io.actor4j.core.features;
 
 import org.junit.runners.Suite;
+
+import io.actor4j.core.logging.Level;
+import io.actor4j.core.logging.user.ActorLogger;
+
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
 @RunWith(Suite.class)
@@ -46,5 +51,9 @@ import org.junit.runner.RunWith;
 	PodFeature.class
 })
 public class AllFeaturesTest {
-
+	@BeforeClass
+	public static void beforeClass() {
+		ActorLogger.logger().setLevel(Level.ERROR);
+		io.actor4j.core.logging.system.ActorLogger.systemLogger().setLevel(Level.ERROR);
+	}
 }
