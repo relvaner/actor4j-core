@@ -15,11 +15,12 @@
  */
 package io.actor4j.core.logging.system;
 
+import io.actor4j.core.logging.Level;
 import io.actor4j.core.logging.Logger;
 import io.actor4j.core.logging.LoggerImpl;
 
 public class SystemActorLogger {
-	public static Logger logger = new LoggerImpl("SYSTEM");
+	public static Logger logger = new LoggerImpl("SYSTEM", Level.INFO);
 	
 	public static Logger systemLogger() {
 		return logger;

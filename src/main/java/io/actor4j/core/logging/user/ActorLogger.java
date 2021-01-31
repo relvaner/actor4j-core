@@ -15,11 +15,12 @@
  */
 package io.actor4j.core.logging.user;
 
+import io.actor4j.core.logging.Level;
 import io.actor4j.core.logging.Logger;
 import io.actor4j.core.logging.LoggerImpl;
 
 public class ActorLogger {
-	public static final Logger logger = new LoggerImpl("USER");
+	public static final Logger logger = new LoggerImpl("USER", Level.DEBUG);
 	
 	public static Logger logger() {
 		return logger;

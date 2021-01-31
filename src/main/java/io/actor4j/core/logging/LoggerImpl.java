@@ -31,7 +31,7 @@ public class LoggerImpl implements Logger {
 	protected java.util.logging.Logger logger;
 	protected String name;
 	
-	public LoggerImpl(String name) {
+	public LoggerImpl(String name, int level) {
 		super();
 		this.name = name;
 		
@@ -46,7 +46,7 @@ public class LoggerImpl implements Logger {
 		});
 		logger.addHandler(handler);
 		logger.setUseParentHandlers(false);
-		logger.setLevel(Level.CONFIG);
+		setLevel(level);
 	}
 	
 	protected String format(LogRecord record) {
