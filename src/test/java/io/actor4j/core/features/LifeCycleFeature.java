@@ -297,7 +297,7 @@ public class LifeCycleFeature {
 					public void postStop() {
 						int i = counter.incrementAndGet();
 						if (i==1 || i==2) {
-							logger.debug("child::postStop: "+i);
+							logger().debug("child::postStop: "+i);
 							testDone.countDown();
 						}
 					}
@@ -313,7 +313,7 @@ public class LifeCycleFeature {
 			public void postStop() {
 				int i = counter.incrementAndGet();
 				if (i==3) {
-					logger.debug("parent::postStop: "+i);
+					logger().debug("parent::postStop: "+i);
 					testDone.countDown();
 				}
 			}
@@ -323,7 +323,7 @@ public class LifeCycleFeature {
 				super.preRestart(reason);
 				int i = counter.incrementAndGet();
 				if (i==1 || i==2) {
-					logger.debug("parent::preRestart: "+i);
+					logger().debug("parent::preRestart: "+i);
 					testDone.countDown();
 				}
 			}
@@ -333,7 +333,7 @@ public class LifeCycleFeature {
 				super.postRestart(reason);
 				int i = counter.incrementAndGet();
 				assertEquals(4, i);
-				logger.debug("parent::postRestart: "+i);
+				logger().debug("parent::postRestart: "+i);
 				testDone.countDown();
 			}
 			
@@ -370,7 +370,7 @@ public class LifeCycleFeature {
 					public void postStop() {
 						int i = counter.incrementAndGet();
 						if (i==1 || i==2) {
-							logger.debug("child::postStop: "+i);
+							logger().debug("child::postStop: "+i);
 							testDone.countDown();
 						}
 					}
@@ -386,7 +386,7 @@ public class LifeCycleFeature {
 			public void postStop() {
 				int i = counter.incrementAndGet();
 				if (i==3) {
-					logger.debug("parent::postStop: "+i);
+					logger().debug("parent::postStop: "+i);
 					testDone.countDown();
 				}
 			}
@@ -396,7 +396,7 @@ public class LifeCycleFeature {
 				super.preRestart(reason);
 				int i = counter.incrementAndGet();
 				if (i==1 || i==2) {
-					logger.debug("parent::preRestart: "+i);
+					logger().debug("parent::preRestart: "+i);
 					testDone.countDown();
 				}
 			}
@@ -406,7 +406,7 @@ public class LifeCycleFeature {
 				super.postRestart(reason);
 				int i = counter.incrementAndGet();
 				assertEquals(4, i);
-				logger.debug("parent::postRestart: "+i);
+				logger().debug("parent::postRestart: "+i);
 				testDone.countDown();
 			}
 			
@@ -453,7 +453,7 @@ public class LifeCycleFeature {
 				addChild(() -> new Actor("child1") {
 					@Override
 					public void postStop() {
-						logger.debug("child1::postStop::"+counter.get());
+						logger().debug("child1::postStop::"+counter.get());
 						if (counter.get()==1)
 							assertEquals(2, counter.incrementAndGet());
 						testDone.countDown();
@@ -461,7 +461,7 @@ public class LifeCycleFeature {
 					
 					@Override
 					public void preRestart(Exception reason) {
-						logger.debug("child1::preRestart::"+counter.get());
+						logger().debug("child1::preRestart::"+counter.get());
 						assertEquals(1, counter.incrementAndGet());
 						super.preRestart(reason);
 						testDone.countDown();
@@ -469,7 +469,7 @@ public class LifeCycleFeature {
 					
 					@Override
 					public void postRestart(Exception reason) {
-						logger.debug("child1::postRestart::"+counter.get());
+						logger().debug("child1::postRestart::"+counter.get());
 						assertEquals(3, counter.incrementAndGet());
 						super.postRestart(reason);
 						testDone.countDown();
@@ -482,21 +482,21 @@ public class LifeCycleFeature {
 				child2 = addChild(() -> new Actor("child2") {
 					@Override
 					public void postStop() {
-						logger.debug("child2::postStop");
+						logger().debug("child2::postStop");
 						testDone.countDown();
 					}
 					
 					@Override
 					public void preRestart(Exception reason) {
 						super.preRestart(reason);
-						logger.debug("child2::preRestart");
+						logger().debug("child2::preRestart");
 						testDone.countDown();
 					}
 					
 					@Override
 					public void postRestart(Exception reason) {
 						super.postRestart(reason);
-						logger.debug("child2::postRestart");
+						logger().debug("child2::postRestart");
 						testDone.countDown();
 					}
 					
@@ -508,21 +508,21 @@ public class LifeCycleFeature {
 				addChild(() -> new Actor("child3") {
 					@Override
 					public void postStop() {
-						logger.debug("child3::postStop");
+						logger().debug("child3::postStop");
 						testDone.countDown();
 					}
 					
 					@Override
 					public void preRestart(Exception reason) {
 						super.preRestart(reason);
-						logger.debug("child3::preRestart");
+						logger().debug("child3::preRestart");
 						testDone.countDown();
 					}
 					
 					@Override
 					public void postRestart(Exception reason) {
 						super.postRestart(reason);
-						logger.debug("child3::postRestart");
+						logger().debug("child3::postRestart");
 						testDone.countDown();
 					}
 					

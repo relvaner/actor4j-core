@@ -20,9 +20,9 @@ import io.actor4j.core.logging.Logger;
 import io.actor4j.core.logging.LoggerImpl;
 
 public class SystemActorLogger {
-	public static Logger logger = new LoggerImpl("SYSTEM", Level.INFO);
+	public static Logger internal_logger = new LoggerImpl("SYSTEM", Level.INFO);
 	
 	public static Logger systemLogger() {
-		return logger;
+		return internal_logger;
 	}
 }

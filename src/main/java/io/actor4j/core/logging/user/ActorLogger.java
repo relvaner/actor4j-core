@@ -20,9 +20,9 @@ import io.actor4j.core.logging.Logger;
 import io.actor4j.core.logging.LoggerImpl;
 
 public class ActorLogger {
-	public static final Logger logger = new LoggerImpl("USER", Level.DEBUG);
+	public static final Logger internal_logger = new LoggerImpl("USER", Level.DEBUG);
 	
 	public static Logger logger() {
-		return logger;
+		return internal_logger;
 	}
 }
