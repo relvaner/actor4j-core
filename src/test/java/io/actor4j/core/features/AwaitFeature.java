@@ -35,7 +35,7 @@ public class AwaitFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("AwaitFeature");
+		system = new ActorSystem();
 		system.setParallelismMin(1);
 	}
 		

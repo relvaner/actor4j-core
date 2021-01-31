@@ -38,7 +38,7 @@ public class PrimarySecondaryActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("PrimarySecondaryActorFeature");
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=5000)

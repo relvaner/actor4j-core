@@ -35,7 +35,7 @@ public class BehaviourFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("BehaviourFeature");
+		system = new ActorSystem();
 		system.setParallelismMin(1);
 	}
 		

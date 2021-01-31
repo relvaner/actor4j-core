@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.balancing;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.List;
@@ -81,7 +81,7 @@ public class ActorLoadBalancingAfterStart {
 					if (groupsMap.get(((ActorGroupMember)actor).getGroupId())==null)
 						groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
 					else
-						systemLogger().error(String.format("[LOAD BALANCING] actor (%s) must be first initial group member", actorLabel(cell.getActor())));
+						systemLogger().log(ERROR, String.format("[LOAD BALANCING] actor (%s) must be first initial group member", actorLabel(cell.getActor())));
 				}
 			}
 			else if (actor instanceof ActorGroupMember) {

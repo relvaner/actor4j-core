@@ -17,9 +17,7 @@ package io.actor4j.core.features;
 
 import org.junit.runners.Suite;
 
-import io.actor4j.core.logging.Level;
-import io.actor4j.core.logging.system.SystemActorLogger;
-import io.actor4j.core.logging.user.ActorLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -54,7 +52,7 @@ import org.junit.runner.RunWith;
 public class AllFeaturesTest {
 	@BeforeClass
 	public static void beforeClass() {
-		SystemActorLogger.systemLogger().setLevel(Level.ERROR);
-		ActorLogger.logger().setLevel(Level.ERROR);
+		systemLogger().setLevel(ERROR);
+		logger().setLevel(ERROR);
 	}
 }

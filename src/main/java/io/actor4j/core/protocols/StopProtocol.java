@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.protocols;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
@@ -38,7 +38,7 @@ public class StopProtocol {
 	protected void postStop() {
 		cell.postStop();
 		cell.internal_stop();
-		systemLogger().info(String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	public void apply() {

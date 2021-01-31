@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.protocols;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
@@ -40,7 +40,7 @@ public class RestartProtocol {
 	protected void postStop() {
 		cell.postStop();
 		cell.internal_stop();
-		systemLogger().info(String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	protected void postRestart(Exception reason) {
@@ -50,7 +50,7 @@ public class RestartProtocol {
 			newActor.setCell(cell);
 			cell.setActor(newActor);
 			cell.postRestart(reason);
-			systemLogger().info(String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor()))); 
+			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor()))); 
 		} catch (Exception e) {
 			throw new ActorInitializationException(); // never must occur
 		}

@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.features.pod;
 
-import static io.actor4j.core.logging.user.ActorLogger.*;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import java.util.UUID;
 
@@ -35,7 +35,7 @@ public class HelloActor extends PodChildActor {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		logger().debug(message.value.toString());
+		logger().log(DEBUG, message.value.toString());
 		tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, groupId:%s]", 
 				message.value, 
 				context.getDomain(),

@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.features.pod;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
@@ -30,7 +30,7 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 			return new PodFunction(host, context) {
 				@Override
 				public Pair<Object, Integer> handle(ActorMessage<?> message) {
-					logger().debug(message.value.toString());
+					logger().log(DEBUG, message.value.toString());
 					
 					/*
 					host.tell(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 

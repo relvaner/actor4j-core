@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
 	public DefaultPodReplicationControllerRunnable(ActorSystemImpl system) {
@@ -28,6 +28,6 @@ public class DefaultPodReplicationControllerRunnable extends PodReplicationContr
 	}
 	
 	public void horizontalPodAutoscaler() {
-		systemLogger().debug(String.format("[REPLICATION][AUTOSCALER] sync"));
+		systemLogger().log(DEBUG, String.format("[REPLICATION][AUTOSCALER] sync"));
 	}
 }

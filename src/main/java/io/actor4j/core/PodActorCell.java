@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.pods.PodContext;
@@ -33,7 +33,7 @@ public class PodActorCell extends ActorCell {
 	
 	@Override
 	public void preStart() {
-		systemLogger().info(String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
+		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
 		super.preStart();
 	}
 }

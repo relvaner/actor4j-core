@@ -31,7 +31,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.actors.Actor.*;
-import static io.actor4j.core.logging.system.SystemActorLogger.*;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 public class PodReplicationController {
 	protected final ActorSystemImpl system;
@@ -60,13 +60,13 @@ public class PodReplicationController {
 	}
 	
 	public void undeployPods(String domain) {
-		systemLogger().info(String.format("[REPLICATION] Domain '%s' undeploying", domain));
+		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' undeploying", domain));
 		
 		Queue<UUID> queue = system.getPodDomains().get(domain);
 		Iterator<UUID> iterator = queue.iterator();
 		while (iterator.hasNext()) {
 			UUID id = iterator.next();
-			systemLogger().info(String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
+			systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 			system.send(new ActorMessage<>(null, STOP, system.SYSTEM_ID, id));
 			iterator.remove();
 		}
@@ -82,7 +82,7 @@ public class PodReplicationController {
 	}
 	
 	protected void updatePods(String domain, Procedure deployPods) {
-		systemLogger().info(String.format("[REPLICATION] Domain '%s' updating", domain));
+		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' updating", domain));
 		
 		ActorGroup oldPods = new ActorGroupSet();
 		Queue<UUID> queue = system.getPodDomains().get(domain);
@@ -98,7 +98,7 @@ public class PodReplicationController {
 			deployPods.apply();
 		
 		if (oldPods.size()>0) {
-			systemLogger().info(String.format("[REPLICATION] Outdated PodActor(s) (%s, %s) stopping", domain, oldPods));
+			systemLogger().log(INFO, String.format("[REPLICATION] Outdated PodActor(s) (%s, %s) stopping", domain, oldPods));
 			system.broadcast(new ActorMessage<Object>(null, STOP, system.SYSTEM_ID, null), oldPods);
 		}
 	}

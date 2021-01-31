@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
@@ -73,26 +73,26 @@ public class ActorExecuterService {
 			public void handle(Throwable t, String message, UUID uuid) {
 				if (message!=null) {
 					if (message.equals("initialization")) {
-						systemLogger().error(
+						systemLogger().log(ERROR,
 							String.format("[SAFETY] Exception in initialization of an actor"));
 					}
 					else if (message.equals("actor") || message.equals("resource")) {
 						Actor actor = system.cells.get(uuid).actor;
-						systemLogger().error(
+						systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 					else if (message.equals("pseudo")) {
 						Actor actor = system.pseudoCells.get(uuid).actor;
-						systemLogger().error(
+						systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 					else if (message.equals("replication")) {
-						systemLogger().error(
+						systemLogger().log(ERROR,
 								String.format("[SAFETY][FATAL] Exception in PodReplicationControllerThread"));
 					}
 				}
 				else {
-					systemLogger().error(
+					systemLogger().log(ERROR,
 						String.format("[SAFETY][FATAL] Exception in ActorThread"));
 				}
 				

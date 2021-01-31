@@ -46,7 +46,7 @@ import io.actor4j.core.protocols.StopProtocol;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
@@ -280,12 +280,12 @@ public class ActorCell {
 		if (system.debugUnhandled) {
 			Actor sourceActor = system.cells.get(message.source).actor;
 			if (sourceActor!=null)
-				systemLogger().warn(
+				systemLogger().log(WARN,
 					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from source (%s)",
 						actorLabel(actor), message.toString(), actorLabel(sourceActor)
 					));
 			else
-				systemLogger().warn(
+				systemLogger().log(WARN,
 					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from unavaible source (???)",
 						actorLabel(actor), message.toString()
 					));

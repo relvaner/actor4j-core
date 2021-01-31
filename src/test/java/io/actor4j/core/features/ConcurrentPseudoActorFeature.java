@@ -31,7 +31,7 @@ import io.actor4j.core.actors.ConcurrentPseudoActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static org.junit.Assert.*;
 
 public class ConcurrentPseudoActorFeature {
@@ -64,7 +64,7 @@ public class ConcurrentPseudoActorFeature {
 					
 					@Override
 					public void receive(ActorMessage<?> message) {
-						logger().debug(String.format("numberGenerator received a message.tag (%d) from main", message.tag));
+						logger().log(DEBUG, String.format("numberGenerator received a message.tag (%d) from main", message.tag));
 						testDone.countDown();
 					}
 					
@@ -86,7 +86,7 @@ public class ConcurrentPseudoActorFeature {
 					.skip(counter).limit(1)
 					.forEach(msg -> { 
 						assertEquals(postconditions_numbers[counter], msg.valueAsInt()); 
-						logger().debug("-> main received a message.value ("+msg.valueAsInt()+") from numberGenerator");
+						logger().log(DEBUG, "-> main received a message.value ("+msg.valueAsInt()+") from numberGenerator");
 					});
 				counter++;
 				

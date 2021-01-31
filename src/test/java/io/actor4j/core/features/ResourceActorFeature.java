@@ -52,7 +52,7 @@ public class ResourceActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("ResourceActorFeature");
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=5000)

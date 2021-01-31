@@ -26,7 +26,7 @@ import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
 import io.actor4j.core.messages.ActorMessage;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static org.junit.Assert.*;
 
 public class EmbeddedActorFeature {
@@ -37,7 +37,7 @@ public class EmbeddedActorFeature {
 		CountDownLatch testDone = new CountDownLatch(2);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem("EmbeddedActorFeature");
+		ActorSystem system = new ActorSystem();
 		
 		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
 			protected EmbeddedActor client;
@@ -50,7 +50,7 @@ public class EmbeddedActorFeature {
 						
 						if (message.tag == SWAP) {
 							become(msg -> {
-								logger().debug(String.format(
+								logger().log(DEBUG, String.format(
 										"Received String message: %s", msg.valueAsString()));
 								unbecome(); 
 								if (counter.incrementAndGet()==1)

@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.utils;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,9 +39,9 @@ public final class ActorUtils {
 	
 	public static int checkTag(int tag) {
 		if (tag<0)
-			systemLogger().error(String.format("[FATAL] Tags below zero are system tags: %s", tag));
+			systemLogger().log(ERROR, String.format("[FATAL] Tags below zero are system tags: %s", tag));
 		else if (!actorTags.add(tag))
-			systemLogger().error(String.format("Tag already exists: %s", tag));
+			systemLogger().log(ERROR, String.format("Tag already exists: %s", tag));
 		
 		return tag;
 	}

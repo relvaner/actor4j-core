@@ -39,7 +39,7 @@ import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
 import io.actor4j.core.utils.ActorGroupSet;
 
-import static io.actor4j.core.logging.user.ActorLogger.*;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static org.junit.Assert.*;
 
 public class PodFeature {
@@ -47,7 +47,7 @@ public class PodFeature {
 
 	@Before
 	public void before() {
-		system = new ActorSystem("PodFeature");
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=5000)
@@ -63,7 +63,7 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -104,7 +104,7 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -154,7 +154,7 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -243,7 +243,7 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -281,7 +281,7 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -328,7 +328,7 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -417,7 +417,7 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -456,7 +456,7 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);
@@ -499,7 +499,7 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value));
 				
 				assertEquals(42, message.tag);
 				assertTrue(message.value!=null);

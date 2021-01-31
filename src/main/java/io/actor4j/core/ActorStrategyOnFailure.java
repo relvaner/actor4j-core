@@ -15,7 +15,7 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.logging.system.SystemActorLogger.systemLogger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.supervisor.SupervisorStrategyDirective.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
@@ -37,7 +37,7 @@ public class ActorStrategyOnFailure {
 	}
 	
 	protected void oneForOne_directive_resume(ActorCell cell) {
-		systemLogger().info(String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.actor)));
+		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.actor)));
 	}
 	
 	protected void oneForOne_directive_restart(ActorCell cell, Exception reason) {

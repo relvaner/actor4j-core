@@ -34,7 +34,7 @@ public class FailsafeFeature {
 
 	@Before
 	public void before() {
-		system = new ActorSystem("FailsafeFeature");
+		system = new ActorSystem();
 		system.setParallelismMin(1);
 	}
 	

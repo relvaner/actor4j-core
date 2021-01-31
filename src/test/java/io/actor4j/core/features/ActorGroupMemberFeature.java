@@ -34,7 +34,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import static io.actor4j.core.logging.ActorLogger.*;
 import static org.junit.Assert.*;
 
 public class ActorGroupMemberFeature {
@@ -42,7 +42,7 @@ public class ActorGroupMemberFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("ActorGroupMemberFeature");
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=30000)
@@ -59,7 +59,7 @@ public class ActorGroupMemberFeature {
 			protected boolean first = true;
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					if (!threadName1.compareAndSet("", Thread.currentThread().getName()))
 						assertEquals(threadName1.get(), Thread.currentThread().getName());
@@ -73,7 +73,7 @@ public class ActorGroupMemberFeature {
 			protected boolean first = true;
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					if (!threadName2.compareAndSet("", Thread.currentThread().getName()))
 						assertEquals(threadName2.get(), Thread.currentThread().getName());
@@ -115,7 +115,7 @@ public class ActorGroupMemberFeature {
 			protected boolean first = true;
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					if (map.get(Thread.currentThread().getName())==null)
 						map.put(Thread.currentThread().getName(), true);
@@ -164,7 +164,7 @@ public class ActorGroupMemberFeature {
 					protected boolean first_child = true;
 					@Override
 					public void receive(ActorMessage<?> message) {
-						logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+						logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 						if (first_child) {
 							if (!threadMap.containsKey(groupId))
 								threadMap.put(groupId, Thread.currentThread().getName());
@@ -178,7 +178,7 @@ public class ActorGroupMemberFeature {
 			}
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					if (map.get(Thread.currentThread().getName())==null)
 						map.put(Thread.currentThread().getName(), true);

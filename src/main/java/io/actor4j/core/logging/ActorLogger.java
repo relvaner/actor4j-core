@@ -15,18 +15,24 @@
  */
 package io.actor4j.core.logging;
 
-public interface Logger {
-	public void error(String msg);
-	public void warn(String msg);
-	public void info(String msg);
-	public void debug(String msg);
-	public void trace(String msg);
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-	public void error(String format, Object... arguments);
-	public void warn(String format, Object... arguments);
-	public void info(String format, Object... arguments);
-	public void debug(String format, Object... arguments);
-	public void trace(String format, Object... arguments);
+public class ActorLogger {
+	public static final Level ERROR = Level.SEVERE;
+	public static final Level WARN  = Level.WARNING;
+	public static final Level INFO  = Level.INFO;
+	public static final Level DEBUG = Level.CONFIG;
+	public static final Level TRACE = Level.FINE;
 	
-	public void setLevel(int level);
+	public static Logger system_logger = LoggerFactory.create("SYSTEM", INFO);
+	public static Logger user_logger = LoggerFactory.create("USER", DEBUG);
+	
+	public static Logger systemLogger() {
+		return system_logger;
+	}
+	
+	public static Logger logger() {
+		return user_logger;
+	}
 }

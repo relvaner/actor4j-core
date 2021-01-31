@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.features;
 
-import static io.actor4j.core.logging.user.ActorLogger.logger;
+import static io.actor4j.core.logging.ActorLogger.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,7 +35,7 @@ public class StatelessActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem("StatelessActorFeature");
+		system = new ActorSystem();
 	}
 	
 	@Test(timeout=30000)
@@ -49,7 +49,7 @@ public class StatelessActorFeature {
 			protected boolean first = true;
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().debug(String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
+				logger().log(DEBUG, String.format("from thread %s of actor %s", Thread.currentThread().getName(), self()));
 				if (first) {
 					testDone.countDown();
 					first=false;
