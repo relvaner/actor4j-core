@@ -17,8 +17,8 @@ package io.actor4j.core.supervisor;
 
 public abstract class SupervisorStrategy {
 	protected int retries;
-	protected int maxRetries;
-	protected long withinTimeRange;
+	protected final int maxRetries;
+	protected final long withinTimeRange;
 	
 	protected long startTime;
 	protected long stopTime;
@@ -33,7 +33,7 @@ public abstract class SupervisorStrategy {
 	}
 	
 	protected void reset() {
-		retries   = 0;
+		retries   = 1;
 		
 		startTime = System.currentTimeMillis();
 		stopTime  = startTime;
@@ -45,11 +45,12 @@ public abstract class SupervisorStrategy {
 		else
 			stopTime  = System.currentTimeMillis();
 		
-		if (!isInTimeRange())
-			if (maxRetries>0 && retries>=maxRetries)
+		if (isInTimeRange()) {
+			if (maxRetries>0 && retries>maxRetries)
 				return SupervisorStrategyDirective.STOP;
-			else
-				reset();
+		}
+		else
+			reset();
 		
 		retries++;
 		

@@ -88,13 +88,16 @@ public class ActorStrategyOnFailure {
 	
 	public void handle(ActorCell cell, Exception e) {
 		ActorCell parent = system.cells.get(cell.parent);
-		SupervisorStrategy supervisorStrategy = parent.supervisorStrategy();
-		SupervisorStrategyDirective directive = supervisorStrategy.apply(e);
+		if (cell.parentSupervisorStrategy==null)	
+			cell.parentSupervisorStrategy = parent.supervisorStrategy();
+		
+		SupervisorStrategy supervisorStrategy = cell.parentSupervisorStrategy;
+		SupervisorStrategyDirective directive = supervisorStrategy.handle(e);
 		
 		while (directive==ESCALATE && !parent.isRoot()) {
 			parent = system.cells.get(parent.parent);
-			supervisorStrategy = parent.supervisorStrategy();
-			directive = supervisorStrategy.apply(e);
+			supervisorStrategy = cell.parentSupervisorStrategy = parent.supervisorStrategy();
+			directive = supervisorStrategy.handle(e);
 		}
 		
 		if (supervisorStrategy instanceof OneForOneSupervisorStrategy) { 

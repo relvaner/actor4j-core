@@ -88,7 +88,9 @@ public class ActorCell {
 	protected final Queue<PersistenceTuple> persistenceTuples;
 	
 	protected final AtomicLong requestRate;
-	protected final Queue<Long> processingTimeStatistics; 
+	protected final Queue<Long> processingTimeStatistics;
+	
+	protected SupervisorStrategy parentSupervisorStrategy;
 			
 	public ActorCell(ActorSystemImpl system, Actor actor) {
 		super();
