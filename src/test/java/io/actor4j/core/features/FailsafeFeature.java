@@ -17,6 +17,7 @@ package io.actor4j.core.features;
 
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.failsafe.ErrorHandler;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
 public class FailsafeFeature {
@@ -91,7 +93,12 @@ public class FailsafeFeature {
 	
 	@Test(timeout=5000)
 	public void test_n_times() {
-		CountDownLatch testDone = new CountDownLatch(3+1);
+		final int maxRetries = DefaultSupervisiorStrategy.MAX_RETRIES;
+		
+		AtomicInteger counterPreRestart = new AtomicInteger(0);
+		AtomicInteger counterPostStop = new AtomicInteger(0);
+		
+		CountDownLatch testDone = new CountDownLatch(maxRetries+1+1);
 		
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
@@ -106,6 +113,7 @@ public class FailsafeFeature {
 					public void preRestart(Exception reason) {
 						super.preRestart(reason);
 						assertEquals(new NullPointerException().getMessage(), reason.getMessage());
+						counterPreRestart.incrementAndGet();
 					}
 					
 					@Override
@@ -115,10 +123,11 @@ public class FailsafeFeature {
 					}
 
 					@Override
-					public void stop() {
-						super.stop();
-						assertEquals(4, testDone.getCount());
-						testDone.countDown();
+					public void postStop() {
+						super.postStop();
+						counterPostStop.incrementAndGet();
+						if (counterPostStop.get()==maxRetries+1)
+							testDone.countDown();
 					}
 				};
 			}
@@ -132,7 +141,7 @@ public class FailsafeFeature {
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
 				assertEquals("actor", message);
 				assertEquals(dest, uuid);
-				testDone.countDown();
+				testDone.countDown(); // maxRetries+1
 			}
 		});
 		
@@ -147,6 +156,8 @@ public class FailsafeFeature {
 		system.start();
 		try {
 			testDone.await();
+			assertEquals(maxRetries, counterPreRestart.get());
+			assertEquals(maxRetries+1, counterPostStop.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
