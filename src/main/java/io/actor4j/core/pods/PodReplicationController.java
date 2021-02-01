@@ -49,7 +49,12 @@ public class PodReplicationController {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
 		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration, jarFile.getAbsolutePath()));
 		if (podSystemConfiguration!=null)
-			PodDeployment.deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
+			deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
+	}
+	
+	protected void deployPods(File jarFile, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorSystemImpl system) {
+		systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be deployed (not implemented)", podConfiguration.domain));
+		// -> PodDeployment.deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
 	}
 	
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {

@@ -58,7 +58,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected final String name;
 	
 	protected /*quasi final*/ DIContainer<UUID> container;
-	protected final PodReplicationController podReplicationController;
+	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell

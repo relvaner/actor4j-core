@@ -18,94 +18,11 @@ package io.actor4j.core.pods;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.List;
 
 import io.actor4j.core.ActorPodService;
 
 public class PodDeployment {
-	public static void deployPods(File jarFile, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
-		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
-		
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(podConfiguration.getClassName(), false, new URLClassLoader(new URL[] { jarFile.toURI().toURL() }));
-
-			if (podSystemConfiguration.getCurrentShardCount()==1)
-				deployPods(clazz, podSystemConfiguration.currentReplicaCount, podConfiguration.getDomain(), service);
-			else
-				deployPodsAsShards(clazz, podConfiguration, podSystemConfiguration, service);
-		} catch (ClassNotFoundException | MalformedURLException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	public static void deployPods(Class<?> clazz, int instances, String domain, ActorPodService service) {
-		if (clazz!=null)
-			try {
-				boolean primaryReplica = true;
-				for (int i=0; i<instances; i++) {
-					Object pod = clazz.getConstructor().newInstance();
-					clazz.getMethod("register", ActorPodService.class, PodContext.class).invoke(pod, service, 
-							new PodContext(
-									domain,
-									false,
-									null,
-									primaryReplica
-							));
-					if (i==0)
-						primaryReplica = false;
-					systemLogger().log(INFO, String.format("[REPLICATION] Pod (%s, %s) deployed", domain, clazz.getName()));
-				}
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}	
-	}
-	
-	public static void deployPodsAsShards(Class<?> clazz, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
-		if (clazz!=null)
-			try {
-				List<String> primaryShardIds = podSystemConfiguration.getPrimaryShardIds();
-				if (primaryShardIds!=null)
-					for (int i=0; i<primaryShardIds.size(); i++) {
-						Object pod = clazz.getConstructor().newInstance();
-						clazz.getMethod("register", ActorPodService.class, PodContext.class).invoke(pod, service, 
-								new PodContext(
-									podConfiguration.getDomain(), 
-									true,
-									primaryShardIds.get(i),
-									true
-								));
-						systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), clazz.getName(), primaryShardIds.get(i)));
-					}
-				List<String> secondaryShardIds = podSystemConfiguration.getSecondaryShardIds();
-				if (secondaryShardIds!=null)
-					for (int i=0; i<secondaryShardIds.size(); i++) {
-						int count = podSystemConfiguration.getSecondaryShardCounts().get(i);
-						if (count>0)
-							for (int j=0; j<count; j++) {
-								Object pod = clazz.getConstructor().newInstance();
-								clazz.getMethod("register", ActorPodService.class, PodContext.class).invoke(pod, service, 
-										new PodContext(
-											podConfiguration.getDomain(), 
-											true,
-											secondaryShardIds.get(i),
-											false
-										));
-								systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.getDomain(), clazz.getName(), secondaryShardIds.get(i)));
-							}
-					}
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-			}	
-	}
-	
 	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
 		
