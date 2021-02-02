@@ -22,11 +22,21 @@ import io.actor4j.core.messages.ActorMessage;
 
 public class ActorService extends ActorSystem {
 	public ActorService() {
-		this(null);
+		super();
+		serverMode();
+	}
+	
+	public ActorService(ActorSystemImplFactory factory) {
+		this(null, factory);
 	}
 	
 	public ActorService(String name) {
 		super(name);
+		serverMode();
+	}
+	
+	public ActorService(String name, ActorSystemImplFactory factory) {
+		super(name, factory);
 		serverMode();
 	}
 	
