@@ -114,7 +114,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			for (; hasNextInner<system.throughput && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
-				if (idle==0) {
+				if (idle>system.load) {
 					load = 0;
 					threadLoad.set(false);
 				}

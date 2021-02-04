@@ -72,7 +72,7 @@ public abstract class ActorThread extends Thread {
 				cell.requestRate.getAndIncrement();
 				failsafeMethod(message, cell);
 			}
-			if (system.counterEnabled)
+			if (system.counterEnabled.get())
 				counter.getAndIncrement();
 			
 			result = true;
@@ -115,6 +115,10 @@ public abstract class ActorThread extends Thread {
 			public void after() {
 			}
 		}, uuid);
+	}
+	
+	public AtomicBoolean getThreadLoad() {
+		return threadLoad;
 	}
 	
 	public AtomicLong getCounter() {

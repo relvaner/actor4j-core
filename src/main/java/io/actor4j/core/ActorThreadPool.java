@@ -117,6 +117,13 @@ public class ActorThreadPool {
 		actorThreadPoolHandler.postPersistence(message);
 	}
 	
+	public List<Boolean> getThreadLoads() {
+		List<Boolean> list = new ArrayList<>();
+		for (ActorThread t : actorThreads)
+			list.add(t.getThreadLoad().get());
+		return list;
+	}
+	
 	public long getCount() {
 		long sum = 0;
 		for (ActorThread t : actorThreads)
@@ -124,6 +131,7 @@ public class ActorThreadPool {
 		
 		return sum;
 	}
+	
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
 		for (ActorThread t : actorThreads)

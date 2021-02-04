@@ -70,10 +70,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected final Map<UUID, ActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
-	protected final AtomicBoolean messagingEnabled;
 	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
 	
-	protected boolean counterEnabled;
+	protected final AtomicBoolean messagingEnabled;
+	protected final AtomicBoolean counterEnabled;
 	
 	protected int parallelismMin;
 	protected int parallelismFactor;
@@ -142,12 +142,15 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		redirector     = new ConcurrentHashMap<>();
 		
 		messagingEnabled = new AtomicBoolean();
+		counterEnabled = new AtomicBoolean();
 		
 		setParallelismMin(0);
 		parallelismFactor = 1;
 		
+		throughput = 100;
+		
 		idle = 100_000;
-		load = 100_000;
+		load = idle/throughput;
 		threadMode = ActorThreadMode.PARK;
 		sleepTime = 25;
 		horizontalPodAutoscalerSyncTime = 15_000;
@@ -155,8 +158,6 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		queueSize       = 50_000;
 		bufferQueueSize = 10_000;
-		
-		throughput = 100;
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
@@ -309,11 +310,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	}
 
 	public boolean isCounterEnabled() {
-		return counterEnabled;
+		return counterEnabled.get();
 	}
 
-	public void setCounterEnabled(boolean counterEnabled) {
-		this.counterEnabled = counterEnabled;
+	public void setCounterEnabled(boolean enabled) {
+		counterEnabled.set(enabled);
 	}
 
 	public int getParallelismMin() {
