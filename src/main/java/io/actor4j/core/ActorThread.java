@@ -17,7 +17,9 @@ package io.actor4j.core;
 
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.actor4j.core.failsafe.Method;
@@ -29,10 +31,15 @@ public abstract class ActorThread extends Thread {
 	
 	protected final ActorSystemImpl system;
 	
-	protected final AtomicBoolean threadLoad;
-	protected final AtomicBoolean processingTimeEnabled;
-	protected final AtomicLong counter;
 	protected Runnable onTermination;
+	
+	protected final AtomicLong counter;
+	protected final AtomicBoolean threadLoad;
+	
+	protected final int maxStatisticValues;
+	protected final AtomicInteger statisticValuesCounter;
+	protected final Queue<Long> threadProcessingTimeStatistics;
+	protected final AtomicBoolean processingTimeEnabled;
 	
 	public ActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
 		super(group, name);
@@ -41,17 +48,31 @@ public abstract class ActorThread extends Thread {
 		uuid = UUID.randomUUID();
 		
 		threadLoad = new AtomicBoolean(false);
-		processingTimeEnabled = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
+		
+		maxStatisticValues = 10_000;
+		statisticValuesCounter = new AtomicInteger(0);
+		threadProcessingTimeStatistics = new ConcurrentLinkedQueue<>();
+		processingTimeEnabled = new AtomicBoolean(false);
 	}
 	
 	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
-			if (processingTimeEnabled.get()) {
-				long startTime = System.nanoTime();
-				cell.internal_receive(message);
-				long stopTime = System.nanoTime();
-				cell.processingTimeStatistics.offer(stopTime-startTime);
+			if (system.threadProcessingTimeEnabled.get() || processingTimeEnabled.get()) {
+				if (statisticValuesCounter.get()<maxStatisticValues) {
+					long startTime = System.nanoTime();
+					cell.internal_receive(message);
+					long stopTime = System.nanoTime();
+					
+					if (system.threadProcessingTimeEnabled.get())
+						threadProcessingTimeStatistics.offer(stopTime-startTime);
+					if (processingTimeEnabled.get())
+						cell.processingTimeStatistics.offer(stopTime-startTime);
+					
+					statisticValuesCounter.incrementAndGet();
+				}
+				else
+					cell.internal_receive(message);
 			}
 			else
 				cell.internal_receive(message);
@@ -121,6 +142,16 @@ public abstract class ActorThread extends Thread {
 		return threadLoad;
 	}
 	
+	public long getThreadProcessingTimeStatistics() {
+		long sum = 0;
+		int count = 0;
+		for (Long value=null; (value=threadProcessingTimeStatistics.poll())!=null; count++) 
+			sum += value;
+		statisticValuesCounter.set(0);
+		
+		return sum>0 ? sum/count : 0;
+	}
+
 	public AtomicLong getCounter() {
 		return counter;
 	}

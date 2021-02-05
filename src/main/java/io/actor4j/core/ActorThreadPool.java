@@ -124,6 +124,13 @@ public class ActorThreadPool {
 		return list;
 	}
 	
+	public List<Long> getProcessingTimeStatistics() {
+		List<Long> list = new ArrayList<>();
+		for (ActorThread t : actorThreads)
+			list.add(t.getThreadProcessingTimeStatistics());
+		return list;
+	}
+	
 	public long getCount() {
 		long sum = 0;
 		for (ActorThread t : actorThreads)

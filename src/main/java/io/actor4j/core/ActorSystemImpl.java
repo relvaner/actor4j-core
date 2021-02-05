@@ -74,6 +74,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected final AtomicBoolean messagingEnabled;
 	protected final AtomicBoolean counterEnabled;
+	protected final AtomicBoolean threadProcessingTimeEnabled;
 	
 	protected int parallelismMin;
 	protected int parallelismFactor;
@@ -143,6 +144,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		messagingEnabled = new AtomicBoolean();
 		counterEnabled = new AtomicBoolean();
+		threadProcessingTimeEnabled = new AtomicBoolean();
 		
 		setParallelismMin(0);
 		parallelismFactor = 1;
@@ -315,6 +317,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 
 	public void setCounterEnabled(boolean enabled) {
 		counterEnabled.set(enabled);
+	}
+	
+	public boolean isThreadProcessingTimeEnabled() {
+		return threadProcessingTimeEnabled.get();
+	}
+	
+	public void setThreadProcessingTimeEnabled(boolean enabled) {
+		threadProcessingTimeEnabled.set(enabled);
 	}
 
 	public int getParallelismMin() {
