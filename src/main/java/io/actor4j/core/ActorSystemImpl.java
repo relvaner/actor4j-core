@@ -86,6 +86,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected long horizontalPodAutoscalerSyncTime;
 	protected long horizontalPodAutoscalerMeasurementTime;
 	
+	protected final int maxStatisticValues;
+	
 	protected boolean debugUnhandled;
 	
 	protected int queueSize;
@@ -157,6 +159,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		sleepTime = 25;
 		horizontalPodAutoscalerSyncTime = 15_000;
 		horizontalPodAutoscalerMeasurementTime = 2_000;
+		
+		maxStatisticValues = 10_000;
 		
 		queueSize       = 50_000;
 		bufferQueueSize = 10_000;

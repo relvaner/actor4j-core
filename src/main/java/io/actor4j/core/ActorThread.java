@@ -36,7 +36,6 @@ public abstract class ActorThread extends Thread {
 	protected final AtomicLong counter;
 	protected final AtomicBoolean threadLoad;
 	
-	protected final int maxStatisticValues;
 	protected final AtomicInteger statisticValuesCounter;
 	protected final Queue<Long> threadProcessingTimeStatistics;
 	protected final AtomicBoolean processingTimeEnabled;
@@ -50,7 +49,6 @@ public abstract class ActorThread extends Thread {
 		threadLoad = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
 		
-		maxStatisticValues = 10_000;
 		statisticValuesCounter = new AtomicInteger(0);
 		threadProcessingTimeStatistics = new ConcurrentLinkedQueue<>();
 		processingTimeEnabled = new AtomicBoolean(false);
@@ -59,7 +57,7 @@ public abstract class ActorThread extends Thread {
 	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
 			if (system.threadProcessingTimeEnabled.get() || processingTimeEnabled.get()) {
-				if (statisticValuesCounter.get()<maxStatisticValues) {
+				if (statisticValuesCounter.get()<system.maxStatisticValues) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
