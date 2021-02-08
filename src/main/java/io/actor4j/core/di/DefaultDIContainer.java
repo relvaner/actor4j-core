@@ -27,10 +27,16 @@ public class DefaultDIContainer<K> implements DIContainer<K> {
 		diMap = new ConcurrentHashMap<>();
 	}
 	
+	@Override
 	public void register(K key, FactoryInjector<?> factoryInjector) {
 		diMap.put(key, factoryInjector);
 	}
 	
+	public FactoryInjector<?> getFactory(K key) {
+		return diMap.get(key);
+	}
+	
+	@Override
 	public Object getInstance(K key) throws Exception {
 		Object result = null;
 		
@@ -42,6 +48,7 @@ public class DefaultDIContainer<K> implements DIContainer<K> {
 		return result;
 	}
 	
+	@Override
 	public void unregister(K key) {
 		diMap.remove(key);
 	}

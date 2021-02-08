@@ -36,9 +36,11 @@ public abstract class ActorThread extends Thread {
 	protected final AtomicLong counter;
 	protected final AtomicBoolean threadLoad;
 	
-	protected final AtomicInteger statisticValuesCounter;
+	protected final AtomicInteger threadStatisticValuesCounter;
 	protected final Queue<Long> threadProcessingTimeStatistics;
-	protected final AtomicBoolean processingTimeEnabled;
+	
+	protected final AtomicInteger cellsStatisticValuesCounter;
+	protected final AtomicBoolean cellsProcessingTimeEnabled;
 	
 	public ActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
 		super(group, name);
@@ -49,25 +51,32 @@ public abstract class ActorThread extends Thread {
 		threadLoad = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
 		
-		statisticValuesCounter = new AtomicInteger(0);
+		threadStatisticValuesCounter = new AtomicInteger(0);
 		threadProcessingTimeStatistics = new ConcurrentLinkedQueue<>();
-		processingTimeEnabled = new AtomicBoolean(false);
+		
+		cellsStatisticValuesCounter = new AtomicInteger(0);
+		cellsProcessingTimeEnabled = new AtomicBoolean(false);
 	}
 	
 	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
-			if (system.threadProcessingTimeEnabled.get() || processingTimeEnabled.get()) {
-				if (statisticValuesCounter.get()<system.maxStatisticValues) {
+			if (system.threadProcessingTimeEnabled.get() || cellsProcessingTimeEnabled.get()) {
+				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.maxStatisticValues;
+				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.maxStatisticValues;
+				
+				if (threadStatisticsEnabled || cellsStatisticsEnabled) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
 					
-					if (system.threadProcessingTimeEnabled.get())
+					if (threadStatisticsEnabled && system.threadProcessingTimeEnabled.get()) {
 						threadProcessingTimeStatistics.offer(stopTime-startTime);
-					if (processingTimeEnabled.get())
+						threadStatisticValuesCounter.incrementAndGet();
+					}
+					if (cellsStatisticsEnabled && cellsProcessingTimeEnabled.get()) {
 						cell.processingTimeStatistics.offer(stopTime-startTime);
-					
-					statisticValuesCounter.incrementAndGet();
+						cellsStatisticValuesCounter.incrementAndGet();
+					}
 				}
 				else
 					cell.internal_receive(message);
@@ -136,6 +145,14 @@ public abstract class ActorThread extends Thread {
 		}, uuid);
 	}
 	
+	public AtomicLong getCounter() {
+		return counter;
+	}
+
+	public long getCount() {
+		return counter.longValue();
+	}
+	
 	public AtomicBoolean getThreadLoad() {
 		return threadLoad;
 	}
@@ -145,19 +162,19 @@ public abstract class ActorThread extends Thread {
 		int count = 0;
 		for (Long value=null; (value=threadProcessingTimeStatistics.poll())!=null; count++) 
 			sum += value;
-		statisticValuesCounter.set(0);
+		threadStatisticValuesCounter.set(0);
 		
 		return sum>0 ? sum/count : 0;
 	}
-
-	public AtomicLong getCounter() {
-		return counter;
-	}
-
-	public long getCount() {
-		return counter.longValue();
-	}
 	
+	public AtomicInteger getCellsStatisticValuesCounter() {
+		return cellsStatisticValuesCounter;
+	}
+
+	public AtomicBoolean getCellsProcessingTimeEnabled() {
+		return cellsProcessingTimeEnabled;
+	}
+
 	public abstract Queue<ActorMessage<?>> getDirectiveQueue();
 	
 	public abstract Queue<ActorMessage<?>> getPriorityQueue();

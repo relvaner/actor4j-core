@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.ActorSystemImpl;
+import io.actor4j.core.di.DefaultDIContainer;
 import io.actor4j.core.function.Procedure;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
@@ -36,12 +37,14 @@ import static io.actor4j.core.logging.ActorLogger.*;
 public class PodReplicationController {
 	protected final ActorSystemImpl system;
 	
+	protected final DefaultDIContainer<String> container;
 	protected final Map<String, PodReplicationTuple> podReplicationMap;
 	
 	public PodReplicationController(ActorSystemImpl system) {
 		super();
 		this.system = system;
 		
+		container = new DefaultDIContainer<>();
 		podReplicationMap = new ConcurrentHashMap<>();
 	}
 
@@ -54,14 +57,15 @@ public class PodReplicationController {
 	
 	protected void deployPods(File jarFile, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorSystemImpl system) {
 		systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be deployed (not implemented)", podConfiguration.domain));
-		// -> PodDeployment.deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
 	}
 	
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
 		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration));
-		if (podSystemConfiguration!=null)
+		if (podSystemConfiguration!=null) {
+			container.register(podConfiguration.getDomain(), factory);
 			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
+		}
 	}
 	
 	public void undeployPods(String domain) {
@@ -76,6 +80,7 @@ public class PodReplicationController {
 			iterator.remove();
 		}
 		system.getPodDomains().remove(domain);
+		container.unregister(domain);
 	}
 	
 	public void updatePods(File jarFile, PodConfiguration podConfiguration) {
@@ -118,7 +123,7 @@ public class PodReplicationController {
 			for (int i=0; i<podConfiguration.getShardCount(); i++)
 				primaryShardIds.add(String.valueOf(i));
 			
-			if (podConfiguration.getMinReplica()==1) {	
+			if (replicaCount==1) {	
 				result = new PodSystemConfiguration(primaryShardIds, null, null, podConfiguration.getShardCount(), 0);
 			}
 			else {
@@ -142,11 +147,39 @@ public class PodReplicationController {
 		return podReplicationMap;
 	}
 
-	public void increasePods(String domain) {
-		
+	public void increasePods(String domain, String shardId) {
+		increasePods(domain, shardId, 1);
 	}
 	
-	public void decreasePods(String domain) {
+	public void increasePods(String domain, String shardId, int instances) {
+		PodReplicationTuple podReplicationTuple = podReplicationMap.get(domain);
+		
+		if (podReplicationTuple!=null) {
+			if (podReplicationTuple.jarFileName!=null)
+				systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be deployed (not implemented)", domain));
+			else if (podReplicationTuple.podConfiguration.getShardCount()==1) {
+				PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+						null, null, null, 1, podReplicationTuple.podSystemConfiguration.getCurrentReplicaCount()+instances);
+				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration, podSystemConfiguration));
+				
+				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration, podSystemConfiguration, instances, null, system);
+			}
+			else {
+				PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+						podReplicationTuple.podSystemConfiguration.primaryShardIds, 
+						podReplicationTuple.podSystemConfiguration.secondaryShardIds, 
+						podReplicationTuple.podSystemConfiguration.secondaryShardCounts, 
+						podReplicationTuple.podSystemConfiguration.currentShardCount, 
+						0);
+				podSystemConfiguration.secondaryShardCounts.set(Integer.valueOf(shardId), podSystemConfiguration.secondaryShardCounts.get(Integer.valueOf(shardId))+instances);
+				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration, podSystemConfiguration));
+				
+				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration, podSystemConfiguration, instances, shardId, system);
+			}
+		}
+	}
+	
+	public void decreasePods(String domain, String shardId) {
 		
 	}
 }

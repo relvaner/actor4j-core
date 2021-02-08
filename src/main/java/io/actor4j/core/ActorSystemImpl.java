@@ -247,6 +247,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return container;
 	}
 	
+	public PodReplicationController getPodReplicationController() {
+		return podReplicationController;
+	}
+
 	public Map<UUID, ActorCell> getCells() {
 		return cells;
 	}
@@ -368,6 +372,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	public long getSleepTime() {
 		return sleepTime;
+	}
+	
+	public long getHorizontalPodAutoscalerMeasurementTime() {
+		return horizontalPodAutoscalerMeasurementTime;
 	}
 
 	public void parkMode() {

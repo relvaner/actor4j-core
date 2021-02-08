@@ -72,6 +72,26 @@ public class ActorTimerExecuterService implements ActorTimer {
 	}
 	
 	@Override
+	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final String alias, long delay, TimeUnit unit) {
+		return timerExecuterService.schedule(new Runnable() {
+			@Override
+			public void run() {
+				system.sendViaAlias(supplier.get(), alias);
+			}
+		}, delay, unit);
+	}
+	
+	@Override
+	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final String alias, long delay, TimeUnit unit) {
+		return scheduleOnce(new Supplier<ActorMessage<?>>() {
+			@Override
+			public ActorMessage<?> get() {
+				return message;
+			}
+		}, alias, delay, unit);
+	}
+	
+	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay, TimeUnit unit) {
 		return timerExecuterService.schedule(new Runnable() {
 			@Override
@@ -115,6 +135,26 @@ public class ActorTimerExecuterService implements ActorTimer {
 				return message;
 			}
 		}, dest, initalDelay, period, unit);
+	}
+	
+	@Override
+	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final String alias, long initalDelay, long period, TimeUnit unit) {
+		return timerExecuterService.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				system.sendViaAlias(supplier.get(), alias);
+			}
+		}, initalDelay, period, unit); 
+	}
+	
+	@Override
+	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final String alias, long initalDelay, long period, TimeUnit unit) {
+		return schedule(new Supplier<ActorMessage<?>>() {
+			@Override
+			public ActorMessage<?> get() {
+				return message;
+			}
+		}, alias, initalDelay, period, unit);
 	}
 	
 	@Override

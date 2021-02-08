@@ -97,6 +97,10 @@ public class ActorThreadPool {
 		}
 	}
 	
+	public List<ActorThread> getActorThreads() {
+		return actorThreads;
+	}
+
 	public ActorThreadPoolHandler getActorThreadPoolHandler() {
 		return actorThreadPoolHandler;
 	}

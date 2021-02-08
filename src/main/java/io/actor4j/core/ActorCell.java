@@ -415,4 +415,8 @@ public class ActorCell {
 	public AtomicLong getRequestRate() {
 		return requestRate;
 	}
+
+	public Queue<Long> getProcessingTimeStatistics() {
+		return processingTimeStatistics;
+	}
 }

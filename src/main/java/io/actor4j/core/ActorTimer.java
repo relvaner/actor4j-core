@@ -26,10 +26,14 @@ import io.actor4j.core.utils.ActorGroup;
 public interface ActorTimer {
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay, TimeUnit unit);
 	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final UUID dest, long delay, TimeUnit unit);
+	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final String alias, long delay, TimeUnit unit);
+	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final String alias, long delay, TimeUnit unit);
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay, TimeUnit unit);
 	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final ActorGroup group, long delay, TimeUnit unit);
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final UUID dest, long initalDelay, long period, TimeUnit unit);
 	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final UUID dest, long initalDelay, long period, TimeUnit unit);
+	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final String alias, long initalDelay, long period, TimeUnit unit);
+	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final String alias, long initalDelay, long period, TimeUnit unit);
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long initalDelay, long period, TimeUnit unit);
 	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final ActorGroup group, long initalDelay, long period, TimeUnit unit);
 }
