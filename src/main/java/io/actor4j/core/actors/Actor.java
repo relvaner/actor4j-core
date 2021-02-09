@@ -271,6 +271,10 @@ public abstract class Actor implements ActorRef {
 		send(message);
 	}
 	
+	public void forward(ActorMessage<?> message, String alias) {
+		sendViaAlias(message, alias);
+	}
+	
 	public void priority(ActorMessage<?> message) {
 		cell.priority(message);
 	}

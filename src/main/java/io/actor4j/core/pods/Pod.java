@@ -16,9 +16,8 @@
 package io.actor4j.core.pods;
 
 import io.actor4j.core.ActorPodService;
-import io.actor4j.core.messages.ActorMessage;
 
-public abstract class Pod implements Shard {
+public abstract class Pod {
 	public Pod() {
 		super();
 	}
@@ -26,9 +25,4 @@ public abstract class Pod implements Shard {
 	public abstract void register(ActorPodService service, PodContext context);
 	
 	public abstract String domain();
-	
-	@Override
-	public String shardId(ActorMessage<?> message, int totalShardCount) {
-		return null;
-	}
 }
