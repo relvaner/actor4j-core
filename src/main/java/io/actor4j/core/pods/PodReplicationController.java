@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.ActorSystemImpl;
+import io.actor4j.core.PodActorCell;
 import io.actor4j.core.di.DefaultDIContainer;
 import io.actor4j.core.function.Procedure;
 import io.actor4j.core.messages.ActorMessage;
@@ -65,6 +66,59 @@ public class PodReplicationController {
 		if (podSystemConfiguration!=null) {
 			container.register(podConfiguration.getDomain(), factory);
 			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
+		}
+	}
+	
+	public void undeployPod(String domain, String shardId, int instances) {
+		PodReplicationTuple podReplicationTuple = podReplicationMap.get(domain);
+		
+		if (podReplicationTuple!=null) {
+			if (podReplicationTuple.podConfiguration.getShardCount()==1) {
+				systemLogger().log(INFO, String.format("[REPLICATION] Pod (%s) undeploying", domain));
+				
+				Queue<UUID> queue = system.getPodDomains().get(domain);
+				Iterator<UUID> iterator = queue.iterator();
+				int count=0;
+				for (; iterator.hasNext() && count<instances;) {
+					UUID id = iterator.next();
+					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
+					if (!cell.getContext().isPrimaryReplica()) { // does not remove primary replica
+						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
+						system.send(new ActorMessage<>(null, STOP, system.SYSTEM_ID, id));
+						iterator.remove();
+						count++;
+					}
+				}
+				
+				PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+						null, null, null, 1, podReplicationTuple.podSystemConfiguration.getCurrentReplicaCount()-count);
+				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration, podSystemConfiguration));
+			}
+			else {
+				systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, SECONDARY, %s) undeploying", domain, shardId));
+				
+				Queue<UUID> queue = system.getPodDomains().get(domain);
+				Iterator<UUID> iterator = queue.iterator();
+				int count=0;
+				for (; iterator.hasNext() && count<instances; count++) {
+					UUID id = iterator.next();
+					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
+					if (!cell.getContext().isPrimaryReplica() && cell.getContext().getShardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
+						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
+						system.send(new ActorMessage<>(null, STOP, system.SYSTEM_ID, id));
+						iterator.remove();
+					}
+				}
+				
+				PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+						podReplicationTuple.podSystemConfiguration.primaryShardIds, 
+						podReplicationTuple.podSystemConfiguration.secondaryShardIds, 
+						podReplicationTuple.podSystemConfiguration.secondaryShardCounts, 
+						podReplicationTuple.podSystemConfiguration.currentShardCount, 
+						0);
+				podSystemConfiguration.secondaryShardCounts.set(Integer.valueOf(shardId), podSystemConfiguration.secondaryShardCounts.get(Integer.valueOf(shardId))-count);
+				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration, podSystemConfiguration));
+			}
 		}
 	}
 	
@@ -180,6 +234,17 @@ public class PodReplicationController {
 	}
 	
 	public void decreasePods(String domain, String shardId) {
+		decreasePods(domain, shardId, 1);
+	}
+	
+	public void decreasePods(String domain, String shardId, int instances) {
+		PodReplicationTuple podReplicationTuple = podReplicationMap.get(domain);
 		
+		if (podReplicationTuple!=null) {
+			if (podReplicationTuple.jarFileName!=null)
+				systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be undeployed (not implemented)", domain));
+			else 
+				undeployPod(domain, shardId, instances);
+		}
 	}
 }

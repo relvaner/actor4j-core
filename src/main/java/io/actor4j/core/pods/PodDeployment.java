@@ -105,7 +105,7 @@ public class PodDeployment {
 								primaryShardIds.get(i),
 								true
 							));
-					systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), primaryShardIds.get(i)));
+					systemLogger().log(INFO, String.format("[SHARDING] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), primaryShardIds.get(i)));
 				}
 			List<String> secondaryShardIds = podSystemConfiguration.getSecondaryShardIds();
 			if (secondaryShardIds!=null)
