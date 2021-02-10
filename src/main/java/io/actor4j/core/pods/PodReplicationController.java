@@ -100,13 +100,14 @@ public class PodReplicationController {
 				Queue<UUID> queue = system.getPodDomains().get(domain);
 				Iterator<UUID> iterator = queue.iterator();
 				int count=0;
-				for (; iterator.hasNext() && count<instances; count++) {
+				for (; iterator.hasNext() && count<instances;) {
 					UUID id = iterator.next();
 					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
 					if (!cell.getContext().isPrimaryReplica() && cell.getContext().getShardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 						system.send(new ActorMessage<>(null, STOP, system.SYSTEM_ID, id));
 						iterator.remove();
+						count++;
 					}
 				}
 				
