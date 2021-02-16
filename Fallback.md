@@ -24,7 +24,7 @@ Of course, it can be tried alternatively to solve the problem by making a classi
 
 ## Use Cases ##
 
-- Multi-agent systems (see also [FIPA Interaction Protocols @actor4j-fipa](https://github.com/relvaner/actor4j-fipa))
+- Multi-agent systems
 - Simulations
 - Games (e.g., MMOG, MMORPG)
 - Business Process Modeling (BPM): e.g., [[21](#21)]
@@ -59,14 +59,16 @@ Aim of this project [[18](#18)] was to enhance the performance in message passin
 
 ## Installation ##
 
-You can add the following Maven dependency to your pom.xml file:
+I am currently working on a new version `1.1.0` for `Actor4j`. In the near future the new version and also the other libraries will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `1.1.0`.
+
+Currently you can add the following Maven dependency to your `pom.xml` file:
 
 ```xml
-		<dependency>
-			<groupId>io.actor4j</groupId>
-			<artifactId>actor4j-core</artifactId>
-			<version>1.0.2</version>
-		</dependency>
+<dependency>
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core</artifactId>
+	<version>1.0.2</version>
+</dependency>
 ```
 
 ## Configuration, starting and stopping the actor system ##
@@ -402,7 +404,7 @@ Enclosed two scruffy class diagrams maked with `yuml.me`, have fun!
 
 ## Cluster configuration ##
 
-In a cluster, `actor4j` can also be operated. A tomcat server is in generally used. A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible over a client API. The websocket approach is similar to the REST API (see Fig. 5).
+A server node can be addressed via a `REST API` ([see the current specification](http://docs.actor4j.apiary.io)) or over a websocket connection. The servers in the cluster exchange messages via websocket connections. Of course access to a server node is also possible over a client API. The websocket approach is similar to the REST API (see Fig. 5). A web template for a `Tomcat` server node can be found under: [actor4j-web-template](https://github.com/relvaner/actor4j-web-template).
 
 <img src="doc/images/rest api.png" alt="Representation of the basic calls to the actor4j REST API" width="730" height="64"/>
 
@@ -410,7 +412,7 @@ Fig. 5: Representation of the basic calls to the `actor4j` `REST API`
 
 Each actor has a unique ID (`UUID`). Alternatively, an actor can also be addressed via an alias instead of its ID. For remote access this is quite handy. Before a message can be processed, it is checked whether the corresponding addressee (actor) is running on the local machine. If this is not the case, an attempt is made to determine on which host the addressee can be located (1, 2). Subsequently, the message is sent to the destination host (3). Already found addressees are temporarily stored for a later easy access (usage of Guava Cache [[14](#14)]).
 
-> Currently, there is worked on a new cluster architecture, that is using Actor4j and Vert.x together, with a focus on a container-based environment.
+> A more modern version is planned for the future.
 
 <!--
 #### Note ####
@@ -434,7 +436,7 @@ D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model
 
 D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki, Finland 2019, pp. 79-86, [Online]. Available from: https://doi.org/10.1109/INDIN41052.2019.8972075
 
-## Announcement ##
+## Development Status ##
 This software framework is currently under an prototype state.
 
 ## References ##
