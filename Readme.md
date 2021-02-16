@@ -20,7 +20,7 @@ This software framework is currently under an prototype state.
 
 ## Installation ##
 
-I am currently working on a new version `1.1.0` for `Actor4j`. In the near future the new version and also the other modules will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `1.1.0`.
+I am currently working on a new version `1.1.0` for `Actor4j`. In the near future the new version and also the other libraries will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `1.1.0`.
 
 Currently you can add the following Maven dependency to your `pom.xml` file:
 
