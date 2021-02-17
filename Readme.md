@@ -7,6 +7,8 @@
 
 For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`. Fallback documentation under https://github.com/relvaner/actor4j-core/blob/master/Fallback.md
 
+The `Actor4j - Core` library (`v1.1.0`) has no external dependencies and is also compilable as a native image with GraalVM.
+
 ## License ##
 This framework is released under an open source Apache 2.0 license.
 
