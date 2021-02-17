@@ -17,8 +17,8 @@ D. A. Bauer and J. Mäkiö, “Actor4j: A Software Framework for the Actor Model
 
 D. A. Bauer and J. Mäkiö, "Hybrid Cloud – Architecture for Administration Shells with RAMI4.0 Using Actor4j," 2019 IEEE 17th International Conference on Industrial Informatics (INDIN), Helsinki, Finland 2019, pp. 79-86, [Online]. Available from: https://doi.org/10.1109/INDIN41052.2019.8972075
 
-## Development Status ##
-This software framework is currently under an prototype state.
+## Development State ##
+This software framework is currently in a prototype state.
 
 ## Installation ##
 
