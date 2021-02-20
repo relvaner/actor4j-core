@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.pods;
+package io.actor4j.core.internal.pods;
 
 import java.io.File;
 import java.util.Iterator;
@@ -29,6 +29,8 @@ import io.actor4j.core.internal.ActorSystemImpl;
 import io.actor4j.core.internal.PodActorCell;
 import io.actor4j.core.internal.di.DefaultDIContainer;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
 
@@ -51,18 +53,18 @@ public class PodReplicationController {
 
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
-		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration, jarFile.getAbsolutePath()));
+		podReplicationMap.put(podConfiguration.getDomain(), new PodReplicationTuple(podConfiguration, podSystemConfiguration, jarFile.getAbsolutePath()));
 		if (podSystemConfiguration!=null)
 			deployPods(jarFile, podConfiguration, podSystemConfiguration, system);
 	}
 	
 	protected void deployPods(File jarFile, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorSystemImpl system) {
-		systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be deployed (not implemented)", podConfiguration.domain));
+		systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be deployed (not implemented)", podConfiguration.getDomain()));
 	}
 	
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
 		PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
-		podReplicationMap.put(podConfiguration.domain, new PodReplicationTuple(podConfiguration, podSystemConfiguration));
+		podReplicationMap.put(podConfiguration.getDomain(), new PodReplicationTuple(podConfiguration, podSystemConfiguration));
 		if (podSystemConfiguration!=null) {
 			container.register(podConfiguration.getDomain(), factory);
 			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
@@ -139,11 +141,11 @@ public class PodReplicationController {
 	}
 	
 	public void updatePods(File jarFile, PodConfiguration podConfiguration) {
-		updatePods(podConfiguration.domain, () -> deployPods(jarFile, podConfiguration));
+		updatePods(podConfiguration.getDomain(), () -> deployPods(jarFile, podConfiguration));
 	}
 	
 	public void updatePods(String domain, PodFactory factory, PodConfiguration podConfiguration) {
-		updatePods(podConfiguration.domain, () -> deployPods(factory, podConfiguration));
+		updatePods(podConfiguration.getDomain(), () -> deployPods(factory, podConfiguration));
 	}
 	
 	protected void updatePods(String domain, Procedure deployPods) {
@@ -171,7 +173,7 @@ public class PodReplicationController {
 	public static PodSystemConfiguration scalingAlgorithm(PodConfiguration podConfiguration) {
 		PodSystemConfiguration result = null;
 		
-		int replicaCount = podConfiguration.minReplica;
+		int replicaCount = podConfiguration.getMinReplica();
 		
 		if (podConfiguration.getShardCount()>1) {
 			List<String> primaryShardIds = new LinkedList<>();

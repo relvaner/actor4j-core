@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package io.actor4j.core.pods;
+package io.actor4j.core.internal.pods;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
 import java.util.List;
 
 import io.actor4j.core.ActorPodService;
+import io.actor4j.core.pods.Pod;
+import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.PodFactory;
 
 public class PodDeployment {
 	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {

@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-import io.actor4j.core.annotations.concurrent.Readonly;
+import io.actor4j.core.internal.annotations.concurrent.Readonly;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingBeforeStart;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;

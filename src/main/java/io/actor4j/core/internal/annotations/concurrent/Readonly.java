@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.annotations.concurrent;
+package io.actor4j.core.internal.annotations.concurrent;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
