@@ -34,4 +34,23 @@ Currently you can add the following Maven dependency to your `pom.xml` file:
 </dependency>		
 ```
 
+or a SNAPSHOT (`v1.1.0`) with JitPack.io
+
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+	
+	<dependencies>
+		<dependency>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-core</artifactId>
+			<version>master-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+```
+
 Last updated: February 17, 2021
