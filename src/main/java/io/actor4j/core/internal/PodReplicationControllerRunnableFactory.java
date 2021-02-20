@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.internal;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import io.actor4j.core.internal.ActorSystemImpl;
-
-public interface ActorSystemImplFactory extends BiFunction<String, ActorSystem, ActorSystemImpl>{
+public interface PodReplicationControllerRunnableFactory extends Function<ActorSystemImpl, PodReplicationControllerRunnable>{
 }

@@ -13,9 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.pods;
+package io.actor4j.core.internal;
 
-import io.actor4j.core.internal.di.FactoryInjector;
+import static io.actor4j.core.logging.ActorLogger.*;
 
-public interface PodFactory extends FactoryInjector<Pod> {
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.pods.PodContext;
+
+public class PodActorCell extends ActorCell {
+	protected volatile PodContext context;
+	
+	public PodActorCell(ActorSystemImpl system, Actor actor) {
+		super(system, actor);
+	}
+	
+	public PodContext getContext() {
+		return context;
+	}
+	
+	@Override
+	public void preStart() {
+		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
+		super.preStart();
+	}
 }

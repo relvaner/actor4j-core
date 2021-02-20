@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.internal.di;
 
-import java.util.function.BiFunction;
-
-import io.actor4j.core.internal.ActorSystemImpl;
-
-public interface ActorSystemImplFactory extends BiFunction<String, ActorSystem, ActorSystemImpl>{
+public interface DIContainer<K> {
+	public void register(K key, FactoryInjector<?> factoryInjector);
+	public Object getInstance(K key) throws Exception;
+	public void unregister(K key);
 }

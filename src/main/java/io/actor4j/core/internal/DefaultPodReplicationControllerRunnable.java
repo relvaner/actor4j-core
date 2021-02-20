@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.pods;
+package io.actor4j.core.internal;
 
-import io.actor4j.core.internal.di.FactoryInjector;
+import static io.actor4j.core.logging.ActorLogger.*;
 
-public interface PodFactory extends FactoryInjector<Pod> {
+public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
+	public DefaultPodReplicationControllerRunnable(ActorSystemImpl system) {
+		super(system);
+	}
+
+	@Override
+	public void onRun() {
+		horizontalPodAutoscaler();
+	}
+	
+	public void horizontalPodAutoscaler() {
+		systemLogger().log(DEBUG, String.format("[REPLICATION][AUTOSCALER] sync"));
+	}
 }

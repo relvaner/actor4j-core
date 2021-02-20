@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.PseudoActorCell;
+import io.actor4j.core.internal.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class ConcurrentPseudoActor {

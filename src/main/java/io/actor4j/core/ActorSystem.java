@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import io.actor4j.core.internal.ActorSystemImpl;
+import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.connectors.PersistenceConnector;
 import io.actor4j.core.pods.Database;

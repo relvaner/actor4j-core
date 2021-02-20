@@ -24,10 +24,10 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.actor4j.core.ActorSystemImpl;
-import io.actor4j.core.PodActorCell;
-import io.actor4j.core.di.DefaultDIContainer;
 import io.actor4j.core.function.Procedure;
+import io.actor4j.core.internal.ActorSystemImpl;
+import io.actor4j.core.internal.PodActorCell;
+import io.actor4j.core.internal.di.DefaultDIContainer;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;

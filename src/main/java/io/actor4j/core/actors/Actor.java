@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.actors;
 
-import static io.actor4j.core.protocols.ActorProtocolTag.*;
+import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 
 import java.util.List;
 import java.util.Queue;
@@ -23,9 +23,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.internal.ActorCell;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;

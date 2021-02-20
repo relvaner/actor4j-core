@@ -129,7 +129,8 @@
         			<descriptorRefs>
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
-              		<jarName>${project.artifactId}-${project.version}</jarName>
+              		<finalName>${project.artifactId}-${project.version}-fat</finalName>
+              		<appendAssemblyId>false</appendAssemblyId>
               		<archive>
             			<manifestEntries>
                 			<Multi-Release>true</Multi-Release>
