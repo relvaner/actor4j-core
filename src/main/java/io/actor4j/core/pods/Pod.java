@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,8 @@ package io.actor4j.core.pods;
 
 import io.actor4j.core.ActorPodService;
 
-public abstract class Pod {
-	public Pod() {
-		super();
-	}
+public interface Pod {
+	public void register(ActorPodService service, PodContext context);
 	
-	public abstract void register(ActorPodService service, PodContext context);
-	
-	public abstract String domain();
+	public String domain();
 }

@@ -18,7 +18,7 @@ package io.actor4j.core.pods;
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.pods.actors.PodActor;
 
-public abstract class ActorPod extends Pod {
+public abstract class ActorPod implements Pod {
 	public ActorPod() {
 		super();
 	}
