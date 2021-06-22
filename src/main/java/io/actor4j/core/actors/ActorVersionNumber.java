@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,6 @@
  */
 package io.actor4j.core.actors;
 
-public interface VersionNumber {
-	public long versionNumber();
+public interface ActorVersionNumber {
+	public String versionNumber();
 }

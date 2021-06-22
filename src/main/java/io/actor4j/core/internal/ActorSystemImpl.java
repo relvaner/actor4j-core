@@ -550,13 +550,13 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		if (instances>0) {
 			List<UUID> oldActors = getActorsFromAlias(alias);
 			/*
-			if (oldActors.size()>0 && getCells().get(oldActors.get(0)).actor instanceof VersionNumber) {	
+			if (oldActors.size()>0 && getCells().get(oldActors.get(0)).actor instanceof ActorVersionNumber) {	
 				Actor newActor = factory.create();
-				if (newActor instanceof VersionNumber) {
-					long oldActorsVersionNumber = ((VersionNumber)getCells().get(oldActors.get(0)).actor).versionNumber();
-					long newActorsVersionNumber = ((VersionNumber)newActor).versionNumber();
+				if (newActor instanceof ActorVersionNumber) {
+					VersionNumber oldActorsVersionNumber = VersionNumber.parse((ActorVersionNumber)getCells().get(oldActors.get(0)).actor).versionNumber());
+					VersionNumber newActorsVersionNumber = VersionNumber.parse((ActorVersionNumber)newActor).versionNumber());
 						
-					if (newActorsVersionNumber<=oldActorsVersionNumber)
+					if (newActorsVersionNumber.compareTo(oldActorsVersionNumber)<=0)
 						return false;
 				}
 				else

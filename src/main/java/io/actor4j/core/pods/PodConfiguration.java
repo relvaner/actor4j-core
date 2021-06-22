@@ -21,6 +21,7 @@ public class PodConfiguration {
 	protected final int shardCount;
 	protected final int minReplica;
 	protected final int maxReplica;
+	protected final String versionNumber;
 	
 	public PodConfiguration() {
 		super();
@@ -30,24 +31,29 @@ public class PodConfiguration {
 		shardCount = 1;
 		minReplica = 1;
 		maxReplica = 1;
+		versionNumber = null;
 	}
 	
 	public PodConfiguration(String domain, String className, int minReplica, int maxReplica) {
-		super();
-		this.domain = domain;
-		this.className = className;
-		this.shardCount = 1;
-		this.minReplica = minReplica;
-		this.maxReplica = maxReplica;
+		this(domain, className, minReplica, maxReplica, null);
+	}
+	
+	public PodConfiguration(String domain, String className, int minReplica, int maxReplica, String versionNumber) {
+		this(domain, className, 1, minReplica, maxReplica, versionNumber);
 	}
 	
 	public PodConfiguration(String domain, String className, int shardCount, int minReplica, int maxReplica) {
+		this(domain, className, shardCount, minReplica, maxReplica, null);
+	}
+	
+	public PodConfiguration(String domain, String className, int shardCount, int minReplica, int maxReplica, String versionNumber) {
 		super();
 		this.domain = domain;
 		this.className = className;
 		this.shardCount = shardCount;
 		this.minReplica = minReplica;
 		this.maxReplica = maxReplica;
+		this.versionNumber = versionNumber;
 	}
 
 	public String getDomain() {
@@ -68,5 +74,9 @@ public class PodConfiguration {
 
 	public int getMaxReplica() {
 		return maxReplica;
+	}
+
+	public String getVersionNumber() {
+		return versionNumber;
 	}
 }
