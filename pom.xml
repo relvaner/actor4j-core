@@ -129,15 +129,16 @@
         			<descriptorRefs>
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
-              		<finalName>${project.artifactId}-${project.version}-fat</finalName>
+              		<finalName>${project.artifactId}-${project.version}</finalName>
               		<appendAssemblyId>false</appendAssemblyId>
               		<archive>
             			<manifestEntries>
                 			<Multi-Release>true</Multi-Release>
+                			<Automatic-Module-Name>io.actor4j.core</Automatic-Module-Name>
             			</manifestEntries>
         			</archive>
               		<includes>
-                		<include>META-INF/LICENSE.txt</include>
+                		<include>META-INF/LICENSE</include>
               		</includes>
             	</configuration>
         		<executions>
