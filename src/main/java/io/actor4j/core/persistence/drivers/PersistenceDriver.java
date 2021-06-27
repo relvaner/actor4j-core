@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.persistence.connectors;
-
-import java.util.UUID;
+package io.actor4j.core.persistence.drivers;
 
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.messages.ActorMessage;
 
-public abstract class PersistenceAdapter {
-	protected ActorSystem parent;
-	protected UUID id;
+public abstract class PersistenceDriver {
+	protected final String host;
+	protected final int port; 
+	protected final String databaseName;
 	
-	protected PersistenceConnector connector;
+	public PersistenceDriver(String host, int port, String databaseName) {
+		this.host = host;
+		this.port = port;
+		this.databaseName = databaseName;
+	}
 	
-	public PersistenceAdapter(ActorSystem parent, PersistenceConnector connector) {
-		this.parent = parent;
-		this.connector = connector;
+	public String getHost() {
+		return host;
 	}
 
-	public UUID self() {
-		return id;
+	public int getPort() {
+		return port;
 	}
-	
-	public void preStart(UUID id) {
-		this.id = id;
+
+	public String getDatabaseName() {
+		return databaseName;
 	}
+
+	public abstract void open();
+	public abstract void close();
 	
-	public abstract void receive(ActorMessage<?> message);
+	public abstract PersistenceImpl createPersistenceImpl(ActorSystem parent);
 }

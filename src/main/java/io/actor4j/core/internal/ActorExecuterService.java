@@ -133,7 +133,7 @@ public class ActorExecuterService {
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		
 		if (system.persistenceMode) {
-			persistenceService = new ActorPersistenceService(system.wrapper, system.parallelismMin, system.parallelismFactor, system.persistenceConnector);
+			persistenceService = new ActorPersistenceService(system.wrapper, system.parallelismMin, system.parallelismFactor, system.persistenceDriver);
 			persistenceService.start();
 		}
 		

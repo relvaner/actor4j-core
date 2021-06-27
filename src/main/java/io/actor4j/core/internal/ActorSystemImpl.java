@@ -46,7 +46,7 @@ import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
 import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.persistence.connectors.PersistenceConnector;
+import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.pods.Database;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
@@ -105,7 +105,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected PersistenceConnector persistenceConnector;
+	protected PersistenceDriver persistenceDriver;
 	protected boolean persistenceMode;
 	
 	protected Database<?> podDatabase;
@@ -404,8 +404,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return persistenceMode;
 	}
 	
-	public void persistenceMode(PersistenceConnector persistenceConnector) {
-		this.persistenceConnector = persistenceConnector;
+	public void persistenceMode(PersistenceDriver persistenceDriver) {
+		this.persistenceDriver = persistenceDriver;
 		this.persistenceMode = true;
 	}
 	

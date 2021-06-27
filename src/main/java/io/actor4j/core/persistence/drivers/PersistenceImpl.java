@@ -13,31 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal.persistence.actor;
+package io.actor4j.core.persistence.drivers;
 
-import io.actor4j.core.actors.Actor;
+import java.util.UUID;
+
+import io.actor4j.core.ActorSystem;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.persistence.drivers.PersistenceImpl;
 
-public class PersistenceServiceActor extends Actor {
-	protected PersistenceImpl impl;
+public abstract class PersistenceImpl {
+	protected ActorSystem parent;
+	protected UUID id;
 	
-	public static final int PERSIST_EVENTS = 100;
-	public static final int PERSIST_STATE  = 101;
-	public static final int RECOVER  	   = 102;
+	protected PersistenceDriver persistenceDriver;
 	
-	public PersistenceServiceActor(String name, PersistenceImpl impl) {
-		super(name);
-		this.impl = impl;
+	public PersistenceImpl(ActorSystem parent, PersistenceDriver persistenceDriver) {
+		this.parent = parent;
+		this.persistenceDriver = persistenceDriver;
 	}
 
-	@Override
-	public void preStart() {
-		impl.preStart(self());
+	public UUID self() {
+		return id;
 	}
 	
-	@Override
-	public void receive(ActorMessage<?> message) {
-		impl.receive(message);
+	public void preStart(UUID id) {
+		this.id = id;
 	}
+	
+	public abstract void receive(ActorMessage<?> message);
 }
