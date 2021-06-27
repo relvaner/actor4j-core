@@ -24,11 +24,11 @@ public abstract class PersistenceImpl {
 	protected ActorSystem parent;
 	protected UUID id;
 	
-	protected PersistenceDriver persistenceDriver;
+	protected PersistenceDriver driver;
 	
-	public PersistenceImpl(ActorSystem parent, PersistenceDriver persistenceDriver) {
+	public PersistenceImpl(ActorSystem parent, PersistenceDriver driver) {
 		this.parent = parent;
-		this.persistenceDriver = persistenceDriver;
+		this.driver = driver;
 	}
 
 	public UUID self() {

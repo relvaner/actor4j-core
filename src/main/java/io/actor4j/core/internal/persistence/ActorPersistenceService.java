@@ -24,21 +24,21 @@ import io.actor4j.core.persistence.drivers.PersistenceDriver;
 
 public class ActorPersistenceService {
 	protected ActorService service;
-	protected PersistenceDriver persistenceDriver;
+	protected PersistenceDriver driver;
 	
-	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, PersistenceDriver persistenceDriver) {
+	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, PersistenceDriver driver) {
 		super();
 		
-		this.persistenceDriver = persistenceDriver;
+		this.driver = driver;
 
 		service = new ActorService("actor4j-persistence");
 		service.setParallelismMin(parallelismMin);
 		service.setParallelismFactor(parallelismFactor);
 		
-		persistenceDriver.open();
+		driver.open();
 		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
 			String alias = getAlias(i);
-			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, persistenceDriver.createPersistenceImpl(parent)));
+			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, driver.createPersistenceImpl(parent)));
 			service.setAlias(id, alias);
 		}
 	}
@@ -57,6 +57,6 @@ public class ActorPersistenceService {
 	
 	public void shutdown() {
 		service.shutdownWithActors(true);
-		persistenceDriver.close();
+		driver.close();
 	}
 }
