@@ -42,8 +42,8 @@ public class ExampleShardingWithActorPod extends ActorPod {
 				}
 
 				@Override
-				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest) {
-					tell(message.value, message.tag, dest);
+				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
+					tell(message.value, message.tag, dest, interaction);
 				}
 			}) {
 			@Override

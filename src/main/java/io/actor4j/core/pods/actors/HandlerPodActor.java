@@ -49,15 +49,20 @@ public abstract class HandlerPodActor extends PodChildActor {
 		
 		if (originalMessage!=null) {
 			map.remove(message.interaction);
-			callback(message, originalMessage, originalMessage.source);
+			callback(message, originalMessage, originalMessage.source, originalMessage.interaction);
 		}
 		else {
+			/*
 			UUID interaction = message.interaction!=null ? message.interaction : UUID.randomUUID();
+			map.put(interaction, message.copy()); 
+			handle(message, interaction);
+			*/
+			UUID interaction = UUID.randomUUID();
 			map.put(interaction, message.copy()); 
 			handle(message, interaction);
 		}
 	}
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
-	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest);
+	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
 }
