@@ -38,7 +38,6 @@ import io.actor4j.core.ActorClientRunnable;
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.ActorTimer;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
@@ -55,6 +54,7 @@ import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
+import io.actor4j.core.utils.ActorTimer;
 import io.actor4j.core.utils.PodActorFactory;
 
 public abstract class ActorSystemImpl implements ActorPodService {

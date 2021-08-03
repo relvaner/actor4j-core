@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core;
+package io.actor4j.core.utils;
 
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.ActorGroup;
 
 public interface ActorTimer {
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay, TimeUnit unit);

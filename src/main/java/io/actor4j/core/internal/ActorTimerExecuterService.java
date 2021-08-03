@@ -22,9 +22,9 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-import io.actor4j.core.ActorTimer;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorTimer;
 
 public class ActorTimerExecuterService implements ActorTimer {
 	protected final ActorSystemImpl system;

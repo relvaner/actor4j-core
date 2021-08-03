@@ -31,12 +31,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.ActorServiceNode;
-import io.actor4j.core.ActorTimer;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.internal.failsafe.FailsafeManager;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorTimer;
 
 public class ActorExecuterService {
 	protected final ActorSystemImpl system;

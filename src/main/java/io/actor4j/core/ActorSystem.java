@@ -28,6 +28,7 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorTimer;
 
 public class ActorSystem {
 	protected ActorSystemImpl system;
