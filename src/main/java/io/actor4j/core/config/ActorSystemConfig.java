@@ -28,70 +28,74 @@ import io.actor4j.core.pods.Database;
 
 public class ActorSystemConfig {
 	public final String name;
-
-	public final AtomicBoolean counterEnabled;
-	public final AtomicBoolean threadProcessingTimeEnabled;
+	
+	public final boolean debugUnhandled;
 
 	public final int parallelism;
 	public final int parallelismFactor;
-
-	public final int idle;
-	public final int load;
-	public final ActorThreadMode threadMode;
-	public final long sleepTime;
-	public final long horizontalPodAutoscalerSyncTime;
-	public final long horizontalPodAutoscalerMeasurementTime;
-
-	public final int maxStatisticValues;
-
-	public final boolean debugUnhandled;
-
+	
 	public final int queueSize;
 	public final int bufferQueueSize;
 
 	public final int throughput;
-
+	public final int idle;
+	public final int load;
+	public final ActorThreadMode threadMode;
+	public final long sleepTime;
+	
+	// Persistence
 	public final PersistenceDriver persistenceDriver;
 	public final boolean persistenceMode;
-
+	
+	// Metrics
+	public final AtomicBoolean counterEnabled;
+	public final AtomicBoolean threadProcessingTimeEnabled;
+	public final int maxStatisticValues;
+	
+	// Pods
+	public final long horizontalPodAutoscalerSyncTime;
+	public final long horizontalPodAutoscalerMeasurementTime;
 	public final Database<?> podDatabase;
-
+	
+	// As Service
 	public final String serviceNodeName;
 	public final List<ActorServiceNode> serviceNodes;
-	public final boolean clientMode;
 	public final boolean serverMode;
+	public final boolean clientMode;
 	public final ActorClientRunnable clientRunnable;
 
 	public static abstract class Builder<T extends ActorSystemConfig> {
 		protected String name;
-
-		protected boolean counterEnabled;
-		protected boolean threadProcessingTimeEnabled;
+		
+		protected boolean debugUnhandled;
 
 		protected int parallelism;
 		protected int parallelismFactor;
-
-		protected int idle;
-		protected int load;
-		protected ActorThreadMode threadMode;
-		protected long sleepTime;
-		protected long horizontalPodAutoscalerSyncTime;
-		protected long horizontalPodAutoscalerMeasurementTime;
-
-		protected int maxStatisticValues;
-
-		protected boolean debugUnhandled;
-
+		
 		protected int queueSize;
 		protected int bufferQueueSize;
 
 		protected int throughput;
-
+		protected int idle;
+		protected int load;
+		protected ActorThreadMode threadMode;
+		protected long sleepTime;
+		
+		// Persistence
 		protected PersistenceDriver persistenceDriver;
 		protected boolean persistenceMode;
 
+		// Metrics
+		protected boolean counterEnabled;
+		protected boolean threadProcessingTimeEnabled;
+		protected int maxStatisticValues;
+		
+		// Pods
+		protected long horizontalPodAutoscalerSyncTime;
+		protected long horizontalPodAutoscalerMeasurementTime;
 		protected Database<?> podDatabase;
-
+		
+		// As Service
 		protected String serviceNodeName;
 		protected List<ActorServiceNode> serviceNodes;
 		protected boolean clientMode;
@@ -102,29 +106,32 @@ public class ActorSystemConfig {
 			super();
 
 			name = "actor4j";
-
-			counterEnabled = false;
-			threadProcessingTimeEnabled = false;
-
+			
 			parallelism(0);
 			parallelismFactor = 1;
-
+			
+			queueSize = 50_000;
+			bufferQueueSize = 10_000;
+			
 			throughput = 100;
-
 			idle = 100_000;
 			calculateLoad();
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
+			
+			// Persistence
+			persistenceMode = false;
+
+			// Metrics
+			counterEnabled = false;
+			threadProcessingTimeEnabled = false;
+			maxStatisticValues = 10_000;
+
+			// Pods
 			horizontalPodAutoscalerSyncTime = 15_000;
 			horizontalPodAutoscalerMeasurementTime = 2_000;
 
-			maxStatisticValues = 10_000;
-
-			queueSize = 50_000;
-			bufferQueueSize = 10_000;
-
-			persistenceMode = false;
-
+			// As Service
 			serviceNodeName = "Default Node";
 			serviceNodes = new ArrayList<>();
 		}
@@ -137,15 +144,21 @@ public class ActorSystemConfig {
 
 			return this;
 		}
+		
+		public Builder<T> debugUnhandled(boolean debugUnhandled) {
+			this.debugUnhandled = debugUnhandled;
 
-		public Builder<T> counterEnabled(boolean enabled) {
-			counterEnabled = enabled;
+			return this;
+		}
+		
+		public Builder<T> queueSize(int queueSize) {
+			this.queueSize = queueSize;
 
 			return this;
 		}
 
-		public Builder<T> threadProcessingTimeEnabled(boolean enabled) {
-			threadProcessingTimeEnabled = enabled;
+		public Builder<T> bufferQueueSize(int bufferQueueSize) {
+			this.bufferQueueSize = bufferQueueSize;
 
 			return this;
 		}
@@ -161,6 +174,13 @@ public class ActorSystemConfig {
 
 		public Builder<T> parallelismFactor(int parallelismFactor) {
 			this.parallelismFactor = parallelismFactor;
+
+			return this;
+		}
+		
+		public Builder<T> throughput(int throughput) {
+			this.throughput = throughput;
+			calculateLoad();
 
 			return this;
 		}
@@ -201,6 +221,31 @@ public class ActorSystemConfig {
 			return this;
 		}
 		
+		public Builder<T> persistenceMode(PersistenceDriver persistenceDriver) {
+			this.persistenceDriver = persistenceDriver;
+			this.persistenceMode = true;
+
+			return this;
+		}
+		
+		public Builder<T> counterEnabled(boolean enabled) {
+			counterEnabled = enabled;
+
+			return this;
+		}
+
+		public Builder<T> threadProcessingTimeEnabled(boolean enabled) {
+			threadProcessingTimeEnabled = enabled;
+
+			return this;
+		}
+		
+		public Builder<T> maxStatisticValues(int maxStatisticValues) {
+			this.maxStatisticValues = maxStatisticValues;
+			
+			return this;
+		}
+		
 		public Builder<T> horizontalPodAutoscalerSyncTime(long horizontalPodAutoscalerSyncTime) {
 			this.horizontalPodAutoscalerSyncTime = horizontalPodAutoscalerSyncTime;
 			
@@ -210,44 +255,6 @@ public class ActorSystemConfig {
 		public Builder<T> horizontalPodAutoscalerMeasurementTime(long horizontalPodAutoscalerMeasurementTime) {
 			this.horizontalPodAutoscalerMeasurementTime = horizontalPodAutoscalerMeasurementTime;
 			
-			return this;
-		}
-
-		public Builder<T> maxStatisticValues(int maxStatisticValues) {
-			this.maxStatisticValues = maxStatisticValues;
-			
-			return this;
-		}
-
-		public Builder<T> debugUnhandled(boolean debugUnhandled) {
-			this.debugUnhandled = debugUnhandled;
-
-			return this;
-		}
-
-		public Builder<T> queueSize(int queueSize) {
-			this.queueSize = queueSize;
-
-			return this;
-		}
-
-		public Builder<T> bufferQueueSize(int bufferQueueSize) {
-			this.bufferQueueSize = bufferQueueSize;
-
-			return this;
-		}
-
-		public Builder<T> throughput(int throughput) {
-			this.throughput = throughput;
-			calculateLoad();
-
-			return this;
-		}
-		
-		public Builder<T> persistenceMode(PersistenceDriver persistenceDriver) {
-			this.persistenceDriver = persistenceDriver;
-			this.persistenceMode = true;
-
 			return this;
 		}
 
@@ -289,23 +296,23 @@ public class ActorSystemConfig {
 	public ActorSystemConfig(Builder<?> builder) {
 		super();
 		this.name = builder.name;
-		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);
-		this.threadProcessingTimeEnabled = new AtomicBoolean(builder.threadProcessingTimeEnabled);
+		this.debugUnhandled = builder.debugUnhandled;
+		this.queueSize = builder.queueSize;
+		this.bufferQueueSize = builder.bufferQueueSize;
 		this.parallelism = builder.parallelism;
 		this.parallelismFactor = builder.parallelismFactor;
+		this.throughput = builder.throughput;
 		this.idle = builder.idle;
 		this.load = builder.load;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
-		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
-		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
-		this.maxStatisticValues = builder.maxStatisticValues;
-		this.debugUnhandled = builder.debugUnhandled;
-		this.queueSize = builder.queueSize;
-		this.bufferQueueSize = builder.bufferQueueSize;
-		this.throughput = builder.throughput;
 		this.persistenceDriver = builder.persistenceDriver;
 		this.persistenceMode = builder.persistenceMode;
+		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);
+		this.threadProcessingTimeEnabled = new AtomicBoolean(builder.threadProcessingTimeEnabled);
+		this.maxStatisticValues = builder.maxStatisticValues;
+		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
+		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
 		this.podDatabase = builder.podDatabase;
 		this.serviceNodeName = builder.serviceNodeName;
 		this.serviceNodes = Collections.unmodifiableList(builder.serviceNodes);
