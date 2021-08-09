@@ -112,7 +112,7 @@ public class ActorSystemConfig {
 			throughput = 100;
 
 			idle = 100_000;
-			load = idle / throughput;
+			calculateLoad();
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			horizontalPodAutoscalerSyncTime = 15_000;
@@ -167,14 +167,13 @@ public class ActorSystemConfig {
 		
 		public Builder<T> idle(int idle) {
 			this.idle = idle;
+			calculateLoad();
 
 			return this;
 		}
 		
-		public Builder<T> load(int load) {
-			this.load = load;
-
-			return this;
+		protected void calculateLoad() {
+			load = idle / throughput;
 		}
 
 		public Builder<T> parkMode() {
@@ -240,6 +239,7 @@ public class ActorSystemConfig {
 
 		public Builder<T> throughput(int throughput) {
 			this.throughput = throughput;
+			calculateLoad();
 
 			return this;
 		}
