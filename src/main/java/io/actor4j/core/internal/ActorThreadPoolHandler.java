@@ -90,7 +90,7 @@ public class ActorThreadPoolHandler {
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
 		boolean result = false;
 		
-		if (system.parallelismMin==1 && system.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
+		if (system.config.parallelism==1 && system.config.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
 			ActorThread t = ((ActorThread)Thread.currentThread());
 			t.innerQueue(message.copy());
 			t.newMessage();

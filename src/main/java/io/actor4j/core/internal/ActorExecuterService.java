@@ -129,11 +129,11 @@ public class ActorExecuterService {
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
-		if (system.clientMode)
+		if (system.config.clientMode)
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		
-		if (system.persistenceMode) {
-			persistenceService = new ActorPersistenceService(system.wrapper, system.parallelismMin, system.parallelismFactor, system.persistenceDriver);
+		if (system.config.persistenceMode) {
+			persistenceService = new ActorPersistenceService(system.wrapper, system.config.parallelism, system.config.parallelismFactor, system.config.persistenceDriver);
 			persistenceService.start();
 		}
 		
@@ -145,7 +145,7 @@ public class ActorExecuterService {
 		podReplicationControllerRunnable = system.podReplicationControllerRunnableFactory.apply(system);
 		
 		if (podReplicationControllerRunnable!=null)
-			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.horizontalPodAutoscalerSyncTime, system.horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
+			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.config.horizontalPodAutoscalerSyncTime, system.config.horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
 		
 		/*
 		 * necessary before executing onStartup; 
@@ -171,12 +171,12 @@ public class ActorExecuterService {
 	}
 
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
-		if (system.clientRunnable!=null)
+		if (system.config.clientRunnable!=null)
 			clientExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						system.clientRunnable.runViaAlias(message, alias);
+						system.config.clientRunnable.runViaAlias(message, alias);
 					}
 					catch(Throwable t) {
 						t.printStackTrace();
@@ -186,12 +186,12 @@ public class ActorExecuterService {
 	}
 	
 	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
-		if (system.clientRunnable!=null)
+		if (system.config.clientRunnable!=null)
 			clientExecuterService.submit(new Runnable() {
 				@Override
 				public void run() {
 					try {
-						system.clientRunnable.runViaPath(message, node, path);
+						system.config.clientRunnable.runViaPath(message, node, path);
 					}
 					catch(Throwable t) {
 						t.printStackTrace();
@@ -224,12 +224,12 @@ public class ActorExecuterService {
 		timerExecuterService.shutdown();
 		
 		resourceExecuterService.shutdown();
-		if (system.clientMode)
+		if (system.config.clientMode)
 			clientExecuterService.shutdown();
 		
 		actorThreadPool.shutdown(onTermination, await);
 		
-		if (system.persistenceMode)
+		if (system.config.persistenceMode)
 			persistenceService.shutdown();
 		
 		reset();

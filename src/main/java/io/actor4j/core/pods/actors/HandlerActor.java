@@ -57,6 +57,6 @@ public class HandlerActor extends io.actor4j.core.actors.HandlerActor implements
 	}
 	
 	public <T> T getPodDatabase() {
-		return getSystem().getPodDatabase();
+		return getSystem().getConfig().getPodDatabase();
 	}
 }

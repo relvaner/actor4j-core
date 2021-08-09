@@ -34,19 +34,16 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.actor4j.core.ActorClientRunnable;
 import io.actor4j.core.ActorPodService;
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
 import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.persistence.drivers.PersistenceDriver;
-import io.actor4j.core.pods.Database;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
@@ -60,7 +57,7 @@ import io.actor4j.core.utils.PodActorFactory;
 public abstract class ActorSystemImpl implements ActorPodService {
 	protected final ActorSystem wrapper;
 	
-	protected final String name;
+	protected final ActorSystemConfig config;
 	
 	protected /*quasi final*/ DIContainer<UUID> container;
 	protected /*quasi final*/ PodReplicationController podReplicationController;
@@ -78,43 +75,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
 	
 	protected final AtomicBoolean messagingEnabled;
-	protected final AtomicBoolean counterEnabled;
-	protected final AtomicBoolean threadProcessingTimeEnabled;
-	
-	protected int parallelismMin;
-	protected int parallelismFactor;
-	
-	protected final int idle;
-	protected final int load;
-	protected ActorThreadMode threadMode;
-	protected long sleepTime;
-	protected long horizontalPodAutoscalerSyncTime;
-	protected long horizontalPodAutoscalerMeasurementTime;
-	
-	protected final int maxStatisticValues;
-	
-	protected boolean debugUnhandled;
-	
-	protected int queueSize;
-	protected int bufferQueueSize;
-	
-	protected int throughput;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
 	protected final ActorExecuterService executerService;
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
-	
-	protected PersistenceDriver persistenceDriver;
-	protected boolean persistenceMode;
-	
-	protected Database<?> podDatabase;
-	
-	protected String serviceNodeName;
-	protected List<ActorServiceNode> serviceNodes;
-	protected boolean clientMode;
-	protected boolean serverMode;
-	protected ActorClientRunnable clientRunnable;
 	
 	protected CountDownLatch countDownLatch;
 	
@@ -123,20 +88,19 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public final UUID UNKNOWN_ID;
 	
 	public ActorSystemImpl(ActorSystem wrapper) {
-		this(null, wrapper);
+		this(wrapper, null);
 	}
 	
-	public ActorSystemImpl(String name, ActorSystem wrapper) {
+	public ActorSystemImpl(ActorSystem wrapper, ActorSystemConfig config) {
 		super();
 		
-		if (name!=null)
-			this.name = name;
-		else
-			this.name = "actor4j";
-		
 		this.wrapper = wrapper;
+		if (config!=null)
+			this.config = config;
+		else
+			this.config = ActorSystemConfig.create();
 		
-		container      = DefaultDIContainer.create();
+		container = DefaultDIContainer.create();
 		podReplicationController = new PodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
 		
@@ -150,35 +114,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		redirector     = new ConcurrentHashMap<>();
 		
 		messagingEnabled = new AtomicBoolean();
-		counterEnabled = new AtomicBoolean();
-		threadProcessingTimeEnabled = new AtomicBoolean();
-		
-		setParallelismMin(0);
-		parallelismFactor = 1;
-		
-		throughput = 100;
-		
-		idle = 100_000;
-		load = idle/throughput;
-		threadMode = ActorThreadMode.PARK;
-		sleepTime = 25;
-		horizontalPodAutoscalerSyncTime = 15_000;
-		horizontalPodAutoscalerMeasurementTime = 2_000;
-		
-		maxStatisticValues = 10_000;
-		
-		queueSize       = 50_000;
-		bufferQueueSize = 10_000;
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
-		
-		persistenceMode = false;
-		
-		serviceNodeName = "Default Node";
-		serviceNodes = new ArrayList<>();
 				
 		resetUserCell();
 		
@@ -244,10 +184,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			return new ActorCell(this, null);
 	}
 
-	public String getName() {
-		return name;
+	public ActorSystemConfig getConfig() {
+		return config;
 	}
-	
+
 	public DIContainer<UUID> getContainer() {
 		return container;
 	}
@@ -300,163 +240,6 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return actorStrategyOnFailure;
 	}
 
-	public boolean isClientMode() {
-		return clientMode;
-	}
-	
-	public boolean isServerMode() {
-		return serverMode;
-	}
-	
-	public void serverMode() {
-		serverMode = true;
-	}
-
-	public ActorSystemImpl setClientRunnable(ActorClientRunnable clientRunnable) {
-		clientMode = (clientRunnable!=null);
-			
-		this.clientRunnable = clientRunnable;
-		
-		return this;
-	}
-
-	public ActorClientRunnable getClientRunnable() {
-		return clientRunnable;
-	}
-
-	public boolean isCounterEnabled() {
-		return counterEnabled.get();
-	}
-
-	public void setCounterEnabled(boolean enabled) {
-		counterEnabled.set(enabled);
-	}
-	
-	public boolean isThreadProcessingTimeEnabled() {
-		return threadProcessingTimeEnabled.get();
-	}
-	
-	public void setThreadProcessingTimeEnabled(boolean enabled) {
-		threadProcessingTimeEnabled.set(enabled);
-	}
-
-	public int getParallelismMin() {
-		return parallelismMin;
-	}
-	
-	public ActorSystemImpl setParallelismMin(int parallelismMin) {
-		if (parallelismMin<=0)
-			this.parallelismMin = Runtime.getRuntime().availableProcessors();
-		else
-			this.parallelismMin = parallelismMin;
-		
-		return this;
-	}
-
-	public int getParallelismFactor() {
-		return parallelismFactor;
-	}
-	
-	public ActorSystemImpl setParallelismFactor(int parallelismFactor) {
-		this.parallelismFactor = parallelismFactor;
-		
-		return this;
-	}
-	
-	public int getIdle() {
-		return idle;
-	}
-
-	public int getLoad() {
-		return load;
-	}
-
-	public ActorThreadMode getThreadMode() {
-		return threadMode;
-	}
-	
-	public long getSleepTime() {
-		return sleepTime;
-	}
-	
-	public long getHorizontalPodAutoscalerMeasurementTime() {
-		return horizontalPodAutoscalerMeasurementTime;
-	}
-
-	public void parkMode() {
-		threadMode = ActorThreadMode.PARK;
-	}
-	
-	public void sleepMode() {
-		threadMode = ActorThreadMode.SLEEP;
-	}
-	
-	public void sleepMode(long sleepTime) {
-		this.sleepTime = sleepTime;
-		threadMode = ActorThreadMode.SLEEP;
-	}
-	
-	public void yieldMode() {
-		threadMode = ActorThreadMode.YIELD;
-	}
-	
-	public boolean isPersistenceMode() {
-		return persistenceMode;
-	}
-	
-	public void persistenceMode(PersistenceDriver persistenceDriver) {
-		this.persistenceDriver = persistenceDriver;
-		this.persistenceMode = true;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T getPodDatabase() {
-		if (podDatabase!=null)
-			return (T)podDatabase.getClient();
-		else
-			return null;
-	}
-	
-	public void setPodDatabase(Database<?> podDatabase) {
-		this.podDatabase = podDatabase;
-	}
-
-	public int getQueueSize() {
-		return queueSize;
-	}
-
-	public void setQueueSize(int queueSize) {
-		this.queueSize = queueSize;
-	}
-	
-	public int getBufferQueueSize() {
-		return bufferQueueSize;
-	}
-	
-	public void setBufferQueueSize(int bufferQueueSize) {
-		this.bufferQueueSize = bufferQueueSize;
-	}
-	
-	public int getThroughput() {
-		return throughput;
-	}
-
-	public void setThroughput(int throughput) {
-		this.throughput = throughput;
-	}
-
-	public ActorSystemImpl setDebugUnhandled(boolean debugUnhandled) {
-		this.debugUnhandled = debugUnhandled;
-		
-		return this;
-	}
-
-	public ActorSystemImpl addServiceNode(ActorServiceNode serviceNode) {
-		serviceNodes.add(serviceNode);
-		
-		return this;
-	}
-	
 	protected UUID internal_addCell(ActorCell cell) {
 		Actor actor = cell.actor;
 		if (actor instanceof PseudoActor)
@@ -893,17 +676,5 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	public ActorExecuterService getExecuterService() {
 		return executerService;
-	}
-	
-	public List<ActorServiceNode> getServiceNodes() {
-		return serviceNodes;
-	}
-
-	public String getServiceNodeName() {
-		return serviceNodeName;
-	}
-
-	public void setServiceNodeName(String serviceNodeName) {
-		this.serviceNodeName = serviceNodeName;
 	}
 }

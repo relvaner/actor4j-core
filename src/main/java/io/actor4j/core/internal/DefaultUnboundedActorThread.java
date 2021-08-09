@@ -28,13 +28,13 @@ public class DefaultUnboundedActorThread extends DefaultActorThread {
 	@Override
 	public void configQueues() {
 		directiveQueue = new ConcurrentLinkedQueue<>(); /* unbounded */
-		priorityQueue  = new PriorityBlockingQueue<>(system.getQueueSize()); /* unbounded */
+		priorityQueue  = new PriorityBlockingQueue<>(system.config.queueSize); /* unbounded */
 		
 		serverQueueL2  = new ConcurrentLinkedQueue<>(); /* unbounded */
-		serverQueueL1  = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
+		serverQueueL1  = new ArrayDeque<>(system.config.bufferQueueSize); /* unbounded */
 		
 		outerQueueL2   = new ConcurrentLinkedQueue<>(); /* unbounded */
-		outerQueueL1   = new ArrayDeque<>(system.getBufferQueueSize()); /* unbounded */
+		outerQueueL1   = new ArrayDeque<>(system.config.bufferQueueSize); /* unbounded */
 		
 		innerQueue     = new LinkedList<>(); /* unbounded */
 	}

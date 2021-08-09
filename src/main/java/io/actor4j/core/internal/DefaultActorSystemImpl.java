@@ -18,14 +18,15 @@ package io.actor4j.core.internal;
 import java.util.List;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.config.ActorSystemConfig;
 
 public class DefaultActorSystemImpl extends ActorSystemImpl {
 	public DefaultActorSystemImpl(ActorSystem wrapper) {
-		this(null, wrapper);
+		this(wrapper, null);
 	}
 
-	public DefaultActorSystemImpl(String name, ActorSystem wrapper) {
-		super(name, wrapper);
+	public DefaultActorSystemImpl(ActorSystem wrapper, ActorSystemConfig config) {
+		super(wrapper, config);
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system);

@@ -60,16 +60,16 @@ public abstract class ActorThread extends Thread {
 	
 	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
 		try {
-			if (system.threadProcessingTimeEnabled.get() || cellsProcessingTimeEnabled.get()) {
-				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.maxStatisticValues;
-				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.maxStatisticValues;
+			if (system.config.threadProcessingTimeEnabled.get() || cellsProcessingTimeEnabled.get()) {
+				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.config.maxStatisticValues;
+				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.config.maxStatisticValues;
 				
 				if (threadStatisticsEnabled || cellsStatisticsEnabled) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
 					
-					if (threadStatisticsEnabled && system.threadProcessingTimeEnabled.get()) {
+					if (threadStatisticsEnabled && system.config.threadProcessingTimeEnabled.get()) {
 						threadProcessingTimeStatistics.offer(stopTime-startTime);
 						threadStatisticValuesCounter.incrementAndGet();
 					}
@@ -100,7 +100,7 @@ public abstract class ActorThread extends Thread {
 				cell.requestRate.getAndIncrement();
 				failsafeMethod(message, cell);
 			}
-			if (system.counterEnabled.get())
+			if (system.config.counterEnabled.get())
 				counter.getAndIncrement();
 			
 			result = true;

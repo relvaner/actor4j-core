@@ -91,43 +91,43 @@ public abstract class DefaultActorThread extends ActorThread {
 			while (poll(priorityQueue)) 
 				hasNextPriority=true;
 			
-			if (system.serverMode) {
-				for (; hasNextServer<system.throughput && poll(serverQueueL1); hasNextServer++);
-				if (hasNextServer<system.throughput && serverQueueL2.peek()!=null) {
+			if (system.config.serverMode) {
+				for (; hasNextServer<system.config.throughput && poll(serverQueueL1); hasNextServer++);
+				if (hasNextServer<system.config.throughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; j<system.getBufferQueueSize() && (message=serverQueueL2.poll())!=null; j++)
+					for (int j=0; j<system.config.bufferQueueSize && (message=serverQueueL2.poll())!=null; j++)
 						serverQueueL1.offer(message);
 				
-					for (; hasNextServer<system.throughput && poll(serverQueueL1); hasNextServer++);
+					for (; hasNextServer<system.config.throughput && poll(serverQueueL1); hasNextServer++);
 				}
 			}
 			
-			for (; hasNextOuter<system.throughput && poll(outerQueueL1); hasNextOuter++);
-			if (hasNextOuter<system.throughput && outerQueueL2.peek()!=null) {
+			for (; hasNextOuter<system.config.throughput && poll(outerQueueL1); hasNextOuter++);
+			if (hasNextOuter<system.config.throughput && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; j<system.getBufferQueueSize() && (message=outerQueueL2.poll())!=null; j++)
+				for (int j=0; j<system.config.bufferQueueSize && (message=outerQueueL2.poll())!=null; j++)
 					outerQueueL1.offer(message);
 
-				for (; hasNextOuter<system.throughput && poll(outerQueueL1); hasNextOuter++);
+				for (; hasNextOuter<system.config.throughput && poll(outerQueueL1); hasNextOuter++);
 			}
 			
-			for (; hasNextInner<system.throughput && poll(innerQueue); hasNextInner++);
+			for (; hasNextInner<system.config.throughput && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
-				if (idle>system.load) {
+				if (idle>system.config.load) {
 					load = 0;
 					threadLoad.set(false);
 				}
 				idle++;
-				if (idle>system.idle) {
+				if (idle>system.config.idle) {
 					idle = 0;
-					if (system.threadMode==ActorThreadMode.PARK) {
+					if (system.config.threadMode==ActorThreadMode.PARK) {
 						if (newMessage.compareAndSet(true, false))
 							LockSupport.park(this);
 					}
-					else if (system.threadMode==ActorThreadMode.SLEEP) {
+					else if (system.config.threadMode==ActorThreadMode.SLEEP) {
 						try {
-							sleep(system.sleepTime);
+							sleep(system.config.sleepTime);
 						} catch (InterruptedException e) {
 							interrupt();
 						}
@@ -138,7 +138,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			}
 			else {
 				idle = 0;
-				if (load>system.load)
+				if (load>system.config.load)
 					threadLoad.set(true);
 				else
 					load++;
@@ -148,7 +148,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-		if (system.threadMode==ActorThreadMode.PARK && newMessage.compareAndSet(false, true))
+		if (system.config.threadMode==ActorThreadMode.PARK && newMessage.compareAndSet(false, true))
 			LockSupport.unpark(this);
 	}
 	

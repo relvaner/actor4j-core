@@ -54,7 +54,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				boolean result = false;
 				
 				if (!isDirective(message)) {
-					int bound = (int)(queue.size()/(double)system.queueSize*10);
+					int bound = (int)(queue.size()/(double)system.config.queueSize*10);
 					if (bound>=8)
 						result = true;
 					else if (bound>=2)
@@ -93,7 +93,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			consumerPseudo.accept(message.copy());
 			return;
 		}
-		else if (system.clientMode && !system.cells.containsKey(message.dest)) {
+		else if (system.config.clientMode && !system.cells.containsKey(message.dest)) {
 			system.executerService.clientViaAlias(message.copy(), alias);
 			return;
 		}

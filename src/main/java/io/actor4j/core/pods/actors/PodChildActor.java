@@ -54,6 +54,6 @@ public abstract class PodChildActor extends Actor implements ActorGroupMember {
 	}
 	
 	public <T> T getPodDatabase() {
-		return getSystem().getPodDatabase();
+		return getSystem().getConfig().getPodDatabase();
 	}
 }

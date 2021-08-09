@@ -30,6 +30,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.ActorWithBothGroups;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.actors.ActorWithGroup;
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
@@ -42,14 +43,15 @@ public class ActorGroupMemberFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		ActorSystemConfig config = ActorSystemConfig.builder()
+			.parallelism(3) /* temporary solution */
+			.build();
+		system = new ActorSystem(config);
 	}
 	
 	@Test(timeout=30000)
 	public void test_ActorGroupMember() {
-		system.setParallelismMin(3); /* temporary solution */
-		
-		int instances = system.getParallelismMin()+1;
+		int instances = system.getConfig().parallelism+1;
 		CountDownLatch testDone = new CountDownLatch(instances*2);
 		AtomicReference<String> threadName1 = new AtomicReference<>("");
 		AtomicReference<String> threadName2 = new AtomicReference<>("");
@@ -104,9 +106,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorDistributedGroupMember() {
-		system.setParallelismMin(3); /* temporary solution */
-		
-		int instances = system.getParallelismMin();
+		int instances = system.getConfig().parallelism;
 		CountDownLatch testDone = new CountDownLatch(instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
 		
@@ -147,9 +147,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorWithBothGroups_with_ActorWithGroup() {
-		system.setParallelismMin(3); /* temporary solution */
-		
-		int instances = system.getParallelismMin();
+		int instances = system.getConfig().parallelism;
 		CountDownLatch testDone = new CountDownLatch(instances+instances*instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
 		Map<UUID, String> threadMap = new ConcurrentHashMap<UUID, String>();

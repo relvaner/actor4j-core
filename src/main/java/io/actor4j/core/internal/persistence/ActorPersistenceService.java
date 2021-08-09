@@ -19,24 +19,28 @@ import java.util.UUID;
 
 import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 
 public class ActorPersistenceService {
-	protected ActorService service;
-	protected PersistenceDriver driver;
+	protected final ActorService service;
+	protected final PersistenceDriver driver;
 	
-	public ActorPersistenceService(ActorSystem parent, int parallelismMin, int parallelismFactor, PersistenceDriver driver) {
+	public ActorPersistenceService(ActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
 		super();
 		
 		this.driver = driver;
 
-		service = new ActorService("actor4j-persistence");
-		service.setParallelismMin(parallelismMin);
-		service.setParallelismFactor(parallelismFactor);
+		ActorServiceConfig config = ActorServiceConfig.builder()
+			.name("actor4j-persistence")
+			.parallelism(parallelism)
+			.parallelismFactor(parallelismFactor)
+			.build();
+		service = new ActorService(config);
 		
 		driver.open();
-		for (int i=0; i<parallelismMin*parallelismFactor; i++) {
+		for (int i=0; i<parallelism*parallelismFactor; i++) {
 			String alias = getAlias(i);
 			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, driver.createPersistenceImpl(parent)));
 			service.setAlias(id, alias);

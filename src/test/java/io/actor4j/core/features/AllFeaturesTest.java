@@ -24,6 +24,8 @@ import org.junit.runner.RunWith;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	ConfigFeature.class,
+	
 	ActorFeature.class,
 	LifeCycleFeature.class,
 	BehaviourFeature.class,

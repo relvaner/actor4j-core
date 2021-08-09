@@ -281,7 +281,7 @@ public class ActorCell {
 	}
 	
 	public void unhandled(ActorMessage<?> message) {
-		if (system.debugUnhandled) {
+		if (system.config.debugUnhandled) {
 			Actor sourceActor = system.cells.get(message.source).actor;
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
@@ -376,7 +376,7 @@ public class ActorCell {
 	
 	@SuppressWarnings("unchecked")
 	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
-		if (system.persistenceMode && events!=null) {
+		if (system.config.persistenceMode && events!=null) {
 			List<ActorPersistenceObject> list = new ArrayList<>(Arrays.asList(events));
 			for (ActorPersistenceObject obj : list)
 				obj.persistenceId = persistenceId();
@@ -389,7 +389,7 @@ public class ActorCell {
 	
 	@SuppressWarnings("unchecked")
 	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
-		if (system.persistenceMode && state!=null) {
+		if (system.config.persistenceMode && state!=null) {
 			state.persistenceId = persistenceId();
 			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
@@ -400,7 +400,7 @@ public class ActorCell {
 	}
 	
 	public void recover(ActorMessage<?> message) {
-		if (system.persistenceMode && actor instanceof PersistentActor) {
+		if (system.config.persistenceMode && actor instanceof PersistentActor) {
 			((PersistentActor<?, ?>)actor).recover(message.valueAsString());
 			active.set(true);
 		}

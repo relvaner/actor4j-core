@@ -87,7 +87,7 @@ public abstract class ConcurrentPseudoActor {
 	public boolean run() {
 		boolean result = false;
 		
-		for (int j=0; poll(getOuterQueue()) && j<actor.getCell().getSystem().getBufferQueueSize(); j++)
+		for (int j=0; poll(getOuterQueue()) && j<actor.getCell().getSystem().getConfig().bufferQueueSize; j++)
 			result = true;
 		
 		return result;

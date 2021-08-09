@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.StatelessActor;
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
@@ -35,14 +36,15 @@ public class StatelessActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		ActorSystemConfig config = ActorSystemConfig.builder()
+			.parallelism(2)
+			.build();
+		system = new ActorSystem(config);
 	}
 	
 	@Test(timeout=30000)
 	public void test() {
-		system.setParallelismFactor(2);
-		
-		CountDownLatch testDone = new CountDownLatch(system.getParallelismMin()*system.getParallelismFactor());
+		CountDownLatch testDone = new CountDownLatch(system.getConfig().parallelism*system.getConfig().parallelismFactor);
 		
 		ActorGroup group = new ActorGroupSet();
 		system.setAlias(system.addActor(() -> new StatelessActor(group) {
@@ -55,7 +57,7 @@ public class StatelessActorFeature {
 					first=false;
 				}
 			}
-		}, system.getParallelismMin()*system.getParallelismFactor()), "instances");
+		}, system.getConfig().parallelism*system.getConfig().parallelismFactor), "instances");
 		
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {

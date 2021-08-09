@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -35,8 +36,10 @@ public class BehaviourFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
-		system.setParallelismMin(1);
+		ActorSystemConfig config = ActorSystemConfig.builder()
+			.parallelism(1)
+			.build();
+		system = new ActorSystem(config);
 	}
 		
 	@Test(timeout=5000)

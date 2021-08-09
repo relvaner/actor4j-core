@@ -19,11 +19,10 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.ActorSystemImpl;
 import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.persistence.drivers.PersistenceDriver;
-import io.actor4j.core.pods.Database;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
@@ -37,112 +36,28 @@ public class ActorSystem {
 	public final UUID SYSTEM_ID;
 	
 	public ActorSystem() {
-		this(null, (n, wrapper) -> new DefaultActorSystemImpl(n, wrapper));
+		this((wrapper, c) -> new DefaultActorSystemImpl(wrapper, c), null);
 	}
 	
 	public ActorSystem(ActorSystemImplFactory factory) {
-		this(null, factory);
+		this(factory, null);
 	}
 	
-	public ActorSystem(String name) {
-		this(name, (n, wrapper) -> new DefaultActorSystemImpl(n, wrapper));
+	public ActorSystem(ActorSystemConfig config) {
+		this((wrapper, c) -> new DefaultActorSystemImpl(wrapper, c), config);
 	}
 	
-	public ActorSystem(String name, ActorSystemImplFactory factory) {
+	public ActorSystem(ActorSystemImplFactory factory, ActorSystemConfig config) {
 		super();
 		
-		system = factory.apply(name, this);
+		system = factory.apply(this, config);
 		
 		USER_ID    = system.USER_ID;
 		SYSTEM_ID  = system.SYSTEM_ID;
 	}
 	
-	public String getName() {
-		return system.getName();
-	}
-	
-	public ActorSystem serverMode() {
-		system.serverMode();
-		
-		return this;
-	}
-	
-	public ActorSystem setClientRunnable(ActorClientRunnable clientRunnable) {
-		system.setClientRunnable(clientRunnable);
-		
-		return this;
-	}
-
-	public int getParallelismMin() {
-		return system.getParallelismMin();
-	}
-	
-	public ActorSystem setParallelismMin(int parallelismMin) {
-		system.setParallelismMin(parallelismMin);
-		
-		return this;
-	}
-
-	public int getParallelismFactor() {
-		return system.getParallelismFactor();
-	}
-	
-	public ActorSystem setParallelismFactor(int parallelismFactor) {
-		system.setParallelismFactor(parallelismFactor);
-		
-		return this;
-	}
-	
-	public ActorSystem parkMode() {
-		system.parkMode();
-		
-		return this;
-	}
-	
-	public ActorSystem sleepMode() {
-		system.sleepMode();
-		
-		return this;
-	}
-	
-	public ActorSystem sleepMode(long sleepTime) {
-		system.sleepMode(sleepTime);
-		
-		return this;
-	}
-	
-	public ActorSystem yieldMode() {
-		system.yieldMode();
-		
-		return this;
-	}
-	
-	public ActorSystem persistenceMode(PersistenceDriver persistenceDriver) {
-		system.persistenceMode(persistenceDriver);
-		
-		return this;
-	}
-	
-	public <T> T getPodDatabase() {
-		return system.getPodDatabase();
-	}
-	
-	public ActorSystem setPodDatabase(Database<?> podDatabase) {
-		system.setPodDatabase(podDatabase);
-		
-		return this;
-	}
-	
-	public ActorSystem setDebugUnhandled(boolean debugUnhandled) {
-		system.setDebugUnhandled(debugUnhandled);
-		
-		return this;
-	}
-		
-	public ActorSystem addServiceNode(ActorServiceNode serviceNode) {
-		system.addServiceNode(serviceNode);
-		
-		return this;
+	public ActorSystemConfig getConfig() {
+		return system.getConfig();
 	}
 	
 	public UUID addActor(ActorFactory factory) {
@@ -275,10 +190,6 @@ public class ActorSystem {
 	
 	public void shutdown(boolean await) {
 		system.shutdown(await);
-	}
-	
-	public List<ActorServiceNode> getServiceNodes() {
-		return system.getServiceNodes();
 	}
 	
 	public ActorSystemImpl underlyingImpl() {

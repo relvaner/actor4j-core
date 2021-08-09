@@ -18,34 +18,24 @@ package io.actor4j.core;
 import java.util.List;
 import java.util.UUID;
 
+import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorService extends ActorSystem {
 	public ActorService() {
 		super();
-		serverMode();
 	}
 	
 	public ActorService(ActorSystemImplFactory factory) {
-		this(null, factory);
+		this(factory, null);
 	}
 	
-	public ActorService(String name) {
-		super(name);
-		serverMode();
+	public ActorService(ActorServiceConfig config) {
+		super(config);
 	}
 	
-	public ActorService(String name, ActorSystemImplFactory factory) {
-		super(name, factory);
-		serverMode();
-	}
-	
-	public String getServiceNodeName() {
-		return system.getServiceNodeName();
-	}
-
-	public void setServiceNodeName(String serviceNodeName) {
-		system.setServiceNodeName(serviceNodeName);
+	public ActorService(ActorSystemImplFactory factory, ActorServiceConfig config) {
+		super(factory, config);
 	}
 
 	public boolean hasActor(String uuid) {
@@ -66,9 +56,5 @@ public class ActorService extends ActorSystem {
 	
 	public void sendAsServer(ActorMessage<?> message) {
 		system.sendAsServer(message);
-	}
-	
-	public ActorClientRunnable getClientRunnable() {
-		return system.getClientRunnable();
 	}
 }
