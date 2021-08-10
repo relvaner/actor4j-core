@@ -15,8 +15,8 @@
  */
 package io.actor4j.core.config;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -133,7 +133,35 @@ public class ActorSystemConfig {
 
 			// As Service
 			serviceNodeName = "Default Node";
-			serviceNodes = new ArrayList<>();
+			serviceNodes = new LinkedList<>();
+		}
+		
+		public Builder(T config) {
+			super();
+			this.name = config.name;
+			this.debugUnhandled = config.debugUnhandled;
+			this.queueSize = config.queueSize;
+			this.bufferQueueSize = config.bufferQueueSize;
+			this.parallelism = config.parallelism;
+			this.parallelismFactor = config.parallelismFactor;
+			this.throughput = config.throughput;
+			this.idle = config.idle;
+			this.load = config.load;
+			this.threadMode = config.threadMode;
+			this.sleepTime = config.sleepTime;
+			this.persistenceDriver = config.persistenceDriver;
+			this.persistenceMode = config.persistenceMode;
+			this.counterEnabled = config.counterEnabled.get();
+			this.threadProcessingTimeEnabled = config.threadProcessingTimeEnabled.get();
+			this.maxStatisticValues = config.maxStatisticValues;
+			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime;
+			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime;
+			this.podDatabase = config.podDatabase;
+			this.serviceNodeName = config.serviceNodeName;
+			this.serviceNodes = new LinkedList<>(config.serviceNodes);
+			this.clientMode = config.clientMode;
+			this.serverMode = config.serverMode;
+			this.clientRunnable = config.clientRunnable;
 		}
 
 		public Builder<T> name(String name) {
@@ -289,7 +317,7 @@ public class ActorSystemConfig {
 
 			return this;
 		}
-
+		
 		public abstract T build();
 	}
 
@@ -327,6 +355,15 @@ public class ActorSystemConfig {
 	
 	public static Builder<?> builder() {
 		return new Builder<ActorSystemConfig>() {
+			@Override
+			public ActorSystemConfig build() {
+				return new ActorSystemConfig(this);
+			}
+		};
+	}
+	
+	public static Builder<?> builder(ActorSystemConfig config) {
+		return new Builder<ActorSystemConfig>(config) {
 			@Override
 			public ActorSystemConfig build() {
 				return new ActorSystemConfig(this);

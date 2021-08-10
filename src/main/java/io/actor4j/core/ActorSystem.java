@@ -60,6 +60,10 @@ public class ActorSystem {
 		return system.getConfig();
 	}
 	
+	public boolean setConfig(ActorSystemConfig config) {
+		return system.setConfig(config);
+	}
+	
 	public UUID addActor(ActorFactory factory) {
 		return system.addActor(factory);
 	}

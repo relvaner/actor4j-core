@@ -21,6 +21,11 @@ public class ActorServiceConfig extends ActorSystemConfig {
 			super();
 			serverMode();
 		}
+		
+		public Builder(T config) {
+			super(config);
+			serverMode();
+		}
 	}
 
 	public ActorServiceConfig(Builder<?> builder) {
@@ -33,6 +38,15 @@ public class ActorServiceConfig extends ActorSystemConfig {
 	
 	public static Builder<?> builder() {
 		return new Builder<ActorServiceConfig>() {
+			@Override
+			public ActorServiceConfig build() {
+				return new ActorServiceConfig(this);
+			}
+		};
+	}
+	
+	public static Builder<?> builder(ActorServiceConfig config) {
+		return new Builder<ActorServiceConfig>(config) {
 			@Override
 			public ActorServiceConfig build() {
 				return new ActorServiceConfig(this);

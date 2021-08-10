@@ -57,7 +57,7 @@ import io.actor4j.core.utils.PodActorFactory;
 public abstract class ActorSystemImpl implements ActorPodService {
 	protected final ActorSystem wrapper;
 	
-	protected final ActorSystemConfig config;
+	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	
 	protected /*quasi final*/ DIContainer<UUID> container;
 	protected /*quasi final*/ PodReplicationController podReplicationController;
@@ -186,6 +186,17 @@ public abstract class ActorSystemImpl implements ActorPodService {
 
 	public ActorSystemConfig getConfig() {
 		return config;
+	}
+	
+	public boolean setConfig(ActorSystemConfig config) {
+		boolean result = false;
+		
+		if (!executerService.isStarted()) {
+			this.config = config;
+			result = true;
+		}
+		
+		return result;
 	}
 
 	public DIContainer<UUID> getContainer() {

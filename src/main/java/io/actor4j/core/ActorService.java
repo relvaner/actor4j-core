@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import io.actor4j.core.config.ActorServiceConfig;
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorService extends ActorSystem {
@@ -36,6 +37,15 @@ public class ActorService extends ActorSystem {
 	
 	public ActorService(ActorSystemImplFactory factory, ActorServiceConfig config) {
 		super(factory, config);
+	}
+	
+	@Override
+	public boolean setConfig(ActorSystemConfig config) {
+		return false;
+	}
+	
+	public boolean setConfig(ActorServiceConfig config) {
+		return super.setConfig(config);
 	}
 
 	public boolean hasActor(String uuid) {
