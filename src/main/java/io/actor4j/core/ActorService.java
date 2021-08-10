@@ -32,11 +32,11 @@ public class ActorService extends ActorSystem {
 	}
 	
 	public ActorService(ActorServiceConfig config) {
-		super(config);
+		super(config!=null ? config : ActorServiceConfig.create());
 	}
 	
 	public ActorService(ActorSystemImplFactory factory, ActorServiceConfig config) {
-		super(factory, config);
+		super(factory, config!=null ? config : ActorServiceConfig.create());
 	}
 	
 	@Deprecated

@@ -191,7 +191,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public boolean setConfig(ActorSystemConfig config) {
 		boolean result = false;
 		
-		if (!executerService.isStarted()) {
+		if (!executerService.isStarted() && config!=null) {
 			this.config = config;
 			result = true;
 		}
