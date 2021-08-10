@@ -39,6 +39,7 @@ public class ActorService extends ActorSystem {
 		super(factory, config);
 	}
 	
+	@Deprecated
 	@Override
 	public boolean setConfig(ActorSystemConfig config) {
 		return false;
