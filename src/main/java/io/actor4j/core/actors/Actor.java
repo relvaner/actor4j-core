@@ -20,6 +20,9 @@ import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -30,6 +33,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
+import static io.actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor implements ActorRef {
 	protected ActorCell cell;
@@ -47,6 +51,8 @@ public abstract class Actor implements ActorRef {
 	
 	public static final int ACTIVATE   = INTERNAL_ACTIVATE;
 	public static final int DEACTIVATE = INTERNAL_DEACTIVATE;
+	
+	public static final int TIMEOUT    = checkTag(Integer.MAX_VALUE);
 	
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 
@@ -192,6 +198,25 @@ public abstract class Actor implements ActorRef {
 	
 	public void await(final Predicate<ActorMessage<?>> predicate, final Consumer<ActorMessage<?>> action) {
 		await(predicate, action, true);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final BiConsumer<ActorMessage<?>, Boolean> action, long timeout, TimeUnit unit, boolean replace) {
+		ScheduledFuture<?> scheduledFuture = getSystem().globalTimer().scheduleOnce(new ActorMessage<>(null, TIMEOUT, self(), null), self(), timeout, unit);
+		become(new Consumer<ActorMessage<?>>() {
+			@Override
+			public void accept(ActorMessage<?> message) {
+				if (message.tag==TIMEOUT)
+					action.accept(null, true);
+				else if (predicate.test(message)) {
+					scheduledFuture.cancel(true);
+					action.accept(message, false);
+				}
+			}
+		}, replace);
+	}
+	
+	public void await(final Predicate<ActorMessage<?>> predicate, final BiConsumer<ActorMessage<?>, Boolean> action, long timeout, TimeUnit unit) {
+		await(predicate, action, timeout, unit, true);
 	}
 	
 	public void send(ActorMessage<?> message) {
