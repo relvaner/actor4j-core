@@ -49,9 +49,12 @@ public abstract class Actor implements ActorRef {
 	public static final int STOP       = INTERNAL_STOP;
 	public static final int RESTART    = INTERNAL_RESTART;
 	
+	public static final int HEALTH     = INTERNAL_HEALTH_CHECK;
+	
 	public static final int ACTIVATE   = INTERNAL_ACTIVATE;
 	public static final int DEACTIVATE = INTERNAL_DEACTIVATE;
 	
+	public static final int UP    	   = checkTag(Integer.MAX_VALUE-1); // HEALTH_CHECK_SUCCESS
 	public static final int TIMEOUT    = checkTag(Integer.MAX_VALUE);
 	
 	/**

@@ -29,13 +29,17 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.internal.failsafe.FailsafeManager;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorGroup;
+import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
 public class ActorExecuterService {
@@ -57,6 +61,9 @@ public class ActorExecuterService {
 	
 	protected ScheduledExecutorService podReplicationControllerExecuterService;
 	protected PodReplicationControllerRunnable podReplicationControllerRunnable;
+	
+	protected ScheduledExecutorService watchdogExecuterService;
+	protected WatchdogRunnable watchdogRunnable;
 	
 	protected int maxResourceThreads;
 	
@@ -91,6 +98,10 @@ public class ActorExecuterService {
 					else if (message.equals("replication")) {
 						systemLogger().log(ERROR,
 								String.format("[SAFETY][FATAL] Exception in PodReplicationControllerThread"));
+					}
+					else if (message.equals("watchdog")) {
+						systemLogger().log(ERROR,
+								String.format("[FAILSAFE] Exception in WatchdogThread"));
 					}
 				}
 				else {
@@ -139,13 +150,25 @@ public class ActorExecuterService {
 		
 		this.onTermination = onTermination;
 		
+		/* necessary before actorThreadPool instantiation */
+		ActorGroup watchdogActorGroup = new ActorGroupList();
+		final AtomicInteger watchdogIndex = new AtomicInteger(0);
+		List<UUID> watchdogActors = system.addSystemActor(() -> new ActorWithDistributedGroup("watchdog-"+watchdogIndex.getAndIncrement(), watchdogActorGroup) {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+		}, system.config.parallelism*system.config.parallelismFactor);
+		watchdogRunnable = system.watchdogRunnableFactory.apply(system, watchdogActors);
+		
 		actorThreadPool = new ActorThreadPool(system);
 		
 		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
 		podReplicationControllerRunnable = system.podReplicationControllerRunnableFactory.apply(system);
-		
 		if (podReplicationControllerRunnable!=null)
 			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.config.horizontalPodAutoscalerSyncTime, system.config.horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
+		
+		watchdogExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
 		
 		/*
 		 * necessary before executing onStartup; 
@@ -156,6 +179,9 @@ public class ActorExecuterService {
 		
 		if (onStartup!=null)
 			onStartup.run();
+		
+		if (watchdogRunnable!=null)
+			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.config.watchdogSyncTime, system.config.watchdogSyncTime, TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean isStarted() {
@@ -218,6 +244,7 @@ public class ActorExecuterService {
 	}
 	
 	public void shutdown(boolean await) {
+		watchdogExecuterService.shutdown();
 		podReplicationControllerExecuterService.shutdown();
 		
 		globalTimerExecuterService.shutdown();

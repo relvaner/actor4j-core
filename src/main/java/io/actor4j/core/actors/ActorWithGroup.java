@@ -30,7 +30,6 @@ public abstract class ActorWithGroup extends Actor implements ActorGroupMember {
 		super(name);
 		
 		groupId = group.getId();
-		//group.add(self());
 	}
 
 	@Override

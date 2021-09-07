@@ -57,6 +57,10 @@ public class ActorSystemConfig {
 	public final long horizontalPodAutoscalerMeasurementTime;
 	public final Database<?> podDatabase;
 	
+	// Watchdog
+	public final long watchdogSyncTime;
+	public final long watchdogTimeout;
+	
 	// As Service
 	public final String serviceNodeName;
 	public final List<ActorServiceNode> serviceNodes;
@@ -95,6 +99,10 @@ public class ActorSystemConfig {
 		protected long horizontalPodAutoscalerMeasurementTime;
 		protected Database<?> podDatabase;
 		
+		// Watchdog
+		protected long watchdogSyncTime;
+		protected long watchdogTimeout;
+		
 		// As Service
 		protected String serviceNodeName;
 		protected List<ActorServiceNode> serviceNodes;
@@ -130,6 +138,10 @@ public class ActorSystemConfig {
 			// Pods
 			horizontalPodAutoscalerSyncTime = 15_000;
 			horizontalPodAutoscalerMeasurementTime = 2_000;
+			
+			// Watchdog
+			watchdogSyncTime = 5_000;
+			watchdogTimeout = 2_000;
 
 			// As Service
 			serviceNodeName = "Default Node";
@@ -157,6 +169,8 @@ public class ActorSystemConfig {
 			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime;
 			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime;
 			this.podDatabase = config.podDatabase;
+			this.watchdogSyncTime = config.watchdogSyncTime;
+			this.watchdogTimeout = config.watchdogTimeout;
 			this.serviceNodeName = config.serviceNodeName;
 			this.serviceNodes = new LinkedList<>(config.serviceNodes);
 			this.clientMode = config.clientMode;
@@ -291,6 +305,18 @@ public class ActorSystemConfig {
 
 			return this;
 		}
+		
+		public Builder<T> watchdogSyncTime(long watchdogSyncTime) {
+			this.watchdogSyncTime = watchdogSyncTime;
+			
+			return this;
+		}
+		
+		public Builder<T> watchdogTimeout(long watchdogTimeout) {
+			this.watchdogTimeout = watchdogTimeout;
+			
+			return this;
+		}
 
 		public Builder<T> serviceNodeName(String serviceNodeName) {
 			this.serviceNodeName = serviceNodeName;
@@ -342,6 +368,8 @@ public class ActorSystemConfig {
 		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
 		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
 		this.podDatabase = builder.podDatabase;
+		this.watchdogSyncTime = builder.watchdogSyncTime;
+		this.watchdogTimeout = builder.watchdogTimeout;
 		this.serviceNodeName = builder.serviceNodeName;
 		this.serviceNodes = Collections.unmodifiableList(builder.serviceNodes);
 		this.clientMode = builder.clientMode;

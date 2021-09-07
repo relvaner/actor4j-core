@@ -62,6 +62,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected /*quasi final*/ DIContainer<UUID> container;
 	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
+	protected /*quasi final*/ WatchdogRunnableFactory watchdogRunnableFactory;
 	
 	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
 	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
@@ -83,9 +84,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected CountDownLatch countDownLatch;
 	
-	public UUID USER_ID;
+	public final UUID USER_ID;
 	public final UUID SYSTEM_ID;
 	public final UUID UNKNOWN_ID;
+	public final UUID PSEUDO_ID;
 	
 	public ActorSystemImpl(ActorSystem wrapper) {
 		this(wrapper, null);
@@ -103,6 +105,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		container = DefaultDIContainer.create();
 		podReplicationController = new PodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
+		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);
 		
 		cells          = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
@@ -120,25 +123,18 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 				
-		resetUserCell();
+		USER_ID    = UUID.randomUUID();
+		SYSTEM_ID  = UUID.randomUUID();
+		UNKNOWN_ID = UUID.randomUUID();
+		PSEUDO_ID  = UUID.randomUUID();
 		
-		SYSTEM_ID = internal_addCell(generateCell(new Actor("system") {
-			@Override
-			public void receive(ActorMessage<?> message) {
-				// empty
-			}
-		}));
-		UNKNOWN_ID = internal_addCell(generateCell(new Actor("unknown") {
-			@Override
-			public void receive(ActorMessage<?> message) {
-				// empty
-			}
-		}));
+		resetCells();
 	}
 	
 	protected void reset() {
 		messagingEnabled.set(false);
 		
+		cells.clear();
 		aliases.clear();
 		hasAliases.clear();
 		resourceCells.clear();
@@ -147,13 +143,13 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		bufferQueue.clear();
 		
-		resetUserCell();
+		resetCells();
 	}
 	
-	protected void resetUserCell() {
-		countDownLatch = new CountDownLatch(1);
+	protected void resetCells() {
+		countDownLatch = new CountDownLatch(3);
 		
-		USER_ID = internal_addCell(generateCell(new Actor("user") {
+		internal_addCell(new ActorCell(this, new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -163,7 +159,38 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			public void postStop() {
 				countDownLatch.countDown();
 			}
-		}));
+		}, USER_ID));
+		
+		internal_addCell(new ActorCell(this, new Actor("system") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+			
+			@Override
+			public void postStop() {
+				countDownLatch.countDown();
+			}
+		}, SYSTEM_ID));
+		
+		internal_addCell(new ActorCell(this, new Actor("unknown") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+			
+			@Override
+			public void postStop() {
+				countDownLatch.countDown();
+			}
+		}, UNKNOWN_ID));
+		
+		internal_addCell(new ActorCell(this, new Actor("pseudo") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+		}, PSEUDO_ID));
 	}
 	
 	public ActorCell generateCell(Actor actor) {
@@ -282,6 +309,12 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		cells.get(SYSTEM_ID).children.add(cell.id);
 		return internal_addCell(cell);
 	}
+	
+	protected UUID pseudo_addCell(ActorCell cell) {
+		cell.parent = PSEUDO_ID;
+		cells.get(PSEUDO_ID).children.add(cell.id);
+		return internal_addCell(cell);
+	}
 
 	public UUID addActor(ActorFactory factory) {
 		ActorCell cell = generateCell(factory.create());
@@ -295,6 +328,22 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		for (int i=0; i<instances; i++)
 			result.add(addActor(factory));
+			
+		return result;
+	}
+	
+	public UUID addSystemActor(ActorFactory factory) {
+		ActorCell cell = generateCell(factory.create());
+		container.register(cell.id, factory);
+		
+		return system_addCell(cell);
+	}
+	
+	public List<UUID> addSystemActor(ActorFactory factory, int instances) {
+		List<UUID> result = new ArrayList<>(instances);
+		
+		for (int i=0; i<instances; i++)
+			result.add(addSystemActor(factory));
 			
 		return result;
 	}
@@ -616,12 +665,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return executerService.globalTimer();
 	}
 	
-	public void start() {
-		start(null, null);
+	public boolean start() {
+		return start(null, null);
 	}
 	
-	public void start(Runnable onStartup, Runnable onTermination) {
-		if (!executerService.isStarted())
+	public boolean start(Runnable onStartup, Runnable onTermination) {
+		boolean result = false;
+		
+		if (!executerService.isStarted()) {
 			executerService.start(new Runnable() {
 				@Override
 				public void run() {
@@ -629,7 +680,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 					Iterator<Entry<UUID, ActorCell>> iterator = cells.entrySet().iterator();
 					while (iterator.hasNext()) {
 						ActorCell cell = iterator.next().getValue();
-						if (cell.isRootInUser() /*&& cell.isRootInSystem()*/ )
+						if (cell.isRootInUser() || cell.isRootInSystem() )
 							cell.preStart();
 					}
 					
@@ -643,6 +694,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 						onStartup.run();
 				}
 			}, onTermination);
+			
+			result = true;
+		}
+		
+		return result;
 	}
 	
 	public void shutdownWithActors() {
@@ -655,6 +711,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 				@Override
 				public void run() {
 					send(new ActorMessage<>(null, INTERNAL_STOP, USER_ID, USER_ID));
+					send(new ActorMessage<>(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
+					send(new ActorMessage<>(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
 					try {
 						countDownLatch.await();
 					} catch (InterruptedException e) {

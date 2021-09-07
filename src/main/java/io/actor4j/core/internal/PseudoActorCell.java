@@ -51,8 +51,8 @@ public class PseudoActorCell extends ActorCell {
 		outerQueueL1 = new LinkedList<>();
 	}
 	
-	public UUID system_addCell(ActorCell cell) {
-		return system.system_addCell(cell);
+	public UUID pseudo_addCell(ActorCell cell) {
+		return system.pseudo_addCell(cell);
 	}
 
 	protected void failsafeMethod(ActorMessage<?> message) {

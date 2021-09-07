@@ -35,7 +35,7 @@ public abstract class PseudoActor extends Actor {
 		
 		PseudoActorCell cell = new PseudoActorCell(system, this, blocking);
 		setCell(cell);
-		cell.system_addCell(cell);
+		cell.pseudo_addCell(cell);
 		/* preStart */
 		preStart();
 	}

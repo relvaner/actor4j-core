@@ -112,8 +112,6 @@ public class PseudoActorFeature {
 	
 	@Test(timeout=5000)
 	public void test_await() {
-		ActorSystem system = new ActorSystem();
-		
 		PseudoActor main = new PseudoActor(system, true) {
 			@Override
 			public void receive(ActorMessage<?> message) {

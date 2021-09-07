@@ -30,7 +30,6 @@ public abstract class ActorWithDistributedGroup extends Actor implements ActorDi
 		super(name);
 		
 		distributedGroupId = group.getId();
-		//group.add(self());
 	}
 
 	@Override

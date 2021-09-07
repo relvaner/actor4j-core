@@ -172,12 +172,12 @@ public class ActorSystem {
 		return system.globalTimer();
 	}
 	
-	public void start() {
-		system.start();
+	public boolean start() {
+		return system.start();
 	}
 	
-	public void start(Runnable onStartup, Runnable onTermination) {
-		system.start(onStartup, onTermination);
+	public boolean start(Runnable onStartup, Runnable onTermination) {
+		return system.start(onStartup, onTermination);
 	}
 	
 	public void shutdownWithActors() {

@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 	MatcherFeature.class,
 	HandlerFeature.class,
 	FailsafeFeature.class,
+	WatchdogFeature.class,
 	/*UnhandledFeature.class,*/
 	
 	EmbeddedActorFeature.class,

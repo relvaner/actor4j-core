@@ -49,6 +49,7 @@ import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
 import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
+import static io.actor4j.core.actors.Actor.*;
 import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
@@ -93,15 +94,19 @@ public class ActorCell {
 	protected final Queue<Long> processingTimeStatistics;
 	
 	protected SupervisorStrategy parentSupervisorStrategy;
-			
+	
 	public ActorCell(ActorSystemImpl system, Actor actor) {
+		this(system, actor, UUID.randomUUID());
+	}
+			
+	public ActorCell(ActorSystemImpl system, Actor actor, UUID id) {
 		super();
 		
 		this.system = system;
 		this.actor  = actor;
 		
 		UUID persistenceId = persistenceId();
-		this.id = (persistenceId!=null)? persistenceId : UUID.randomUUID();
+		this.id = (persistenceId!=null)? persistenceId : id;
 		
 		children = new ConcurrentLinkedQueue<>();
 		
@@ -135,6 +140,8 @@ public class ActorCell {
 						stop();
 					else if (message.tag==INTERNAL_KILL) 
 						throw new ActorKilledException();
+					else if (message.tag==INTERNAL_HEALTH_CHECK)
+						send(new ActorMessage<>(null, UP, id, message.source));
 					else if (message.tag==INTERNAL_ACTIVATE)
 						active.set(true);
 					else if (message.tag==INTERNAL_DEACTIVATE)
@@ -214,6 +221,10 @@ public class ActorCell {
 	
 	public boolean isRootInUser() {
 		return (parent==system.USER_ID);
+	}
+	
+	public boolean isRootInSystem() {
+		return (parent==system.SYSTEM_ID);
 	}
 	
 	public void internal_receive(ActorMessage<?> message) {
