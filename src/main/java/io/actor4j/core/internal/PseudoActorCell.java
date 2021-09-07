@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -51,10 +52,73 @@ public class PseudoActorCell extends ActorCell {
 		outerQueueL1 = new LinkedList<>();
 	}
 	
+	@Override
+	public void internal_receive(ActorMessage<?> message) {
+		Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
+		if (behaviour==null)
+			actor.receive(message);
+		else
+			behaviour.accept(message);	
+	}
+	
 	public UUID pseudo_addCell(ActorCell cell) {
 		return system.pseudo_addCell(cell);
 	}
+	
+	@Override
+	public void send(ActorMessage<?> message) {
+		system.send(message);
+	}
+	
+	@Override
+	public void send(ActorMessage<?> message, String alias) {
+		if (alias!=null) {
+			List<UUID> destinations = system.getActorsFromAlias(alias);
 
+			UUID dest = null;
+			if (!destinations.isEmpty()) {
+				if (destinations.size()==1)
+					dest = destinations.get(0);
+				else {
+					Random random = new Random();
+					dest = destinations.get(random.nextInt(destinations.size()));
+				}
+			}
+			message.dest = (dest!=null) ? dest : UUID_ZERO;
+		}
+		
+		system.send(message);
+	}
+	
+	@Deprecated
+	@Override
+	public UUID internal_addChild(ActorCell cell) {
+		return null;
+	}
+	
+	@Deprecated
+	@Override
+	public UUID addChild(ActorFactory factory) {
+		return null;
+	}
+	
+	@Deprecated
+	@Override
+	public List<UUID> addChild(ActorFactory factory, int instances) {
+		return null;
+	}
+	
+	@Override
+	public void restart(Exception reason) {
+		postStop();
+		postRestart(reason);
+	}
+	
+	@Override
+	public void stop() {
+		internal_stop();
+	}
+	
 	protected void failsafeMethod(ActorMessage<?> message) {
 		try {
 			internal_receive(message);
@@ -174,52 +238,6 @@ public class PseudoActorCell extends ActorCell {
 		}
 			
 		return result;
-	}
-	
-	@Override
-	public void send(ActorMessage<?> message) {
-		system.send(message);
-	}
-	
-	@Override
-	public void send(ActorMessage<?> message, String alias) {
-		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
-
-			UUID dest = null;
-			if (!destinations.isEmpty()) {
-				if (destinations.size()==1)
-					dest = destinations.get(0);
-				else {
-					Random random = new Random();
-					dest = destinations.get(random.nextInt(destinations.size()));
-				}
-			}
-			message.dest = (dest!=null) ? dest : UUID_ZERO;
-		}
-		
-		system.send(message);
-	}
-	
-	@Override
-	public UUID internal_addChild(ActorCell cell) {
-		return null;
-	}
-	
-	@Override
-	public UUID addChild(ActorFactory factory) {
-		return null;
-	}
-	
-	@Override
-	public void restart(Exception reason) {
-		postStop();
-		postRestart(reason);
-	}
-	
-	@Override
-	public void stop() {
-		internal_stop();
 	}
 	
 	public Queue<ActorMessage<?>> getOuterQueue() {

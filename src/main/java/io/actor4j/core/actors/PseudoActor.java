@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.actors;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.internal.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorFactory;
 
 public abstract class PseudoActor extends Actor {
 	public PseudoActor(ActorSystem system, boolean blocking) {
@@ -38,6 +41,18 @@ public abstract class PseudoActor extends Actor {
 		cell.pseudo_addCell(cell);
 		/* preStart */
 		preStart();
+	}
+	
+	@Deprecated
+	@Override
+	public UUID addChild(ActorFactory factory) {
+		return null;
+	}
+	
+	@Deprecated
+	@Override
+	public List<UUID> addChild(ActorFactory factory, int instances) {
+		return null;
 	}
 
 	public boolean run() {

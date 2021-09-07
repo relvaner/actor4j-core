@@ -37,7 +37,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 	public DefaultWatchdogRunnable(ActorSystemImpl system, List<UUID> watchdogActors) {
 		super(system, watchdogActors);
 		
-		mediator = system.addActor(() -> new ResourceActor() {
+		mediator = system.addSystemActor(() -> new ResourceActor("watchdog-controller") {
 			List<CompletableFuture<Void>> futures;
 			
 			@SuppressWarnings("unchecked")
