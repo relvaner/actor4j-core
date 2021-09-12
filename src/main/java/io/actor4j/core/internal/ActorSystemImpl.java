@@ -290,7 +290,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			else if (actor instanceof PodActor)
 				podCells.put(cell.id, false);
 			if (executerService.isStarted()) {
-				messageDispatcher.registerCell(cell);
+				if (!(actor instanceof ResourceActor))
+					messageDispatcher.registerCell(cell);
 				/* preStart */
 				cell.preStart();
 			}

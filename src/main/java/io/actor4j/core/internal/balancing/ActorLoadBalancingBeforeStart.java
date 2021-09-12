@@ -26,18 +26,24 @@ import java.util.UUID;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
+import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.internal.ActorCell;
 import io.actor4j.core.internal.ActorThread;
 
 public class ActorLoadBalancingBeforeStart {
 	public void registerCells(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, ActorCell> cells) {
 		List<UUID> buffer = new LinkedList<>();
-		for (UUID id : cells.keySet())
-			buffer.add(id);
+		for (ActorCell cell : cells.values()) 
+			if (!(cell.getActor() instanceof ResourceActor))
+				buffer.add(cell.getId());
 		
 		int i=0, j=0;
 		for (ActorCell cell : cells.values()) {
 			Actor actor = cell.getActor();
+			
+			if (actor instanceof ResourceActor)
+				continue;
+			
 			if (actor instanceof ActorDistributedGroupMember) {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
