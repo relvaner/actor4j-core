@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package io.actor4j.core.internal;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.internal.failsafe.Method;
@@ -59,4 +60,8 @@ public abstract class WatchdogRunnable implements Runnable {
 	public UUID getUUID() {
 		return uuid;
 	}
+	
+	public abstract boolean isResponsiveThread(int index);
+	public abstract Set<Long> nonResponsiveThreads();
+	public abstract int nonResponsiveThreadsCount();
 }

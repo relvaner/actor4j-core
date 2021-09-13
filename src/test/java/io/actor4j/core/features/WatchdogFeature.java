@@ -19,6 +19,8 @@ import static org.junit.Assert.*;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +39,7 @@ public class WatchdogFeature {
 	@Before
 	public void before() {
 		ActorSystemConfig config = ActorSystemConfig.builder()
-			.parallelism(1)
+			.parallelism(2)
 			.watchdogSyncTime(200)
 			.watchdogTimeout(100)
 			.build();
@@ -74,27 +76,40 @@ public class WatchdogFeature {
 	}
 
 	@Test(timeout=5000)
-	public void test() {
+	public void test_health_check_failed() {
+		CountDownLatch testDone = new CountDownLatch(1);
+		AtomicLong threadId = new AtomicLong();
+		
 		UUID dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
+				threadId.getAndSet(Thread.currentThread().getId());
 				try {
-					Thread.sleep(500);
+					Thread.sleep(750);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				
-				tell("done", 200, message.source);
+				testDone.countDown();
 			} 
 		});
 		
 		system.start();
 		
-		Optional<ActorMessage<?>> optional = AskPattern.ask(new ActorMessage<>(null, 0, null, dest), system);
-		ActorMessage<?> message = optional.get();
-		assertEquals(200, message.tag);
-		assertEquals("done", message.valueAsString());
+		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, dest));
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		assertEquals(1, system.underlyingImpl().getExecuterService().nonResponsiveThreadsCount());
+		assertEquals(true, system.underlyingImpl().getExecuterService().nonResponsiveThreads().contains(threadId.get()));
 		
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		system.shutdown(true);
 	}
 }

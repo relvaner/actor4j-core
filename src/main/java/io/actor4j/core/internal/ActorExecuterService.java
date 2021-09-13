@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,14 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -102,6 +105,15 @@ public class ActorExecuterService {
 					else if (message.equals("watchdog")) {
 						systemLogger().log(ERROR,
 								String.format("[FAILSAFE] Exception in WatchdogThread"));
+					}
+					else if (message.equals("executer_resource")) {
+						Actor actor = system.cells.get(uuid).actor;
+						systemLogger().log(ERROR,
+								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
+					}
+					else if (message.equals("executer_client")) {
+						systemLogger().log(ERROR,
+								String.format("[SAFETY][EXECUTER][REJECTION] Exception in sending a message as a client"));
 					}
 				}
 				else {
@@ -197,49 +209,65 @@ public class ActorExecuterService {
 	}
 
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
-		if (system.config.clientRunnable!=null)
-			clientExecuterService.submit(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						system.config.clientRunnable.runViaAlias(message, alias);
+		if (system.config.clientRunnable!=null && !clientExecuterService.isShutdown())
+			try {
+				clientExecuterService.submit(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							system.config.clientRunnable.runViaAlias(message, alias);
+						}
+						catch(Throwable t) {
+							t.printStackTrace();
+						}	
 					}
-					catch(Throwable t) {
-						t.printStackTrace();
-					}	
-				}
-			});
+				});
+			}
+			catch (RejectedExecutionException e) {
+				system.executerService.failsafeManager.notifyErrorHandler(e, "executer_client", null);
+			};
 	}
 	
 	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
-		if (system.config.clientRunnable!=null)
-			clientExecuterService.submit(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						system.config.clientRunnable.runViaPath(message, node, path);
+		if (system.config.clientRunnable!=null && !clientExecuterService.isShutdown())
+			try {
+				clientExecuterService.submit(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							system.config.clientRunnable.runViaPath(message, node, path);
+						}
+						catch(Throwable t) {
+							t.printStackTrace();
+						}	
 					}
-					catch(Throwable t) {
-						t.printStackTrace();
-					}	
-				}
-			});
+				});
+			}
+			catch (RejectedExecutionException e) {
+				system.executerService.failsafeManager.notifyErrorHandler(e, "executer_client", null);
+			};
 	}
 	
 	public void resource(final ActorMessage<?> message) {
 		final ResourceActorCell cell = (ResourceActorCell)system.cells.get(message.dest);
 		if (cell!=null && cell.beforeRun(message)) {
-			resourceExecuterService.submit(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						cell.run(message);
-					}
-					catch(Throwable t) {
-						t.printStackTrace();
-					}	
+			if (!resourceExecuterService.isShutdown())
+				try {
+					resourceExecuterService.submit(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								cell.run(message);
+							}
+							catch(Throwable t) {
+								t.printStackTrace();
+							}	
+						}
+					});
 				}
-			});
+				catch (RejectedExecutionException e) {
+					system.executerService.failsafeManager.notifyErrorHandler(e, "executer_resource", cell.getId());
+				}
 		}
 	}
 	
@@ -265,7 +293,20 @@ public class ActorExecuterService {
 	public long getCount() {
 		return actorThreadPool!=null ? actorThreadPool.getCount() : 0;
 	}
+	
 	public List<Long> getCounts() {
 		return actorThreadPool!=null ? actorThreadPool.getCounts() : new ArrayList<>();
+	}
+	
+	public boolean isResponsiveThread(int index) {
+		return watchdogRunnable!=null ? watchdogRunnable.isResponsiveThread(index) : true;
+	}
+	
+	public Set<Long> nonResponsiveThreads() {
+		return watchdogRunnable!=null ? watchdogRunnable.nonResponsiveThreads() : new HashSet<>();
+	}
+	
+	public int nonResponsiveThreadsCount() {	
+		return watchdogRunnable!=null ? watchdogRunnable.nonResponsiveThreadsCount() : 0;
 	}
 }
