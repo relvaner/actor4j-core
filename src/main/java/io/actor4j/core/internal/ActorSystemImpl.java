@@ -82,7 +82,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected CountDownLatch countDownLatch;
+	protected volatile CountDownLatch countDownLatch;
 	
 	public final UUID USER_ID;
 	public final UUID SYSTEM_ID;
