@@ -160,6 +160,14 @@ public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<Ac
 		return (UUID)value;
 	}
 	
+	public boolean isSelfReferencing() {
+		return source.equals(dest);
+	}
+	
+	public boolean isSelfReferencing(UUID self) {
+		return source.equals(self) && dest.equals(self);
+	}
+	
 	protected ActorMessage<T> weakCopy() {
 		return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 	}

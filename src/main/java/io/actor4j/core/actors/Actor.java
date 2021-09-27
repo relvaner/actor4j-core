@@ -38,9 +38,9 @@ import static io.actor4j.core.utils.ActorUtils.*;
 public abstract class Actor implements ActorRef {
 	protected ActorCell cell;
 	
-	protected String name;
+	protected final String name;
 	
-	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
+	protected Queue<ActorMessage<?>> stash; // must be initialized by hand
 	
 	public static final int POISONPILL = INTERNAL_STOP;
 	public static final int TERMINATED = INTERNAL_STOP_SUCCESS;
