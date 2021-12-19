@@ -24,7 +24,7 @@ import io.actor4j.core.messages.ActorMessage;
 
 public class ActorService extends ActorSystem {
 	public ActorService() {
-		super();
+		super(ActorServiceConfig.create());
 	}
 	
 	public ActorService(ActorSystemImplFactory factory) {
