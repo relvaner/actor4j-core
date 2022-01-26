@@ -20,8 +20,8 @@ import java.util.UUID;
 import io.actor4j.core.utils.Copyable;
 import io.actor4j.core.utils.Shareable;
 
-public class PodActorMessage<T, A> extends ActorMessage<T> {
-	public final A authentication;
+public class PodActorMessage<T, U> extends ActorMessage<T> {
+	public final U user;
 
 	public PodActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
 		this(value, tag.ordinal(), source, dest, domain);
@@ -39,13 +39,13 @@ public class PodActorMessage<T, A> extends ActorMessage<T> {
 		this(value, tag, source, dest, null, null, null, domain);
 	}
 
-	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, A authentication, String protocol, String domain) {
+	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain) {
 		super(value, tag, source, dest, interaction, protocol, domain);
-		this.authentication = authentication;
+		this.user = user;
 	}
 
-	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, A authentication) {
-		this(value, tag, source, dest, interaction, authentication, null, null);
+	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user) {
+		this(value, tag, source, dest, interaction, user, null, null);
 	}
 
 	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
@@ -56,27 +56,27 @@ public class PodActorMessage<T, A> extends ActorMessage<T> {
 		this(value, tag, source, dest, null, null, null, null);
 	}
 
-	public A getAuthentication() {
-		return authentication;
+	public U getUser() {
+		return user;
 	}
 	
 	protected ActorMessage<T> weakCopy() {
-		return new PodActorMessage<T, A>(value, tag, source, dest, interaction, authentication, protocol, domain);
+		return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
 			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new PodActorMessage<T, A>(value, tag, source, dest, interaction, authentication, protocol, domain);
+				return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Copyable)
-				return new PodActorMessage<T, A>(((Copyable<T>)value).copy(), tag, source, dest, interaction, authentication, protocol, domain);
+				return new PodActorMessage<T, U>(((Copyable<T>)value).copy(), tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Exception)
-				return new PodActorMessage<T, A>(value, tag, source, dest, interaction, authentication, protocol, domain);
+				return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new PodActorMessage<T, A>(null, tag, source, dest, interaction, authentication, protocol, domain);
+			return new PodActorMessage<T, U>(null, tag, source, dest, interaction, user, protocol, domain);
 	}
 }

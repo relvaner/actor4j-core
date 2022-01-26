@@ -21,15 +21,18 @@ import io.actor4j.core.utils.Shareable;
 public class RemotePodMessage implements Shareable {
 	public final RemotePodMessageDTO remotePodMessageDTO;
 	public final String replyAddress;
+	public final Object user;
 	
-	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress) {
+	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user) {
 		super();
 		this.remotePodMessageDTO = remotePodMessageDTO;
 		this.replyAddress = replyAddress;
+		this.user = user;
 	}
 
 	@Override
 	public String toString() {
-		return "RemotePodMessage [remotePodMessageDTO=" + remotePodMessageDTO + ", replyAddress=" + replyAddress + "]";
+		return "RemotePodMessage [remotePodMessageDTO=" + remotePodMessageDTO + ", replyAddress=" + replyAddress
+				+ ", user=" + user + "]";
 	}
 }

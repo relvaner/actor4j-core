@@ -329,7 +329,7 @@ public class PodFeature {
 		
 		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(new ActorMessage<>(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
 		
-		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", null, true), client.toString());
+		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", null, true), client.toString(), null);
 		system.sendViaAlias(new ActorMessage<>(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {

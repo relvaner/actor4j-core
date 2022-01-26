@@ -21,7 +21,7 @@ public class RemotePodMessageDTO {
 	public final int tag;
 	public final String alias;
 	
-	public final Object authentication;
+	public final Object auth;
 	
 	public final boolean reply;
 	
@@ -30,22 +30,22 @@ public class RemotePodMessageDTO {
 		this.payload = null;
 		this.tag = 0;
 		this.alias = null;
-		this.authentication = null;
+		this.auth = null;
 		this.reply = false;
 	}
 	
-	public RemotePodMessageDTO(Object payload, int tag, String alias, Object authentication, boolean reply) {
+	public RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
 		super();
 		this.payload = payload;
 		this.tag = tag;
 		this.alias = alias;
-		this.authentication = authentication;
+		this.auth = auth;
 		this.reply = reply;
 	}
 
 	@Override
 	public String toString() {
-		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", authentication="
-				+ authentication + ", reply=" + reply + "]";
+		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", auth="
+				+ auth + ", reply=" + reply + "]";
 	}
 }
