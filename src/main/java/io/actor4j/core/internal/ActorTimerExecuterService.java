@@ -16,10 +16,13 @@
 package io.actor4j.core.internal;
 
 import java.util.UUID;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -30,6 +33,51 @@ public class ActorTimerExecuterService implements ActorTimer {
 	protected final ActorSystemImpl system;
 	
 	protected final ScheduledExecutorService timerExecuterService;
+	
+	protected static class CanceledScheduledFuture<T> implements ScheduledFuture<T> {
+		public CanceledScheduledFuture() {
+			super();
+		}
+		
+		public static CanceledScheduledFuture<?> create() {
+			return new CanceledScheduledFuture<>();
+		}
+		
+		@Override
+		public long getDelay(TimeUnit unit) {
+			return 0;
+		}
+
+		@Override
+		public int compareTo(Delayed o) {
+			return 0;
+		}
+
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning) {
+			return true;
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return true;
+		}
+
+		@Override
+		public boolean isDone() {
+			return true;
+		}
+
+		@Override
+		public T get() throws InterruptedException, ExecutionException {
+			return null;
+		}
+
+		@Override
+		public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+			return null;
+		}
+	}
 	
 	public ActorTimerExecuterService(ActorSystemImpl system, int corePoolSize, String threadName) {
 		super();
@@ -43,23 +91,23 @@ public class ActorTimerExecuterService implements ActorTimer {
 	}
 		
 	public ScheduledFuture<?> scheduleOnce(Runnable command, long delay, TimeUnit unit) {
-		return timerExecuterService.schedule(command, delay, unit);
+		return !timerExecuterService.isShutdown() ? timerExecuterService.schedule(command, delay, unit) : CanceledScheduledFuture.create();
 	}
 	
 	public ScheduledFuture<?> schedule(Runnable command, long initialDelay, long period, TimeUnit unit) {
-		return timerExecuterService.scheduleAtFixedRate(command, initialDelay, period, unit);
+		return !timerExecuterService.isShutdown() ? timerExecuterService.scheduleAtFixedRate(command, initialDelay, period, unit) : CanceledScheduledFuture.create();
 	}
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay, TimeUnit unit) {
-		return timerExecuterService.schedule(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.schedule(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				message.dest = dest;
 				system.send(message);
 			}
-		}, delay, unit); 
+		}, delay, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -74,12 +122,12 @@ public class ActorTimerExecuterService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final String alias, long delay, TimeUnit unit) {
-		return timerExecuterService.schedule(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.schedule(new Runnable() {
 			@Override
 			public void run() {
 				system.sendViaAlias(supplier.get(), alias);
 			}
-		}, delay, unit);
+		}, delay, unit) : CanceledScheduledFuture.create();
 	}
 	
 	@Override
@@ -94,7 +142,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay, TimeUnit unit) {
-		return timerExecuterService.schedule(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.schedule(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
@@ -103,7 +151,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 					system.send(message);
 				}
 			}
-		}, delay, unit); 
+		}, delay, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -118,14 +166,14 @@ public class ActorTimerExecuterService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final UUID dest, long initalDelay, long period, TimeUnit unit) {
-		return timerExecuterService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				message.dest = dest;
 				system.send(message);
 			}
-		}, initalDelay, period, unit); 
+		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -140,12 +188,12 @@ public class ActorTimerExecuterService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final String alias, long initalDelay, long period, TimeUnit unit) {
-		return timerExecuterService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				system.sendViaAlias(supplier.get(), alias);
 			}
-		}, initalDelay, period, unit); 
+		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -160,7 +208,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long initalDelay, long period, TimeUnit unit) {
-		return timerExecuterService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecuterService.isShutdown() ? timerExecuterService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
@@ -169,7 +217,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 					system.send(message);
 				}
 			}
-		}, initalDelay, period, unit); 
+		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
