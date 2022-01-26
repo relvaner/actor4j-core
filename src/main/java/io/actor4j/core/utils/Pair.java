@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.utils;
 
-public final class Pair<A, B> {
+public final class Pair<A, B> implements Shareable {
 	public final A a;
 	public final B b;
 	
