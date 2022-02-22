@@ -41,23 +41,23 @@ public class PodStatus {
 	
 	static {
 		statusMap = new HashMap<>();
-		statusMap.put(200, "Ok");
-		statusMap.put(201, "Created");
-		statusMap.put(202, "Accepted");
+		statusMap.put(PodStatus.OK, "Ok");
+		statusMap.put(PodStatus.CREATED, "Created");
+		statusMap.put(PodStatus.ACCEPTED, "Accepted");
 		
-		statusMap.put(400, "Bad Request");
-		statusMap.put(401, "Unauthorized");
-		statusMap.put(403, "Forbidden");
-		statusMap.put(404, "Not Found");
-		statusMap.put(405, "Method Not Allowed");
-		statusMap.put(406, "Not Acceptable");
-		statusMap.put(407, "Authentication Required");
-		statusMap.put(409, "Conflict");
-		statusMap.put(409, "Gone");
+		statusMap.put(PodStatus.BAD_REQUEST, "Bad Request");
+		statusMap.put(PodStatus.UNAUTHORIZED, "Unauthorized");
+		statusMap.put(PodStatus.FORBIDDED, "Forbidden");
+		statusMap.put(PodStatus.NOT_FOUND, "Not Found");
+		statusMap.put(PodStatus.METHOD_NOT_ALLOWED, "Method Not Allowed");
+		statusMap.put(PodStatus.NOT_ACCEPTABALE, "Not Acceptable");
+		statusMap.put(PodStatus.AUTHENTICATION_REQUIRED, "Authentication Required");
+		statusMap.put(PodStatus.CONFLICT, "Conflict");
+		statusMap.put(PodStatus.GONE, "Gone");
 		
-		statusMap.put(500, "Internal Server Error");
-		statusMap.put(501, "Not Implemented");
-		statusMap.put(503, "Service Unavailable");
+		statusMap.put(PodStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+		statusMap.put(PodStatus.NOT_IMPLEMENTED, "Not Implemented");
+		statusMap.put(PodStatus.SERVICE_UNAVAILABLE, "Service Unavailable");
 	}
 	
 	public static String getStatus(int code) {
