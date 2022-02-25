@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PodStatus {
-	private static final Map<Integer, String> statusMap;
+	protected static final Map<Integer, String> statusMap;
 	
 	public static final int OK = 200; 
 	public static final int CREATED = 201; 
