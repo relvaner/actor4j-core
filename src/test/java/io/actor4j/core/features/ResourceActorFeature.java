@@ -44,7 +44,7 @@ public class ResourceActorFeature {
 				e.printStackTrace();
 			}
 			
-			tell(null, 1, message.source);
+			tell(null, 1, message.source());
 		}
 	}
 	
@@ -68,24 +68,24 @@ public class ResourceActorFeature {
 				child = addChild(() -> new Actor("child") {
 					@Override
 					public void receive(ActorMessage<?> message) {
-						if (message.tag==1 && message.source.equals(resource))
+						if (message.tag()==1 && message.source().equals(resource))
 							testDone.countDown();
 					}
 				});
 			}
 			@Override
 			public void receive(ActorMessage<?> message) {
-				send(new ActorMessage<>(null, 0, child, resource));
+				send(ActorMessage.create(null, 0, child, resource));
 			}
 		});
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {
@@ -108,7 +108,7 @@ public class ResourceActorFeature {
 					e.printStackTrace();
 				}
 				
-				tell(null, 1, message.source);
+				tell(null, 1, message.source());
 			}
 		});
 		
@@ -120,24 +120,24 @@ public class ResourceActorFeature {
 				child = addChild(() -> new Actor("child") {
 					@Override
 					public void receive(ActorMessage<?> message) {
-						if (message.tag==1 && message.source.equals(resource))
+						if (message.tag()==1 && message.source().equals(resource))
 							testDone.countDown();
 					}
 				});
 			}
 			@Override
 			public void receive(ActorMessage<?> message) {
-				send(new ActorMessage<>(null, 0, child, resource));
+				send(ActorMessage.create(null, 0, child, resource));
 			}
 		});
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

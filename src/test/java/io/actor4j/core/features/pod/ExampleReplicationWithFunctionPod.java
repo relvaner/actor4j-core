@@ -30,19 +30,19 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 			return new PodFunction(host, context) {
 				@Override
 				public Pair<Object, Integer> handle(ActorMessage<?> message) {
-					logger().log(DEBUG, message.value.toString());
+					logger().log(DEBUG, message.value().toString());
 					
 					/*
 					host.tell(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
-							message.value, 
+							message.value(), 
 							context.getDomain(),
 							context.isPrimaryReplica())
-							, 42, message.source, message.interaction);
+							, 42, message.source(), message.interaction());
 					return null;
 					*/
 					
 					return Pair.of(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
-							message.value, 
+							message.value(), 
 							context.getDomain(),
 							context.isPrimaryReplica()), 42);
 				}

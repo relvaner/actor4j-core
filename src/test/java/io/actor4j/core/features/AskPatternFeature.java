@@ -48,15 +48,15 @@ public class AskPatternFeature {
 		UUID dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				tell("done", 200, message.source);
+				tell("done", 200, message.source());
 			} 
 		});
 		
 		system.start();
 		
-		Optional<ActorMessage<?>> optional = AskPattern.ask(new ActorMessage<>(null, 0, null, dest), system);
+		Optional<ActorMessage<?>> optional = AskPattern.ask(ActorMessage.create(null, 0, null, dest), system);
 		ActorMessage<?> message = optional.get();
-		assertEquals(200, message.tag);
+		assertEquals(200, message.tag());
 		assertEquals("done", message.valueAsString());
 		
 		system.shutdown(true);
@@ -64,7 +64,7 @@ public class AskPatternFeature {
 	
 	@Test(expected=AskPatternException.class)
 	public void test_exception() {
-		AskPattern.ask(new ActorMessage<>(null, 0, null, UUID.randomUUID()), system);
+		AskPattern.ask(ActorMessage.create(null, 0, null, UUID.randomUUID()), system);
 	}
 	
 	@Test(timeout=5000)
@@ -78,7 +78,7 @@ public class AskPatternFeature {
 		
 		system.start();
 		
-		Optional<ActorMessage<?>> optional = AskPattern.ask(new ActorMessage<>(null, 0, null, dest), 500, TimeUnit.MILLISECONDS, system);
+		Optional<ActorMessage<?>> optional = AskPattern.ask(ActorMessage.create(null, 0, null, dest), 500, TimeUnit.MILLISECONDS, system);
 		assertFalse(optional.isPresent());
 		
 		system.shutdown(true);

@@ -31,7 +31,7 @@ public class CacheHandlerFeature {
 	
 	@Test
 	public void test_match() {
-		ActorCacheHandler<String, Integer> handler = new ActorCacheHandler<>((msg) -> Pair.of(msg.value.toString(), 42));
+		ActorCacheHandler<String, Integer> handler = new ActorCacheHandler<>((msg) -> Pair.of(msg.value().toString(), 42));
 		Consumer<Pair<String, Integer>> action = (pair) -> {
 			if (pair.a.equals("Hello World!") && pair.b.equals(42))
 				postcondition = true;
@@ -39,17 +39,17 @@ public class CacheHandlerFeature {
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertTrue(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertTrue(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
+		assertFalse(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
 		assertFalse(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.match(new ActorMessage<>(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertTrue(handler.match(ActorMessage.create(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 		
 		
@@ -57,17 +57,17 @@ public class CacheHandlerFeature {
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertFalse(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
+		assertFalse(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
 		assertFalse(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertFalse(handler.match(ActorMessage.create(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 	}
 }

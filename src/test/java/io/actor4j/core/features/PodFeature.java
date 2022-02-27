@@ -60,17 +60,17 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
 				testDone.countDown();
 			}
 		});
 		system.start();
-		system.sendViaAlias(new ActorMessage<>("Test", 0, client, null), "ExampleReplicationWithActorPod");
+		system.sendViaAlias(ActorMessage.create("Test", 0, client, null), "ExampleReplicationWithActorPod");
 		
 		try {
 			testDone.await();
@@ -98,13 +98,13 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -113,11 +113,11 @@ public class PodFeature {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithActorPod");
-				system.broadcast(new ActorMessage<>("Test", 0, client, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
 		
 		try {
 			testDone.await();
@@ -145,13 +145,13 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -160,11 +160,11 @@ public class PodFeature {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithActorPod");
-				system.broadcast(new ActorMessage<>("Test", 0, client, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
 		
 		try {
 			testDone.await();
@@ -193,8 +193,8 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.tag==TERMINATED)
-					pods_postcondition.add(message.source);
+				if (message.tag()==TERMINATED)
+					pods_postcondition.add(message.source());
 				
 				if (pods_postcondition.size()==3) {
 					assertEquals(pods_precondition.size(), 3);
@@ -234,18 +234,18 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
 				testDone.countDown();
 			}
 		});
 		system.start();
 		
-		system.sendViaAlias(new ActorMessage<>("Test", 0, client, null), "ExampleReplicationWithFunctionPod");
+		system.sendViaAlias(ActorMessage.create("Test", 0, client, null), "ExampleReplicationWithFunctionPod");
 		
 		try {
 			testDone.await();
@@ -273,13 +273,13 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithFunctionPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -288,11 +288,11 @@ public class PodFeature {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithFunctionPod");
-				system.broadcast(new ActorMessage<>("Test", 0, client, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
 		
 		try {
 			testDone.await();
@@ -316,21 +316,21 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
 				testDone.countDown();
 			}
 		});
 		system.start();
 		
-		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(new ActorMessage<>(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
+		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", null, true), client.toString(), null);
-		system.sendViaAlias(new ActorMessage<>(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
+		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {
 			testDone.await();
@@ -352,18 +352,18 @@ public class PodFeature {
 		UUID client = system.addActor(() -> new Actor(){
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
 				testDone.countDown();
 			}
 		});
 		system.start();
 		
-		system.sendViaAlias(new ActorMessage<>("Test", 0, client, null), "ExampleShardingWithActorPod");
+		system.sendViaAlias(ActorMessage.create("Test", 0, client, null), "ExampleShardingWithActorPod");
 		
 		try {
 			testDone.await();
@@ -391,13 +391,13 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==1)
 					testDone.countDown();
 			}
@@ -407,11 +407,11 @@ public class PodFeature {
 			public void receive(ActorMessage<?> message) {
 				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleShardingWithActorPod");
 				assertEquals(3, handlers.size());
-				system.broadcast(new ActorMessage<>("Test", 0, client, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
 		
 		try {
 			testDone.await();
@@ -439,14 +439,14 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Test!"));
 				assertTrue(message.valueAsString().contains("shardId:2"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -461,14 +461,14 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello Zzzz!"));
 				assertTrue(message.valueAsString().contains("shardId:0"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -483,14 +483,14 @@ public class PodFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value));
+				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleShardingWithActorPod", message.value()));
 				
-				assertEquals(42, message.tag);
-				assertTrue(message.value!=null);
-				assertTrue(message.value instanceof String);
+				assertEquals(42, message.tag());
+				assertTrue(message.value()!=null);
+				assertTrue(message.value() instanceof String);
 				assertTrue(message.valueAsString().startsWith("Hello aaaa!"));
 				assertTrue(message.valueAsString().contains("shardId:1"));
-				handlers.add(message.source);
+				handlers.add(message.source());
 				if (handlers.size()==3)
 					testDone.countDown();
 			}
@@ -500,13 +500,13 @@ public class PodFeature {
 			public void receive(ActorMessage<?> message) {
 				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleShardingWithActorPod");
 				assertEquals(3*3, handlers.size());
-				system.broadcast(new ActorMessage<>("Test", 0, clientA, null), new ActorGroupSet(handlers));
-				system.broadcast(new ActorMessage<>("Zzzz", 0, clientB, null), new ActorGroupSet(handlers));
-				system.broadcast(new ActorMessage<>("aaaa", 0, clientC, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Test", 0, clientA, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("Zzzz", 0, clientB, null), new ActorGroupSet(handlers));
+				system.broadcast(ActorMessage.create("aaaa", 0, clientC, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
 		
 		try {
 			testDone.await();

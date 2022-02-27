@@ -29,12 +29,12 @@ public class ExampleReplicationWithActorPod extends ActorPod {
 		return new DefaultPodActor((groupId, context) -> new HandlerPodActor(domain(), groupId, context) {
 				@Override
 				public void handle(ActorMessage<?> message, UUID interaction) {
-					sendViaAlias(new ActorMessage<>(message.value, message.tag, self(), null, interaction, "", ""), "hello"+groupId);
+					sendViaAlias(ActorMessage.create(message.value(), message.tag(), self(), null, interaction, "", ""), "hello"+groupId);
 				}
 
 				@Override
 				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
-					tell(message.value, message.tag, dest, interaction);
+					tell(message.value(), message.tag(), dest, interaction);
 				}
 			}) {
 			@Override

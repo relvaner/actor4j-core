@@ -102,7 +102,7 @@ public class CommPatternFeature {
 					@Override
 					public void receive(ActorMessage<?> message) {
 						@SuppressWarnings("unchecked")
-						ImmutableList<String> list = (ImmutableList<String>)message.value;
+						ImmutableList<String> list = (ImmutableList<String>)message.value();
 						assertEquals("Hello", list.get().get(0));
 						assertEquals("World!", list.get().get(1));
 						testDone.countDown();
@@ -122,7 +122,7 @@ public class CommPatternFeature {
 		});
 		
 		system.start();
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

@@ -35,21 +35,21 @@ public class HelloActor extends PodChildActor {
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		logger().log(DEBUG, message.value.toString());
+		logger().log(DEBUG, message.value().toString());
 		if (context.isShard())
 			tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, shardId:%s, groupId:%s]", 
-				message.value, 
+				message.value(), 
 				context.getDomain(),
 				context.isPrimaryReplica(),
 				context.getShardId(),
 				groupId)
-				, 42, message.source, message.interaction);
+				, 42, message.source(), message.interaction());
 		else
 			tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, groupId:%s]", 
-				message.value, 
+				message.value(), 
 				context.getDomain(),
 				context.isPrimaryReplica(),
 				groupId)
-				, 42, message.source, message.interaction);
+				, 42, message.source(), message.interaction());
 	}
 }

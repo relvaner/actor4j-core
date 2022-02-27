@@ -42,16 +42,16 @@ public class ExampleReplicationWithRemoteFunctionImpl {
 	public Pair<Object, Integer> handle(ActorMessage<?> message) {
 		Pair<Object, Integer> result = null;
 		
-		BiFunction<Object, Integer, Pair<Object, Integer>> handler = handlerMap.get(message.interaction);
-		if (handler!=null && message.value!=null && message.value instanceof String) {
-			result = handler.apply(message.value, message.tag);
-			handlerMap.remove(message.interaction);
+		BiFunction<Object, Integer, Pair<Object, Integer>> handler = handlerMap.get(message.interaction());
+		if (handler!=null && message.value()!=null && message.value() instanceof String) {
+			result = handler.apply(message.value(), message.tag());
+			handlerMap.remove(message.interaction());
 		}
 		else {
-			handlerMap.put(message.interaction, (value, tag) -> {
+			handlerMap.put(message.interaction(), (value, tag) -> {
 				return Pair.of(value, tag);
 			});
-			host.tell(message.value, message.tag, "ExampleReplicationWithFunctionPod", message.interaction, null, context.getDomain());
+			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", message.interaction(), null, context.getDomain());
 		}
 			
 		return result;

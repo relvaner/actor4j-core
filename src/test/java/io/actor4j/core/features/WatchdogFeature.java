@@ -57,20 +57,20 @@ public class WatchdogFeature {
 		
 		system.start();
 		
-		Optional<ActorMessage<?>> optional = AskPattern.ask(new ActorMessage<>(null, HEALTH, null, system.SYSTEM_ID), system);
+		Optional<ActorMessage<?>> optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.SYSTEM_ID), system);
 		ActorMessage<?> message = optional.get();
-		assertEquals(UP, message.tag);
-		assertEquals(true, message.value==null);
+		assertEquals(UP, message.tag());
+		assertEquals(true, message.value()==null);
 		
-		optional = AskPattern.ask(new ActorMessage<>(null, HEALTH, null, system.USER_ID), system);
+		optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.USER_ID), system);
 		message = optional.get();
-		assertEquals(UP, message.tag);
-		assertEquals(true, message.value==null);
+		assertEquals(UP, message.tag());
+		assertEquals(true, message.value()==null);
 		
-		optional = AskPattern.ask(new ActorMessage<>(null, HEALTH, null, dest), system);
+		optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, dest), system);
 		message = optional.get();
-		assertEquals(UP, message.tag);
-		assertEquals(true, message.value==null);
+		assertEquals(UP, message.tag());
+		assertEquals(true, message.value()==null);
 		
 		system.shutdown(true);
 	}
@@ -96,7 +96,7 @@ public class WatchdogFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {

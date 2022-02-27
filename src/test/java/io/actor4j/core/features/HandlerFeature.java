@@ -39,23 +39,23 @@ public class HandlerFeature {
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertTrue(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertTrue(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
+		assertFalse(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
 		assertFalse(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertFalse(handler.match(ActorMessage.create(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 	}
 	
 	@Test
 	public void test_predicate() {
-		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class, (msg) -> msg.domain.equals("domainA"));
+		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class, (msg) -> msg.domain().equals("domainA"));
 		Consumer<String> action = (value) -> {
 			if (value.equals("Hello World!"))
 				postcondition = true;
@@ -63,17 +63,17 @@ public class HandlerFeature {
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), "", "domainA")));
+		assertTrue(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), "", "domainA")));
 		assertTrue(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), "", "domainB")));
+		assertFalse(handler.match(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), "", "domainB")));
 		assertFalse(postcondition);
 		
 		postcondition = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.match(new ActorMessage<>(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertFalse(handler.match(ActorMessage.create(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 	}
 	
@@ -92,35 +92,35 @@ public class HandlerFeature {
 		postcondition = false;
 		postcondition_null = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.matchOfNullable(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertTrue(handler.matchOfNullable(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertTrue(postcondition);
 		assertFalse(postcondition_null);
 
 		postcondition = false;
 		postcondition_null = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.matchOfNullable(new ActorMessage<>("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
+		assertFalse(handler.matchOfNullable(ActorMessage.create("Hello World!", 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
 		assertFalse(postcondition);
 		assertFalse(postcondition_null);
 		
 		postcondition = false;
 		postcondition_null = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.matchOfNullable(new ActorMessage<>(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertFalse(handler.matchOfNullable(ActorMessage.create(42, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 		assertFalse(postcondition_null);
 
 		postcondition = false;
 		postcondition_null = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertTrue(handler.matchOfNullable(new ActorMessage<>(null, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
+		assertTrue(handler.matchOfNullable(ActorMessage.create(null, 0, null, null, UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"))));
 		assertFalse(postcondition);
 		assertTrue(postcondition_null);
 		
 		postcondition = false;
 		postcondition_null = false;
 		handler.define(UUID.fromString("5ae55fff-d420-4c31-bbe7-0b18812766c2"), action);
-		assertFalse(handler.matchOfNullable(new ActorMessage<>(null, 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
+		assertFalse(handler.matchOfNullable(ActorMessage.create(null, 0, null, null, UUID.fromString("acefb4a4-b2a0-4641-8553-9a0ac12e282a"))));
 		assertFalse(postcondition);
 		assertFalse(postcondition_null);
 	}

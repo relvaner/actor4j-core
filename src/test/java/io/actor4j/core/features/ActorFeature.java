@@ -61,7 +61,7 @@ public class ActorFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

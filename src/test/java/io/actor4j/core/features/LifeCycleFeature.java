@@ -114,14 +114,14 @@ public class LifeCycleFeature {
 
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.tag==TERMINATED && message.source.equals(parent))
+				if (message.tag()==TERMINATED && message.source().equals(parent))
 					testDone.countDown();
 			}
 		});
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, Actor.POISONPILL, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -199,10 +199,10 @@ public class LifeCycleFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.source==system.SYSTEM_ID)
+				if (message.source()==system.SYSTEM_ID)
 					tell(null, 0, child2);
-				else if (message.tag==TERMINATED) {
-					waitForChildren.remove(message.source);
+				else if (message.tag()==TERMINATED) {
+					waitForChildren.remove(message.source());
 					if (waitForChildren.isEmpty())
 						testDone.countDown();
 				}
@@ -211,7 +211,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -264,14 +264,14 @@ public class LifeCycleFeature {
 
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.tag==TERMINATED && message.source.equals(parent))
+				if (message.tag()==TERMINATED && message.source().equals(parent))
 					testDone.countDown();
 			}
 		});
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, Actor.KILL, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.KILL, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -344,7 +344,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, Actor.RESTART, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.RESTART, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -418,7 +418,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();
@@ -534,14 +534,14 @@ public class LifeCycleFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.source==system.SYSTEM_ID)
+				if (message.source()==system.SYSTEM_ID)
 					tell(null, 0, child2);
 			}
 		});
 		
 		system.start();
 		
-		system.send(new ActorMessage<>(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
 		
 		try {
 			testDone.await();

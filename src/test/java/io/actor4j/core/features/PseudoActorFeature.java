@@ -64,12 +64,12 @@ public class PseudoActorFeature {
 					@Override
 					public void preStart() {
 						timerFuture = system.timer()
-							.schedule(() -> new ActorMessage<Integer>(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
+							.schedule(() -> ActorMessage.create(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
 					}
 					
 					@Override
 					public void receive(ActorMessage<?> message) {
-						logger().log(DEBUG, String.format("numberGenerator received a message.tag (%d) from main", message.tag));
+						logger().log(DEBUG, String.format("numberGenerator received a message.tag (%d) from main", message.tag()));
 						testDone.countDown();
 					}
 					
@@ -95,7 +95,7 @@ public class PseudoActorFeature {
 					});
 				counter++;
 					
-				main.send(new ActorMessage<>(null, i++, main.getId(), numberGenerator));
+				main.send(ActorMessage.create(null, i++, main.getId(), numberGenerator));
 			}
 		}, 0, 50);
 		
@@ -120,7 +120,7 @@ public class PseudoActorFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
 		ActorMessage<?> message1 = main.await();
 		assertEquals(true, message1.valueAsBoolean());
 

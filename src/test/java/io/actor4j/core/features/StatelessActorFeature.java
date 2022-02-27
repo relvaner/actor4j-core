@@ -63,7 +63,7 @@ public class StatelessActorFeature {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				system.sendViaAlias(new ActorMessage<Object>(null, 0, system.SYSTEM_ID, null), "instances");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances");
 			}
 		}, 0, 50);
 		

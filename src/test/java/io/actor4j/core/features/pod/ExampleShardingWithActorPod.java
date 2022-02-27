@@ -31,19 +31,19 @@ public class ExampleShardingWithActorPod extends ActorPod {
 			(groupId, context) -> new ShardProxyPodActor(domain(), groupId, context) {
 				@Override
 				public String shardId(ActorMessage<?> message, int totalShardCount) {
-					int hashCode = String.valueOf(message.value).hashCode();
+					int hashCode = String.valueOf(message.value()).hashCode();
 					return String.valueOf(hashCode%totalShardCount);
 				}
 			}, 
 			(groupId, context) -> new HandlerPodActor(domain(), groupId, context) {
 				@Override
 				public void handle(ActorMessage<?> message, UUID interaction) {
-					sendViaAlias(new ActorMessage<>(message.value, message.tag, self(), null, interaction, "", ""), "hello"+groupId);
+					sendViaAlias(ActorMessage.create(message.value(), message.tag(), self(), null, interaction, "", ""), "hello"+groupId);
 				}
 
 				@Override
 				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
-					tell(message.value, message.tag, dest, interaction);
+					tell(message.value(), message.tag(), dest, interaction);
 				}
 			}) {
 			@Override

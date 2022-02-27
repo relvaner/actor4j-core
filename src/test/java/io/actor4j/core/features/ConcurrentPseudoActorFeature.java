@@ -59,12 +59,12 @@ public class ConcurrentPseudoActorFeature {
 					@Override
 					public void preStart() {
 						timerFuture = system.timer()
-							.schedule(() -> new ActorMessage<Integer>(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
+							.schedule(() -> ActorMessage.create(postconditions_numbers[counter++], 0, self(), null), main.getId(), 0, 25, TimeUnit.MILLISECONDS);
 					}
 					
 					@Override
 					public void receive(ActorMessage<?> message) {
-						logger().log(DEBUG, String.format("numberGenerator received a message.tag (%d) from main", message.tag));
+						logger().log(DEBUG, String.format("numberGenerator received a message.tag (%d) from main", message.tag()));
 						testDone.countDown();
 					}
 					
@@ -90,7 +90,7 @@ public class ConcurrentPseudoActorFeature {
 					});
 				counter++;
 				
-				main.send(new ActorMessage<>(null, i++, main.getId(), numberGenerator));
+				main.send(ActorMessage.create(null, i++, main.getId(), numberGenerator));
 			}
 		}, 0, 50);
 		
@@ -117,7 +117,7 @@ public class ConcurrentPseudoActorFeature {
 		
 		system.start();
 		
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
 		ActorMessage<?> message1 = null;
 		try {
 			message1 = main.await(5000, TimeUnit.MILLISECONDS);
@@ -126,16 +126,16 @@ public class ConcurrentPseudoActorFeature {
 		}
 		assertTrue(message1.valueAsBoolean());
 		
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 1, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(new ActorMessage<Boolean>(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 1, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
 		boolean value = false;
 		try {
-			 value = main.await((msg) -> msg.tag==1, (msg) -> msg.valueAsBoolean(), 5000, TimeUnit.MILLISECONDS);
+			 value = main.await((msg) -> msg.tag()==1, (msg) -> msg.valueAsBoolean(), 5000, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException | TimeoutException e1) {
 			e1.printStackTrace();
 		}
