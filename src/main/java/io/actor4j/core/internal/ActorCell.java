@@ -127,39 +127,39 @@ public class ActorCell {
 				
 				if (isDirective(message) && !activeDirectiveBehaviour) {
 					result = true;
-					if (message.tag==INTERNAL_RESTART || message.tag==INTERNAL_STOP)
+					if (message.tag()==INTERNAL_RESTART || message.tag()==INTERNAL_STOP)
 						activeDirectiveBehaviour = true;
 						
-					if (message.tag==INTERNAL_RESTART) {
-						if (message.value instanceof Exception)
-							preRestart((Exception)message.value);
+					if (message.tag()==INTERNAL_RESTART) {
+						if (message.value() instanceof Exception)
+							preRestart((Exception)message.value());
 						else
 							preRestart(null);
 					}
-					else if (message.tag==INTERNAL_STOP)
+					else if (message.tag()==INTERNAL_STOP)
 						stop();
-					else if (message.tag==INTERNAL_KILL) 
+					else if (message.tag()==INTERNAL_KILL) 
 						throw new ActorKilledException();
-					else if (message.tag==INTERNAL_HEALTH_CHECK)
-						send(new ActorMessage<>(null, UP, id, message.source));
-					else if (message.tag==INTERNAL_ACTIVATE)
+					else if (message.tag()==INTERNAL_HEALTH_CHECK)
+						send(ActorMessage.create(null, UP, id, message.source()));
+					else if (message.tag()==INTERNAL_ACTIVATE)
 						active.set(true);
-					else if (message.tag==INTERNAL_DEACTIVATE)
+					else if (message.tag()==INTERNAL_DEACTIVATE)
 						active.set(false);
-					else if (message.tag==INTERNAL_RECOVER)
+					else if (message.tag()==INTERNAL_RECOVER)
 						recoverProtocol.apply();
-					else if (message.tag==INTERNAL_PERSISTENCE_RECOVER)
+					else if (message.tag()==INTERNAL_PERSISTENCE_RECOVER)
 						recover(message);
-					else if (message.tag==INTERNAL_PERSISTENCE_SUCCESS) {
+					else if (message.tag()==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();
 						if (tuple.onSuccess!=null)
 							for (int i=0; i<tuple.objects.size(); i++)
 								tuple.onSuccess.accept(tuple.objects.get(i));
 					}
-					else if (message.tag==INTERNAL_PERSISTENCE_FAILURE) {
+					else if (message.tag()==INTERNAL_PERSISTENCE_FAILURE) {
 						PersistenceTuple tuple = persistenceTuples.poll();
 						if (tuple.onFailure!=null)
-							tuple.onFailure.accept((Exception)message.value);
+							tuple.onFailure.accept((Exception)message.value());
 					}
 					else
 						result = false;
@@ -276,8 +276,8 @@ public class ActorCell {
 					else
 						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 				}
-				message.dest = (dest!=null) ? dest : ActorMessageDispatcher.UUID_ALIAS;
-				system.bufferQueue.offer(message.copy());
+				dest = (dest!=null) ? dest : ActorMessageDispatcher.UUID_ALIAS;
+				system.bufferQueue.offer(message.copy(dest));
 			}
 		}
 	}
@@ -293,7 +293,7 @@ public class ActorCell {
 	
 	public void unhandled(ActorMessage<?> message) {
 		if (system.config.debugUnhandled) {
-			Actor sourceActor = system.cells.get(message.source).actor;
+			Actor sourceActor = system.cells.get(message.source()).actor;
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
 					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from source (%s)",
@@ -369,7 +369,7 @@ public class ActorCell {
 		Iterator<UUID> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
-			system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP_SUCCESS, id, dest));
+			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, id, dest));
 		}
 	}
 	
@@ -392,7 +392,7 @@ public class ActorCell {
 			for (ActorPersistenceObject obj : list)
 				obj.persistenceId = persistenceId();
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
-			system.messageDispatcher.postPersistence(new ActorMessage<ImmutableList<E>>(new ImmutableList<E>(Arrays.asList(events)), PersistenceServiceActor.PERSIST_EVENTS, id, null));
+			system.messageDispatcher.postPersistence(ActorMessage.create(new ImmutableList<E>(Arrays.asList(events)), PersistenceServiceActor.PERSIST_EVENTS, id, null));
 			persistenceTuples.offer(tuple);
 			
 		}
@@ -405,7 +405,7 @@ public class ActorCell {
 			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<ActorPersistenceObject>)onSuccess, onFailure, list);
-			system.messageDispatcher.postPersistence(new ActorMessage<S>(state, PersistenceServiceActor.PERSIST_STATE, id, null));
+			system.messageDispatcher.postPersistence(ActorMessage.create(state, PersistenceServiceActor.PERSIST_STATE, id, null));
 			persistenceTuples.offer(tuple);
 		}
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,209 +15,99 @@
  */
 package io.actor4j.core.messages;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.utils.Copyable;
-import io.actor4j.core.utils.Shareable;
 
-public class ActorMessage<T> implements Copyable<ActorMessage<T>>, Comparable<ActorMessage<T>> {
-	public static Set<Class<?>> SUPPORTED_TYPES;
+public interface ActorMessage<T> extends Copyable<ActorMessage<T>>, Comparable<ActorMessage<T>> {
+	public T value();
+	public int tag();
+	public UUID source();
+	public UUID dest();
+	public UUID interaction();
+	public String protocol();
+	public String domain();
 	
-	public T value;
-	public int tag;
-	public UUID source;
-	public UUID dest;
-	
-	public UUID interaction;
-	public String protocol;
-	public String domain;
-	
-	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
-		this.value = value;
-		this.tag = tag;
-		this.source = source;
-		this.dest = dest;
-		this.interaction = interaction;
-		this.protocol = protocol;
-		this.domain = domain;
-	}
-
-	public ActorMessage(T value, int tag, UUID source, UUID dest) {
-		this(value, tag, source, dest, null, null, null);
+	public default boolean valueAsBoolean() {
+		return (Boolean)value();
 	}
 	
-	public ActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
-		this(value, tag, source, dest, null, null, domain);
+	public default int valueAsInt() {
+		return (Integer)value();
 	}
 	
-	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
-		this(value, tag, source, dest, interaction, null, null);
+	public default long valueAsLong() {
+		return (Long)value();
 	}
 	
-	public ActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
-		this(value, tag, source, dest, interaction, protocol, null);
-	}
-
-	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
-		this(value, tag.ordinal(), source, dest);
+	public default double valueAsDouble() {
+		return (Double)value();
 	}
 	
-	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
-		this(value, tag.ordinal(), source, dest, domain);
+	public default String valueAsString() {
+		return (String)value();
 	}
 	
-	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
-		this(value, tag.ordinal(), source, dest, interaction);
+	public default UUID valueAsUUID() {
+		return (UUID)value();
 	}
 	
-	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
-		this(value, tag.ordinal(), source, dest, interaction, protocol);
+	public default boolean isSelfReferencing() {
+		return source().equals(dest());
 	}
 	
-	public ActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
-		this(value, tag.ordinal(), source, dest, interaction, protocol, domain);
+	public default boolean isSelfReferencing(UUID self) {
+		return source().equals(self) && dest().equals(self);
 	}
 	
-	public T getValue() {
-		return value;
+	public ActorMessage<T> weakCopy();
+	public ActorMessage<T> weakCopy(UUID source, UUID dest);
+	public ActorMessage<T> weakCopy(UUID dest);
+	
+	public ActorMessage<T> copy();
+	public ActorMessage<T> copy(UUID dest);
+	
+	public default int compareTo(ActorMessage<T> message) {
+		return Integer.compare(tag(), message.tag()); // tag - message.tag
 	}
 	
-	public void setValue(T value) {
-		this.value = value;
+	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+		return new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 	}
 	
-	public int getTag() {
-		return tag;
+	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest) {
+		return create(value, tag, source, dest, null, null, null);
 	}
-
-	public void setTag(int tag) {
-		this.tag = tag;
+	
+	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, String domain) {
+		return create(value, tag, source, dest, null, null, domain);
+	}
+	
+	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction) {
+		return create(value, tag, source, dest, interaction, null, null);
+	}
+	
+	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		return create(value, tag, source, dest, interaction, protocol, null);
 	}
 
-	public UUID getSource() {
-		return source;
-	}
-
-	public void setSource(UUID source) {
-		this.source = source;
-	}
-
-	public UUID getDest() {
-		return dest;
-	}
-
-	public void setDest(UUID dest) {
-		this.dest = dest;
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest) {
+		return create(value, tag.ordinal(), source, dest);
 	}
 	
-	public UUID getInteraction() {
-		return interaction;
-	}
-
-	public void setInteraction(UUID interaction) {
-		this.interaction = interaction;
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+		return create(value, tag.ordinal(), source, dest, domain);
 	}
 	
-	public String getProtocol() {
-		return protocol;
-	}
-
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public boolean valueAsBoolean() {
-		return (Boolean)value;
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+		return create(value, tag.ordinal(), source, dest, interaction);
 	}
 	
-	public int valueAsInt() {
-		return (Integer)value;
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
+		return create(value, tag.ordinal(), source, dest, interaction, protocol);
 	}
 	
-	public long valueAsLong() {
-		return (Long)value;
-	}
-	
-	public double valueAsDouble() {
-		return (Double)value;
-	}
-	
-	public String valueAsString() {
-		return (String)value;
-	}
-	
-	public UUID valueAsUUID() {
-		return (UUID)value;
-	}
-	
-	public boolean isSelfReferencing() {
-		return source.equals(dest);
-	}
-	
-	public boolean isSelfReferencing(UUID self) {
-		return source.equals(self) && dest.equals(self);
-	}
-	
-	protected ActorMessage<T> weakCopy() {
-		return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public ActorMessage<T> copy() {
-		if (value!=null) { 
-			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
-			else if (value instanceof Copyable)
-				return new ActorMessage<T>(((Copyable<T>)value).copy(), tag, source, dest, interaction, protocol, domain);
-			else if (value instanceof Exception)
-				return new ActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
-			else
-				throw new IllegalArgumentException(value.getClass().getName());
-		}
-		else
-			return new ActorMessage<T>(null, tag, source, dest, interaction, protocol, domain);
-	}
-	
-	@Override
-	public int compareTo(ActorMessage<T> message) {
-		return Integer.compare(tag, message.tag); // tag - message.tag
-	}
-
-	@Override
-	public String toString() {
-		return "ActorMessage [value=" + value + ", tag=" + tag + ", source=" + source + ", dest=" + dest
-				+ ", interaction=" + interaction + ", protocol=" + protocol + ", domain=" + domain + "]";
-	}
-
-	public static boolean isSupportedType(Class<?> type) {
-		return SUPPORTED_TYPES.contains(type);
-	}
-
-	static {
-		SUPPORTED_TYPES = new HashSet<Class<?>>();
-		SUPPORTED_TYPES.add(Byte.class);
-		SUPPORTED_TYPES.add(Short.class);
-		SUPPORTED_TYPES.add(Integer.class);
-		SUPPORTED_TYPES.add(Long.class);
-		SUPPORTED_TYPES.add(Float.class);
-		SUPPORTED_TYPES.add(Double.class);
-		SUPPORTED_TYPES.add(Character.class);
-		SUPPORTED_TYPES.add(String.class);
-		SUPPORTED_TYPES.add(Boolean.class);
-		SUPPORTED_TYPES.add(Void.class);
-		
-		// IMMUTABLE
-		SUPPORTED_TYPES.add(Object.class);
-		SUPPORTED_TYPES.add(UUID.class);
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+		return create(value, tag.ordinal(), source, dest, interaction, protocol, domain);
 	}
 }

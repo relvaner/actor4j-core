@@ -96,7 +96,7 @@ public abstract class EmbeddedActor {
 	}
 	
 	public <T> boolean embedded(T value, int tag, UUID dest) {
-		return embedded(new ActorMessage<T>(value, tag, getParent(), dest));
+		return embedded(ActorMessage.create(value, tag, getParent(), dest));
 	}
 	
 	public abstract boolean receive(ActorMessage<?> message);
@@ -124,7 +124,7 @@ public abstract class EmbeddedActor {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source.equals(source))
+				if (message.source().equals(source))
 					result = action.test(message);
 				return result;
 			}
@@ -140,7 +140,7 @@ public abstract class EmbeddedActor {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.tag==tag)
+				if (message.tag()==tag)
 					result = action.test(message);
 				return result;
 			}
@@ -156,7 +156,7 @@ public abstract class EmbeddedActor {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source.equals(source) && message.tag==tag)
+				if (message.source().equals(source) && message.tag()==tag)
 					result = action.test(message);
 				return result;
 			}
@@ -189,18 +189,15 @@ public abstract class EmbeddedActor {
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
-		message.source = self();
-		message.dest   = dest;
-		send(message);
+		send(message.weakCopy(self(), dest));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest) {
-		send(new ActorMessage<T>(value, tag, self(), dest));
+		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {
-		message.dest   = dest;
-		send(message);
+		send(message.weakCopy(dest));
 	}
 	
 	public void preStart() {

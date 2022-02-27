@@ -53,7 +53,7 @@ public final class AskPattern {
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 
 		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
-		system.send(new ActorMessage<>(message.value, message.tag, source, message.dest, message.interaction, message.protocol, message.domain));
+		system.send(message.weakCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
 		boolean exception = false;
@@ -63,7 +63,7 @@ public final class AskPattern {
 			e.printStackTrace();
 			exception = true;
 		}
-		system.send(new ActorMessage<>(null, Actor.POISONPILL, system.SYSTEM_ID, source));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, source));
 
 		return exception ? Optional.empty() : Optional.of(result);
 	}
@@ -75,8 +75,8 @@ public final class AskPattern {
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 		
 		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
-		system.send(new ActorMessage<>(message.value, message.tag, source, message.dest, message.interaction, message.protocol, message.domain));
-		
+		system.send(message.weakCopy(source, message.dest()));
+
 		ActorMessage<?> result = null;
 		boolean exception = false;
 		try {
@@ -85,7 +85,7 @@ public final class AskPattern {
 			e.printStackTrace();
 			exception = true;
 		}
-		system.send(new ActorMessage<>(null, Actor.POISONPILL, system.SYSTEM_ID, source));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, source));
 
 		return exception ? Optional.empty() : Optional.of(result);
 	}

@@ -70,10 +70,10 @@ public abstract class EmbeddedHostActor extends Actor {
 	public boolean embedded(ActorMessage<?> message) {
 		boolean result = false;
 		
-		EmbeddedActor embeddedActor = router.get(message.dest);
+		EmbeddedActor embeddedActor = router.get(message.dest());
 		if (embeddedActor!=null)
 			result = embeddedActor.embedded(message);
-		else if (message.dest.equals(self()))
+		else if (message.dest().equals(self()))
 			receive(message);
 		
 		return result;
@@ -86,16 +86,16 @@ public abstract class EmbeddedHostActor extends Actor {
 		if (embeddedActor!=null)
 			result = embeddedActor.embedded(value, tag, dest);
 		else if (dest.equals(self()))
-			receive(new ActorMessage<T>(value, tag, self(), dest));
+			receive(ActorMessage.create(value, tag, self(), dest));
 		
 		return result;
 	}
 	
 	public void sendWithinHost(ActorMessage<?> message) {
-		EmbeddedActor embeddedActor = router.get(message.dest);
+		EmbeddedActor embeddedActor = router.get(message.dest());
 		if (embeddedActor!=null)
 			embeddedActor.embedded(message.copy());
-		else if (message.dest.equals(self()))
+		else if (message.dest().equals(self()))
 			receive(message.copy());
 	}
 	

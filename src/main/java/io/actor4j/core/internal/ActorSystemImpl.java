@@ -411,7 +411,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			List<UUID> newActors = addActor(factory, instances);
 			setAlias(newActors, alias);
 			if (oldActors.size()>0)
-				broadcast(new ActorMessage<Object>(null, Actor.STOP, SYSTEM_ID, null), new ActorGroupSet(oldActors));
+				broadcast(ActorMessage.create(null, Actor.STOP, SYSTEM_ID, null), new ActorGroupSet(oldActors));
 			result = true;
 		}
 		
@@ -555,9 +555,9 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	}
 	
 	public ActorSystemImpl sendViaPath(ActorMessage<?> message, String path) {
-		message.dest = getActorFromPath(path);
-		if (message.dest!=null)
-			send(message);
+		UUID dest = getActorFromPath(path);
+		if (dest!=null)
+			send(message.weakCopy(dest));
 		
 		return this;
 	}
@@ -566,12 +566,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		List<UUID> destinations = getActorsFromAlias(alias);
 		
 		if (!destinations.isEmpty()) {
+			UUID dest = null;
+			
 			if (destinations.size()==1)
-				message.dest = destinations.get(0);
+				dest = destinations.get(0);
 			else 
-				message.dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			if (message.dest!=null)
-				send(message);
+				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+			if (dest!=null)
+				send(message.weakCopy(dest));
 		}
 		
 		return this;
@@ -582,12 +584,14 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		
 		List<UUID> destinations = getActorsFromAlias(alias);
 		if (!destinations.isEmpty()) {
+			UUID dest = null;
+			
 			if (destinations.size()==1)
-				message.dest = destinations.get(0);
+				dest = destinations.get(0);
 			else 
-				message.dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			if (message.dest!=null) {
-				sendAsServer(message);
+				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+			if (dest!=null) {
+				sendAsServer(message.weakCopy(dest));
 				result = true;
 			}
 		}
@@ -596,8 +600,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	}
 	
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
-		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest!=null)  {
-			ActorCell cell = cells.get(message.dest);
+		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
+			ActorCell cell = cells.get(message.dest());
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
 			else
@@ -629,15 +633,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	public ActorSystemImpl broadcast(ActorMessage<?> message, ActorGroup group) {
 		if (!messagingEnabled.get())
-			for (UUID id : group) {
-				message.dest = id;
-				bufferQueue.offer(message.copy());
-			}
+			for (UUID id : group)
+				bufferQueue.offer(message.copy(id));
 		else
-			for (UUID id : group) {
-				message.dest = id;
-				messageDispatcher.postOuter(message);
-			}
+			for (UUID id : group)
+				messageDispatcher.postOuter(message.weakCopy(id));
 		
 		return this;
 	}
@@ -711,9 +711,9 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					send(new ActorMessage<>(null, INTERNAL_STOP, USER_ID, USER_ID));
-					send(new ActorMessage<>(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
-					send(new ActorMessage<>(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
+					send(ActorMessage.create(null, INTERNAL_STOP, USER_ID, USER_ID));
+					send(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
+					send(ActorMessage.create(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
 					try {
 						countDownLatch.await();
 					} catch (InterruptedException e) {

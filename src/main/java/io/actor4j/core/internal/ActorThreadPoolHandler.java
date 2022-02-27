@@ -98,7 +98,7 @@ public class ActorThreadPoolHandler {
 		}
 		else {
 			Long id_source = cellsMap.get(source);
-			Long id_dest   = cellsMap.get(message.dest);
+			Long id_dest   = cellsMap.get(message.dest());
 		
 			if (id_dest!=null) {
 				ActorThread t = threadsMap.get(id_dest);
@@ -117,8 +117,38 @@ public class ActorThreadPoolHandler {
 		return result;
 	}
 	
+	public boolean postInnerOuter(ActorMessage<?> message, UUID source, UUID dest) {
+		boolean result = false;
+		
+		if (system.config.parallelism==1 && system.config.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
+			ActorThread t = ((ActorThread)Thread.currentThread());
+			t.innerQueue(message.copy(dest));
+			t.newMessage();
+			result = true;
+		}
+		else {
+			Long id_source = cellsMap.get(source);
+			Long id_dest   = cellsMap.get(dest);
+		
+			if (id_dest!=null) {
+				ActorThread t = threadsMap.get(id_dest);
+				
+				if (id_source!=null && id_source.equals(id_dest)
+						&& Thread.currentThread().getId()==id_source.longValue())
+					t.innerQueue(message.copy(dest));
+				else
+					t.outerQueue(message.copy(dest));
+				
+				t.newMessage();
+				result = true;
+			}	
+		}
+		
+		return result;
+	}
+	
 	public boolean postOuter(ActorMessage<?> message) {
-		Long id_dest = cellsMap.get(message.dest);
+		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
 			ActorThread t = threadsMap.get(id_dest);
 			t.outerQueue(message.copy());
@@ -128,8 +158,19 @@ public class ActorThreadPoolHandler {
 		return id_dest!=null;
 	}
 	
+	public boolean postOuter(ActorMessage<?> message, UUID dest) {
+		Long id_dest = cellsMap.get(dest);
+		if (id_dest!=null) {
+			ActorThread t = threadsMap.get(id_dest);
+			t.outerQueue(message.copy(dest));
+			t.newMessage();
+		}
+		
+		return id_dest!=null;
+	}
+	
 	public boolean postServer(ActorMessage<?> message) {
-		Long id_dest = cellsMap.get(message.dest);
+		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
 			ActorThread t = threadsMap.get(id_dest);
 			t.serverQueue(message.copy());
@@ -139,8 +180,19 @@ public class ActorThreadPoolHandler {
 		return id_dest!=null;
 	}
 	
+	public boolean postServer(ActorMessage<?> message, UUID dest) {
+		Long id_dest = cellsMap.get(dest);
+		if (id_dest!=null) {
+			ActorThread t = threadsMap.get(id_dest);
+			t.serverQueue(message.copy(dest));
+			t.newMessage();
+		}
+		
+		return id_dest!=null;
+	}
+	
 	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
-		Long id_dest = cellsMap.get(message.dest);
+		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
 			ActorThread t = threadsMap.get(id_dest);
 			biconsumer.accept(t, message.copy());
@@ -150,10 +202,21 @@ public class ActorThreadPoolHandler {
 		return id_dest!=null;
 	}
 	
+	public boolean postQueue(ActorMessage<?> message, UUID dest, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
+		Long id_dest = cellsMap.get(dest);
+		if (id_dest!=null) {
+			ActorThread t = threadsMap.get(id_dest);
+			biconsumer.accept(t, message.copy(dest));
+			t.newMessage();
+		}
+		
+		return id_dest!=null;
+	}
+	
 	public void postPersistence(ActorMessage<?> message) {
-		Long id_source = cellsMap.get(message.source); // message.source matches original actor
-		message.dest = system.executerService.persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
-		system.executerService.persistenceService.getService().send(message.copy());
+		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
+		UUID dest = system.executerService.persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
+		system.executerService.persistenceService.getService().send(message.copy(dest));
 	}
 	
 	public void registerCell(ActorCell cell) {

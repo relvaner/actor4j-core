@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ import java.util.UUID;
 import io.actor4j.core.utils.Copyable;
 import io.actor4j.core.utils.Shareable;
 
-public class PodActorMessage<T, U> extends ActorMessage<T> {
-	public final U user;
-
+public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain) implements ActorMessage<T> {
+	public PodActorMessage {
+		// empty
+	}
+	
 	public PodActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
 		this(value, tag.ordinal(), source, dest, domain);
 	}
@@ -37,11 +39,6 @@ public class PodActorMessage<T, U> extends ActorMessage<T> {
 
 	public PodActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
 		this(value, tag, source, dest, null, null, null, domain);
-	}
-
-	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain) {
-		super(value, tag, source, dest, interaction, protocol, domain);
-		this.user = user;
 	}
 
 	public PodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user) {
@@ -60,23 +57,52 @@ public class PodActorMessage<T, U> extends ActorMessage<T> {
 		return user;
 	}
 	
-	protected ActorMessage<T> weakCopy() {
+	@Override
+	public ActorMessage<T> weakCopy() {
 		return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
 	}
 	
+	@Override
+	public ActorMessage<T> weakCopy(UUID source, UUID dest) {
+		return this.source!=source || this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+	}
+	
+	@Override
+	public ActorMessage<T> weakCopy(UUID dest) {
+		return this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+	}
+	
 	@SuppressWarnings("unchecked")
+	@Override
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
-			if (isSupportedType(value.getClass()) || value instanceof Shareable)
-				return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
+			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
+				return this;
 			else if (value instanceof Copyable)
 				return new PodActorMessage<T, U>(((Copyable<T>)value).copy(), tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Exception)
-				return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
+				return this;
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return new PodActorMessage<T, U>(null, tag, source, dest, interaction, user, protocol, domain);
+			return this;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActorMessage<T> copy(UUID dest) {
+		if (value!=null) { 
+			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
+				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+			else if (value instanceof Copyable)
+				return new PodActorMessage<T, U>(((Copyable<T>)value).copy(), tag, source, dest, interaction, user, protocol, domain);
+			else if (value instanceof Exception)
+				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+			else
+				throw new IllegalArgumentException(value.getClass().getName());
+		}
+		else
+			return dest()!=dest ? new PodActorMessage<T, U>(null, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 }

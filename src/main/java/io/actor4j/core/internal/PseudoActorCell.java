@@ -84,7 +84,7 @@ public class PseudoActorCell extends ActorCell {
 					dest = destinations.get(random.nextInt(destinations.size()));
 				}
 			}
-			message.dest = (dest!=null) ? dest : UUID_ZERO;
+			message = message.weakCopy((dest!=null) ? dest : UUID_ZERO);
 		}
 		
 		system.send(message);

@@ -147,7 +147,7 @@ public abstract class Actor implements ActorRef {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.source.equals(source)) {
+				if (message.source().equals(source)) {
 					action.accept(message);
 				}
 			}
@@ -162,7 +162,7 @@ public abstract class Actor implements ActorRef {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.tag==tag) {
+				if (message.tag()==tag) {
 					action.accept(message);
 				}
 			}
@@ -177,7 +177,7 @@ public abstract class Actor implements ActorRef {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.source.equals(source) && message.tag==tag) {
+				if (message.source().equals(source) && message.tag()==tag) {
 					action.accept(message);
 				}
 			}
@@ -204,11 +204,11 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void await(final Predicate<ActorMessage<?>> predicate, final BiConsumer<ActorMessage<?>, Boolean> action, long timeout, TimeUnit unit, boolean replace) {
-		ScheduledFuture<?> scheduledFuture = getSystem().globalTimer().scheduleOnce(new ActorMessage<>(null, TIMEOUT, self(), null), self(), timeout, unit);
+		ScheduledFuture<?> scheduledFuture = getSystem().globalTimer().scheduleOnce(ActorMessage.create(null, TIMEOUT, self(), null), self(), timeout, unit);
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.tag==TIMEOUT)
+				if (message.tag()==TIMEOUT)
 					action.accept(null, true);
 				else if (predicate.test(message)) {
 					scheduledFuture.cancel(true);
@@ -253,50 +253,47 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
-		message.source = self();
-		message.dest   = dest;
-		send(message);
+		send(message.weakCopy(self(), dest));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest) {
-		send(new ActorMessage<T>(value, tag, self(), dest));
+		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, String domain) {
-		send(new ActorMessage<T>(value, tag, self(), dest, domain));
+		send(ActorMessage.create(value, tag, self(), dest, domain));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction) {
-		send(new ActorMessage<T>(value, tag, self(), dest, interaction));
+		send(ActorMessage.create(value, tag, self(), dest, interaction));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol) {
-		send(new ActorMessage<T>(value, tag, self(), dest, interaction, protocol));
+		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain) {
-		send(new ActorMessage<T>(value, tag, self(), dest, interaction, protocol, domain));
+		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol, domain));
 	}
 	
 	public <T> void tell(T value, int tag, String alias) {
-		sendViaAlias(new ActorMessage<T>(value, tag, self(), null), alias);
+		sendViaAlias(ActorMessage.create(value, tag, self(), null), alias);
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction) {
-		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction), alias);
+		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction), alias);
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol) {
-		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, protocol), alias);
+		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction, protocol), alias);
 	}
 	
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain) {
-		sendViaAlias(new ActorMessage<T>(value, tag, self(), null, interaction, protocol, domain), alias);
+		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction, protocol, domain), alias);
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {
-		message.dest   = dest;
-		send(message);
+		send(message.weakCopy(dest));
 	}
 	
 	public void forward(ActorMessage<?> message, String alias) {
@@ -308,13 +305,11 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void priority(ActorMessage<?> message, UUID dest) {
-		message.source = self();
-		message.dest   = dest;
-		priority(message);
+		priority(message.weakCopy(self(), dest));
 	}
 	
 	public <T> void priority(T value, int tag, UUID dest) {
-		priority(new ActorMessage<T>(value, tag, self(), dest));
+		priority(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	public void unhandled(ActorMessage<?> message) {

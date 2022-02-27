@@ -40,7 +40,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		consumerPseudo = new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> msg) {
-				ActorCell cell = DefaultActorMessageDispatcher.this.system.pseudoCells.get(msg.dest);
+				ActorCell cell = DefaultActorMessageDispatcher.this.system.pseudoCells.get(msg.dest());
 				if (cell!=null)
 					((PseudoActorCell)cell).getOuterQueue().offer(msg);
 			}
@@ -72,37 +72,41 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
+		UUID dest = message.dest();
+		
 		if (alias!=null) {
 			List<UUID> destinations = system.getActorsFromAlias(alias);
 
-			UUID dest = null;
 			if (!destinations.isEmpty()) {
 				if (destinations.size()==1)
 					dest = destinations.get(0);
 				else
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
-			message.dest = (dest!=null) ? dest : UUID_ALIAS;
+			dest = (dest!=null) ? dest : UUID_ALIAS;
 		}
 		
-		UUID redirect = system.redirector.get(message.dest);
+		UUID redirect = system.redirector.get(dest);
 		if (redirect!=null) 
-			message.dest = redirect;
+			dest = redirect;
 		
-		if (system.pseudoCells.containsKey(message.dest)) {
-			consumerPseudo.accept(message.copy());
+		if (system.pseudoCells.containsKey(dest)) {
+			consumerPseudo.accept(message.copy(dest));
 			return;
 		}
-		else if (system.config.clientMode && !system.cells.containsKey(message.dest)) {
-			system.executerService.clientViaAlias(message.copy(), alias);
+		else if (system.config.clientMode && !system.cells.containsKey(dest)) {
+			system.executerService.clientViaAlias(message.copy(dest), alias);
 			return;
 		}
-		else if (system.resourceCells.containsKey(message.dest)) {
-			system.executerService.resource(message.copy());
+		else if (system.resourceCells.containsKey(dest)) {
+			system.executerService.resource(message.copy(dest));
 			return;
 		}
 		
-		system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source);
+		if (alias==null && redirect==null)
+			system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source);
+		else
+			system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source, dest);
 	}
 	
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
@@ -117,17 +121,30 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID redirect = system.redirector.get(message.dest);
+		UUID dest = message.dest();
+		
+		UUID redirect = system.redirector.get(dest);
 		if (redirect!=null) 
-			message.dest = redirect;
+			dest = redirect;
 		
-		if (system.resourceCells.containsKey(message.dest)) {
-			system.executerService.resource(message.copy());
-			return;
+		if (redirect==null) {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy());
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
+				consumerPseudo.accept(message.copy());
 		}
-		
-		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
-			consumerPseudo.accept(message.copy());
+		else {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy(dest));
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, dest, biconsumer)) 
+				consumerPseudo.accept(message.copy(dest));
+		}
 	}
 	
 	@Override
@@ -135,17 +152,30 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID redirect = system.redirector.get(message.dest);
+		UUID dest = message.dest();
+		
+		UUID redirect = system.redirector.get(dest);
 		if (redirect!=null) 
-			message.dest = redirect;
+			dest = redirect;
 		
-		if (system.resourceCells.containsKey(message.dest)) {
-			system.executerService.resource(message.copy());
-			return;
+		if (redirect==null) {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy());
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message))
+				consumerPseudo.accept(message.copy());
 		}
-		
-		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message))
-			consumerPseudo.accept(message.copy());
+		else {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy(dest));
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message, dest))
+				consumerPseudo.accept(message.copy(dest));
+		}
 	}
 	
 	@Override
@@ -153,17 +183,30 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID redirect = system.redirector.get(message.dest);
+		UUID dest = message.dest();
+		
+		UUID redirect = system.redirector.get(dest);
 		if (redirect!=null) 
-			message.dest = redirect;
+			dest = redirect;
 		
-		if (system.resourceCells.containsKey(message.dest)) {
-			system.executerService.resource(message.copy());
-			return;
+		if (redirect==null) {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy());
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message))
+				consumerPseudo.accept(message.copy());
 		}
-		
-		if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message))
-			consumerPseudo.accept(message.copy());
+		else {
+			if (system.resourceCells.containsKey(dest)) {
+				system.executerService.resource(message.copy(dest));
+				return;
+			}
+			
+			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message, dest))
+				consumerPseudo.accept(message.copy(dest));
+		}
 	}
 	/*
 	@Override
