@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,11 @@ public class DefaultThreadFactory implements ThreadFactory {
     protected final String name;
     protected final AtomicInteger index = new AtomicInteger(0);
 
-    public DefaultThreadFactory(String name) {
+	public DefaultThreadFactory(String name) {
     	this.name = name;
-        SecurityManager s = System.getSecurityManager();
+    	
+    	@SuppressWarnings("removal")
+		SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() :
                               Thread.currentThread().getThreadGroup();
     }
