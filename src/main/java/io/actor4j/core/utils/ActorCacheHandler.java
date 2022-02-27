@@ -44,10 +44,10 @@ public class ActorCacheHandler<K, V> {
 		
 		Pair<K, V> pair = function.apply(message);
 		if (pair!=null) {
-			Consumer<Pair<K, V>> handler = handlerMap.get(message.interaction);
+			Consumer<Pair<K, V>> handler = handlerMap.get(message.interaction());
 			if (handler!=null) {
 				handler.accept(pair);
-				handlerMap.remove(message.interaction);
+				handlerMap.remove(message.interaction());
 				result = true;
 			}
 		}

@@ -95,7 +95,7 @@ public abstract class ActorThread extends Thread {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			ActorCell cell = system.cells.get(message.dest);
+			ActorCell cell = system.cells.get(message.dest());
 			if (cell!=null) {
 				cell.requestRate.getAndIncrement();
 				failsafeMethod(message, cell);

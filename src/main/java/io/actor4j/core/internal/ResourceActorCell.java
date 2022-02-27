@@ -87,7 +87,7 @@ public class ResourceActorCell extends ActorCell {
 						bulkList.add(message);
 						while ((message=queue.poll())!=null)
 							bulkList.add(message);
-						internal_receive(new ActorMessage<>(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID, id));
+						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID, id));
 					}
 					
 					// Spinlock

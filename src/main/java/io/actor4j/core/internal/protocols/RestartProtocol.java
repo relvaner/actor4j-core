@@ -68,7 +68,7 @@ public class RestartProtocol {
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			cell.getSystem().sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, cell.getId(), dest));
+			cell.getSystem().sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) {
@@ -80,10 +80,10 @@ public class RestartProtocol {
 				protected boolean flag_stop;
 				@Override
 				public void accept(ActorMessage<?> message) {
-					if (message.tag==INTERNAL_STOP)
+					if (message.tag()==INTERNAL_STOP)
 						flag_stop = true;
-					else if (message.tag==INTERNAL_STOP_SUCCESS) {
-						waitForChildren.remove(message.source);
+					else if (message.tag()==INTERNAL_STOP_SUCCESS) {
+						waitForChildren.remove(message.source());
 						if (waitForChildren.isEmpty()) {
 							if (flag_stop)
 								postStop();

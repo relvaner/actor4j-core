@@ -57,9 +57,9 @@ public class ServiceDiscoveryActor extends Actor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (message.value!=null) {
-			if (message.tag==PUBLISH_SERVICE && message.value instanceof Service) {
-				Service service = (Service)message.value;
+		if (message.value()!=null) {
+			if (message.tag()==PUBLISH_SERVICE && message.value() instanceof Service) {
+				Service service = (Service)message.value();
 				services.put(service.id, service);
 				if (service.topics!=null) {
 					for (String topic : service.topics) {
@@ -72,8 +72,8 @@ public class ServiceDiscoveryActor extends Actor {
 					}
 				}
 			}
-			else if (message.tag==UNPUBLISH_SERVICE && message.value instanceof UUID) {
-				Service service = services.get(message.value);
+			else if (message.tag()==UNPUBLISH_SERVICE && message.value() instanceof UUID) {
+				Service service = services.get(message.value());
 				if (service.topics!=null) {
 					for (String topic : service.topics) {
 						Set<UUID> ids = topicsMap.get(topic);
@@ -83,10 +83,10 @@ public class ServiceDiscoveryActor extends Actor {
 				}
 				services.remove(service.id);
 			}
-			else if (message.tag==LOOKUP_SERVICES && message.value instanceof String) {
+			else if (message.tag()==LOOKUP_SERVICES && message.value() instanceof String) {
 				List<Service> result = new LinkedList<>();
 				
-				Set<UUID> ids = topicsMap.get(message.value);
+				Set<UUID> ids = topicsMap.get(message.value());
 				if (ids!=null) {
 					Iterator<UUID> iterator = ids.iterator();
 					while (iterator.hasNext())
@@ -94,19 +94,19 @@ public class ServiceDiscoveryActor extends Actor {
 					
 				}
 				
-				tell(new ImmutableList<>(result), LOOKUP_SERVICES, message.source);
+				tell(new ImmutableList<>(result), LOOKUP_SERVICES, message.source());
 			}
-			else if (message.tag==LOOKUP_SERVICE && message.value instanceof String) {
+			else if (message.tag()==LOOKUP_SERVICE && message.value() instanceof String) {
 				Service result = null;
 				
-				Set<UUID> ids = topicsMap.get(message.value);
+				Set<UUID> ids = topicsMap.get(message.value());
 				if (ids!=null) {
 					Iterator<UUID> iterator = ids.iterator();
 					if (iterator.hasNext())
 						result = services.get(iterator.next());
 				}
 			
-				tell(new ImmutableObject<>(result), LOOKUP_SERVICE, message.source);
+				tell(new ImmutableObject<>(result), LOOKUP_SERVICE, message.source());
 			}
 			else
 				unhandled(message);

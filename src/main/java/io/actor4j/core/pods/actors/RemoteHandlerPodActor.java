@@ -39,18 +39,18 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		RemotePodMessage remoteMessage = null;
-		if (message.interaction!=null)
-			remoteMessage = remoteMap.get(message.interaction);
+		if (message.interaction()!=null)
+			remoteMessage = remoteMap.get(message.interaction());
 			
-		if (remoteMessage!=null || message.value instanceof RemotePodMessage) {
+		if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
 			if (remoteMessage!=null) {
-				remoteMap.remove(message.interaction);
+				remoteMap.remove(message.interaction());
 				internal_callback(message, remoteMessage);
 			}
 			else {
-				UUID interaction = message.interaction!=null ? message.interaction : UUID.randomUUID();
-				remoteMap.put(interaction, (RemotePodMessage)message.value); 
-				handle((RemotePodMessage)message.value, interaction);
+				UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
+				remoteMap.put(interaction, (RemotePodMessage)message.value()); 
+				handle((RemotePodMessage)message.value(), interaction);
 			}
 		}
 		else
@@ -60,7 +60,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected void internal_callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
 		Object result = callback(message, remoteMessage);
 		if (remoteMessage.remotePodMessageDTO.reply && internal_server_callback!=null)
-			internal_server_callback.accept(remoteMessage.replyAddress, result, message.tag);
+			internal_server_callback.accept(remoteMessage.replyAddress, result, message.tag());
 	}
 
 	public abstract void handle(RemotePodMessage remoteMessage, UUID interaction);

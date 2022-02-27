@@ -53,7 +53,7 @@ public abstract class FunctionPod extends ActorPod {
 	}
 	
 	protected void internal_callback(ActorRef host, ActorMessage<?> message, Pair<Object, Integer> result) {
-		host.tell(result.a, result.b, message.source, message.interaction, message.protocol, message.domain);
+		host.tell(result.a, result.b, message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 
 	public abstract PodFunction createFunction(ActorRef host, PodContext context);

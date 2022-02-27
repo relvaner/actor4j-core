@@ -46,7 +46,7 @@ public class ActorMessageMatcher {
 		tuple.predicate = new Predicate<ActorMessage<?>>(){
 			@Override
 			public boolean test(ActorMessage<?> message) {
-				return message.source!=null ? message.source.equals(source) : false;
+				return message.source()!=null ? message.source().equals(source) : false;
 			}
 		};
 		tuple.action = action;
@@ -63,9 +63,9 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source!=null)
+				if (message.source()!=null)
 					for (UUID source : sources)
-						if (message.source.equals(source)) {
+						if (message.source().equals(source)) {
 							result = true;
 							break;
 						}
@@ -85,7 +85,7 @@ public class ActorMessageMatcher {
 		tuple.predicate = new Predicate<ActorMessage<?>>(){
 			@Override
 			public boolean test(ActorMessage<?> message) {
-				return message.tag==tag;
+				return message.tag()==tag;
 			}
 		};
 		tuple.action = action;
@@ -103,7 +103,7 @@ public class ActorMessageMatcher {
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
 				for (int tag : tags)
-					if (message.tag==tag) {
+					if (message.tag()==tag) {
 						result = true;
 						break;
 					}
@@ -123,7 +123,7 @@ public class ActorMessageMatcher {
 		tuple.predicate = new Predicate<ActorMessage<?>>(){
 			@Override
 			public boolean test(ActorMessage<?> message) {
-				return message.source!=null ? message.source.equals(source) && message.tag==tag : false;
+				return message.source()!=null ? message.source().equals(source) && message.tag()==tag : false;
 			}
 		};
 		tuple.action = action;
@@ -140,9 +140,9 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source!=null && message.tag==tag)
+				if (message.source()!=null && message.tag()==tag)
 					for (UUID source : sources)
-						if (message.source.equals(source)) {
+						if (message.source().equals(source)) {
 							result = true;
 							break;
 						}
@@ -163,9 +163,9 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source!=null && message.source.equals(source))
+				if (message.source()!=null && message.source().equals(source))
 					for (int tag : tags)
-						if (message.tag==tag) {
+						if (message.tag()==tag) {
 							result = true;
 							break;
 						}
@@ -186,16 +186,16 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source!=null)
+				if (message.source()!=null)
 					for (UUID source : sources)
-						if (message.source.equals(source)) {
+						if (message.source().equals(source)) {
 							result = true;
 							break;
 						}
 				if (result) {
 					result = false;
 					for (int tag : tags)
-						if (message.tag==tag) {
+						if (message.tag()==tag) {
 							result = true;
 							break;
 						}
@@ -221,8 +221,8 @@ public class ActorMessageMatcher {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.value!=null) {
-					result = message.value.getClass().equals(clazz);
+				if (message.value()!=null) {
+					result = message.value().getClass().equals(clazz);
 					if (predicate!=null)
 						result = result && predicate.test(message);
 				}

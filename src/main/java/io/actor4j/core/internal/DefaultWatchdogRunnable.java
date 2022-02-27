@@ -55,13 +55,13 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.value!=null && message.value instanceof ImmutableList) {
-					futures = ((ImmutableList<CompletableFuture<Void>>)message.value).get();
+				if (message.value()!=null && message.value() instanceof ImmutableList) {
+					futures = ((ImmutableList<CompletableFuture<Void>>)message.value()).get();
 					for (UUID dest : watchdogActors)
 						tell(null, INTERNAL_HEALTH_CHECK, dest);
 				}
-				else if (message.tag==UP && watchdogActors.contains(message.source)) {
-					int index = watchdogActors.indexOf(message.source);
+				else if (message.tag()==UP && watchdogActors.contains(message.source())) {
+					int index = watchdogActors.indexOf(message.source());
 					upArray.getAndSet(index, true);
 					
 					futures.get(index).complete(null);
@@ -85,7 +85,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 		CompletableFuture<Void>[] futures = new CompletableFuture[upArray.length()];
 		for (int i=0; i<upArray.length(); i++)
 			futures[i] = new CompletableFuture<Void>();
-		system.send(new ActorMessage<>(new ImmutableList<>(Arrays.asList(futures)), 0, system.SYSTEM_ID, mediator));
+		system.send(ActorMessage.create(new ImmutableList<>(Arrays.asList(futures)), 0, system.SYSTEM_ID, mediator));
 		
 		int count = 0;
 		try {

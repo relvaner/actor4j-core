@@ -34,7 +34,7 @@ public final class ActorUtils {
 	}
 	
 	public static boolean isDirective(ActorMessage<?> message) {
-		return message.tag<0;
+		return message.tag()<0;
 	}
 	
 	public static int checkTag(int tag) {

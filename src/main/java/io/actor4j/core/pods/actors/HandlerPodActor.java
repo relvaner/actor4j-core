@@ -44,12 +44,12 @@ public abstract class HandlerPodActor extends PodChildActor {
 	@Override
 	public void receive(ActorMessage<?> message) {
 		ActorMessage<?> originalMessage = null;
-		if (message.interaction!=null)
-			originalMessage = map.get(message.interaction);
+		if (message.interaction()!=null)
+			originalMessage = map.get(message.interaction());
 		
 		if (originalMessage!=null) {
-			map.remove(message.interaction);
-			callback(message, originalMessage, originalMessage.source, originalMessage.interaction);
+			map.remove(message.interaction());
+			callback(message, originalMessage, originalMessage.source(), originalMessage.interaction());
 		}
 		else {
 			/*

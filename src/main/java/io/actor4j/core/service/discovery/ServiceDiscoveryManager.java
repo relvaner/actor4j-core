@@ -63,16 +63,16 @@ public class ServiceDiscoveryManager {
 	
 	@SuppressWarnings("unchecked")
 	public Optional<ImmutableObject<Service>> lookupFirst(ActorMessage<?> message) {	
-		if (message.tag==LOOKUP_SERVICE && message.value!=null && message.value instanceof ImmutableObject) 
-			return Optional.of(((ImmutableObject<Service>)message.value));
+		if (message.tag()==LOOKUP_SERVICE && message.value()!=null && message.value() instanceof ImmutableObject) 
+			return Optional.of(((ImmutableObject<Service>)message.value()));
 		else
 			return Optional.empty();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Optional<ImmutableList<Service>> lookup(ActorMessage<?> message) {	
-		if (message.tag==LOOKUP_SERVICES && message.value!=null && message.value instanceof ImmutableList)
-			return Optional.of(((ImmutableList<Service>)message.value));
+		if (message.tag()==LOOKUP_SERVICES && message.value()!=null && message.value() instanceof ImmutableList)
+			return Optional.of(((ImmutableList<Service>)message.value()));
 		else
 			return Optional.empty();
 	}

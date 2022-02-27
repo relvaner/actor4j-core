@@ -60,7 +60,7 @@ public class ActorStrategyOnFailure {
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
 					if (!dest.equals(cell.id))
-						system.sendAsDirective(new ActorMessage<>(reason, INTERNAL_RESTART, parent.id, dest));
+						system.sendAsDirective(ActorMessage.create(reason, INTERNAL_RESTART, parent.id, dest));
 				}
 				cell.preRestart(reason);
 			}
@@ -77,7 +77,7 @@ public class ActorStrategyOnFailure {
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
 					if (!dest.equals(cell.id))
-						system.sendAsDirective(new ActorMessage<>(null, INTERNAL_STOP, parent.id, dest));
+						system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, parent.id, dest));
 				}
 				cell.stop();
 			}

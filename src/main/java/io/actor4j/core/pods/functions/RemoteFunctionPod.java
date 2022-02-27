@@ -51,25 +51,25 @@ public abstract class RemoteFunctionPod extends ActorPod {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				RemotePodMessage remoteMessage = null;
-				if (message.interaction!=null)
-					remoteMessage = remoteMap.get(message.interaction);
+				if (message.interaction()!=null)
+					remoteMessage = remoteMap.get(message.interaction());
 				
-				if (remoteMessage!=null || message.value instanceof RemotePodMessage) {
+				if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
 					Pair<Object, Integer> result = null;
 					if (remoteMessage!=null) {
 						result = podRemoteFunction.handle(message);
 						if (result!=null) {
-							remoteMap.remove(message.interaction);
+							remoteMap.remove(message.interaction());
 							internal_callback(remoteMessage, result);
 						}	
 					}
 					else {
-						UUID interaction = message.interaction!=null ? message.interaction : UUID.randomUUID();
-						result = podRemoteFunction.handle((RemotePodMessage)message.value, interaction);
+						UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
+						result = podRemoteFunction.handle((RemotePodMessage)message.value(), interaction);
 						if (result!=null)
-							internal_callback((RemotePodMessage)message.value, result);
+							internal_callback((RemotePodMessage)message.value(), result);
 						else
-							remoteMap.put(interaction, (RemotePodMessage)message.value);
+							remoteMap.put(interaction, (RemotePodMessage)message.value());
 					}	
 				}
 				else {
@@ -87,7 +87,7 @@ public abstract class RemoteFunctionPod extends ActorPod {
 	}
 	
 	protected void internal_callback(ActorRef host, ActorMessage<?> message, Pair<Object, Integer> result) {
-		host.tell(result.a, result.b, message.source, message.interaction, message.protocol, message.domain);
+		host.tell(result.a, result.b, message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 	
 	protected void internal_callback(RemotePodMessage remoteMessage, Pair<Object, Integer> result) {

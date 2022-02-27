@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.immutable;
 
-import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.messages.ActorMessageUtils;
 import io.actor4j.core.utils.Copyable;
 import io.actor4j.core.utils.Shareable;
 
@@ -26,7 +26,7 @@ public class ImmutableObject<T> implements Shareable {
 		super();
 		
 		if (value!=null)
-			if (!(ActorMessage.isSupportedType(value.getClass()) || value instanceof Shareable || value instanceof Copyable || value instanceof Exception))
+			if (!(ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable || value instanceof Copyable || value instanceof Exception))
 				throw new IllegalArgumentException();
 		
 		this.value = value;

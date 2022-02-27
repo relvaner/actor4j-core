@@ -133,7 +133,7 @@ public abstract class DefaultActorThread extends ActorThread {
 						}
 					}
 					else
-						yield();
+						Thread.yield();
 				}
 			}
 			else {

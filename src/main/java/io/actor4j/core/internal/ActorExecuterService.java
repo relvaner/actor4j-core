@@ -249,7 +249,7 @@ public class ActorExecuterService {
 	}
 	
 	public void resource(final ActorMessage<?> message) {
-		final ResourceActorCell cell = (ResourceActorCell)system.cells.get(message.dest);
+		final ResourceActorCell cell = (ResourceActorCell)system.cells.get(message.dest());
 		if (cell!=null && cell.beforeRun(message)) {
 			if (!resourceExecuterService.isShutdown())
 				try {

@@ -51,7 +51,7 @@ public class HandlerActor extends EmbeddedHostActor {
 	}
 	
 	public void handle(ActorMessage<?> message, BiConsumer<ActorMessage<?>, EmbeddedActor> handler, Predicate<ActorMessage<?>> done) {
-		UUID id = message.interaction;
+		UUID id = message.interaction();
 		EmbeddedActor embeddedActor = router.get(id);
 		if (embeddedActor!=null)
 			embeddedActor.embedded(message);
@@ -73,7 +73,7 @@ public class HandlerActor extends EmbeddedHostActor {
 	
 	public void handle(ActorMessage<?> message, BiFunction<EmbeddedHostActor, UUID, EmbeddedActor> factory) {
 		boolean done = false;
-		UUID id = message.interaction;
+		UUID id = message.interaction();
 		EmbeddedActor embeddedActor = router.get(id);
 		if (embeddedActor!=null)
 			done = embeddedActor.embedded(message);

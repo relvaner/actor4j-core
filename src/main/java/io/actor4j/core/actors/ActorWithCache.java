@@ -51,7 +51,7 @@ public class ActorWithCache<K, V> extends Actor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (message.value!=null && message.tag==GC)
+		if (message.value()!=null && message.tag()==GC)
 			cache.gc(message.valueAsLong());
 	}
 }

@@ -49,13 +49,13 @@ public class ActorMessageHandler<T> {
 	public boolean match(ActorMessage<?> message) {
 		boolean result = true;
 		
-		Consumer<T> handler = handlerMap.get(message.interaction);
-		if (handler!=null && message.value!=null && message.value.getClass().equals(clazz)) {
+		Consumer<T> handler = handlerMap.get(message.interaction());
+		if (handler!=null && message.value()!=null && message.value().getClass().equals(clazz)) {
 			if (predicate!=null)
 				result = predicate.test(message);
 			if (result) {
-				handler.accept((T)message.value);
-				handlerMap.remove(message.interaction);
+				handler.accept((T)message.value());
+				handlerMap.remove(message.interaction());
 			}
 		}
 		else
@@ -68,15 +68,15 @@ public class ActorMessageHandler<T> {
 	public boolean matchOfNullable(ActorMessage<?> message) {
 		boolean result = true;
 		
-		Consumer<T> handler = handlerMap.get(message.interaction);
+		Consumer<T> handler = handlerMap.get(message.interaction());
 		if (handler!=null) {
-			if (message.value!=null) {
-				if (message.value.getClass().equals(clazz)) {
+			if (message.value()!=null) {
+				if (message.value().getClass().equals(clazz)) {
 					if (predicate!=null)
 						result = predicate.test(message);
 					if (result) {
-						handler.accept((T)message.value);
-						handlerMap.remove(message.interaction);
+						handler.accept((T)message.value());
+						handlerMap.remove(message.interaction());
 					}
 				}
 				else
@@ -87,7 +87,7 @@ public class ActorMessageHandler<T> {
 					result = predicate.test(message);
 				if (result) {
 					handler.accept(null);
-					handlerMap.remove(message.interaction);
+					handlerMap.remove(message.interaction());
 				}
 			}
 		}
