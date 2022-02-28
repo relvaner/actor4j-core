@@ -52,6 +52,11 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 	}
 	
 	@Override
+	public ActorMessage<T> weakCopy(int tag) {
+		return this.tag!=tag ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+	}
+	
+	@Override
 	public ActorMessage<T> weakCopy(UUID source, UUID dest) {
 		return this.source!=source || this.dest!=dest ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}

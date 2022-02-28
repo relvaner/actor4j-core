@@ -77,6 +77,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (alias!=null) {
 			List<UUID> destinations = system.getActorsFromAlias(alias);
 
+			dest = null;
 			if (!destinations.isEmpty()) {
 				if (destinations.size()==1)
 					dest = destinations.get(0);

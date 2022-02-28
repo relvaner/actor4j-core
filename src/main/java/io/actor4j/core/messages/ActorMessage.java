@@ -61,6 +61,7 @@ public interface ActorMessage<T> extends Copyable<ActorMessage<T>>, Comparable<A
 	}
 	
 	public ActorMessage<T> weakCopy();
+	public ActorMessage<T> weakCopy(int tag);
 	public ActorMessage<T> weakCopy(UUID source, UUID dest);
 	public ActorMessage<T> weakCopy(UUID dest);
 	
