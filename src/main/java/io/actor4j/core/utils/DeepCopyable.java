@@ -30,6 +30,6 @@
  */
 package io.actor4j.core.utils;
 
-public interface Copyable<T> {
-	public T copy();
+public interface DeepCopyable<T> {
+	public T deepCopy();
 }

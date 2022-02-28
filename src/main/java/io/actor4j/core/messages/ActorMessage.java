@@ -17,9 +17,7 @@ package io.actor4j.core.messages;
 
 import java.util.UUID;
 
-import io.actor4j.core.utils.Copyable;
-
-public interface ActorMessage<T> extends Copyable<ActorMessage<T>>, Comparable<ActorMessage<T>> {
+public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	public T value();
 	public int tag();
 	public UUID source();
@@ -60,10 +58,10 @@ public interface ActorMessage<T> extends Copyable<ActorMessage<T>>, Comparable<A
 		return source().equals(self) && dest().equals(self);
 	}
 	
-	public ActorMessage<T> weakCopy();
-	public ActorMessage<T> weakCopy(int tag);
-	public ActorMessage<T> weakCopy(UUID source, UUID dest);
-	public ActorMessage<T> weakCopy(UUID dest);
+	public ActorMessage<T> shallowCopy();
+	public ActorMessage<T> shallowCopy(int tag);
+	public ActorMessage<T> shallowCopy(UUID source, UUID dest);
+	public ActorMessage<T> shallowCopy(UUID dest);
 	
 	public ActorMessage<T> copy();
 	public ActorMessage<T> copy(UUID dest);

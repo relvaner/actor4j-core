@@ -104,7 +104,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
-				system.send(message.weakCopy(dest));
+				system.send(message.shallowCopy(dest));
 			}
 		}, delay, unit) : CanceledScheduledFuture.create(); 
 	}
@@ -146,7 +146,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				for (UUID id : group)
-					system.send(message.weakCopy(id));
+					system.send(message.shallowCopy(id));
 			}
 		}, delay, unit) : CanceledScheduledFuture.create(); 
 	}
@@ -167,7 +167,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
-				system.send(message.weakCopy(dest));
+				system.send(message.shallowCopy(dest));
 			}
 		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
@@ -209,7 +209,7 @@ public class ActorTimerExecuterService implements ActorTimer {
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				for (UUID id : group)
-					system.send(message.weakCopy(id));
+					system.send(message.shallowCopy(id));
 			}
 		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}

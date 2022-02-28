@@ -17,7 +17,7 @@ package io.actor4j.core.messages;
 
 import java.util.UUID;
 
-import io.actor4j.core.utils.Copyable;
+import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
 public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain) implements ActorMessage<T> {
@@ -58,22 +58,22 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	}
 	
 	@Override
-	public ActorMessage<T> weakCopy() {
+	public ActorMessage<T> shallowCopy() {
 		return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
 	}
 	
 	@Override
-	public ActorMessage<T> weakCopy(int tag) {
+	public ActorMessage<T> shallowCopy(int tag) {
 		return this.tag!=tag ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> weakCopy(UUID source, UUID dest) {
+	public ActorMessage<T> shallowCopy(UUID source, UUID dest) {
 		return this.source!=source || this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> weakCopy(UUID dest) {
+	public ActorMessage<T> shallowCopy(UUID dest) {
 		return this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
@@ -83,8 +83,8 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
 				return this;
-			else if (value instanceof Copyable)
-				return new PodActorMessage<T, U>(((Copyable<T>)value).copy(), tag, source, dest, interaction, user, protocol, domain);
+			else if (value instanceof DeepCopyable)
+				return new PodActorMessage<T, U>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Exception)
 				return this;
 			else
@@ -100,8 +100,8 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
 				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
-			else if (value instanceof Copyable)
-				return new PodActorMessage<T, U>(((Copyable<T>)value).copy(), tag, source, dest, interaction, user, protocol, domain);
+			else if (value instanceof DeepCopyable)
+				return new PodActorMessage<T, U>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Exception)
 				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 			else

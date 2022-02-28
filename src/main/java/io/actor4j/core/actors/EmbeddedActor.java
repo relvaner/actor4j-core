@@ -189,7 +189,7 @@ public abstract class EmbeddedActor {
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
-		send(message.weakCopy(self(), dest));
+		send(message.shallowCopy(self(), dest));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest) {
@@ -197,7 +197,7 @@ public abstract class EmbeddedActor {
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {
-		send(message.weakCopy(dest));
+		send(message.shallowCopy(dest));
 	}
 	
 	public void preStart() {

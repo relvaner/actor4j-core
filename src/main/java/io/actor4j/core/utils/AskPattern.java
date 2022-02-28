@@ -53,7 +53,7 @@ public final class AskPattern {
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 
 		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
-		system.send(message.weakCopy(source, message.dest()));
+		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
 		boolean exception = false;
@@ -75,7 +75,7 @@ public final class AskPattern {
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 		
 		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
-		system.send(message.weakCopy(source, message.dest()));
+		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
 		boolean exception = false;

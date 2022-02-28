@@ -557,7 +557,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public ActorSystemImpl sendViaPath(ActorMessage<?> message, String path) {
 		UUID dest = getActorFromPath(path);
 		if (dest!=null)
-			send(message.weakCopy(dest));
+			send(message.shallowCopy(dest));
 		
 		return this;
 	}
@@ -573,7 +573,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			else 
 				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			if (dest!=null)
-				send(message.weakCopy(dest));
+				send(message.shallowCopy(dest));
 		}
 		
 		return this;
@@ -591,7 +591,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			else 
 				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			if (dest!=null) {
-				sendAsServer(message.weakCopy(dest));
+				sendAsServer(message.shallowCopy(dest));
 				result = true;
 			}
 		}
@@ -637,7 +637,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 				bufferQueue.offer(message.copy(id));
 		else
 			for (UUID id : group)
-				messageDispatcher.postOuter(message.weakCopy(id));
+				messageDispatcher.postOuter(message.shallowCopy(id));
 		
 		return this;
 	}

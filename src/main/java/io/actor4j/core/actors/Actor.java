@@ -253,7 +253,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void send(ActorMessage<?> message, UUID dest) {
-		send(message.weakCopy(self(), dest));
+		send(message.shallowCopy(self(), dest));
 	}
 	
 	public <T> void tell(T value, int tag, UUID dest) {
@@ -293,7 +293,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void forward(ActorMessage<?> message, UUID dest) {
-		send(message.weakCopy(dest));
+		send(message.shallowCopy(dest));
 	}
 	
 	public void forward(ActorMessage<?> message, String alias) {
@@ -305,7 +305,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void priority(ActorMessage<?> message, UUID dest) {
-		priority(message.weakCopy(self(), dest));
+		priority(message.shallowCopy(self(), dest));
 	}
 	
 	public <T> void priority(T value, int tag, UUID dest) {
