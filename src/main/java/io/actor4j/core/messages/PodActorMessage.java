@@ -52,14 +52,15 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	public PodActorMessage(T value, int tag, UUID source, UUID dest) {
 		this(value, tag, source, dest, null, null, null, null);
 	}
-
-	public U getUser() {
-		return user;
-	}
 	
 	@Override
 	public ActorMessage<T> shallowCopy() {
 		return new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain);
+	}
+	
+	@Override
+	public ActorMessage<T> shallowCopy(T value) {
+		return !this.value.equals(value) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
 	@Override
@@ -68,13 +69,23 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	}
 	
 	@Override
+	public ActorMessage<T> shallowCopy(T value, int tag) {
+		return !this.value.equals(value) || this.tag!=tag ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+	}
+	
+	@Override
+	public ActorMessage<T> shallowCopy(int tag, String protocol) {
+		return this.tag!=tag || !this.protocol.equals(protocol) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+	}
+	
+	@Override
 	public ActorMessage<T> shallowCopy(UUID source, UUID dest) {
-		return this.source!=source || this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+		return !this.source.equals(source) || !this.dest.equals(dest) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
 	@Override
 	public ActorMessage<T> shallowCopy(UUID dest) {
-		return this.dest!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+		return !this.dest.equals(dest) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -99,15 +110,15 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	public ActorMessage<T> copy(UUID dest) {
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
-				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+				return !this.dest.equals(dest) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 			else if (value instanceof DeepCopyable)
 				return new PodActorMessage<T, U>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, protocol, domain);
 			else if (value instanceof Exception)
-				return dest()!=dest ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
+				return !this.dest.equals(dest) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return dest()!=dest ? new PodActorMessage<T, U>(null, tag, source, dest, interaction, user, protocol, domain) : this;
+			return !this.dest.equals(dest) ? new PodActorMessage<T, U>(null, tag, source, dest, interaction, user, protocol, domain) : this;
 	}
 }

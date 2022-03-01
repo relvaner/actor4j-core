@@ -52,18 +52,33 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 	}
 	
 	@Override
+	public ActorMessage<T> shallowCopy(T value) {
+		return !this.value.equals(value) ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+	}
+	
+	@Override
 	public ActorMessage<T> shallowCopy(int tag) {
 		return this.tag!=tag ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
 	
 	@Override
+	public ActorMessage<T> shallowCopy(T value, int tag) {
+		return !this.value.equals(value) || this.tag!=tag ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+	}
+	
+	@Override
+	public ActorMessage<T> shallowCopy(int tag, String protocol) {
+		return this.tag!=tag || !this.protocol.equals(protocol) ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+	}
+	
+	@Override
 	public ActorMessage<T> shallowCopy(UUID source, UUID dest) {
-		return this.source!=source || this.dest!=dest ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+		return !this.source.equals(source) || !this.dest.equals(dest) ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
 	
 	@Override
 	public ActorMessage<T> shallowCopy(UUID dest) {
-		return this.dest!=dest ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+		return !this.dest.equals(dest) ? new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,16 +103,16 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 	public ActorMessage<T> copy(UUID dest) {
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
-				return dest()!=dest ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
+				return !this.dest.equals(dest) ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
 			else if (value instanceof DeepCopyable)
 				return ActorMessage.create(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, protocol, domain);
 			else if (value instanceof Exception)
-				return dest()!=dest ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
+				return !this.dest.equals(dest) ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
 			else
 				throw new IllegalArgumentException(value.getClass().getName());
 		}
 		else
-			return dest()!=dest ? ActorMessage.create(null, tag, source, dest, interaction, protocol, domain) : this;
+			return !this.dest.equals(dest) ? ActorMessage.create(null, tag, source, dest, interaction, protocol, domain) : this;
 	}
 
 	@Override
