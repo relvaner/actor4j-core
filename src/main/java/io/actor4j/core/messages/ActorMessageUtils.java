@@ -19,11 +19,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class ActorMessageUtils {
-	public static Set<Class<?>> SUPPORTED_TYPES;
+public final class ActorMessageUtils {
+	public static final Set<Class<?>> SUPPORTED_TYPES;
 
 	public static boolean isSupportedType(Class<?> type) {
 		return SUPPORTED_TYPES.contains(type);
+	}
+	
+	public static <T> boolean equals(T o1, T o2) {	
+		if (o1!=null/* && (o1 instanceof Comparable)*/) 
+			return o1.equals(o2);
+		else
+			return o2==null;
 	}
 
 	static {
