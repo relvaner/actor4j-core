@@ -98,7 +98,7 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	@Override
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
+			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
 				return this;
 			else if (value instanceof DeepCopyable)
 				return new PodActorMessage<T, U>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, protocol, domain);
@@ -115,7 +115,7 @@ public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UU
 	@Override
 	public ActorMessage<T> copy(UUID dest) {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable)
+			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
 				return !ActorMessageUtils.equals(this.dest, dest) ? new PodActorMessage<T, U>(value, tag, source, dest, interaction, user, protocol, domain) : this;
 			else if (value instanceof DeepCopyable)
 				return new PodActorMessage<T, U>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, protocol, domain);
