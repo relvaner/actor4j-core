@@ -235,7 +235,7 @@ public abstract class Actor implements ActorRef {
 	public void sendViaPath(ActorMessage<?> message, String nodeName, String path) {
 		ActorServiceNode found = null;
 		for (ActorServiceNode node : cell.getSystem().getConfig().serviceNodes)
-			if (node.getName().equals(nodeName)) {
+			if (node.name().equals(nodeName)) {
 				found = node;
 				break;
 			}

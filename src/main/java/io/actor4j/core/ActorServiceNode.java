@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,5 @@
  */
 package io.actor4j.core;
 
-public class ActorServiceNode {
-	protected final String name;
-	protected final String uri;
-
-	public ActorServiceNode(String name, String uri) {
-		super();
-		this.name = name;
-		this.uri  = uri;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getUri() {
-		return uri;
-	}
+public record ActorServiceNode(String name, String uri) {
 }
