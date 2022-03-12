@@ -41,7 +41,7 @@ public abstract class RemoteFunctionPod extends ActorPod {
 				remoteMap = new HashMap<>();
 				
 				if (getContext().isShard())
-					setAlias(domain()+getContext().getShardId());
+					setAlias(domain()+getContext().shardId());
 				else
 					setAlias(domain());
 				
@@ -87,12 +87,12 @@ public abstract class RemoteFunctionPod extends ActorPod {
 	}
 	
 	protected void internal_callback(ActorRef host, ActorMessage<?> message, Pair<Object, Integer> result) {
-		host.tell(result.a, result.b, message.source(), message.interaction(), message.protocol(), message.domain());
+		host.tell(result.a(), result.b(), message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 	
 	protected void internal_callback(RemotePodMessage remoteMessage, Pair<Object, Integer> result) {
-		if (remoteMessage.remotePodMessageDTO.reply && RemoteHandlerPodActor.internal_server_callback!=null)
-			RemoteHandlerPodActor.internal_server_callback.accept(remoteMessage.replyAddress, result.a, result.b);
+		if (remoteMessage.remotePodMessageDTO().reply() && RemoteHandlerPodActor.internal_server_callback!=null)
+			RemoteHandlerPodActor.internal_server_callback.accept(remoteMessage.replyAddress(), result.a(), result.b());
 	}
 	
 	public abstract PodRemoteFunction createFunction(ActorRef host, PodContext context);

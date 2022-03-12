@@ -84,7 +84,7 @@ public class PodReplicationController {
 				for (; iterator.hasNext() && count<instances;) {
 					UUID id = iterator.next();
 					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
-					if (!cell.getContext().isPrimaryReplica()) { // does not remove primary replica
+					if (!cell.getContext().primaryReplica()) { // does not remove primary replica
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID, id));
 						iterator.remove();
@@ -105,7 +105,7 @@ public class PodReplicationController {
 				for (; iterator.hasNext() && count<instances;) {
 					UUID id = iterator.next();
 					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
-					if (!cell.getContext().isPrimaryReplica() && cell.getContext().getShardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
+					if (!cell.getContext().primaryReplica() && cell.getContext().shardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID, id));
 						iterator.remove();

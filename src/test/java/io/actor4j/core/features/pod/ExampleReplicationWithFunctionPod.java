@@ -43,8 +43,8 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 					
 					return Pair.of(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
 							message.value(), 
-							context.getDomain(),
-							context.isPrimaryReplica()), 42);
+							context.domain(),
+							context.primaryReplica()), 42);
 				}
 			};
 	}

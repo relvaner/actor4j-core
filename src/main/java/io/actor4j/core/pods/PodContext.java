@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,8 @@
  */
 package io.actor4j.core.pods;
 
-public class PodContext {
-	protected final String domain;
-	protected final boolean isShard;
-	protected final String shardId;
-	protected final boolean primaryReplica;
-	
-	public PodContext() {
-		super();
-		this.domain = null;
-		this.isShard = false;
-		this.shardId = null;
-		this.primaryReplica = false;
-	}
-	
-	public PodContext(String domain, boolean isShard, String shardId, boolean primaryReplica) {
-		super();
-		this.domain = domain;
-		this.isShard = isShard;
-		this.shardId = shardId;
-		this.primaryReplica = primaryReplica;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public boolean isShard() {
-		return isShard;
-	}
-
-	public String getShardId() {
-		return shardId;
-	}
-
-	public boolean isPrimaryReplica() {
-		return primaryReplica;
-	}
-	
+public record PodContext(String domain, boolean isShard, String shardId, boolean primaryReplica) {
 	public boolean hasPrimaryReplica() {
-		return true; // temporary
+		return true; // TODO: temporary
 	}
 }

@@ -33,7 +33,7 @@ public class PodActorCell extends ActorCell {
 	
 	@Override
 	public void preStart() {
-		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().getDomain(), id));
+		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().domain(), id));
 		super.preStart();
 	}
 }

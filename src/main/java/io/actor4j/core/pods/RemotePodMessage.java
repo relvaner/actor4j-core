@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,5 @@
 
 package io.actor4j.core.pods;
 
-import io.actor4j.core.utils.Shareable;
-
-public class RemotePodMessage implements Shareable {
-	public final RemotePodMessageDTO remotePodMessageDTO;
-	public final String replyAddress;
-	public final Object user;
-	
-	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user) {
-		super();
-		this.remotePodMessageDTO = remotePodMessageDTO;
-		this.replyAddress = replyAddress;
-		this.user = user;
-	}
-
-	@Override
-	public String toString() {
-		return "RemotePodMessage [remotePodMessageDTO=" + remotePodMessageDTO + ", replyAddress=" + replyAddress
-				+ ", user=" + user + "]";
-	}
+public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user) {
 }

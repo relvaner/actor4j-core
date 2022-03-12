@@ -51,7 +51,7 @@ public final class CommPattern {
 		int i=0;
 		for (UUID dest : group) {
 			Range range = loadBalancing(i, group.size(), list.size());
-			actorRef.send(ActorMessage.create(new ImmutableList<T>(list.subList(range.low, range.high+1)), tag, actorRef.self(), dest));	
+			actorRef.send(ActorMessage.create(new ImmutableList<T>(list.subList(range.low(), range.high()+1)), tag, actorRef.self(), dest));	
 			i++;
 		}
 	}

@@ -39,16 +39,16 @@ public class HelloActor extends PodChildActor {
 		if (context.isShard())
 			tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, shardId:%s, groupId:%s]", 
 				message.value(), 
-				context.getDomain(),
-				context.isPrimaryReplica(),
-				context.getShardId(),
+				context.domain(),
+				context.primaryReplica(),
+				context.shardId(),
 				groupId)
 				, 42, message.source(), message.interaction());
 		else
 			tell(String.format("Hello %s! [domain:%s, primaryReplica:%s, groupId:%s]", 
 				message.value(), 
-				context.getDomain(),
-				context.isPrimaryReplica(),
+				context.domain(),
+				context.primaryReplica(),
 				groupId)
 				, 42, message.source(), message.interaction());
 	}

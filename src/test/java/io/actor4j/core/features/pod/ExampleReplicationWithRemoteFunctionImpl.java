@@ -51,7 +51,7 @@ public class ExampleReplicationWithRemoteFunctionImpl {
 			handlerMap.put(message.interaction(), (value, tag) -> {
 				return Pair.of(value, tag);
 			});
-			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", message.interaction(), null, context.getDomain());
+			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", message.interaction(), null, context.domain());
 		}
 			
 		return result;

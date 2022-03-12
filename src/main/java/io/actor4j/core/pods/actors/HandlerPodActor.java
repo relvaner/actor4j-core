@@ -36,7 +36,7 @@ public abstract class HandlerPodActor extends PodChildActor {
 	@Override
 	public void preStart() {
 		if (context.isShard())
-			setAlias(alias+context.getShardId(), false);
+			setAlias(alias+context.shardId(), false);
 		else
 			setAlias(alias, false);
 	}

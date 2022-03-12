@@ -16,36 +16,5 @@
 
 package io.actor4j.core.pods;
 
-public class RemotePodMessageDTO {
-	public final Object payload;
-	public final int tag;
-	public final String alias;
-	
-	public final Object auth;
-	
-	public final boolean reply;
-	
-	public RemotePodMessageDTO() {
-		super();
-		this.payload = null;
-		this.tag = 0;
-		this.alias = null;
-		this.auth = null;
-		this.reply = false;
-	}
-	
-	public RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
-		super();
-		this.payload = payload;
-		this.tag = tag;
-		this.alias = alias;
-		this.auth = auth;
-		this.reply = reply;
-	}
-
-	@Override
-	public String toString() {
-		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", auth="
-				+ auth + ", reply=" + reply + "]";
-	}
+public record RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
 }

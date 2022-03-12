@@ -33,7 +33,7 @@ public class CacheHandlerFeature {
 	public void test_match() {
 		ActorCacheHandler<String, Integer> handler = new ActorCacheHandler<>((msg) -> Pair.of(msg.value().toString(), 42));
 		Consumer<Pair<String, Integer>> action = (pair) -> {
-			if (pair.a.equals("Hello World!") && pair.b.equals(42))
+			if (pair.a().equals("Hello World!") && pair.b().equals(42))
 				postcondition = true;
 		};
 		

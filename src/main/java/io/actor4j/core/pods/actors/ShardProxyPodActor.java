@@ -42,13 +42,13 @@ public abstract class ShardProxyPodActor extends PodChildActor implements Shard 
 		setAlias(alias, false);
 		
 		Map<String, PodReplicationTuple> podReplicationMap = getSystem().underlyingImpl().getPodReplicationController().getPodReplicationMap();
-		shardCount = podReplicationMap.get(context.getDomain()).getPodSystemConfiguration().getCurrentShardCount(); 
+		shardCount = podReplicationMap.get(context.domain()).getPodSystemConfiguration().getCurrentShardCount(); 
 	}
 
 	@Override
 	public void receive(ActorMessage<?> message) {
 		if (internal_server_proxy!=null)
-			internal_server_proxy.accept(message, context.getDomain(), shardId(message, shardCount));
+			internal_server_proxy.accept(message, context.domain(), shardId(message, shardCount));
 		else
 			forward(message, getShardAlias(shardId(message, shardCount)));
 	}

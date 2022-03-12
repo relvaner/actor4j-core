@@ -367,7 +367,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public UUID addPodActor(PodActorFactory factory, PodContext context) {
 		PodActorCell cell = (PodActorCell)generateCell(factory.create());
 		cell.context = context;
-		setPodDomain(cell.id, context.getDomain());
+		setPodDomain(cell.id, context.domain());
 		container.register(cell.id, factory);
 		
 		return user_addCell(cell);

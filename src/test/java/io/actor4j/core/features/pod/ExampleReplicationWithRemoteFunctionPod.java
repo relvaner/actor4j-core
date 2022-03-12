@@ -38,7 +38,7 @@ public class ExampleReplicationWithRemoteFunctionPod extends RemoteFunctionPod {
 
 				@Override
 				public Pair<Object, Integer> handle(RemotePodMessage remoteMessage, UUID interaction) {
-					return functionImpl.handle(ActorMessage.create(remoteMessage.remotePodMessageDTO.payload, remoteMessage.remotePodMessageDTO.tag, host.self(), null, interaction, "", ""));
+					return functionImpl.handle(ActorMessage.create(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), host.self(), null, interaction, "", ""));
 				}
 			};
 	}
