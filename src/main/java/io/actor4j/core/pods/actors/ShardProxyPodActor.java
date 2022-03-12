@@ -42,7 +42,7 @@ public abstract class ShardProxyPodActor extends PodChildActor implements Shard 
 		setAlias(alias, false);
 		
 		Map<String, PodReplicationTuple> podReplicationMap = getSystem().underlyingImpl().getPodReplicationController().getPodReplicationMap();
-		shardCount = podReplicationMap.get(context.domain()).getPodSystemConfiguration().getCurrentShardCount(); 
+		shardCount = podReplicationMap.get(context.domain()).podSystemConfiguration().currentShardCount(); 
 	}
 
 	@Override

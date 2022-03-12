@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,12 @@ package io.actor4j.core.internal.pods;
 
 import io.actor4j.core.pods.PodConfiguration;
 
-public class PodReplicationTuple {
-	protected final PodConfiguration podConfiguration;
-	protected final PodSystemConfiguration podSystemConfiguration;
-	
-	protected final String jarFileName;
-	
+public record PodReplicationTuple(PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, String jarFileName) {
 	public PodReplicationTuple(PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration) {
-		super();
-		this.podConfiguration = podConfiguration;
-		this.podSystemConfiguration = podSystemConfiguration;
-		this.jarFileName = null;
-	}
-	
-	public PodReplicationTuple(PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, String jarFileName) {
-		super();
-		this.podConfiguration = podConfiguration;
-		this.podSystemConfiguration = podSystemConfiguration;
-		this.jarFileName = jarFileName;
+		this(podConfiguration, podSystemConfiguration, null);
 	}
 	
 	public boolean hasJarFile() {
 		return jarFileName!=null;
-	}
-
-	public PodConfiguration getPodConfiguration() {
-		return podConfiguration;
-	}
-
-	public PodSystemConfiguration getPodSystemConfiguration() {
-		return podSystemConfiguration;
 	}
 }

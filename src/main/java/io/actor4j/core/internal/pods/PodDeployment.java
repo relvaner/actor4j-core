@@ -28,10 +28,10 @@ import io.actor4j.core.pods.PodFactory;
 
 public class PodDeployment {
 	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
-		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
+		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.domain()));
 		
-		if (podSystemConfiguration.getCurrentShardCount()==1)
-			deployPods(factory, podSystemConfiguration.currentReplicaCount, podConfiguration.getDomain(), service);
+		if (podSystemConfiguration.currentShardCount()==1)
+			deployPods(factory, podSystemConfiguration.currentReplicaCount(), podConfiguration.domain(), service);
 		else
 			deployPodsAsShards(factory, podConfiguration, podSystemConfiguration, service);		
 	}
@@ -56,12 +56,12 @@ public class PodDeployment {
 	}
 	
 	public static void increasePods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, int instances, String shardId, ActorPodService service) {
-		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.getDomain()));
+		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.domain()));
 		
-		if (podSystemConfiguration.getCurrentShardCount()==1)
-			increasePods(factory, instances, podConfiguration.getDomain(), service);
+		if (podSystemConfiguration.currentShardCount()==1)
+			increasePods(factory, instances, podConfiguration.domain(), service);
 		else
-			increasePodsAsShards(factory, instances, podConfiguration.getDomain(), shardId, service);
+			increasePodsAsShards(factory, instances, podConfiguration.domain(), shardId, service);
 	}
 	
 	public static void increasePods(PodFactory factory, int instances, String domain, ActorPodService service) {
@@ -98,34 +98,34 @@ public class PodDeployment {
 
 	public static void deployPodsAsShards(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
 		if (factory!=null) {
-			List<String> primaryShardIds = podSystemConfiguration.getPrimaryShardIds();
+			List<String> primaryShardIds = podSystemConfiguration.primaryShardIds();
 			if (primaryShardIds!=null)
 				for (int i=0; i<primaryShardIds.size(); i++) {
 					Pod pod = factory.create();
 					pod.register(service, 
 							new PodContext(
-								podConfiguration.getDomain(), 
+								podConfiguration.domain(), 
 								true,
 								primaryShardIds.get(i),
 								true
 							));
-					systemLogger().log(INFO, String.format("[SHARDING] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), primaryShardIds.get(i)));
+					systemLogger().log(INFO, String.format("[SHARDING] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.domain(), pod.getClass().getName(), primaryShardIds.get(i)));
 				}
-			List<String> secondaryShardIds = podSystemConfiguration.getSecondaryShardIds();
+			List<String> secondaryShardIds = podSystemConfiguration.secondaryShardIds();
 			if (secondaryShardIds!=null)
 				for (int i=0; i<secondaryShardIds.size(); i++) {
-					int count = podSystemConfiguration.getSecondaryShardCounts().get(i);
+					int count = podSystemConfiguration.secondaryShardCounts().get(i);
 					if (count>0)
 						for (int j=0; j<count; j++) {
 							Pod pod = factory.create();
 							pod.register(service,
 									new PodContext(
-										podConfiguration.getDomain(), 
+										podConfiguration.domain(), 
 										true,
 										secondaryShardIds.get(i),
 										false
 									));
-							systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.getDomain(), pod.getClass().getName(), secondaryShardIds.get(i)));
+							systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.domain(), pod.getClass().getName(), secondaryShardIds.get(i)));
 						}
 				}
 		}	
