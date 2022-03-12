@@ -27,20 +27,27 @@ import io.actor4j.core.pods.RemotePodMessage;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	public static TriConsumer<String, Object, Integer> internal_server_callback;
+	public static TriConsumer<Object, UUID, String> internal_server_request;
 	
 	protected Map<UUID, RemotePodMessage> remoteMap;
+	protected Map<UUID, Object> requestMap;
 
 	public RemoteHandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(alias, groupId, context);
 		
 		this.remoteMap = new HashMap<>();
+		this.requestMap = new HashMap<>();
 	}
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
 		RemotePodMessage remoteMessage = null;
-		if (message.interaction()!=null)
+		Object requestMessage = null;
+		if (message.interaction()!=null) {
 			remoteMessage = remoteMap.get(message.interaction());
+			if (remoteMessage==null)
+				requestMessage = requestMap.get(message.interaction());
+		}
 			
 		if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
 			if (remoteMessage!=null) {
@@ -53,16 +60,44 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 				handle((RemotePodMessage)message.value(), interaction);
 			}
 		}
+		else if (requestMessage!=null && message.value() instanceof RemotePodMessage) {
+			requestMap.remove(message.interaction());
+			handle((RemotePodMessage)message.value(), message.interaction());
+		}
 		else
 			super.receive(message);
 	}
 	
 	protected void internal_callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
 		Object result = callback(message, remoteMessage);
-		if (remoteMessage.remotePodMessageDTO.reply && internal_server_callback!=null)
-			internal_server_callback.accept(remoteMessage.replyAddress, result, message.tag());
+		if (remoteMessage.remotePodMessageDTO().reply() && internal_server_callback!=null)
+			internal_server_callback.accept(remoteMessage.replyAddress(), result, message.tag());
 	}
 
 	public abstract void handle(RemotePodMessage remoteMessage, UUID interaction);
 	public abstract Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage);
+	
+	public void request(Object message) {
+		request(message, null);
+	}
+	
+	public boolean request(Object message, UUID interaction) {
+		boolean result = false;
+		
+		if (internal_server_request!=null) {
+			if (interaction!=null) {
+				if (remoteMap.get(interaction)==null && requestMap.get(interaction)==null) {
+					requestMap.put(interaction, message); 
+					internal_server_request.accept(message, interaction, context.domain());
+					result = true;
+				}
+			}
+			else {
+				internal_server_request.accept(message, null, null);
+				result = true;
+			}
+		}
+		
+		return result;
+	}
 }
