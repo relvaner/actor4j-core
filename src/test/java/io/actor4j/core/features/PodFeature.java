@@ -247,7 +247,7 @@ public class PodFeature {
 		
 		RemoteHandlerPodActor.internal_server_request = (msg, interaction, domain) -> {
 			if (interaction!=null) {
-				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", null, false), client.toString(), null);
+				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client.toString(), null);
 				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID, null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
 			}
 			else {
@@ -373,7 +373,7 @@ public class PodFeature {
 		
 		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
 		
-		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", null, true), client.toString(), null);
+		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {

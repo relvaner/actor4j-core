@@ -16,5 +16,5 @@
 
 package io.actor4j.core.pods;
 
-public record RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
+public record RemotePodMessageDTO(Object payload, int tag, String alias, boolean reply) {
 }
