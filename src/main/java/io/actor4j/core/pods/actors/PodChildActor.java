@@ -24,11 +24,15 @@ import io.actor4j.core.pods.PodContext;
 public abstract class PodChildActor extends Actor implements ActorGroupMember {
 	protected UUID groupId;
 	protected PodContext context;
-
-	public PodChildActor(UUID groupId, PodContext context) {
-		super();
+	
+	public PodChildActor(String name, UUID groupId, PodContext context) {
+		super(name);
 		this.groupId = groupId;
 		this.context = context;
+	}
+
+	public PodChildActor(UUID groupId, PodContext context) {
+		this(null, groupId, context);
 	}
 
 	@Override

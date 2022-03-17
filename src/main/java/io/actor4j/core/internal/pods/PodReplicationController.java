@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import io.actor4j.core.function.Procedure;
 import io.actor4j.core.internal.ActorSystemImpl;
@@ -43,12 +44,16 @@ public class PodReplicationController {
 	protected final DefaultDIContainer<String> container;
 	protected final Map<String, PodReplicationTuple> podReplicationMap;
 	
+	protected final Function<String, Boolean> hasPrimaryReplica;
+	
 	public PodReplicationController(ActorSystemImpl system) {
 		super();
 		this.system = system;
 		
 		container = new DefaultDIContainer<>();
 		podReplicationMap = new ConcurrentHashMap<>();
+		
+		hasPrimaryReplica = (domain) -> system.primaryPodDeployed(domain);
 	}
 
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
@@ -67,7 +72,7 @@ public class PodReplicationController {
 		podReplicationMap.put(podConfiguration.domain(), new PodReplicationTuple(podConfiguration, podSystemConfiguration));
 		if (podSystemConfiguration!=null) {
 			container.register(podConfiguration.domain(), factory);
-			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system);
+			PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system, hasPrimaryReplica);
 		}
 	}
 	
@@ -219,7 +224,7 @@ public class PodReplicationController {
 						null, null, null, 1, podReplicationTuple.podSystemConfiguration().currentReplicaCount()+instances);
 				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration));
 				
-				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, instances, null, system);
+				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, instances, null, system, hasPrimaryReplica);
 			}
 			else {
 				PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
@@ -231,7 +236,7 @@ public class PodReplicationController {
 				podSystemConfiguration.secondaryShardCounts().set(Integer.valueOf(shardId), podSystemConfiguration.secondaryShardCounts().get(Integer.valueOf(shardId))+instances);
 				podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration));
 				
-				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, instances, shardId, system);
+				PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, instances, shardId, system, hasPrimaryReplica);
 			}
 		}
 	}

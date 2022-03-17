@@ -15,8 +15,13 @@
  */
 package io.actor4j.core.pods;
 
-public record PodContext(String domain, boolean isShard, String shardId, boolean primaryReplica) {
+import java.util.function.Function;
+
+public record PodContext(String domain, boolean isShard, String shardId, boolean primaryReplica, Function<String, Boolean> function) {
+	/**
+	 * Exists on this actor system a running primary replica of this pod?
+	 */
 	public boolean hasPrimaryReplica() {
-		return true; // TODO: temporary
+		return function.apply(domain);
 	}
 }

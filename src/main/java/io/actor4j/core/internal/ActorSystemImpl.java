@@ -385,6 +385,15 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		podReplicationController.undeployPods(domain);
 	}
 	
+	public boolean primaryPodDeployed(String domain) {
+		Queue<UUID> queue = podDomains.get(domain);
+		
+		return queue.stream().filter(id -> {
+				PodActorCell cell = ((PodActorCell)cells.get(id));
+				return cell.getContext().primaryReplica();
+			}).findFirst().isPresent();
+	}
+	
 	public boolean updateActors(String alias, ActorFactory factory) {
 		return updateActors(alias, factory, 1);
 	}

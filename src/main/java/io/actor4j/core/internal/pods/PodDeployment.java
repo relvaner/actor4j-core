@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.actor4j.core.internal.pods;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 import java.util.List;
+import java.util.function.Function;
 
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.pods.Pod;
@@ -27,16 +28,16 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 
 public class PodDeployment {
-	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
+	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.domain()));
 		
 		if (podSystemConfiguration.currentShardCount()==1)
-			deployPods(factory, podSystemConfiguration.currentReplicaCount(), podConfiguration.domain(), service);
+			deployPods(factory, podSystemConfiguration.currentReplicaCount(), podConfiguration.domain(), service, hasPrimaryReplica);
 		else
-			deployPodsAsShards(factory, podConfiguration, podSystemConfiguration, service);		
+			deployPodsAsShards(factory, podConfiguration, podSystemConfiguration, service, hasPrimaryReplica);		
 	}
 	
-	public static void deployPods(PodFactory factory, int instances, String domain, ActorPodService service) {
+	public static void deployPods(PodFactory factory, int instances, String domain, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		if (factory!=null) {
 			boolean primaryReplica = true;
 			for (int i=0; i<instances; i++) {
@@ -46,7 +47,8 @@ public class PodDeployment {
 							domain,
 							false,
 							null,
-							primaryReplica
+							primaryReplica,
+							hasPrimaryReplica
 						));
 				if (i==0)
 					primaryReplica = false;
@@ -55,16 +57,16 @@ public class PodDeployment {
 		}
 	}
 	
-	public static void increasePods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, int instances, String shardId, ActorPodService service) {
+	public static void increasePods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, int instances, String shardId, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.domain()));
 		
 		if (podSystemConfiguration.currentShardCount()==1)
-			increasePods(factory, instances, podConfiguration.domain(), service);
+			increasePods(factory, instances, podConfiguration.domain(), service, hasPrimaryReplica);
 		else
-			increasePodsAsShards(factory, instances, podConfiguration.domain(), shardId, service);
+			increasePodsAsShards(factory, instances, podConfiguration.domain(), shardId, service, hasPrimaryReplica);
 	}
 	
-	public static void increasePods(PodFactory factory, int instances, String domain, ActorPodService service) {
+	public static void increasePods(PodFactory factory, int instances, String domain, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		if (factory!=null) {
 			for (int i=0; i<instances; i++) {
 				Pod pod = factory.create();
@@ -73,14 +75,15 @@ public class PodDeployment {
 							domain,
 							false,
 							null,
-							false
+							false,
+							hasPrimaryReplica
 						));
 				systemLogger().log(INFO, String.format("[REPLICATION] Pod (%s, %s) deployed", domain, pod.getClass().getName()));
 			}			
 		}
 	}
 	
-	public static void increasePodsAsShards(PodFactory factory, int instances, String domain, String shardId, ActorPodService service) {
+	public static void increasePodsAsShards(PodFactory factory, int instances, String domain, String shardId, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		if (factory!=null) {
 			for (int i=0; i<instances; i++) {
 				Pod pod = factory.create();
@@ -89,14 +92,15 @@ public class PodDeployment {
 							domain,
 							true,
 							shardId,
-							false
+							false,
+							hasPrimaryReplica
 						));
 				systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", domain, pod.getClass().getName(), shardId));
 			}			
 		}
 	}
 
-	public static void deployPodsAsShards(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service) {
+	public static void deployPodsAsShards(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		if (factory!=null) {
 			List<String> primaryShardIds = podSystemConfiguration.primaryShardIds();
 			if (primaryShardIds!=null)
@@ -107,7 +111,8 @@ public class PodDeployment {
 								podConfiguration.domain(), 
 								true,
 								primaryShardIds.get(i),
-								true
+								true,
+								hasPrimaryReplica
 							));
 					systemLogger().log(INFO, String.format("[SHARDING] Pod-Shard (%s, %s, PRIMARY, %s) deployed", podConfiguration.domain(), pod.getClass().getName(), primaryShardIds.get(i)));
 				}
@@ -123,7 +128,8 @@ public class PodDeployment {
 										podConfiguration.domain(), 
 										true,
 										secondaryShardIds.get(i),
-										false
+										false,
+										hasPrimaryReplica
 									));
 							systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, %s, SECONDARY, %s) deployed", podConfiguration.domain(), pod.getClass().getName(), secondaryShardIds.get(i)));
 						}
