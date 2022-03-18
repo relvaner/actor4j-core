@@ -114,8 +114,10 @@ public class LifeCycleFeature {
 
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.tag()==TERMINATED && message.source().equals(parent))
+				if (message.tag()==TERMINATED && message.source().equals(parent)) {
+					assertEquals(3, counter.incrementAndGet());
 					testDone.countDown();
+				}
 			}
 		});
 		
