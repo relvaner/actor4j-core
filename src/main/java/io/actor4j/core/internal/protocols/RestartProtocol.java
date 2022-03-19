@@ -27,13 +27,14 @@ import java.util.function.Consumer;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.exceptions.ActorInitializationException;
-import io.actor4j.core.internal.ActorCell;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
 public class RestartProtocol {
-	protected final ActorCell cell;
+	protected final InternalActorCell cell;
 
-	public RestartProtocol(ActorCell cell) {
+	public RestartProtocol(InternalActorCell cell) {
 		this.cell = cell;
 	}
 	
@@ -46,7 +47,7 @@ public class RestartProtocol {
 	protected void postRestart(Exception reason) {
 		cell.postStop();
 		try {
-			Actor newActor = (Actor)cell.getSystem().getContainer().getInstance(cell.getId());
+			Actor newActor = (Actor)((InternalActorSystem)cell.getSystem()).getContainer().getInstance(cell.getId());
 			newActor.setCell(cell);
 			cell.setActor(newActor);
 			cell.postRestart(reason);
@@ -68,7 +69,7 @@ public class RestartProtocol {
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			cell.getSystem().sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
+			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) {

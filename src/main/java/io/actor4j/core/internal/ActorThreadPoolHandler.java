@@ -219,15 +219,15 @@ public class ActorThreadPoolHandler {
 		system.executerService.persistenceService.getService().send(message.copy(dest));
 	}
 	
-	public void registerCell(ActorCell cell) {
+	public void registerCell(InternalActorCell cell) {
 		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 	
-	public void unregisterCell(ActorCell cell) {
+	public void unregisterCell(InternalActorCell cell) {
 		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
 	}
 	
-	public boolean isRegisteredCell(ActorCell cell) {
+	public boolean isRegisteredCell(InternalActorCell cell) {
 		return cellsMap.containsKey(cell.getId());
 	}
 }

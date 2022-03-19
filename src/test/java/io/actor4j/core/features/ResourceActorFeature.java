@@ -52,7 +52,7 @@ public class ResourceActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = ActorSystem.create();
 	}
 	
 	@Test(timeout=5000)
@@ -81,11 +81,11 @@ public class ResourceActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {
@@ -133,11 +133,11 @@ public class ResourceActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

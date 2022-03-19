@@ -25,6 +25,8 @@ import java.util.stream.Stream;
 
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.PseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -65,8 +67,8 @@ public abstract class ConcurrentPseudoActor {
 			receive(message);
 		}
 		catch(Exception e) {
-			actor.cell.getSystem().getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", actor.getId());
-			actor.cell.getSystem().getActorStrategyOnFailure().handle(actor.cell, e);
+			((InternalActorSystem)actor.cell.getSystem()).getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", actor.getId());
+			((InternalActorSystem)actor.cell.getSystem()).getActorStrategyOnFailure().handle((InternalActorCell)actor.cell, e);
 		}	
 	}
 	

@@ -40,7 +40,7 @@ public class AskPatternFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(1)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 
 	@Test(timeout=5000)

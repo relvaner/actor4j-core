@@ -37,7 +37,7 @@ public class ActorPersistenceService {
 			.parallelism(parallelism)
 			.parallelismFactor(parallelismFactor)
 			.build();
-		service = new ActorService(config);
+		service = ActorService.create(config);
 		
 		driver.open();
 		for (int i=0; i<parallelism*parallelismFactor; i++) {

@@ -92,7 +92,7 @@ public class CommPatternFeature {
 	public void test_scatter() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child;
@@ -122,7 +122,7 @@ public class CommPatternFeature {
 		});
 		
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

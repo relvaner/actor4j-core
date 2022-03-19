@@ -89,12 +89,12 @@ public class ActorExecuterService {
 							String.format("[SAFETY] Exception in initialization of an actor"));
 					}
 					else if (message.equals("actor") || message.equals("resource")) {
-						Actor actor = system.cells.get(uuid).actor;
+						Actor actor = system.cells.get(uuid).getActor();
 						systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
 					else if (message.equals("pseudo")) {
-						Actor actor = system.pseudoCells.get(uuid).actor;
+						Actor actor = system.pseudoCells.get(uuid).getActor();
 						systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
 					}
@@ -107,7 +107,7 @@ public class ActorExecuterService {
 								String.format("[FAILSAFE] Exception in WatchdogThread"));
 					}
 					else if (message.equals("executer_resource")) {
-						Actor actor = system.cells.get(uuid).actor;
+						Actor actor = system.cells.get(uuid).getActor();
 						systemLogger().log(ERROR,
 								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
 					}
@@ -156,7 +156,7 @@ public class ActorExecuterService {
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		
 		if (system.config.persistenceMode) {
-			persistenceService = new ActorPersistenceService(system.wrapper, system.config.parallelism, system.config.parallelismFactor, system.config.persistenceDriver);
+			persistenceService = new ActorPersistenceService(system, system.config.parallelism, system.config.parallelismFactor, system.config.persistenceDriver);
 			persistenceService.start();
 		}
 		

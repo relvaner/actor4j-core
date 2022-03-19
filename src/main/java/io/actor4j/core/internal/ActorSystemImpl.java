@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.actor4j.core.ActorPodService;
-import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
@@ -54,9 +53,7 @@ import io.actor4j.core.utils.ActorGroupSet;
 import io.actor4j.core.utils.ActorTimer;
 import io.actor4j.core.utils.PodActorFactory;
 
-public abstract class ActorSystemImpl implements ActorPodService {
-	protected final ActorSystem wrapper;
-	
+public abstract class ActorSystemImpl implements InternalActorSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	
 	protected /*quasi final*/ DIContainer<UUID> container;
@@ -64,13 +61,13 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	protected /*quasi final*/ WatchdogRunnableFactory watchdogRunnableFactory;
 	
-	protected final Map<UUID, ActorCell> cells; // ActorCellID    -> ActorCell
+	protected final Map<UUID, InternalActorCell> cells; // ActorCellID    -> ActorCell
 	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
 	protected final Map<UUID, String> hasAliases;
 	protected final Map<UUID, Boolean> resourceCells;
 	protected final Map<UUID, Boolean> podCells;
 	protected final Map<String, Queue<UUID>> podDomains; // PodActorCellDomain -> ActorCellID
-	protected final Map<UUID, ActorCell> pseudoCells;
+	protected final Map<UUID, InternalActorCell> pseudoCells;
 	protected final Map<UUID, UUID> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
 	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
@@ -89,14 +86,9 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public final UUID UNKNOWN_ID;
 	public final UUID PSEUDO_ID;
 	
-	public ActorSystemImpl(ActorSystem wrapper) {
-		this(wrapper, null);
-	}
-	
-	public ActorSystemImpl(ActorSystem wrapper, ActorSystemConfig config) {
+	public ActorSystemImpl(ActorSystemConfig config) {
 		super();
 		
-		this.wrapper = wrapper;
 		if (config!=null)
 			this.config = config;
 		else
@@ -131,6 +123,16 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		resetCells();
 	}
 	
+	@Override
+	public UUID USER_ID() {
+		return USER_ID;
+	}
+
+	@Override
+	public UUID SYSTEM_ID() {
+		return SYSTEM_ID;
+	}
+	
 	protected void reset() {
 		messagingEnabled.set(false);
 		
@@ -149,7 +151,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	protected void resetCells() {
 		countDownLatch = new CountDownLatch(3);
 		
-		internal_addCell(new ActorCell(this, new Actor("user") {
+		internal_addCell(new DefaultActorCell(this, new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -161,7 +163,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			}
 		}, USER_ID));
 		
-		internal_addCell(new ActorCell(this, new Actor("system") {
+		internal_addCell(new DefaultActorCell(this, new Actor("system") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -173,7 +175,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			}
 		}, SYSTEM_ID));
 		
-		internal_addCell(new ActorCell(this, new Actor("unknown") {
+		internal_addCell(new DefaultActorCell(this, new Actor("unknown") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -185,7 +187,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 			}
 		}, UNKNOWN_ID));
 		
-		internal_addCell(new ActorCell(this, new Actor("pseudo") {
+		internal_addCell(new DefaultActorCell(this, new Actor("pseudo") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -193,29 +195,42 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		}, PSEUDO_ID));
 	}
 	
-	public ActorCell generateCell(Actor actor) {
+	public InternalActorCell generateCell(Actor actor) {
 		if (actor instanceof ResourceActor)
 			return new ResourceActorCell(this, actor);
 		else if (actor instanceof PodActor)
 			return new PodActorCell(this, actor);
 		else
-			return new ActorCell(this, actor);
+			return new DefaultActorCell(this, actor);
 	}
 	
-	public ActorCell generateCell(Class<? extends Actor> clazz) {
+	public InternalActorCell generateCell(Class<? extends Actor> clazz) {
 		if (clazz==ResourceActor.class)
 			return new ResourceActorCell(this, null);
 		else if (clazz==PodActor.class)
 			return new PodActorCell(this, null);
 		else
-			return new ActorCell(this, null);
+			return new DefaultActorCell(this, null);
 	}
 
 	public ActorSystemConfig getConfig() {
 		return config;
 	}
 	
+	@Override
 	public boolean setConfig(ActorSystemConfig config) {
+		boolean result = false;
+		
+		if (!executerService.isStarted() && config!=null) {
+			this.config = config;
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public boolean setConfig(ActorServiceConfig config) {
 		boolean result = false;
 		
 		if (!executerService.isStarted() && config!=null) {
@@ -234,11 +249,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return podReplicationController;
 	}
 
-	public Map<UUID, ActorCell> getCells() {
+	public Map<UUID, InternalActorCell> getCells() {
 		return cells;
 	}
 	
-	public Map<UUID, ActorCell> getPseudoCells() {
+	public Map<UUID, InternalActorCell> getPseudoCells() {
 		return pseudoCells;
 	}
 	
@@ -277,18 +292,30 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public ActorStrategyOnFailure getActorStrategyOnFailure() {
 		return actorStrategyOnFailure;
 	}
+	
+	public AtomicBoolean getMessagingEnabled() {
+		return messagingEnabled;
+	}
 
-	protected UUID internal_addCell(ActorCell cell) {
-		Actor actor = cell.actor;
+	public Queue<ActorMessage<?>> getBufferQueue() {
+		return bufferQueue;
+	}
+	
+	public ActorExecuterService getExecuterService() {
+		return executerService;
+	}
+	
+	public UUID internal_addCell(InternalActorCell cell) {
+		Actor actor = cell.getActor();
 		if (actor instanceof PseudoActor)
-			pseudoCells.put(cell.id, cell);
+			pseudoCells.put(cell.getId(), cell);
 		else {
 			actor.setCell(cell);
-			cells.put(cell.id, cell);
+			cells.put(cell.getId(), cell);
 			if (actor instanceof ResourceActor)
-				resourceCells.put(cell.id, false);
+				resourceCells.put(cell.getId(), false);
 			else if (actor instanceof PodActor)
-				podCells.put(cell.id, false);
+				podCells.put(cell.getId(), false);
 			if (executerService.isStarted()) {
 				if (!(actor instanceof ResourceActor))
 					messageDispatcher.registerCell(cell);
@@ -296,30 +323,30 @@ public abstract class ActorSystemImpl implements ActorPodService {
 				cell.preStart();
 			}
 		}
-		return cell.id;
+		return cell.getId();
 	}
 	
-	protected UUID user_addCell(ActorCell cell) {
-		cell.parent = USER_ID;
-		cells.get(USER_ID).children.add(cell.id);
+	protected UUID user_addCell(InternalActorCell cell) {
+		cell.setParent(USER_ID);
+		cells.get(USER_ID).getChildren().add(cell.getId());
 		return internal_addCell(cell);
 	}
 	
-	protected UUID system_addCell(ActorCell cell) {
-		cell.parent = SYSTEM_ID;
-		cells.get(SYSTEM_ID).children.add(cell.id);
+	protected UUID system_addCell(InternalActorCell cell) {
+		cell.setParent(SYSTEM_ID);
+		cells.get(SYSTEM_ID).getChildren().add(cell.getId());
 		return internal_addCell(cell);
 	}
 	
-	protected UUID pseudo_addCell(ActorCell cell) {
-		cell.parent = PSEUDO_ID;
-		cells.get(PSEUDO_ID).children.add(cell.id);
+	public UUID pseudo_addCell(InternalActorCell cell) {
+		cell.setParent(PSEUDO_ID);
+		cells.get(PSEUDO_ID).getChildren().add(cell.getId());
 		return internal_addCell(cell);
 	}
 
 	public UUID addActor(ActorFactory factory) {
-		ActorCell cell = generateCell(factory.create());
-		container.register(cell.id, factory);
+		InternalActorCell cell = generateCell(factory.create());
+		container.register(cell.getId(), factory);
 		
 		return user_addCell(cell);
 	}
@@ -334,8 +361,8 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	}
 	
 	public UUID addSystemActor(ActorFactory factory) {
-		ActorCell cell = generateCell(factory.create());
-		container.register(cell.id, factory);
+		InternalActorCell cell = generateCell(factory.create());
+		container.register(cell.getId(), factory);
 		
 		return system_addCell(cell);
 	}
@@ -427,7 +454,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return result;
 	}
 	
-	protected void removeActor(UUID id) {	
+	public void removeActor(UUID id) {	
 		cells.remove(id);
 		resourceCells.remove(id);
 		podCells.remove(id);
@@ -505,11 +532,11 @@ public abstract class ActorSystemImpl implements ActorPodService {
 				result = "/";
 			else {
 				StringBuffer buffer = new StringBuffer();
-				ActorCell cell = cells.get(uuid);
+				InternalActorCell cell = cells.get(uuid);
 				if (cell.getActor()!=null)
 					buffer.append("/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
 				UUID parent = null;
-				while ((parent=cell.parent)!=null && !parent.equals(USER_ID)) {
+				while ((parent=cell.getParent())!=null && !parent.equals(USER_ID)) {
 					cell = cells.get(parent);
 					buffer.insert(0, "/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
 				}
@@ -522,10 +549,10 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	}
 	
 	public UUID getActorFromPath(String path) {
-		ActorCell result = null;
+		InternalActorCell result = null;
 		
 		if (path!=null) {
-			ActorCell parent = cells.get(USER_ID);
+			InternalActorCell parent = cells.get(USER_ID);
 			
 			if (path.isEmpty() || path.equals("/"))
 				result = parent;
@@ -538,7 +565,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 					Iterator<UUID> iterator = parent.getChildren().iterator();
 					result  = null;
 					while (iterator.hasNext()) {
-						ActorCell child = cells.get(iterator.next());
+						InternalActorCell child = cells.get(iterator.next());
 						if (child!=null  && (token.equals(child.getActor().getName()) || token.equals(child.getId().toString()))) {
 							result = child;
 							break;
@@ -610,7 +637,7 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
 		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
-			ActorCell cell = cells.get(message.dest());
+			InternalActorCell cell = cells.get(message.dest());
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
 			else
@@ -655,16 +682,22 @@ public abstract class ActorSystemImpl implements ActorPodService {
 		return redirector.get(source);
 	}
 	
-	public void addRedirection(UUID source, UUID dest) {
+	public ActorSystemImpl addRedirection(UUID source, UUID dest) {
 		redirector.put(source, dest);
+		
+		return this;
 	}
 	
-	public void removeRedirection(UUID source) {
+	public ActorSystemImpl removeRedirection(UUID source) {
 		redirector.remove(source);
+		
+		return this;
 	}
 	
-	public void clearRedirections() {
+	public ActorSystemImpl clearRedirections() {
 		redirector.clear();
+		
+		return this;
 	}
 	
 	public ActorTimer timer() {
@@ -687,9 +720,9 @@ public abstract class ActorSystemImpl implements ActorPodService {
 				@Override
 				public void run() {
 					/* preStart */
-					Iterator<Entry<UUID, ActorCell>> iterator = cells.entrySet().iterator();
+					Iterator<Entry<UUID, InternalActorCell>> iterator = cells.entrySet().iterator();
 					while (iterator.hasNext()) {
-						ActorCell cell = iterator.next().getValue();
+						InternalActorCell cell = iterator.next().getValue();
 						if (cell.isRootInUser() || cell.isRootInSystem() )
 							cell.preStart();
 					}
@@ -751,9 +784,5 @@ public abstract class ActorSystemImpl implements ActorPodService {
 	public void shutdown(boolean await) {
 		if (executerService.isStarted())
 			executerService.shutdown(await);
-	}
-	
-	public ActorExecuterService getExecuterService() {
-		return executerService;
 	}
 }

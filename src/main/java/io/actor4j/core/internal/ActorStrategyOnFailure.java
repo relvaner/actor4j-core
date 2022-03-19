@@ -30,37 +30,37 @@ import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategyDirective;
 
 public class ActorStrategyOnFailure {
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
-	public ActorStrategyOnFailure(ActorSystemImpl system) {
+	public ActorStrategyOnFailure(InternalActorSystem system) {
 		this.system = system;
 	}
 	
-	protected void oneForOne_directive_resume(ActorCell cell) {
-		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.actor)));
+	protected void oneForOne_directive_resume(InternalActorCell cell) {
+		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.getActor())));
 	}
 	
-	protected void oneForOne_directive_restart(ActorCell cell, Exception reason) {
+	protected void oneForOne_directive_restart(InternalActorCell cell, Exception reason) {
 		cell.preRestart(reason);
 	}
 	
-	protected void oneForOne_directive_stop(ActorCell cell) {
+	protected void oneForOne_directive_stop(InternalActorCell cell) {
 		cell.stop();
 	}
 	
-	protected void oneForAll_directive_resume(ActorCell cell) {
+	protected void oneForAll_directive_resume(InternalActorCell cell) {
 		oneForOne_directive_resume(cell);
 	}
 	
-	protected void oneForAll_directive_restart(ActorCell cell, Exception reason) {
+	protected void oneForAll_directive_restart(InternalActorCell cell, Exception reason) {
 		if (!cell.isRoot()) {
-			ActorCell parent = system.cells.get(cell.parent);
+			InternalActorCell parent = system.getCells().get(cell.getParent());
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.children.iterator();
+				Iterator<UUID> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(cell.id))
-						system.sendAsDirective(ActorMessage.create(reason, INTERNAL_RESTART, parent.id, dest));
+					if (!dest.equals(cell.getId()))
+						system.sendAsDirective(ActorMessage.create(reason, INTERNAL_RESTART, parent.getId(), dest));
 				}
 				cell.preRestart(reason);
 			}
@@ -69,15 +69,15 @@ public class ActorStrategyOnFailure {
 			cell.preRestart(reason);
 	}
 	
-	protected void oneForAll_directive_stop(ActorCell cell) {
+	protected void oneForAll_directive_stop(InternalActorCell cell) {
 		if (!cell.isRoot()) {
-			ActorCell parent = system.cells.get(cell.parent);
+			InternalActorCell parent = system.getCells().get(cell.getParent());
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.children.iterator();
+				Iterator<UUID> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
 					UUID dest = iterator.next();
-					if (!dest.equals(cell.id))
-						system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, parent.id, dest));
+					if (!dest.equals(cell.getId()))
+						system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, parent.getId(), dest));
 				}
 				cell.stop();
 			}
@@ -86,17 +86,18 @@ public class ActorStrategyOnFailure {
 			cell.stop();
 	}
 	
-	public void handle(ActorCell cell, Exception e) {
-		ActorCell parent = system.cells.get(cell.parent);
-		if (cell.parentSupervisorStrategy==null)	
-			cell.parentSupervisorStrategy = parent.supervisorStrategy();
+	public void handle(InternalActorCell cell, Exception e) {
+		InternalActorCell parent = system.getCells().get(cell.getParent());
+		if (cell.getParentSupervisorStrategy()==null)	
+			cell.setParentSupervisorStrategy(parent.supervisorStrategy());
 		
-		SupervisorStrategy supervisorStrategy = cell.parentSupervisorStrategy;
+		SupervisorStrategy supervisorStrategy = cell.getParentSupervisorStrategy();
 		SupervisorStrategyDirective directive = supervisorStrategy.handle(e);
 		
 		while (directive==ESCALATE && !parent.isRoot()) {
-			parent = system.cells.get(parent.parent);
-			supervisorStrategy = cell.parentSupervisorStrategy = parent.supervisorStrategy();
+			parent = system.getCells().get(parent.getParent());
+			cell.setParentSupervisorStrategy(parent.supervisorStrategy());
+			supervisorStrategy = cell.getParentSupervisorStrategy();
 			directive = supervisorStrategy.handle(e);
 		}
 		

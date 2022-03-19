@@ -20,52 +20,43 @@ import java.util.UUID;
 
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorService extends ActorSystem {
-	public ActorService() {
-		super(ActorServiceConfig.create());
+public interface ActorService extends ActorSystem {
+	public static ActorService create() {
+		return create((c) -> new DefaultActorSystemImpl(c));
 	}
 	
-	public ActorService(ActorSystemImplFactory factory) {
-		this(factory, null);
+	public static ActorSystem create(String name) {
+		return create(ActorServiceConfig.builder().name(name).build());
 	}
 	
-	public ActorService(ActorServiceConfig config) {
-		super(config!=null ? config : ActorServiceConfig.create());
+	public static ActorService create(ActorSystemFactory factory) {
+		return create(factory, null);
 	}
 	
-	public ActorService(ActorSystemImplFactory factory, ActorServiceConfig config) {
-		super(factory, config!=null ? config : ActorServiceConfig.create());
+	public static ActorService create(ActorServiceConfig config) {
+		return create((c) -> new DefaultActorSystemImpl(c), config);
 	}
+	
+	public static ActorService create(ActorSystemFactory factory, ActorServiceConfig config) {
+		return (ActorService)factory.apply(config!=null ? config : ActorServiceConfig.create());
+	}	
 	
 	@Deprecated
 	@Override
-	public boolean setConfig(ActorSystemConfig config) {
+	public default boolean setConfig(ActorSystemConfig config) {
 		return false;
 	}
 	
-	public boolean setConfig(ActorServiceConfig config) {
-		return super.setConfig(config);
-	}
+	public boolean setConfig(ActorServiceConfig config);
 
-	public boolean hasActor(String uuid) {
-		return system.hasActor(uuid);
-	}
+	public boolean hasActor(String uuid);
 	
-	public UUID getActorFromAlias(String alias) {
-		return system.getActorFromAlias(alias);
-	}
+	public UUID getActorFromAlias(String alias);
+	public List<UUID> getActorsFromAlias(String alias);
 	
-	public List<UUID> getActorsFromAlias(String alias) {
-		return system.getActorsFromAlias(alias);
-	}
-	
-	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias) {
-		return system.sendViaAliasAsServer(message, alias);
-	}
-	
-	public void sendAsServer(ActorMessage<?> message) {
-		system.sendAsServer(message);
-	}
+	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
+	public void sendAsServer(ActorMessage<?> message);
 }

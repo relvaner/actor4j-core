@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
@@ -40,7 +41,7 @@ public class FailsafeFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(1)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 	
 	@Test(timeout=5000)
@@ -71,8 +72,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = system.underlyingImpl().getExecuterService().getFailsafeManager().getErrorHandler();
-		system.underlyingImpl().getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecuterService().getFailsafeManager().getErrorHandler();
+		((InternalActorSystem)system).getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				errorHandler.handle(t, message, uuid);
@@ -83,8 +84,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -136,8 +137,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = system.underlyingImpl().getExecuterService().getFailsafeManager().getErrorHandler();
-		system.underlyingImpl().getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecuterService().getFailsafeManager().getErrorHandler();
+		((InternalActorSystem)system).getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				errorHandler.handle(t, message, uuid);
@@ -148,13 +149,13 @@ public class FailsafeFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest)); // -> restart
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest)); // -> restart
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest)); // -> restart
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest)); // -> stop
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest)); // -> restart
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest)); // -> restart
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest)); // -> restart
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest)); // -> stop
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		
 		system.start();
 		try {

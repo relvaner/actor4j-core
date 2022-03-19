@@ -20,7 +20,7 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.pods.PodContext;
 
-public class PodActorCell extends ActorCell {
+public class PodActorCell extends DefaultActorCell {
 	protected volatile PodContext context;
 	
 	public PodActorCell(ActorSystemImpl system, Actor actor) {

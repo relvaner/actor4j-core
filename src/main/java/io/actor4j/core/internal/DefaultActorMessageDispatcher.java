@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
+import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -40,7 +41,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		consumerPseudo = new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> msg) {
-				ActorCell cell = DefaultActorMessageDispatcher.this.system.pseudoCells.get(msg.dest());
+				ActorCell cell = DefaultActorMessageDispatcher.this.system.getPseudoCells().get(msg.dest());
 				if (cell!=null)
 					((PseudoActorCell)cell).getOuterQueue().offer(msg);
 			}

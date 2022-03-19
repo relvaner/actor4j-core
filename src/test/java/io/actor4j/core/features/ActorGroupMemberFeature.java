@@ -46,7 +46,7 @@ public class ActorGroupMemberFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(3) /* temporary solution */
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 	
 	@Test(timeout=30000)
@@ -89,7 +89,7 @@ public class ActorGroupMemberFeature {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID(), null), "instances");
 			}
 		}, 0, 50);
 		
@@ -129,7 +129,7 @@ public class ActorGroupMemberFeature {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID(), null), "instances");
 			}
 		}, 0, 50);
 		
@@ -199,8 +199,8 @@ public class ActorGroupMemberFeature {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances");
-				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances_child");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID(), null), "instances");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID(), null), "instances_child");
 			}
 		}, 0, 50);
 		

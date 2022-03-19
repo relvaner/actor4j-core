@@ -38,7 +38,7 @@ public class LifeCycleFeature {
 	public void test_start() {
 		CountDownLatch testDone = new CountDownLatch(2);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		system.addActor(() -> new Actor("parent") {
 			@Override
@@ -77,7 +77,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(3);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -123,7 +123,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();
@@ -137,7 +137,7 @@ public class LifeCycleFeature {
 	@Test(timeout=5000)
 	public void test_stop_for_all() {
 		CountDownLatch testDone = new CountDownLatch(4);
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child1;
@@ -201,7 +201,7 @@ public class LifeCycleFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.source()==system.SYSTEM_ID)
+				if (message.source()==system.SYSTEM_ID())
 					tell(null, 0, child2);
 				else if (message.tag()==TERMINATED) {
 					waitForChildren.remove(message.source());
@@ -213,7 +213,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();
@@ -229,7 +229,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(3);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -273,7 +273,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, Actor.KILL, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.KILL, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();
@@ -289,7 +289,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(4);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -346,7 +346,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, Actor.RESTART, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, Actor.RESTART, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();
@@ -362,7 +362,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(4);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -420,7 +420,7 @@ public class LifeCycleFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();
@@ -434,7 +434,7 @@ public class LifeCycleFeature {
 	@Test(timeout=5000)
 	public void test_restart_for_all() {
 		CountDownLatch testDone = new CountDownLatch(9);
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child2;
@@ -536,14 +536,14 @@ public class LifeCycleFeature {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (message.source()==system.SYSTEM_ID)
+				if (message.source()==system.SYSTEM_ID())
 					tell(null, 0, child2);
 			}
 		});
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		
 		try {
 			testDone.await();

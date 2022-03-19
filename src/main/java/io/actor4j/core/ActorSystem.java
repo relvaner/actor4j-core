@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.ActorSystemImpl;
 import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
@@ -29,174 +28,65 @@ import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
-public class ActorSystem {
-	protected ActorSystemImpl system;
-	
-	public final UUID USER_ID;
-	public final UUID SYSTEM_ID;
-	
-	public ActorSystem() {
-		this((wrapper, c) -> new DefaultActorSystemImpl(wrapper, c), null);
+public interface ActorSystem {
+	public static ActorSystem create() {
+		return create((c) -> new DefaultActorSystemImpl(c));
 	}
 	
-	public ActorSystem(ActorSystemImplFactory factory) {
-		this(factory, null);
+	public static ActorSystem create(String name) {
+		return create(ActorSystemConfig.builder().name(name).build());
 	}
 	
-	public ActorSystem(ActorSystemConfig config) {
-		this((wrapper, c) -> new DefaultActorSystemImpl(wrapper, c), config);
+	public static ActorSystem create(ActorSystemFactory factory) {
+		return create(factory, null);
 	}
 	
-	public ActorSystem(ActorSystemImplFactory factory, ActorSystemConfig config) {
-		super();
-		
-		system = factory.apply(this, config);
-		
-		USER_ID    = system.USER_ID;
-		SYSTEM_ID  = system.SYSTEM_ID;
+	public static ActorSystem create(ActorSystemConfig config) {
+		return create((c) -> new DefaultActorSystemImpl(c), config);
 	}
 	
-	public ActorSystemConfig getConfig() {
-		return system.getConfig();
+	public static ActorSystem create(ActorSystemFactory factory, ActorSystemConfig config) {
+		return factory.apply(config);
 	}
 	
-	public boolean setConfig(ActorSystemConfig config) {
-		return system.setConfig(config);
-	}
+	public UUID USER_ID();
+	public UUID SYSTEM_ID();
 	
-	public UUID addActor(ActorFactory factory) {
-		return system.addActor(factory);
-	}
+	public ActorSystemConfig getConfig();
+	public boolean setConfig(ActorSystemConfig config);
 	
-	public List<UUID> addActor(ActorFactory factory, int instances) {
-		return system.addActor(factory, instances);
-	}
+	public UUID addActor(ActorFactory factory);
+	public List<UUID> addActor(ActorFactory factory, int instances);
 	
-	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
-		system.deployPods(jarFile, podConfiguration);
-	}
+	public void deployPods(File jarFile, PodConfiguration podConfiguration);
+	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
+	public void undeployPods(String domain);
 	
-	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
-		system.deployPods(factory, podConfiguration);
-	}
+	public ActorSystem setAlias(UUID id, String alias);
+	public ActorSystem setAlias(List<UUID> ids, String alias);
+	public UUID getActorFromAlias(String alias);
+	public List<UUID> getActorsFromAlias(String alias);
+	public String getActorPath(UUID uuid);
+	public UUID getActorFromPath(String path);
 	
-	public void undeployPods(String domain) {
-		system.undeployPods(domain);
-	}
+	public ActorSystem send(ActorMessage<?> message);
+	public ActorSystem sendViaPath(ActorMessage<?> message, String path);
+	public ActorSystem sendViaAlias(ActorMessage<?> message, String alias);
+	public ActorSystem sendWhenActive(ActorMessage<?> message);
+	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group);
 	
-	public ActorSystem setAlias(UUID id, String alias) {
-		system.setAlias(id, alias);
-		
-		return this;
-	}
+	public UUID getRedirectionDestination(UUID source);
+	public ActorSystem addRedirection(UUID source, UUID dest);
+	public ActorSystem removeRedirection(UUID source);
+	public ActorSystem clearRedirections();
 	
-	public ActorSystem setAlias(List<UUID> ids, String alias) {
-		system.setAlias(ids, alias);
-		
-		return this;
-	}
+	public ActorTimer timer();
+	public ActorTimer globalTimer();
 	
-	public UUID getActorFromAlias(String alias) {
-		return system.getActorFromAlias(alias);
-	}
-	
-	public List<UUID> getActorsFromAlias(String alias) {
-		return system.getActorsFromAlias(alias);
-	}
-	
-	public String getActorPath(UUID uuid) {
-		return system.getActorPath(uuid);
-	}
-	
-	public UUID getActorFromPath(String path) {
-		return system.getActorFromPath(path);
-	}
-		
-	public ActorSystem send(ActorMessage<?> message) {
-		system.send(message);
-		
-		return this;
-	}
-	
-	public ActorSystem sendViaPath(ActorMessage<?> message, String path) {
-		system.sendViaPath(message, path);
-		
-		return this;
-	}
-	
-	public ActorSystem sendViaAlias(ActorMessage<?> message, String alias) {
-		system.sendViaAlias(message, alias);
-		
-		return this;
-	}
-	
-	public ActorSystem sendWhenActive(ActorMessage<?> message) {
-		system.sendWhenActive(message);
-		
-		return this;
-	}
-	
-	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group) {
-		system.broadcast(message, group);
-		
-		return this;
-	}
-	
-	public UUID getRedirectionDestination(UUID source) {
-		return system.getRedirectionDestination(source);
-	}
-	
-	public ActorSystem addRedirection(UUID source, UUID dest) {
-		system.addRedirection(source, dest);
-		
-		return this;
-	}
-	
-	public ActorSystem removeRedirection(UUID source) {
-		system.removeRedirection(source);
-		
-		return this;
-	}
-	
-	public ActorSystem clearRedirections() {
-		system.clearRedirections();
-		
-		return this;
-	}
-	
-	public ActorTimer timer() {
-		return system.timer();
-	}
-	
-	public ActorTimer globalTimer() {
-		return system.globalTimer();
-	}
-	
-	public boolean start() {
-		return system.start();
-	}
-	
-	public boolean start(Runnable onStartup, Runnable onTermination) {
-		return system.start(onStartup, onTermination);
-	}
-	
-	public void shutdownWithActors() {
-		system.shutdownWithActors();
-	}
-	
-	public void shutdownWithActors(final boolean await) {
-		system.shutdownWithActors(await);
-	}
-	
-	public void shutdown() {
-		system.shutdown();
-	}
-	
-	public void shutdown(boolean await) {
-		system.shutdown(await);
-	}
-	
-	public ActorSystemImpl underlyingImpl() {
-		return system;
-	}
+	public boolean start();
+	public boolean start(Runnable onStartup, Runnable onTermination);
+	public void shutdownWithActors();
+	public void shutdownWithActors(final boolean await);
+	public void shutdown();
+	public void shutdown(boolean await);
 }

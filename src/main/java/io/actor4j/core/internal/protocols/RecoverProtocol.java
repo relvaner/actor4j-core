@@ -16,21 +16,22 @@
 package io.actor4j.core.internal.protocols;
 
 import io.actor4j.core.actors.PersistentActor;
-import io.actor4j.core.internal.ActorCell;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.messages.ActorMessage;
 
 public class RecoverProtocol {
-	protected final ActorCell cell;
+	protected final InternalActorCell cell;
 
-	public RecoverProtocol(ActorCell cell) {
+	public RecoverProtocol(InternalActorCell cell) {
 		this.cell = cell;
 	}
 	
 	public void apply() {
 		if (cell.getSystem().getConfig().persistenceMode && cell.getActor() instanceof PersistentActor) {
 			cell.setActive(false);
-			cell.getSystem().getMessageDispatcher().postPersistence(
+			((InternalActorSystem)cell.getSystem()).getMessageDispatcher().postPersistence(
 				ActorMessage.create(((PersistentActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));
 		}
 	}

@@ -41,7 +41,7 @@ public class AwaitFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(1)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 		
 	@Test(timeout=5000)
@@ -81,9 +81,9 @@ public class AwaitFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -134,9 +134,9 @@ public class AwaitFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 1, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -180,9 +180,9 @@ public class AwaitFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();

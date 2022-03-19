@@ -27,18 +27,18 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ResourceActor;
-import io.actor4j.core.internal.ActorCell;
 import io.actor4j.core.internal.ActorThread;
+import io.actor4j.core.internal.InternalActorCell;
 
 public class ActorLoadBalancingBeforeStart {
-	public void registerCells(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, ActorCell> cells) {
+	public void registerCells(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
 		List<UUID> buffer = new LinkedList<>();
-		for (ActorCell cell : cells.values()) 
+		for (InternalActorCell cell : cells.values()) 
 			if (!(cell.getActor() instanceof ResourceActor))
 				buffer.add(cell.getId());
 		
 		int i=0, j=0;
-		for (ActorCell cell : cells.values()) {
+		for (InternalActorCell cell : cells.values()) {
 			Actor actor = cell.getActor();
 			
 			if (actor instanceof ResourceActor)

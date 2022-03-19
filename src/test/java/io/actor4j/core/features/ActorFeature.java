@@ -33,7 +33,7 @@ public class ActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = ActorSystem.create();
 	}
 	
 	@Test(timeout=5000)
@@ -61,7 +61,7 @@ public class ActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, parent));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), parent));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {
@@ -139,9 +139,9 @@ public class ActorFeature {
 		
 		system.start(() -> {
 			assertEquals(null, system.getActorFromPath(null));
-			assertEquals(system.USER_ID, system.getActorFromPath(""));
-			assertEquals(system.USER_ID, system.getActorFromPath("/"));
-			assertEquals("/", system.getActorPath(system.USER_ID));
+			assertEquals(system.USER_ID(), system.getActorFromPath(""));
+			assertEquals(system.USER_ID(), system.getActorFromPath("/"));
+			assertEquals("/", system.getActorPath(system.USER_ID()));
 			
 			assertEquals(parentA, system.getActorFromPath("parentA"));
 			assertEquals(parentA, system.getActorFromPath("/parentA"));

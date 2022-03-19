@@ -26,14 +26,14 @@ import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 
-public class ResourceActorCell extends ActorCell {
+public class ResourceActorCell extends DefaultActorCell {
 	protected boolean stateful;
 	protected volatile boolean status; // volatile not necessary!
 	protected AtomicBoolean lock;
 	protected Queue<ActorMessage<?>> queue;
 	protected boolean bulk;
 
-	public ResourceActorCell(ActorSystemImpl system, Actor actor) {
+	public ResourceActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
 	}
 	
@@ -87,7 +87,7 @@ public class ResourceActorCell extends ActorCell {
 						bulkList.add(message);
 						while ((message=queue.poll())!=null)
 							bulkList.add(message);
-						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID, id));
+						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID(), id));
 					}
 					
 					// Spinlock
@@ -107,8 +107,8 @@ public class ResourceActorCell extends ActorCell {
 			after();
 		}
 		catch(Exception e) {
-			system.executerService.failsafeManager.notifyErrorHandler(e, "resource", id);
-			system.actorStrategyOnFailure.handle(this, e);
+			system.getExecuterService().failsafeManager.notifyErrorHandler(e, "resource", id);
+			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}
 	

@@ -38,7 +38,7 @@ public class PrimarySecondaryActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = ActorSystem.create();
 	}
 	
 	@Test(timeout=5000)
@@ -58,7 +58,7 @@ public class PrimarySecondaryActorFeature {
 							secondaryReceived.incrementAndGet();
 							testDone.countDown();
 						}
-						else if (message.source()==system.SYSTEM_ID)
+						else if (message.source()==system.SYSTEM_ID())
 							publish(message);
 					}
 				}, system.getConfig().parallelism*system.getConfig().parallelismFactor-1) {
@@ -71,7 +71,7 @@ public class PrimarySecondaryActorFeature {
 			
 					@Override
 					public void receive(ActorMessage<?> message) {
-						if (message.source()==system.SYSTEM_ID) {
+						if (message.source()==system.SYSTEM_ID()) {
 							primaryReceivedFromSystem.set(true);
 							publish(message);
 						}
@@ -84,8 +84,8 @@ public class PrimarySecondaryActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, primary));
-		system.send(ActorMessage.create(null, 101, system.SYSTEM_ID, group.peek()));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), primary));
+		system.send(ActorMessage.create(null, 101, system.SYSTEM_ID(), group.peek()));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {

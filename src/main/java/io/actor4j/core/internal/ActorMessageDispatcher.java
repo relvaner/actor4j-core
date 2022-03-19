@@ -51,15 +51,15 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postPersistence(ActorMessage<?> message);
 	
-	public void registerCell(ActorCell cell) {
-		system.executerService.actorThreadPool.actorThreadPoolHandler.registerCell(cell);
+	public void registerCell(InternalActorCell cell) {
+		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.registerCell(cell);
 	}
 	
-	public void unregisterCell(ActorCell cell) {
-		system.executerService.actorThreadPool.actorThreadPoolHandler.unregisterCell(cell);
+	public void unregisterCell(InternalActorCell cell) {
+		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.unregisterCell(cell);
 	}
 	
-	public boolean isRegisteredCell(ActorCell cell) {
-		return system.executerService.actorThreadPool.actorThreadPoolHandler.isRegisteredCell(cell);
+	public boolean isRegisteredCell(InternalActorCell cell) {
+		return system.getExecuterService().actorThreadPool.actorThreadPoolHandler.isRegisteredCell(cell);
 	}
 }

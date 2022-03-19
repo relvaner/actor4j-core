@@ -26,7 +26,7 @@ import io.actor4j.core.internal.ActorThreadMode;
 public class ConfigFeature {
 	@Test
 	public void test_default() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		assertEquals("actor4j", system.getConfig().name);
 		assertEquals(false, system.getConfig().counterEnabled.get());
@@ -73,7 +73,7 @@ public class ConfigFeature {
 			.serviceNodeName("test-node")
 			.serverMode()
 			.build();
-		ActorSystem system = new ActorSystem(config);
+		ActorSystem system = ActorSystem.create(config);
 		
 		assertEquals("test", system.getConfig().name);
 		assertEquals(true, system.getConfig().counterEnabled.get());

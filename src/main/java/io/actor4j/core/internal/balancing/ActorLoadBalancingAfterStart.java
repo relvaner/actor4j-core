@@ -29,8 +29,8 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
-import io.actor4j.core.internal.ActorCell;
 import io.actor4j.core.internal.ActorThread;
+import io.actor4j.core.internal.InternalActorCell;
 
 public class ActorLoadBalancingAfterStart {
 	protected AtomicInteger i;
@@ -55,7 +55,7 @@ public class ActorLoadBalancingAfterStart {
 		k.set(0);
 	}
 	
-	public void registerCell(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, ActorCell cell) {
+	public void registerCell(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		lock.lock();
 		try {
 			Actor actor = cell.getActor();
@@ -103,7 +103,7 @@ public class ActorLoadBalancingAfterStart {
 		}
 	}
 	
-	public void unregisterCell(Map<UUID, Long> cellsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, ActorCell cell) {
+	public void unregisterCell(Map<UUID, Long> cellsMap, Map<Long, ActorThread> threadsMap, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		/*
 		 * eventually remove the group (when no more group members are available), for ActorGroupMember, ActorDistributedGroupMember
 		 */

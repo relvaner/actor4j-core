@@ -32,17 +32,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
-public class PseudoActorCell extends ActorCell {
+public class PseudoActorCell extends DefaultActorCell {
 	protected final Queue<ActorMessage<?>> outerQueueL2;
 	protected final Queue<ActorMessage<?>> outerQueueL1;
 	
-	public PseudoActorCell(ActorSystem wrapper, Actor actor, boolean blocking) {
-		super(wrapper.underlyingImpl(), actor);
+	public PseudoActorCell(InternalActorSystem system, Actor actor, boolean blocking) {
+		super(system, actor);
 		
 		if (blocking)
 			outerQueueL2 = new LinkedBlockingQueue<>();
@@ -61,7 +60,7 @@ public class PseudoActorCell extends ActorCell {
 			behaviour.accept(message);	
 	}
 	
-	public UUID pseudo_addCell(ActorCell cell) {
+	public UUID pseudo_addCell(InternalActorCell cell) {
 		return system.pseudo_addCell(cell);
 	}
 	
@@ -92,7 +91,7 @@ public class PseudoActorCell extends ActorCell {
 	
 	@Deprecated
 	@Override
-	public UUID internal_addChild(ActorCell cell) {
+	public UUID internal_addChild(InternalActorCell cell) {
 		return null;
 	}
 	
@@ -124,8 +123,8 @@ public class PseudoActorCell extends ActorCell {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			system.executerService.failsafeManager.notifyErrorHandler(e, "pseudo", id);
-			system.actorStrategyOnFailure.handle(this, e);
+			system.getExecuterService().failsafeManager.notifyErrorHandler(e, "pseudo", id);
+			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}
 	
@@ -147,7 +146,7 @@ public class PseudoActorCell extends ActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.config.bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
 				outerQueueL1.offer(message);
 		}
 		while (poll(outerQueueL1))
@@ -175,7 +174,7 @@ public class PseudoActorCell extends ActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.config.bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
 				outerQueueL1.offer(message);
 		}
 		return poll(outerQueueL1);
@@ -185,7 +184,7 @@ public class PseudoActorCell extends ActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.config.bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
 				outerQueueL1.offer(message);
 		}
 		

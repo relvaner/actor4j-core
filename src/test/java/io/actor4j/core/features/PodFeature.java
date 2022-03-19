@@ -33,6 +33,7 @@ import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequest;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteFunctionPod;
 import io.actor4j.core.features.pod.ExampleShardingWithActorPod;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.RemotePodMessage;
@@ -49,7 +50,7 @@ public class PodFeature {
 
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = ActorSystem.create();
 	}
 	
 	@Test(timeout=5000)
@@ -114,12 +115,12 @@ public class PodFeature {
 		UUID starter = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithActorPod");
+				List<UUID> handlers = ((InternalActorSystem)system).getActorsFromAlias("ExampleReplicationWithActorPod");
 				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
 		
 		try {
 			testDone.await();
@@ -161,12 +162,12 @@ public class PodFeature {
 		UUID starter = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithActorPod");
+				List<UUID> handlers = ((InternalActorSystem)system).getActorsFromAlias("ExampleReplicationWithActorPod");
 				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
 		
 		try {
 			testDone.await();
@@ -183,7 +184,7 @@ public class PodFeature {
 			
 			@Override
 			public void preStart() {
-				Queue<UUID> queue = system.underlyingImpl().getPodDomains().get("ExampleReplicationWithActorPod");
+				Queue<UUID> queue = ((InternalActorSystem)system).getPodDomains().get("ExampleReplicationWithActorPod");
 				Iterator<UUID> iterator = queue.iterator();
 				while (iterator.hasNext()) {
 					UUID pod = iterator.next();
@@ -248,7 +249,7 @@ public class PodFeature {
 		RemoteHandlerPodActor.internal_server_request = (msg, interaction, domain) -> {
 			if (interaction!=null) {
 				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client.toString(), null);
-				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID, null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
+				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
 			}
 			else {
 				assertTrue(msg.toString().equals("Test Moin!"));
@@ -331,12 +332,12 @@ public class PodFeature {
 		UUID starter = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleReplicationWithFunctionPod");
+				List<UUID> handlers = ((InternalActorSystem)system).getActorsFromAlias("ExampleReplicationWithFunctionPod");
 				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
 		
 		try {
 			testDone.await();
@@ -371,10 +372,10 @@ public class PodFeature {
 		});
 		system.start();
 		
-		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID, UUID.fromString(replyAddress)));
+		RemoteHandlerPodActor.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), UUID.fromString(replyAddress)));
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.toString(), null);
-		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID, null), "ExampleReplicationWithRemoteFunctionPod");
+		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {
 			testDone.await();
@@ -449,13 +450,13 @@ public class PodFeature {
 		UUID starter = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleShardingWithActorPod");
+				List<UUID> handlers = ((InternalActorSystem)system).getActorsFromAlias("ExampleShardingWithActorPod");
 				assertEquals(3, handlers.size());
 				system.broadcast(ActorMessage.create("Test", 0, client, null), new ActorGroupSet(handlers));
 			}
 		});
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
 		
 		try {
 			testDone.await();
@@ -542,7 +543,7 @@ public class PodFeature {
 		UUID starter = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				List<UUID> handlers = system.underlyingImpl().getActorsFromAlias("ExampleShardingWithActorPod");
+				List<UUID> handlers = ((InternalActorSystem)system).getActorsFromAlias("ExampleShardingWithActorPod");
 				assertEquals(3*3, handlers.size());
 				system.broadcast(ActorMessage.create("Test", 0, clientA, null), new ActorGroupSet(handlers));
 				system.broadcast(ActorMessage.create("Zzzz", 0, clientB, null), new ActorGroupSet(handlers));
@@ -550,7 +551,7 @@ public class PodFeature {
 			}
 		});
 		system.start();
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, starter));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
 		
 		try {
 			testDone.await();

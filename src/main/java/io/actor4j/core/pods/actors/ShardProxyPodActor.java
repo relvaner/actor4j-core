@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.actor4j.core.function.TriConsumer;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.pods.PodReplicationTuple;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -41,7 +42,7 @@ public abstract class ShardProxyPodActor extends PodChildActor implements Shard 
 	public void preStart() {
 		setAlias(alias, false);
 		
-		Map<String, PodReplicationTuple> podReplicationMap = getSystem().underlyingImpl().getPodReplicationController().getPodReplicationMap();
+		Map<String, PodReplicationTuple> podReplicationMap = ((InternalActorSystem)getSystem()).getPodReplicationController().getPodReplicationMap();
 		shardCount = podReplicationMap.get(context.domain()).podSystemConfiguration().currentShardCount(); 
 	}
 

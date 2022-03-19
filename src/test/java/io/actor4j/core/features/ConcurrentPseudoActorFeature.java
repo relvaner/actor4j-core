@@ -39,7 +39,7 @@ public class ConcurrentPseudoActorFeature {
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(10);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		ConcurrentPseudoActor main = new ConcurrentPseudoActor(system, false) {
 			@Override
@@ -107,7 +107,7 @@ public class ConcurrentPseudoActorFeature {
 	
 	@Test(timeout=10000)
 	public void test_await() {
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		ConcurrentPseudoActor main = new ConcurrentPseudoActor(system, true) {
 			@Override
@@ -117,7 +117,7 @@ public class ConcurrentPseudoActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
 		ActorMessage<?> message1 = null;
 		try {
 			message1 = main.await(5000, TimeUnit.MILLISECONDS);
@@ -126,13 +126,13 @@ public class ConcurrentPseudoActorFeature {
 		}
 		assertTrue(message1.valueAsBoolean());
 		
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 1, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 1, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
 		boolean value = false;
 		try {
 			 value = main.await((msg) -> msg.tag()==1, (msg) -> msg.valueAsBoolean(), 5000, TimeUnit.MILLISECONDS);

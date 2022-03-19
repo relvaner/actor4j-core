@@ -25,13 +25,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import io.actor4j.core.internal.ActorCell;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
 public class StopProtocol {
-	protected final ActorCell cell;
+	protected final InternalActorCell cell;
 
-	public StopProtocol(ActorCell cell) {
+	public StopProtocol(InternalActorCell cell) {
 		this.cell = cell;
 	}
 	
@@ -53,7 +54,7 @@ public class StopProtocol {
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			waitForChildren.add(dest);
-			cell.getSystem().sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
+			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
 		}
 		
 		if (waitForChildren.isEmpty()) 

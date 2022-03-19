@@ -26,9 +26,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.internal.ActorCell;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
@@ -86,7 +86,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public ActorSystem getSystem() {
-		return cell.getSystemWrapper();
+		return cell.getSystem();
 	}
 	
 	public String getName() {

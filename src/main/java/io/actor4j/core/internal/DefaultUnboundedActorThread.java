@@ -21,20 +21,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class DefaultUnboundedActorThread extends DefaultActorThread {
-	public DefaultUnboundedActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+	public DefaultUnboundedActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
 	}
 
 	@Override
 	public void configQueues() {
 		directiveQueue = new ConcurrentLinkedQueue<>(); /* unbounded */
-		priorityQueue  = new PriorityBlockingQueue<>(system.config.queueSize); /* unbounded */
+		priorityQueue  = new PriorityBlockingQueue<>(system.getConfig().queueSize); /* unbounded */
 		
 		serverQueueL2  = new ConcurrentLinkedQueue<>(); /* unbounded */
-		serverQueueL1  = new ArrayDeque<>(system.config.bufferQueueSize); /* unbounded */
+		serverQueueL1  = new ArrayDeque<>(system.getConfig().bufferQueueSize); /* unbounded */
 		
 		outerQueueL2   = new ConcurrentLinkedQueue<>(); /* unbounded */
-		outerQueueL1   = new ArrayDeque<>(system.config.bufferQueueSize); /* unbounded */
+		outerQueueL1   = new ArrayDeque<>(system.getConfig().bufferQueueSize); /* unbounded */
 		
 		innerQueue     = new LinkedList<>(); /* unbounded */
 	}

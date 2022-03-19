@@ -15,10 +15,9 @@
  */
 package io.actor4j.core;
 
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.ActorSystemImpl;
 
-public interface ActorSystemImplFactory extends BiFunction<ActorSystem, ActorSystemConfig, ActorSystemImpl>{
+public interface ActorSystemFactory extends Function<ActorSystemConfig, ActorSystem>{
 }

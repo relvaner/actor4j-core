@@ -39,7 +39,7 @@ public class BehaviourFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(1)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 		
 	@Test(timeout=5000)
@@ -68,8 +68,8 @@ public class BehaviourFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -118,9 +118,9 @@ public class BehaviourFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -177,10 +177,10 @@ public class BehaviourFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();
@@ -238,10 +238,10 @@ public class BehaviourFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		system.start();
 		try {
 			testDone.await();

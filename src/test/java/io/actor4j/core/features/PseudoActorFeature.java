@@ -39,7 +39,7 @@ public class PseudoActorFeature {
 	
 	@Before
 	public void before() {
-		system = new ActorSystem();
+		system = ActorSystem.create();
 	}
 	
 	@Test(timeout=5000)
@@ -120,7 +120,7 @@ public class PseudoActorFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID, main.getId()));
+		system.send(ActorMessage.create(true, 0, system.SYSTEM_ID(), main.getId()));
 		ActorMessage<?> message1 = main.await();
 		assertEquals(true, message1.valueAsBoolean());
 

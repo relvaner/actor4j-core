@@ -39,7 +39,7 @@ public class StatelessActorFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(2)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 	
 	@Test(timeout=30000)
@@ -63,7 +63,7 @@ public class StatelessActorFeature {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID, null), "instances");
+				system.sendViaAlias(ActorMessage.create(null, 0, system.SYSTEM_ID(), null), "instances");
 			}
 		}, 0, 50);
 		

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeoutException;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
 public final class AskPattern {
@@ -47,7 +48,7 @@ public final class AskPattern {
 	}
 	
 	public static Optional<ActorMessage<?>> ask(ActorMessage<?> message, ActorSystem system) {
-		if (!system.underlyingImpl().getExecuterService().isStarted())
+		if (!((InternalActorSystem)system).getExecuterService().isStarted())
 			throw new AskPatternException();
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
@@ -63,13 +64,13 @@ public final class AskPattern {
 			e.printStackTrace();
 			exception = true;
 		}
-		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, source));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID(), source));
 
 		return exception ? Optional.empty() : Optional.of(result);
 	}
 	
 	public static Optional<ActorMessage<?>> ask(ActorMessage<?> message, long timeout, TimeUnit unit, ActorSystem system) {
-		if (!system.underlyingImpl().getExecuterService().isStarted())
+		if (!((InternalActorSystem)system).getExecuterService().isStarted())
 			throw new AskPatternException();
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
@@ -85,7 +86,7 @@ public final class AskPattern {
 			e.printStackTrace();
 			exception = true;
 		}
-		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID, source));
+		system.send(ActorMessage.create(null, Actor.POISONPILL, system.SYSTEM_ID(), source));
 
 		return exception ? Optional.empty() : Optional.of(result);
 	}

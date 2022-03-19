@@ -37,7 +37,7 @@ public class EmbeddedActorFeature {
 		CountDownLatch testDone = new CountDownLatch(2);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = new ActorSystem();
+		ActorSystem system = ActorSystem.create();
 		
 		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
 			protected EmbeddedActor client;
@@ -75,10 +75,10 @@ public class EmbeddedActorFeature {
 			}
 		});
 		
-		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID, host));
-		system.send(ActorMessage.create("Hello World!", 0, system.SYSTEM_ID, host));
-		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID, host));
-		system.send(ActorMessage.create("Hello World Again!", 0, system.SYSTEM_ID, host));
+		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID(), host));
+		system.send(ActorMessage.create("Hello World!", 0, system.SYSTEM_ID(), host));
+		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID(), host));
+		system.send(ActorMessage.create("Hello World Again!", 0, system.SYSTEM_ID(), host));
 		system.start();
 		
 		try {

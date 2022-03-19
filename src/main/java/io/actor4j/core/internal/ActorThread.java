@@ -29,7 +29,7 @@ import io.actor4j.core.messages.ActorMessage;
 public abstract class ActorThread extends Thread {
 	protected final UUID uuid; // for failsafe
 	
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected Runnable onTermination;
 	
@@ -42,7 +42,7 @@ public abstract class ActorThread extends Thread {
 	protected final AtomicInteger cellsStatisticValuesCounter;
 	protected final AtomicBoolean cellsProcessingTimeEnabled;
 	
-	public ActorThread(ThreadGroup group, String name, ActorSystemImpl system) {
+	public ActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name);
 		
 		this.system = system;
@@ -58,23 +58,23 @@ public abstract class ActorThread extends Thread {
 		cellsProcessingTimeEnabled = new AtomicBoolean(false);
 	}
 	
-	protected void failsafeMethod(ActorMessage<?> message, ActorCell cell) {
+	protected void failsafeMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
-			if (system.config.threadProcessingTimeEnabled.get() || cellsProcessingTimeEnabled.get()) {
-				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.config.maxStatisticValues;
-				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.config.maxStatisticValues;
+			if (system.getConfig().threadProcessingTimeEnabled.get() || cellsProcessingTimeEnabled.get()) {
+				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.getConfig().maxStatisticValues;
+				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.getConfig().maxStatisticValues;
 				
 				if (threadStatisticsEnabled || cellsStatisticsEnabled) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
 					
-					if (threadStatisticsEnabled && system.config.threadProcessingTimeEnabled.get()) {
+					if (threadStatisticsEnabled && system.getConfig().threadProcessingTimeEnabled.get()) {
 						threadProcessingTimeStatistics.offer(stopTime-startTime);
 						threadStatisticValuesCounter.incrementAndGet();
 					}
 					if (cellsStatisticsEnabled && cellsProcessingTimeEnabled.get()) {
-						cell.processingTimeStatistics.offer(stopTime-startTime);
+						cell.getProcessingTimeStatistics().offer(stopTime-startTime);
 						cellsStatisticValuesCounter.incrementAndGet();
 					}
 				}
@@ -85,8 +85,8 @@ public abstract class ActorThread extends Thread {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.executerService.failsafeManager.notifyErrorHandler(e, "actor", cell.id);
-			system.actorStrategyOnFailure.handle(cell, e);
+			system.getExecuterService().failsafeManager.notifyErrorHandler(e, "actor", cell.getId());
+			system.getActorStrategyOnFailure().handle(cell, e);
 		}	
 	}
 	
@@ -95,12 +95,12 @@ public abstract class ActorThread extends Thread {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			ActorCell cell = system.cells.get(message.dest());
+			InternalActorCell cell = system.getCells().get(message.dest());
 			if (cell!=null) {
-				cell.requestRate.getAndIncrement();
+				cell.getRequestRate().getAndIncrement();
 				failsafeMethod(message, cell);
 			}
-			if (system.config.counterEnabled.get())
+			if (system.getConfig().counterEnabled.get())
 				counter.getAndIncrement();
 			
 			result = true;
@@ -125,7 +125,7 @@ public abstract class ActorThread extends Thread {
 		
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.executerService.failsafeManager, new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().failsafeManager, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

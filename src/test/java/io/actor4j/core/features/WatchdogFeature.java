@@ -28,6 +28,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.AskPattern;
 
@@ -43,7 +44,7 @@ public class WatchdogFeature {
 			.watchdogSyncTime(200)
 			.watchdogTimeout(100)
 			.build();
-		system = new ActorSystem(config);
+		system = ActorSystem.create(config);
 	}
 	
 	@Test(timeout=5000)
@@ -57,12 +58,12 @@ public class WatchdogFeature {
 		
 		system.start();
 		
-		Optional<ActorMessage<?>> optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.SYSTEM_ID), system);
+		Optional<ActorMessage<?>> optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.SYSTEM_ID()), system);
 		ActorMessage<?> message = optional.get();
 		assertEquals(UP, message.tag());
 		assertEquals(true, message.value()==null);
 		
-		optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.USER_ID), system);
+		optional = AskPattern.ask(ActorMessage.create(null, HEALTH, null, system.USER_ID()), system);
 		message = optional.get();
 		assertEquals(UP, message.tag());
 		assertEquals(true, message.value()==null);
@@ -96,14 +97,14 @@ public class WatchdogFeature {
 		
 		system.start();
 		
-		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID, dest));
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), dest));
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertEquals(1, system.underlyingImpl().getExecuterService().nonResponsiveThreadsCount());
-		assertEquals(true, system.underlyingImpl().getExecuterService().nonResponsiveThreads().contains(threadId.get()));
+		assertEquals(1, ((InternalActorSystem)system).getExecuterService().nonResponsiveThreadsCount());
+		assertEquals(true, ((InternalActorSystem)system).getExecuterService().nonResponsiveThreads().contains(threadId.get()));
 		
 		try {
 			testDone.await();
