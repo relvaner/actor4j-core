@@ -49,6 +49,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorStrategyOnFailure getActorStrategyOnFailure();
 	
 	public InternalActorCell generateCell(Actor actor);
+	public InternalActorCell generateCell(Class<? extends Actor> clazz);
 	public UUID internal_addCell(InternalActorCell cell);
 	public UUID pseudo_addCell(InternalActorCell cell);
 	

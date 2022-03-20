@@ -15,9 +15,6 @@
  */
 package io.actor4j.core;
 
-import java.util.List;
-import java.util.UUID;
-
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.DefaultActorSystemImpl;
@@ -53,9 +50,6 @@ public interface ActorService extends ActorSystem {
 	public boolean setConfig(ActorServiceConfig config);
 
 	public boolean hasActor(String uuid);
-	
-	public UUID getActorFromAlias(String alias);
-	public List<UUID> getActorsFromAlias(String alias);
 	
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
 	public void sendAsServer(ActorMessage<?> message);

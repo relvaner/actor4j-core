@@ -46,6 +46,7 @@ public interface InternalActorCell extends ActorCell {
 	public void preRestart(Exception reason);
 	public void postRestart(Exception reason);
 	public void postStop();
+	public UUID internal_addChild(InternalActorCell cell);
 	public void internal_stop();
 	
 	public AtomicLong getRequestRate();
