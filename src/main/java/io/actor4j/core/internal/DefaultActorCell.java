@@ -228,11 +228,11 @@ public class DefaultActorCell implements InternalActorCell {
 	}
 	
 	public boolean isRootInUser() {
-		return (parent==system.USER_ID());
+		return parent!=null ? (parent.equals(system.USER_ID())) : false;
 	}
 	
 	public boolean isRootInSystem() {
-		return (parent==system.SYSTEM_ID());
+		return parent!=null ? (parent.equals(system.SYSTEM_ID())) : false;
 	}
 	
 	public void internal_receive(ActorMessage<?> message) {
