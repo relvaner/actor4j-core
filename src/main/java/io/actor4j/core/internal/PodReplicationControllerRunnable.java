@@ -23,11 +23,11 @@ import io.actor4j.core.internal.failsafe.Method;
 public abstract class PodReplicationControllerRunnable implements Runnable {
 	protected final UUID uuid; // for failsafe
 	
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected Runnable onTermination;
 	
-	public PodReplicationControllerRunnable(ActorSystemImpl system) {
+	public PodReplicationControllerRunnable(InternalActorSystem system) {
 		super();
 		
 		this.system = system;
@@ -38,7 +38,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.executerService.failsafeManager, "replication", new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().failsafeManager, "replication", new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();
