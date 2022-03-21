@@ -175,10 +175,6 @@ public class DefaultActorCell implements InternalActorCell {
 		processingTimeStatistics = new ConcurrentLinkedQueue<>();
 	}
 	
-	public InternalActorSystem getInternalSystem() {
-		return system;
-	}
-	
 	public ActorSystem getSystem() {
 		return system;
 	}
