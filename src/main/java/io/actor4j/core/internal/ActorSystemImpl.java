@@ -223,6 +223,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			return new DefaultActorCell(this, null);
 	}
 
+	@Override
 	public ActorSystemConfig getConfig() {
 		return config;
 	}
@@ -251,46 +252,57 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 
+	@Override
 	public DIContainer<UUID> getContainer() {
 		return container;
 	}
 	
+	@Override
 	public PodReplicationController getPodReplicationController() {
 		return podReplicationController;
 	}
 
+	@Override
 	public Map<UUID, InternalActorCell> getCells() {
 		return cells;
 	}
 	
+	@Override
 	public Map<UUID, InternalActorCell> getPseudoCells() {
 		return pseudoCells;
 	}
 	
+	@Override
 	public Map<UUID, Boolean> getResourceCells() {
 		return resourceCells;
 	}
 	
+	@Override
 	public Map<UUID, Boolean> getPodCells() {
 		return podCells;
 	}
 
+	@Override
 	public Map<String, Queue<UUID>> getPodDomains() {
 		return podDomains;
 	}
 
+	@Override
 	public Map<String, Queue<UUID>> getAliases() {
 		return aliases;
 	}
 	
+	@Override
 	public Map<UUID, UUID> getRedirector() {
 		return redirector;
 	}
 
+	@Override
 	public ActorMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
 	}
 	
+	@Override
 	public ActorThreadFactory getActorThreadFactory() {
 		return actorThreadFactory;
 	}
@@ -299,22 +311,27 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		this.actorThreadFactory = actorThreadFactory;
 	}
 
+	@Override
 	public ActorStrategyOnFailure getActorStrategyOnFailure() {
 		return actorStrategyOnFailure;
 	}
 	
+	@Override
 	public AtomicBoolean getMessagingEnabled() {
 		return messagingEnabled;
 	}
 
+	@Override
 	public Queue<ActorMessage<?>> getBufferQueue() {
 		return bufferQueue;
 	}
 	
+	@Override
 	public ActorExecuterService getExecuterService() {
 		return executerService;
 	}
 	
+	@Override
 	public UUID internal_addCell(InternalActorCell cell) {
 		Actor actor = cell.getActor();
 		if (actor instanceof PseudoActor)
@@ -348,12 +365,14 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return internal_addCell(cell);
 	}
 	
+	@Override
 	public UUID pseudo_addCell(InternalActorCell cell) {
 		cell.setParent(PSEUDO_ID);
 		cells.get(PSEUDO_ID).getChildren().add(cell.getId());
 		return internal_addCell(cell);
 	}
 
+	@Override
 	public UUID addActor(ActorFactory factory) {
 		InternalActorCell cell = generateCell(factory.create());
 		container.register(cell.getId(), factory);
@@ -361,6 +380,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return user_addCell(cell);
 	}
 	
+	@Override
 	public List<UUID> addActor(ActorFactory factory, int instances) {
 		List<UUID> result = new ArrayList<>(instances);
 		
@@ -410,14 +430,17 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return user_addCell(cell);
 	}
 	
+	@Override
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {
 		podReplicationController.deployPods(jarFile, podConfiguration);
 	}
 	
+	@Override
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration) {
 		podReplicationController.deployPods(factory, podConfiguration);
 	}
 	
+	@Override
 	public void undeployPods(String domain) {
 		podReplicationController.undeployPods(domain);
 	}
@@ -464,6 +487,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public void removeActor(UUID id) {	
 		cells.remove(id);
 		resourceCells.remove(id);
@@ -482,6 +506,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		}
 	}
 	
+	@Override
 	public boolean hasActor(String uuid) {
 		UUID key;
 		try {
@@ -493,6 +518,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return cells.containsKey(key);
 	}		
 	
+	@Override
 	public ActorSystemImpl setAlias(UUID id, String alias) {
 		if (id!=null && alias!=null && !alias.isEmpty()) {
 			Queue<UUID> queue = null;
@@ -511,6 +537,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public ActorSystemImpl setAlias(List<UUID> ids, String alias) {
 		for (UUID id : ids)
 			setAlias(id, alias);
@@ -518,12 +545,14 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public UUID getActorFromAlias(String alias) {
 		List<UUID> result = getActorsFromAlias(alias);
 		
 		return !result.isEmpty() ? result.get(0) : null;
 	}
 	
+	@Override
 	public List<UUID> getActorsFromAlias(String alias) {
 		List<UUID> result = new LinkedList<>();
 		
@@ -534,6 +563,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public String getActorPath(UUID uuid) {
 		String result = null;
 		
@@ -558,6 +588,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public UUID getActorFromPath(String path) {
 		InternalActorCell result = null;
 		
@@ -591,6 +622,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return (result!=null) ? result.getId() : null;
 	}
 	
+	@Override
 	public ActorSystemImpl send(ActorMessage<?> message) {
 		if (!messagingEnabled.get()) 
 			bufferQueue.offer(message.copy());
@@ -600,6 +632,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public ActorSystemImpl sendViaPath(ActorMessage<?> message, String path) {
 		UUID dest = getActorFromPath(path);
 		if (dest!=null)
@@ -608,6 +641,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public ActorSystemImpl sendViaAlias(ActorMessage<?> message, String alias) {
 		List<UUID> destinations = getActorsFromAlias(alias);
 		
@@ -625,6 +659,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias) {
 		boolean result = false;
 		
@@ -645,6 +680,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
 		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
 			InternalActorCell cell = cells.get(message.dest());
@@ -665,6 +701,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public void sendAsServer(ActorMessage<?> message) {
 		if (!messagingEnabled.get()) 
 			bufferQueue.offer(message.copy());
@@ -672,11 +709,13 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			messageDispatcher.postServer(message);
 	}
 	
+	@Override
 	public void sendAsDirective(ActorMessage<?> message) {
 		if (messagingEnabled.get()) 
 			messageDispatcher.postDirective(message);
 	}
 	
+	@Override
 	public ActorSystemImpl broadcast(ActorMessage<?> message, ActorGroup group) {
 		if (!messagingEnabled.get())
 			for (UUID id : group)
@@ -688,40 +727,48 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return this;
 	}
 	
+	@Override
 	public UUID getRedirectionDestination(UUID source) {
 		return redirector.get(source);
 	}
 	
+	@Override
 	public ActorSystemImpl addRedirection(UUID source, UUID dest) {
 		redirector.put(source, dest);
 		
 		return this;
 	}
 	
+	@Override
 	public ActorSystemImpl removeRedirection(UUID source) {
 		redirector.remove(source);
 		
 		return this;
 	}
 	
+	@Override
 	public ActorSystemImpl clearRedirections() {
 		redirector.clear();
 		
 		return this;
 	}
 	
+	@Override
 	public ActorTimer timer() {
 		return executerService.timer();
 	}
 	
+	@Override
 	public ActorTimer globalTimer() {
 		return executerService.globalTimer();
 	}
 	
+	@Override
 	public boolean start() {
 		return start(null, null);
 	}
 	
+	@Override
 	public boolean start(Runnable onStartup, Runnable onTermination) {
 		boolean result = false;
 		
@@ -754,10 +801,12 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public void shutdownWithActors() {
 		shutdownWithActors(false);
 	}
 	
+	@Override
 	public void shutdownWithActors(final boolean await) {
 		if (executerService.isStarted()) {
 			Thread waitOnTermination = new Thread(new Runnable() {
@@ -787,10 +836,12 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		}
 	}
 	
+	@Override
 	public void shutdown() {
 		shutdown(false);
 	}
 	
+	@Override
 	public void shutdown(boolean await) {
 		if (executerService.isStarted())
 			executerService.shutdown(await);

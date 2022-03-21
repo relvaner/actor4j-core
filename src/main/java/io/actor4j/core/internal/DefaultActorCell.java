@@ -175,62 +175,77 @@ public class DefaultActorCell implements InternalActorCell {
 		processingTimeStatistics = new ConcurrentLinkedQueue<>();
 	}
 	
+	@Override
 	public ActorSystem getSystem() {
 		return system;
 	}
 	
+	@Override
 	public Actor getActor() {
 		return actor;
 	}
 	
+	@Override
 	public void setActor(Actor actor) {
 		this.actor = actor;
 	}
 
+	@Override
 	public UUID getId() {
 		return id;
 	}
 	
+	@Override
 	public UUID getParent() {
 		return parent;
 	}
 	
+	@Override
 	public void setParent(UUID parent) {
 		this.parent = parent;
 	}
 
+	@Override
 	public Queue<UUID> getChildren() {
 		return children;
 	}
 	
+	@Override
 	public boolean isActive() {
 		return active.get();
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		this.active.set(active);
 	}
 	
+	@Override
 	public Queue<UUID> getDeathWatcher() {
 		return deathWatcher;
 	}
 
+	@Override
 	public void setActiveDirectiveBehaviour(boolean activeDirectiveBehaviour) {
 		this.activeDirectiveBehaviour = activeDirectiveBehaviour;
 	}
 
+	@Override
 	public boolean isRoot() {
 		return (parent==null);
 	}
 	
+	@Override
 	public boolean isRootInUser() {
 		return parent!=null ? (parent.equals(system.USER_ID())) : false;
 	}
 	
+	@Override
 	public boolean isRootInSystem() {
 		return parent!=null ? (parent.equals(system.SYSTEM_ID())) : false;
 	}
 	
+	@Override
 	public void internal_receive(ActorMessage<?> message) {
 		if (!processedDirective.apply(message) && active.get()) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
@@ -241,24 +256,29 @@ public class DefaultActorCell implements InternalActorCell {
 		}
 	}
 	
+	@Override
 	public void become(Consumer<ActorMessage<?>> behaviour, boolean replace) {
 		if (replace && !behaviourStack.isEmpty())
 			behaviourStack.pop();
 		behaviourStack.push(behaviour);
 	}
 	
+	@Override
 	public void become(Consumer<ActorMessage<?>> behaviour) {
 		become(behaviour, true);
 	}
 	
+	@Override
 	public void unbecome() {
 		behaviourStack.pop();
 	}
 	
+	@Override
 	public void unbecomeAll() {
 		behaviourStack.clear();
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().post(message, id);
@@ -266,6 +286,7 @@ public class DefaultActorCell implements InternalActorCell {
 			system.getBufferQueue().offer(message.copy());
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message, String alias) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().post(message, id, alias);
@@ -286,15 +307,18 @@ public class DefaultActorCell implements InternalActorCell {
 		}
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message, ActorServiceNode node, String path) {
 		system.getMessageDispatcher().post(message, node, path);
 	}
 	
+	@Override
 	public void priority(ActorMessage<?> message) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().postPriority(message);
 	}
 	
+	@Override
 	public void unhandled(ActorMessage<?> message) {
 		if (system.getConfig().debugUnhandled) {
 			Actor sourceActor = system.getCells().get(message.source()).getActor();
@@ -311,6 +335,7 @@ public class DefaultActorCell implements InternalActorCell {
 		}
 	}
 	
+	@Override
 	public UUID internal_addChild(InternalActorCell cell) {
 		cell.setParent(id);
 		children.add(cell.getId());
@@ -319,6 +344,7 @@ public class DefaultActorCell implements InternalActorCell {
 		return cell.getId();
 	}
 	
+	@Override
 	public UUID addChild(ActorFactory factory) {
 		InternalActorCell cell = system.generateCell(factory.create());
 		system.getContainer().register(cell.getId(), factory);
@@ -326,6 +352,7 @@ public class DefaultActorCell implements InternalActorCell {
 		return internal_addChild(cell);
 	}
 	
+	@Override
 	public List<UUID> addChild(ActorFactory factory, int instances) {
 		List<UUID> result = new ArrayList<>(instances);
 		
@@ -335,35 +362,43 @@ public class DefaultActorCell implements InternalActorCell {
 		return result;
 	}
 	
+	@Override
 	public SupervisorStrategy supervisorStrategy() {
 		return actor.supervisorStrategy();
 	}
 	
+	@Override
 	public void preStart() {
 		recoverProtocol.apply();
 		actor.preStart();
 	}
 	
+	@Override
 	public void preRestart(Exception reason) {
 		actor.preRestart(reason);
 	}
 	
+	@Override
 	public void postRestart(Exception reason) {
 		actor.postRestart(reason);
 	}
 	
+	@Override
 	public void postStop() {
 		actor.postStop();
 	}
 	
+	@Override
 	public void restart(Exception reason) {
 		restartProtocol.apply(reason);
 	}
 	
+	@Override
 	public void stop() {
 		stopProtocol.apply();
 	}
 	
+	@Override
 	public void internal_stop() {
 		if (parent!=null)
 			system.getCells().get(parent).getChildren().remove(id);
@@ -377,12 +412,14 @@ public class DefaultActorCell implements InternalActorCell {
 		}
 	}
 	
+	@Override
 	public void watch(UUID dest) {
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null)
 			cell.getDeathWatcher().add(id);
 	}
 	
+	@Override
 	public void unwatch(UUID dest) {
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null)
@@ -390,6 +427,7 @@ public class DefaultActorCell implements InternalActorCell {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
 		if (system.getConfig().persistenceMode && events!=null) {
 			List<ActorPersistenceObject> list = new ArrayList<>(Arrays.asList(events));
@@ -403,6 +441,7 @@ public class DefaultActorCell implements InternalActorCell {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
 		if (system.getConfig().persistenceMode && state!=null) {
 			state.persistenceId = persistenceId();
@@ -429,18 +468,22 @@ public class DefaultActorCell implements InternalActorCell {
 		return result;
 	}
 
+	@Override
 	public AtomicLong getRequestRate() {
 		return requestRate;
 	}
 
+	@Override
 	public Queue<Long> getProcessingTimeStatistics() {
 		return processingTimeStatistics;
 	}
 
+	@Override
 	public SupervisorStrategy getParentSupervisorStrategy() {
 		return parentSupervisorStrategy;
 	}
 
+	@Override
 	public void setParentSupervisorStrategy(SupervisorStrategy parentSupervisorStrategy) {
 		this.parentSupervisorStrategy = parentSupervisorStrategy;
 	}
