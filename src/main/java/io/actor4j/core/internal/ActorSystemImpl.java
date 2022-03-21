@@ -133,6 +133,16 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return SYSTEM_ID;
 	}
 	
+	@Override
+	public UUID UNKNOWN_ID() {
+		return UNKNOWN_ID;
+	}
+	
+	@Override
+	public UUID PSEUDO_ID() {
+		return PSEUDO_ID;
+	}
+	
 	protected void reset() {
 		messagingEnabled.set(false);
 		

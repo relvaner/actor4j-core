@@ -28,6 +28,9 @@ import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
+	public UUID UNKNOWN_ID();
+	public UUID PSEUDO_ID();
+	
 	public DIContainer<UUID> getContainer();
 	public PodReplicationController getPodReplicationController();
 	
