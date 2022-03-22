@@ -17,5 +17,5 @@ package io.actor4j.core.internal;
 
 import io.actor4j.core.function.TriFunction;
 
-public interface ActorThreadFactory extends TriFunction<ThreadGroup, String, ActorSystemImpl, ActorThread> {
+public interface ActorThreadFactory extends TriFunction<ThreadGroup, String, InternalActorSystem, ActorThread> {
 }

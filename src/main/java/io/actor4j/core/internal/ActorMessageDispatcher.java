@@ -23,11 +23,11 @@ import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class ActorMessageDispatcher {
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected static final UUID UUID_ALIAS = UUID_ZERO;
 	
-	public ActorMessageDispatcher(ActorSystemImpl system) {
+	public ActorMessageDispatcher(InternalActorSystem system) {
 		super();
 		
 		this.system = system;

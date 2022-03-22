@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.internal;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -26,6 +27,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public UUID UNKNOWN_ID();
@@ -33,6 +35,8 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public DIContainer<UUID> getContainer();
 	public PodReplicationController getPodReplicationController();
+	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();
+	public WatchdogRunnableFactory getWatchdogRunnableFactory();
 	
 	public Map<UUID, InternalActorCell> getCells();
 	public Map<UUID, InternalActorCell> getPseudoCells();
@@ -55,6 +59,9 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public InternalActorCell generateCell(Class<? extends Actor> clazz);
 	public UUID internal_addCell(InternalActorCell cell);
 	public UUID pseudo_addCell(InternalActorCell cell);
+	
+	public UUID addSystemActor(ActorFactory factory);
+	public List<UUID> addSystemActor(ActorFactory factory, int instances);
 	
 	public void removeActor(UUID id);
 	

@@ -40,7 +40,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 	protected AtomicReferenceArray<Boolean> upArray;
 	protected AtomicInteger downCount;
 	
-	public DefaultWatchdogRunnable(ActorSystemImpl system, List<UUID> watchdogActors) {
+	public DefaultWatchdogRunnable(InternalActorSystem system, List<UUID> watchdogActors) {
 		super(system, watchdogActors);
 		
 		upArray = new AtomicReferenceArray<>(watchdogActors.size());
@@ -85,11 +85,11 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 		CompletableFuture<Void>[] futures = new CompletableFuture[upArray.length()];
 		for (int i=0; i<upArray.length(); i++)
 			futures[i] = new CompletableFuture<Void>();
-		system.send(ActorMessage.create(new ImmutableList<>(Arrays.asList(futures)), 0, system.SYSTEM_ID, mediator));
+		system.send(ActorMessage.create(new ImmutableList<>(Arrays.asList(futures)), 0, system.SYSTEM_ID(), mediator));
 		
 		int count = 0;
 		try {
-			CompletableFuture.allOf(futures).get(system.config.watchdogTimeout, TimeUnit.MILLISECONDS);
+			CompletableFuture.allOf(futures).get(system.getConfig().watchdogTimeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException | ExecutionException e) {
 			// e.printStackTrace();
 		} catch (TimeoutException e) {
@@ -113,7 +113,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 		
 		for (int i=0; i<upArray.length(); i++)
 			if (!upArray.get(i)) 
-				result.add(system.executerService.actorThreadPool.getActorThreadPoolHandler().cellsMap.get(watchdogActors.get(i)));
+				result.add(system.getExecuterService().actorThreadPool.getActorThreadPoolHandler().cellsMap.get(watchdogActors.get(i)));
 		
 		return result;
 	}

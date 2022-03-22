@@ -30,7 +30,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
 public class ActorTimerExecuterService implements ActorTimer {
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected final ScheduledExecutorService timerExecuterService;
 	
@@ -79,14 +79,14 @@ public class ActorTimerExecuterService implements ActorTimer {
 		}
 	}
 	
-	public ActorTimerExecuterService(ActorSystemImpl system, int corePoolSize, String threadName) {
+	public ActorTimerExecuterService(InternalActorSystem system, int corePoolSize, String threadName) {
 		super();
 		
 		this.system = system;
 		this.timerExecuterService = new ScheduledThreadPoolExecutor(corePoolSize, new DefaultThreadFactory(threadName));
 	}
 	
-	public ActorTimerExecuterService(ActorSystemImpl system, int corePoolSize) {
+	public ActorTimerExecuterService(InternalActorSystem system, int corePoolSize) {
 		this(system, corePoolSize, "actor4j-timer-thread");
 	}
 		

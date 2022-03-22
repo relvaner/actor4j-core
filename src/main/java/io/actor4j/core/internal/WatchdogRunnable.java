@@ -25,10 +25,10 @@ import io.actor4j.core.internal.failsafe.FailsafeMethod;
 public abstract class WatchdogRunnable implements Runnable {
 	protected final UUID uuid; // for failsafe
 	
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	protected final List<UUID> watchdogActors;
 
-	public WatchdogRunnable(ActorSystemImpl system, List<UUID> watchdogActors) {
+	public WatchdogRunnable(InternalActorSystem system, List<UUID> watchdogActors) {
 		super();
 		
 		this.system = system;
@@ -40,7 +40,7 @@ public abstract class WatchdogRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.executerService.failsafeManager, "watchdog", new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().failsafeManager, "watchdog", new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

@@ -17,5 +17,5 @@ package io.actor4j.core.internal;
 
 import java.util.function.Function;
 
-public interface PodReplicationControllerRunnableFactory extends Function<ActorSystemImpl, PodReplicationControllerRunnable>{
+public interface PodReplicationControllerRunnableFactory extends Function<InternalActorSystem, PodReplicationControllerRunnable>{
 }

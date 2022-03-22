@@ -24,22 +24,22 @@ import java.util.function.BiConsumer;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPool {
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected final List<ActorThread> actorThreads;
 	protected final ActorThreadPoolHandler actorThreadPoolHandler;
 	
 	protected final CountDownLatch countDownLatch;
 	
-	public ActorThreadPool(ActorSystemImpl system) {
+	public ActorThreadPool(InternalActorSystem system) {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();
 		actorThreadPoolHandler = new ActorThreadPoolHandler(system);
 		
-		countDownLatch = new CountDownLatch(system.config.parallelism*system.config.parallelismFactor);
-		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.config.name);
-		for (int i=0; i<system.config.parallelism*system.config.parallelismFactor; i++) {
+		countDownLatch = new CountDownLatch(system.getConfig().parallelism*system.getConfig().parallelismFactor);
+		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.getConfig().name);
+		for (int i=0; i<system.getConfig().parallelism*system.getConfig().parallelismFactor; i++) {
 			try {
 				ActorThread t = defaultActorThreadFactory.newThread(system);
 				t.onTermination = new Runnable() {

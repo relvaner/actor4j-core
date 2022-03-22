@@ -23,7 +23,7 @@ import io.actor4j.core.pods.PodContext;
 public class PodActorCell extends DefaultActorCell {
 	protected volatile PodContext context;
 	
-	public PodActorCell(ActorSystemImpl system, Actor actor) {
+	public PodActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
 	}
 	

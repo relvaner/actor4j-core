@@ -37,7 +37,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
-	public DefaultActorMessageDispatcher(ActorSystemImpl system) {
+	public DefaultActorMessageDispatcher(InternalActorSystem system) {
 		super(system);
 		
 		consumerPseudo = new Function<ActorMessage<?>, Boolean>() {
@@ -63,7 +63,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				boolean result = false;
 				
 				if (!isDirective(message)) {
-					int bound = (int)(queue.size()/(double)system.config.queueSize*10);
+					int bound = (int)(queue.size()/(double)system.getConfig().queueSize*10);
 					if (bound>=8)
 						result = true;
 					else if (bound>=2)
@@ -97,27 +97,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				dest = UUID_ALIAS;
 		}
 		
-		UUID redirect = system.redirector.get(dest);
+		UUID redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
-		if (system.pseudoCells.containsKey(dest)) {
+		if (system.getPseudoCells().containsKey(dest)) {
 			consumerPseudo.apply(message.copy(dest));
 			return;
 		}
-		else if (system.config.clientMode && !system.cells.containsKey(dest)) {
-			system.executerService.clientViaAlias(message.copy(dest), alias);
+		else if (system.getConfig().clientMode && !system.getCells().containsKey(dest)) {
+			system.getExecuterService().clientViaAlias(message.copy(dest), alias);
 			return;
 		}
-		else if (system.resourceCells.containsKey(dest)) {
-			system.executerService.resource(message.copy(dest));
+		else if (system.getResourceCells().containsKey(dest)) {
+			system.getExecuterService().resource(message.copy(dest));
 			return;
 		}
 		
 		if (alias==null && redirect==null)
-			system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source);
+			system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source);
 		else
-			system.executerService.actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source, dest);
+			system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source, dest);
 	}
 	
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
@@ -125,7 +125,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			throw new NullPointerException();
 		
 		if (node!=null && path!=null)
-			system.executerService.clientViaPath(message, node, path);
+			system.getExecuterService().clientViaPath(message, node, path);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
@@ -134,27 +134,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		
 		UUID dest = message.dest();
 		
-		UUID redirect = system.redirector.get(dest);
+		UUID redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
 		if (redirect==null) {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy());
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy());
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy(dest));
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, dest, biconsumer)) 
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postQueue(message, dest, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -167,27 +167,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		
 		UUID dest = message.dest();
 		
-		UUID redirect = system.redirector.get(dest);
+		UUID redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
 		if (redirect==null) {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy());
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy());
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message))
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy(dest));
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message, dest))
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -200,27 +200,27 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		
 		UUID dest = message.dest();
 		
-		UUID redirect = system.redirector.get(dest);
+		UUID redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
 		if (redirect==null) {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy());
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy());
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message))
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postServer(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
-			if (system.resourceCells.containsKey(dest)) {
-				system.executerService.resource(message.copy(dest));
+			if (system.getResourceCells().containsKey(dest)) {
+				system.getExecuterService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message, dest))
+			if (!system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postServer(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -243,7 +243,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		system.executerService.actorThreadPool.actorThreadPoolHandler.postPersistence(message);
+		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postPersistence(message);
 	}
 	
 	@Override
@@ -252,7 +252,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		
 		InternalActorCell cell = system.getCells().get(source);
 		
-		system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID);
+		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 		systemLogger().log(WARN,
 			String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
 				message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest

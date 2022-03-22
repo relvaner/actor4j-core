@@ -18,7 +18,7 @@ package io.actor4j.core.internal;
 import static io.actor4j.core.logging.ActorLogger.*;
 
 public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
-	public DefaultPodReplicationControllerRunnable(ActorSystemImpl system) {
+	public DefaultPodReplicationControllerRunnable(InternalActorSystem system) {
 		super(system);
 	}
 

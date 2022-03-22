@@ -30,7 +30,7 @@ import io.actor4j.core.internal.persistence.ActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPoolHandler {
-	protected final ActorSystemImpl system;
+	protected final InternalActorSystem system;
 	
 	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
 	@Readonly
@@ -46,7 +46,7 @@ public class ActorThreadPoolHandler {
 	protected final ActorLoadBalancingBeforeStart actorLoadBalancingBeforeStart;
 	protected final ActorLoadBalancingAfterStart actorLoadBalancingAfterStart;
 	
-	public ActorThreadPoolHandler(ActorSystemImpl system) {
+	public ActorThreadPoolHandler(InternalActorSystem system) {
 		super();
 		
 		this.system = system;
@@ -76,7 +76,7 @@ public class ActorThreadPoolHandler {
 	}
 
 	public void beforeStart(List<ActorThread> actorThreads) {
-		actorLoadBalancingBeforeStart.registerCells(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.cells);
+		actorLoadBalancingBeforeStart.registerCells(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.getCells());
 		
 		int i=0;
 		for(ActorThread t : actorThreads) {
@@ -90,7 +90,7 @@ public class ActorThreadPoolHandler {
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
 		boolean result = false;
 		
-		if (system.config.parallelism==1 && system.config.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
+		if (system.getConfig().parallelism==1 && system.getConfig().parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
 			ActorThread t = ((ActorThread)Thread.currentThread());
 			t.innerQueue(message.copy());
 			t.newMessage();
@@ -122,7 +122,7 @@ public class ActorThreadPoolHandler {
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source, UUID dest) {
 		boolean result = false;
 		
-		if (system.config.parallelism==1 && system.config.parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
+		if (system.getConfig().parallelism==1 && system.getConfig().parallelismFactor==1 && Thread.currentThread() instanceof ActorThread) {
 			ActorThread t = ((ActorThread)Thread.currentThread());
 			t.innerQueue(message.copy(dest));
 			t.newMessage();
@@ -219,8 +219,8 @@ public class ActorThreadPoolHandler {
 	
 	public void postPersistence(ActorMessage<?> message) {
 		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
-		UUID dest = system.executerService.persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
-		system.executerService.persistenceService.getService().send(message.copy(dest));
+		UUID dest = system.getExecuterService().persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
+		system.getExecuterService().persistenceService.getService().send(message.copy(dest));
 	}
 	
 	public void registerCell(InternalActorCell cell) {

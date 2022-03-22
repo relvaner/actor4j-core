@@ -261,6 +261,16 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	public PodReplicationController getPodReplicationController() {
 		return podReplicationController;
 	}
+	
+	@Override
+	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory() {
+		return podReplicationControllerRunnableFactory;
+	}
+
+	@Override
+	public WatchdogRunnableFactory getWatchdogRunnableFactory() {
+		return watchdogRunnableFactory;
+	}
 
 	@Override
 	public Map<UUID, InternalActorCell> getCells() {
@@ -390,6 +400,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return result;
 	}
 	
+	@Override
 	public UUID addSystemActor(ActorFactory factory) {
 		InternalActorCell cell = generateCell(factory.create());
 		container.register(cell.getId(), factory);
@@ -397,6 +408,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		return system_addCell(cell);
 	}
 	
+	@Override
 	public List<UUID> addSystemActor(ActorFactory factory, int instances) {
 		List<UUID> result = new ArrayList<>(instances);
 		
