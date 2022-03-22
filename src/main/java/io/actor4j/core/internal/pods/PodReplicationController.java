@@ -91,7 +91,7 @@ public class PodReplicationController {
 					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
 					if (!cell.getContext().primaryReplica()) { // does not remove primary replica
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
-						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID, id));
+						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));
 						iterator.remove();
 						count++;
 					}
@@ -112,7 +112,7 @@ public class PodReplicationController {
 					PodActorCell cell = ((PodActorCell)system.getCells().get(id));
 					if (!cell.getContext().primaryReplica() && cell.getContext().shardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
-						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID, id));
+						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));
 						iterator.remove();
 						count++;
 					}
@@ -138,7 +138,7 @@ public class PodReplicationController {
 		while (iterator.hasNext()) {
 			UUID id = iterator.next();
 			systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
-			system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID, id));
+			system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));
 			iterator.remove();
 		}
 		system.getPodDomains().remove(domain);
@@ -171,7 +171,7 @@ public class PodReplicationController {
 		
 		if (oldPods.size()>0) {
 			systemLogger().log(INFO, String.format("[REPLICATION] Outdated PodActor(s) (%s, %s) stopping", domain, oldPods));
-			system.broadcast(ActorMessage.create(null, STOP, system.SYSTEM_ID, null), oldPods);
+			system.broadcast(ActorMessage.create(null, STOP, system.SYSTEM_ID(), null), oldPods);
 		}
 	}
 	

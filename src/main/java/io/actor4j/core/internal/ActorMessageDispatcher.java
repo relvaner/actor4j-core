@@ -54,14 +54,14 @@ public abstract class ActorMessageDispatcher {
 	public abstract void undelivered(ActorMessage<?> message, UUID source, UUID dest);
 	
 	public void registerCell(InternalActorCell cell) {
-		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.registerCell(cell);
+		system.getExecuterService().getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
 	}
 	
 	public void unregisterCell(InternalActorCell cell) {
-		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.unregisterCell(cell);
+		system.getExecuterService().getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
 	}
 	
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return system.getExecuterService().actorThreadPool.actorThreadPoolHandler.isRegisteredCell(cell);
+		return system.getExecuterService().getActorThreadPool().getActorThreadPoolHandler().isRegisteredCell(cell);
 	}
 }

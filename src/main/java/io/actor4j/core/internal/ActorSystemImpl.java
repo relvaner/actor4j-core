@@ -81,10 +81,10 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	
 	protected volatile CountDownLatch countDownLatch;
 	
-	public final UUID USER_ID;
-	public final UUID SYSTEM_ID;
-	public final UUID UNKNOWN_ID;
-	public final UUID PSEUDO_ID;
+	protected final UUID USER_ID;
+	protected final UUID SYSTEM_ID;
+	protected final UUID UNKNOWN_ID;
+	protected final UUID PSEUDO_ID;
 	
 	public ActorSystemImpl(ActorSystemConfig config) {
 		super();
