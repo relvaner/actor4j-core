@@ -51,6 +51,8 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postPersistence(ActorMessage<?> message);
 	
+	public abstract void undelivered(ActorMessage<?> message, UUID source, UUID dest);
+	
 	public void registerCell(InternalActorCell cell) {
 		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.registerCell(cell);
 	}

@@ -38,4 +38,9 @@ public class ImmutableMap<K, V> implements Shareable {
 	public Map<K, V> get() {
 		return map;
 	}
+
+	@Override
+	public String toString() {
+		return "ImmutableMap [map=" + map + "]";
+	}
 }

@@ -111,7 +111,9 @@ public class ActorThreadPoolHandler {
 				
 				t.newMessage();
 				result = true;
-			}	
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, message.dest());
 		}
 		
 		return result;
@@ -142,6 +144,8 @@ public class ActorThreadPoolHandler {
 				t.newMessage();
 				result = true;
 			}	
+			else
+				system.getMessageDispatcher().undelivered(message, source, dest);
 		}
 		
 		return result;

@@ -38,4 +38,9 @@ public class ImmutableList<T> implements Shareable {
 	public List<T> get() {
 		return list;
 	}
+
+	@Override
+	public String toString() {
+		return "ImmutableList [list=" + list + "]";
+	}
 }

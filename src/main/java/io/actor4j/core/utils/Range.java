@@ -15,5 +15,51 @@
  */
 package io.actor4j.core.utils;
 
-public record Range(int low, int high) {
+public final class Range {
+	private final int low; 
+	private final int high;
+	
+	public Range(int low, int high) {
+		super();
+		this.low = low;
+		this.high = high;
+	}
+	
+	public int low() {
+		return low;
+	}
+	
+	public int high() {
+		return high;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + high;
+		result = prime * result + low;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Range other = (Range) obj;
+		if (high != other.high)
+			return false;
+		if (low != other.low)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Range [low=" + low + ", high=" + high + "]";
+	}
 }

@@ -324,12 +324,12 @@ public class DefaultActorCell implements InternalActorCell {
 			Actor sourceActor = system.getCells().get(message.source()).getActor();
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
-					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from source (%s)",
+					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from source (%s)",
 						actorLabel(actor), message.toString(), actorLabel(sourceActor)
 					));
 			else
 				systemLogger().log(WARN,
-					String.format("[MESSAGE] actor (%s) - Unhandled message (%s) from unavaible source (???)",
+					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from unavaible source (???)",
 						actorLabel(actor), message.toString()
 					));
 		}

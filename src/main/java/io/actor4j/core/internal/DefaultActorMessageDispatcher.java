@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.internal;
 
+import static io.actor4j.core.logging.ActorLogger.WARN;
+import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
@@ -24,26 +26,32 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
-	protected final Consumer<ActorMessage<?>> consumerPseudo;
+	protected final Function<ActorMessage<?>, Boolean> consumerPseudo;
 	
 	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
 	public DefaultActorMessageDispatcher(ActorSystemImpl system) {
 		super(system);
 		
-		consumerPseudo = new Consumer<ActorMessage<?>>() {
+		consumerPseudo = new Function<ActorMessage<?>, Boolean>() {
 			@Override
-			public void accept(ActorMessage<?> msg) {
+			public Boolean apply(ActorMessage<?> msg) {
+				boolean result = false;
+				
 				ActorCell cell = DefaultActorMessageDispatcher.this.system.getPseudoCells().get(msg.dest());
-				if (cell!=null)
+				if (cell!=null) {
 					((PseudoActorCell)cell).getOuterQueue().offer(msg);
+					result = true;
+				}
+				
+				return result;
 			}
 		};
 		
@@ -94,7 +102,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			dest = redirect;
 		
 		if (system.pseudoCells.containsKey(dest)) {
-			consumerPseudo.accept(message.copy(dest));
+			consumerPseudo.apply(message.copy(dest));
 			return;
 		}
 		else if (system.config.clientMode && !system.cells.containsKey(dest)) {
@@ -137,7 +145,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, biconsumer)) 
-				consumerPseudo.accept(message.copy());
+				if (!consumerPseudo.apply(message.copy()))
+					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.resourceCells.containsKey(dest)) {
@@ -146,7 +155,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postQueue(message, dest, biconsumer)) 
-				consumerPseudo.accept(message.copy(dest));
+				if (!consumerPseudo.apply(message.copy(dest)))
+					undelivered(message, message.source(), dest);
 		}
 	}
 	
@@ -168,7 +178,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message))
-				consumerPseudo.accept(message.copy());
+				if (!consumerPseudo.apply(message.copy()))
+					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.resourceCells.containsKey(dest)) {
@@ -177,7 +188,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message, dest))
-				consumerPseudo.accept(message.copy(dest));
+				if (!consumerPseudo.apply(message.copy(dest)))
+					undelivered(message, message.source(), dest);
 		}
 	}
 	
@@ -199,7 +211,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message))
-				consumerPseudo.accept(message.copy());
+				if (!consumerPseudo.apply(message.copy()))
+					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.resourceCells.containsKey(dest)) {
@@ -208,7 +221,8 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			}
 			
 			if (!system.executerService.actorThreadPool.actorThreadPoolHandler.postServer(message, dest))
-				consumerPseudo.accept(message.copy(dest));
+				if (!consumerPseudo.apply(message.copy(dest)))
+					undelivered(message, message.source(), dest);
 		}
 	}
 	/*
@@ -230,5 +244,18 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
 		system.executerService.actorThreadPool.actorThreadPoolHandler.postPersistence(message);
+	}
+	
+	@Override
+	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
+		//TODO: debugUndelivered
+		
+		InternalActorCell cell = system.getCells().get(source);
+		
+		system.executerService.actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID);
+		systemLogger().log(WARN,
+			String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
+				message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
+			));
 	}
 }

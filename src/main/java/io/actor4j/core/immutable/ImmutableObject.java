@@ -35,4 +35,9 @@ public class ImmutableObject<T> implements Shareable {
 	public T get() {
 		return value;
 	}
+
+	@Override
+	public String toString() {
+		return "ImmutableObject [value=" + value + "]";
+	}
 }

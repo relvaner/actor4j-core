@@ -38,4 +38,9 @@ public class ImmutableSet<T> implements Shareable {
 	public Set<T> get() {
 		return set;
 	}
+
+	@Override
+	public String toString() {
+		return "ImmutableSet [set=" + set + "]";
+	}
 }
