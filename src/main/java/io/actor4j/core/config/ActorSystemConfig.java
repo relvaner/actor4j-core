@@ -30,6 +30,7 @@ public class ActorSystemConfig {
 	public final String name;
 	
 	public final boolean debugUnhandled;
+	public final boolean debugUndelivered;
 
 	public final int parallelism;
 	public final int parallelismFactor;
@@ -72,6 +73,7 @@ public class ActorSystemConfig {
 		protected String name;
 		
 		protected boolean debugUnhandled;
+		protected boolean debugUndelivered;
 
 		protected int parallelism;
 		protected int parallelismFactor;
@@ -152,6 +154,7 @@ public class ActorSystemConfig {
 			super();
 			this.name = config.name;
 			this.debugUnhandled = config.debugUnhandled;
+			this.debugUndelivered = config.debugUndelivered;
 			this.queueSize = config.queueSize;
 			this.bufferQueueSize = config.bufferQueueSize;
 			this.parallelism = config.parallelism;
@@ -189,6 +192,12 @@ public class ActorSystemConfig {
 		
 		public Builder<T> debugUnhandled(boolean debugUnhandled) {
 			this.debugUnhandled = debugUnhandled;
+
+			return this;
+		}
+		
+		public Builder<T> debugUndelivered(boolean debugUndelivered) {
+			this.debugUndelivered = debugUndelivered;
 
 			return this;
 		}
@@ -351,6 +360,7 @@ public class ActorSystemConfig {
 		super();
 		this.name = builder.name;
 		this.debugUnhandled = builder.debugUnhandled;
+		this.debugUndelivered = builder.debugUndelivered;
 		this.queueSize = builder.queueSize;
 		this.bufferQueueSize = builder.bufferQueueSize;
 		this.parallelism = builder.parallelism;

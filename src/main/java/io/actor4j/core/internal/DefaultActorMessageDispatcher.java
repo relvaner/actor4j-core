@@ -248,14 +248,14 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
-		//TODO: debugUndelivered
+		if (system.getConfig().debugUndelivered) {
+			InternalActorCell cell = system.getCells().get(source);
 		
-		InternalActorCell cell = system.getCells().get(source);
-		
-		system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
-		systemLogger().log(WARN,
-			String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
-				message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
-			));
+			system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
+			systemLogger().log(WARN,
+				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
+					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
+				));
+		}
 	}
 }
