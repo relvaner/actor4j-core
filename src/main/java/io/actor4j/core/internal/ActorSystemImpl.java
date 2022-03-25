@@ -33,6 +33,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PseudoActor;
@@ -79,7 +80,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected volatile CountDownLatch countDownLatch;
+	protected final AtomicReference<CountDownLatch> countDownLatch;
 	
 	protected final UUID USER_ID;
 	protected final UUID SYSTEM_ID;
@@ -114,6 +115,8 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		executerService = new ActorExecuterService(this);
 		
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
+		
+		countDownLatch = new AtomicReference<>();
 				
 		USER_ID    = UUID.randomUUID();
 		SYSTEM_ID  = UUID.randomUUID();
@@ -154,12 +157,12 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		redirector.clear();
 		
 		bufferQueue.clear();
-		
+	
 		resetCells();
 	}
 	
 	protected void resetCells() {
-		countDownLatch = new CountDownLatch(3);
+		countDownLatch.set(new CountDownLatch(3));
 		
 		internal_addCell(new DefaultActorCell(this, new Actor("user") {
 			@Override
@@ -169,7 +172,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.countDown();
+				countDownLatch.get().countDown();
 			}
 		}, USER_ID));
 		
@@ -181,7 +184,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.countDown();
+				countDownLatch.get().countDown();
 			}
 		}, SYSTEM_ID));
 		
@@ -193,7 +196,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.countDown();
+				countDownLatch.get().countDown();
 			}
 		}, UNKNOWN_ID));
 		
@@ -362,7 +365,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		}
 		return cell.getId();
 	}
-	
+
 	protected UUID user_addCell(InternalActorCell cell) {
 		cell.setParent(USER_ID);
 		cells.get(USER_ID).getChildren().add(cell.getId());
@@ -435,7 +438,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	@Override
 	public UUID addPodActor(PodActorFactory factory, PodContext context) {
 		PodActorCell cell = (PodActorCell)generateCell(factory.create());
-		cell.context = context;
+		cell.setContext(context);
 		setPodDomain(cell.id, context.domain());
 		container.register(cell.id, factory);
 		
@@ -828,13 +831,14 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 					send(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
 					send(ActorMessage.create(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
 					try {
-						countDownLatch.await();
+						countDownLatch.get().await();
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 					}
+					messageDispatcher.unregisterCell(cells.get(PSEUDO_ID));
+					removeActor(PSEUDO_ID);
+					
 					executerService.shutdown(await);
-
-					reset();
 				}
 			});
 			
@@ -845,6 +849,8 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
+			
+			reset();
 		}
 	}
 	

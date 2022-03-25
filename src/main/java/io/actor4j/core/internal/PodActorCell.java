@@ -17,18 +17,26 @@ package io.actor4j.core.internal;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.pods.PodContext;
 
 public class PodActorCell extends DefaultActorCell {
-	protected volatile PodContext context;
+	protected final AtomicReference<PodContext> contextReference;
 	
 	public PodActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
+		
+		this.contextReference = new AtomicReference<>();
 	}
 	
 	public PodContext getContext() {
-		return context;
+		return contextReference.get();
+	}
+	
+	public void setContext(PodContext context) {
+		contextReference.set(context);
 	}
 	
 	@Override
