@@ -26,8 +26,8 @@ public class DefaultActorThreadFactory extends DefaultThreadFactory {
     	
     	if (t.isDaemon())
     		t.setDaemon(false);
-    	if (t.getPriority() != Thread.NORM_PRIORITY)
-    		t.setPriority(Thread.NORM_PRIORITY);
+    	if (t.getPriority() != Thread.MAX_PRIORITY)
+    		t.setPriority(Thread.MAX_PRIORITY);
 	        
         return t;
     }
