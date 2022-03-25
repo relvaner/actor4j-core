@@ -16,7 +16,6 @@
 package io.actor4j.core.internal;
 
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -30,14 +29,12 @@ public abstract class DefaultActorThread extends ActorThread {
 	protected Queue<ActorMessage<?>> serverQueueL2;
 	protected Queue<ActorMessage<?>> serverQueueL1;
 	
-	protected final AtomicBoolean newMessage;
+	protected final Object blocker = new Object();
 	
 	public DefaultActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
 		
 		configQueues();
-		
-		newMessage = new AtomicBoolean(true);
 	}
 	
 	
@@ -122,8 +119,9 @@ public abstract class DefaultActorThread extends ActorThread {
 				if (idle>system.getConfig().idle) {
 					idle = 0;
 					if (system.getConfig().threadMode==ActorThreadMode.PARK) {
-						if (newMessage.compareAndSet(true, false))
-							LockSupport.park(this);
+						LockSupport.park(blocker);
+						if (isInterrupted())
+							interrupt();
 					}
 					else if (system.getConfig().threadMode==ActorThreadMode.SLEEP) {
 						try {
@@ -148,8 +146,8 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-		if (system.getConfig().threadMode==ActorThreadMode.PARK && newMessage.compareAndSet(false, true))
-			LockSupport.unpark(this);
+		if (system.getConfig().threadMode==ActorThreadMode.PARK)
+			LockSupport.unpark(this);			
 	}
 	
 	@Override
