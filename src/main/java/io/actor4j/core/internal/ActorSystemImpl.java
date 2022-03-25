@@ -33,6 +33,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.actor4j.core.actors.Actor;
@@ -81,6 +82,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
 	protected final AtomicReference<CountDownLatch> countDownLatch;
+	protected final AtomicInteger countDownLatchPark;
 	
 	protected final UUID USER_ID;
 	protected final UUID SYSTEM_ID;
@@ -117,6 +119,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
 		
 		countDownLatch = new AtomicReference<>();
+		countDownLatchPark = new AtomicInteger();
 				
 		USER_ID    = UUID.randomUUID();
 		SYSTEM_ID  = UUID.randomUUID();
@@ -162,7 +165,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	}
 	
 	protected void resetCells() {
-		countDownLatch.set(new CountDownLatch(3));
+		resetCountdownLatch();
 		
 		internal_addCell(new DefaultActorCell(this, new Actor("user") {
 			@Override
@@ -172,7 +175,10 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.get().countDown();
+				if (config.threadMode==ActorThreadMode.PARK)
+					countDownLatchPark.decrementAndGet();
+				else
+					countDownLatch.get().countDown();
 			}
 		}, USER_ID));
 		
@@ -184,7 +190,10 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.get().countDown();
+				if (config.threadMode==ActorThreadMode.PARK)
+					countDownLatchPark.decrementAndGet();
+				else
+					countDownLatch.get().countDown();
 			}
 		}, SYSTEM_ID));
 		
@@ -196,7 +205,10 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				countDownLatch.get().countDown();
+				if (config.threadMode==ActorThreadMode.PARK)
+					countDownLatchPark.decrementAndGet();
+				else
+					countDownLatch.get().countDown();
 			}
 		}, UNKNOWN_ID));
 		
@@ -206,6 +218,13 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 				// empty
 			}
 		}, PSEUDO_ID));
+	}
+	
+	protected void resetCountdownLatch() {
+		if (config.threadMode==ActorThreadMode.PARK)
+			countDownLatchPark.set(3);
+		else
+			countDownLatch.set(new CountDownLatch(3));
 	}
 	
 	public InternalActorCell generateCell(Actor actor) {
@@ -237,6 +256,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		
 		if (!executerService.isStarted() && config!=null) {
 			this.config = config;
+			resetCountdownLatch();
 			result = true;
 		}
 		
@@ -249,6 +269,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		
 		if (!executerService.isStarted() && config!=null) {
 			this.config = config;
+			resetCountdownLatch();
 			result = true;
 		}
 		
@@ -830,10 +851,21 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 					send(ActorMessage.create(null, INTERNAL_STOP, USER_ID, USER_ID));
 					send(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
 					send(ActorMessage.create(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
-					try {
-						countDownLatch.get().await();
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
+					if (config.threadMode==ActorThreadMode.PARK) {
+						while (countDownLatchPark.get()>0) {
+							try {
+								Thread.sleep(config.sleepTime);
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+							}
+						}
+					}
+					else {
+						try {
+							countDownLatch.get().await();
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
 					}
 					messageDispatcher.unregisterCell(cells.get(PSEUDO_ID));
 					removeActor(PSEUDO_ID);
