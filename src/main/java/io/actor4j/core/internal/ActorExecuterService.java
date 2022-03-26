@@ -152,11 +152,11 @@ public class ActorExecuterService {
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
-		if (system.getConfig().clientMode)
+		if (system.getConfig().clientMode())
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		
-		if (system.getConfig().persistenceMode) {
-			persistenceService = new ActorPersistenceService(system, system.getConfig().parallelism, system.getConfig().parallelismFactor, system.getConfig().persistenceDriver);
+		if (system.getConfig().persistenceMode()) {
+			persistenceService = new ActorPersistenceService(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
 			persistenceService.start();
 		}
 		
@@ -170,7 +170,7 @@ public class ActorExecuterService {
 			public void receive(ActorMessage<?> message) {
 				// empty
 			}
-		}, system.getConfig().parallelism*system.getConfig().parallelismFactor);
+		}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		
 		actorThreadPool = new ActorThreadPool(system);
@@ -178,7 +178,7 @@ public class ActorExecuterService {
 		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
 		podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
 		if (podReplicationControllerRunnable!=null)
-			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime, system.getConfig().horizontalPodAutoscalerSyncTime, TimeUnit.MILLISECONDS);
+			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime(), system.getConfig().horizontalPodAutoscalerSyncTime(), TimeUnit.MILLISECONDS);
 		
 		watchdogExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
 		
@@ -193,7 +193,7 @@ public class ActorExecuterService {
 			onStartup.run();
 		
 		if (watchdogRunnable!=null)
-			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime, system.getConfig().watchdogSyncTime, TimeUnit.MILLISECONDS);
+			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
 	public boolean isStarted() {
@@ -209,13 +209,13 @@ public class ActorExecuterService {
 	}
 
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
-		if (system.getConfig().clientRunnable!=null && !clientExecuterService.isShutdown())
+		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
 			try {
 				clientExecuterService.submit(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							system.getConfig().clientRunnable.runViaAlias(message, alias);
+							system.getConfig().clientRunnable().runViaAlias(message, alias);
 						}
 						catch(Throwable t) {
 							t.printStackTrace();
@@ -229,13 +229,13 @@ public class ActorExecuterService {
 	}
 	
 	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
-		if (system.getConfig().clientRunnable!=null && !clientExecuterService.isShutdown())
+		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
 			try {
 				clientExecuterService.submit(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							system.getConfig().clientRunnable.runViaPath(message, node, path);
+							system.getConfig().clientRunnable().runViaPath(message, node, path);
 						}
 						catch(Throwable t) {
 							t.printStackTrace();
@@ -279,12 +279,12 @@ public class ActorExecuterService {
 		timerExecuterService.shutdown();
 		
 		resourceExecuterService.shutdown();
-		if (system.getConfig().clientMode)
+		if (system.getConfig().clientMode())
 			clientExecuterService.shutdown();
 		
 		actorThreadPool.shutdown(onTermination, await);
 		
-		if (system.getConfig().persistenceMode)
+		if (system.getConfig().persistenceMode())
 			persistenceService.shutdown();
 		
 		reset();

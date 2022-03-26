@@ -28,30 +28,30 @@ public class ConfigFeature {
 	public void test_default() {
 		ActorSystem system = ActorSystem.create();
 		
-		assertEquals("actor4j", system.getConfig().name);
-		assertEquals(false, system.getConfig().counterEnabled.get());
-		assertEquals(false, system.getConfig().threadProcessingTimeEnabled.get());
-		assertEquals(Runtime.getRuntime().availableProcessors(), system.getConfig().parallelism);
-		assertEquals(1, system.getConfig().parallelismFactor);
-		assertEquals(100, system.getConfig().throughput);
-		assertEquals(100_000, system.getConfig().idle);
-		assertEquals(100_000/100, system.getConfig().load);
-		assertEquals(ActorThreadMode.PARK, system.getConfig().threadMode);
-		assertEquals(25, system.getConfig().sleepTime);
-		assertEquals(15_000, system.getConfig().horizontalPodAutoscalerSyncTime);
-		assertEquals(2_000, system.getConfig().horizontalPodAutoscalerMeasurementTime);
-		assertEquals(10_000, system.getConfig().maxStatisticValues);
-		assertEquals(50_000, system.getConfig().queueSize);
-		assertEquals(10_000, system.getConfig().bufferQueueSize);
-		assertEquals(false, system.getConfig().persistenceMode);
-		assertEquals("Default Node", system.getConfig().serviceNodeName);
+		assertEquals("actor4j", system.getConfig().name());
+		assertEquals(false, system.getConfig().counterEnabled().get());
+		assertEquals(false, system.getConfig().threadProcessingTimeEnabled().get());
+		assertEquals(Runtime.getRuntime().availableProcessors(), system.getConfig().parallelism());
+		assertEquals(1, system.getConfig().parallelismFactor());
+		assertEquals(100, system.getConfig().throughput());
+		assertEquals(100_000, system.getConfig().idle());
+		assertEquals(100_000/100, system.getConfig().load());
+		assertEquals(ActorThreadMode.PARK, system.getConfig().threadMode());
+		assertEquals(25, system.getConfig().sleepTime());
+		assertEquals(15_000, system.getConfig().horizontalPodAutoscalerSyncTime());
+		assertEquals(2_000, system.getConfig().horizontalPodAutoscalerMeasurementTime());
+		assertEquals(10_000, system.getConfig().maxStatisticValues());
+		assertEquals(50_000, system.getConfig().queueSize());
+		assertEquals(10_000, system.getConfig().bufferQueueSize());
+		assertEquals(false, system.getConfig().persistenceMode());
+		assertEquals("Default Node", system.getConfig().serviceNodeName());
 		
-		assertEquals(null, system.getConfig().persistenceDriver);
-		assertEquals(null, system.getConfig().podDatabase);
-		assertEquals(0, system.getConfig().serviceNodes.size());
-		assertEquals(false, system.getConfig().clientMode);
-		assertEquals(false, system.getConfig().serverMode);
-		assertEquals(null, system.getConfig().clientRunnable);
+		assertEquals(null, system.getConfig().persistenceDriver());
+		assertEquals(null, system.getConfig().podDatabase());
+		assertEquals(0, system.getConfig().serviceNodes().size());
+		assertEquals(false, system.getConfig().clientMode());
+		assertEquals(false, system.getConfig().serverMode());
+		assertEquals(null, system.getConfig().clientRunnable());
 	}
 	
 	@Test
@@ -75,29 +75,29 @@ public class ConfigFeature {
 			.build();
 		ActorSystem system = ActorSystem.create(config);
 		
-		assertEquals("test", system.getConfig().name);
-		assertEquals(true, system.getConfig().counterEnabled.get());
-		assertEquals(true, system.getConfig().threadProcessingTimeEnabled.get());
-		assertEquals(3, system.getConfig().parallelism);
-		assertEquals(2, system.getConfig().parallelismFactor);
-		assertEquals(200, system.getConfig().throughput);
-		assertEquals(10_000, system.getConfig().idle);
-		assertEquals(10_000/200, system.getConfig().load);
-		assertEquals(ActorThreadMode.SLEEP, system.getConfig().threadMode);
-		assertEquals(100, system.getConfig().sleepTime);
-		assertEquals(30_000, system.getConfig().horizontalPodAutoscalerSyncTime);
-		assertEquals(3_000, system.getConfig().horizontalPodAutoscalerMeasurementTime);
-		assertEquals(12_000, system.getConfig().maxStatisticValues);
-		assertEquals(55_000, system.getConfig().queueSize);
-		assertEquals(13_000, system.getConfig().bufferQueueSize);
-		assertEquals(false, system.getConfig().persistenceMode);
-		assertEquals("test-node", system.getConfig().serviceNodeName);
+		assertEquals("test", system.getConfig().name());
+		assertEquals(true, system.getConfig().counterEnabled().get());
+		assertEquals(true, system.getConfig().threadProcessingTimeEnabled().get());
+		assertEquals(3, system.getConfig().parallelism());
+		assertEquals(2, system.getConfig().parallelismFactor());
+		assertEquals(200, system.getConfig().throughput());
+		assertEquals(10_000, system.getConfig().idle());
+		assertEquals(10_000/200, system.getConfig().load());
+		assertEquals(ActorThreadMode.SLEEP, system.getConfig().threadMode());
+		assertEquals(100, system.getConfig().sleepTime());
+		assertEquals(30_000, system.getConfig().horizontalPodAutoscalerSyncTime());
+		assertEquals(3_000, system.getConfig().horizontalPodAutoscalerMeasurementTime());
+		assertEquals(12_000, system.getConfig().maxStatisticValues());
+		assertEquals(55_000, system.getConfig().queueSize());
+		assertEquals(13_000, system.getConfig().bufferQueueSize());
+		assertEquals(false, system.getConfig().persistenceMode());
+		assertEquals("test-node", system.getConfig().serviceNodeName());
 		
-		assertEquals(null, system.getConfig().persistenceDriver);
-		assertEquals(null, system.getConfig().podDatabase);
-		assertEquals(0, system.getConfig().serviceNodes.size());
-		assertEquals(false, system.getConfig().clientMode);
-		assertEquals(true, system.getConfig().serverMode);
-		assertEquals(null, system.getConfig().clientRunnable);
+		assertEquals(null, system.getConfig().persistenceDriver());
+		assertEquals(null, system.getConfig().podDatabase());
+		assertEquals(0, system.getConfig().serviceNodes().size());
+		assertEquals(false, system.getConfig().clientMode());
+		assertEquals(true, system.getConfig().serverMode());
+		assertEquals(null, system.getConfig().clientRunnable());
 	}
 }

@@ -29,7 +29,7 @@ public class RecoverProtocol {
 	}
 	
 	public void apply() {
-		if (cell.getSystem().getConfig().persistenceMode && cell.getActor() instanceof PersistentActor) {
+		if (cell.getSystem().getConfig().persistenceMode() && cell.getActor() instanceof PersistentActor) {
 			cell.setActive(false);
 			((InternalActorSystem)cell.getSystem()).getMessageDispatcher().postPersistence(
 				ActorMessage.create(((PersistentActor<?,?>)cell.getActor()).persistenceId().toString(), PersistenceServiceActor.RECOVER, cell.getId(), null));

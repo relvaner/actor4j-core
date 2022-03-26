@@ -89,7 +89,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 		
 		int count = 0;
 		try {
-			CompletableFuture.allOf(futures).get(system.getConfig().watchdogTimeout, TimeUnit.MILLISECONDS);
+			CompletableFuture.allOf(futures).get(system.getConfig().watchdogTimeout(), TimeUnit.MILLISECONDS);
 		} catch (InterruptedException | ExecutionException e) {
 			// e.printStackTrace();
 		} catch (TimeoutException e) {

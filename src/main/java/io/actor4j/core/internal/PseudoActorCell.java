@@ -146,7 +146,7 @@ public class PseudoActorCell extends DefaultActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
 		while (poll(outerQueueL1))
@@ -174,7 +174,7 @@ public class PseudoActorCell extends DefaultActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
 		return poll(outerQueueL1);
@@ -184,7 +184,7 @@ public class PseudoActorCell extends DefaultActorCell {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize; j++)
+			for (int j=0; (message=outerQueueL2.poll())!=null && j<system.getConfig().bufferQueueSize(); j++)
 				outerQueueL1.offer(message);
 		}
 		

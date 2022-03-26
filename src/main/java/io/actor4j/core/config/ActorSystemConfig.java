@@ -27,48 +27,156 @@ import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.pods.Database;
 
 public class ActorSystemConfig {
-	public final String name;
+	private final String name;
 	
-	public final boolean debugUnhandled;
-	public final boolean debugUndelivered;
+	private final boolean debugUnhandled;
+	private final boolean debugUndelivered;
 
-	public final int parallelism;
-	public final int parallelismFactor;
+	private final int parallelism;
+	private final int parallelismFactor;
 	
-	public final int queueSize;
-	public final int bufferQueueSize;
+	private final int queueSize;
+	private final int bufferQueueSize;
 
-	public final int throughput;
-	public final int idle;
-	public final int load;
-	public final ActorThreadMode threadMode;
-	public final long sleepTime;
+	private final int throughput;
+	private final int idle;
+	private final int load;
+	private final ActorThreadMode threadMode;
+	private final long sleepTime;
 	
 	// Persistence
-	public final PersistenceDriver persistenceDriver;
-	public final boolean persistenceMode;
+	private final PersistenceDriver persistenceDriver;
+	private final boolean persistenceMode;
 	
 	// Metrics
-	public final AtomicBoolean counterEnabled;
-	public final AtomicBoolean threadProcessingTimeEnabled;
-	public final int maxStatisticValues;
+	private final AtomicBoolean counterEnabled;
+	private final AtomicBoolean threadProcessingTimeEnabled;
+	private final int maxStatisticValues;
 	
 	// Pods
-	public final long horizontalPodAutoscalerSyncTime;
-	public final long horizontalPodAutoscalerMeasurementTime;
-	public final Database<?> podDatabase;
+	private final long horizontalPodAutoscalerSyncTime;
+	private final long horizontalPodAutoscalerMeasurementTime;
+	private final Database<?> podDatabase;
 	
 	// Watchdog
-	public final long watchdogSyncTime;
-	public final long watchdogTimeout;
+	private final long watchdogSyncTime;
+	private final long watchdogTimeout;
 	
 	// As Service
-	public final String serviceNodeName;
-	public final List<ActorServiceNode> serviceNodes;
-	public final boolean serverMode;
-	public final boolean clientMode;
-	public final ActorClientRunnable clientRunnable;
-
+	private final String serviceNodeName;
+	private final List<ActorServiceNode> serviceNodes;
+	private final boolean serverMode;
+	private final boolean clientMode;
+	private final ActorClientRunnable clientRunnable;
+	
+	public String name() {
+		return name;
+	}
+	
+	public boolean debugUnhandled() {
+		return debugUnhandled;
+	}
+	
+	public boolean debugUndelivered() {
+		return debugUndelivered;
+	}
+	
+	public int parallelism() {
+		return parallelism;
+	}
+	
+	public int parallelismFactor() {
+		return parallelismFactor;
+	}
+	
+	public int queueSize() {
+		return queueSize;
+	}
+	
+	public int bufferQueueSize() {
+		return bufferQueueSize;
+	}
+	
+	public int throughput() {
+		return throughput;
+	}
+	
+	public int idle() {
+		return idle;
+	}
+	
+	public int load() {
+		return load;
+	}
+	
+	public ActorThreadMode threadMode() {
+		return threadMode;
+	}
+	
+	public long sleepTime() {
+		return sleepTime;
+	}
+	
+	public PersistenceDriver persistenceDriver() {
+		return persistenceDriver;
+	}
+	
+	public boolean persistenceMode() {
+		return persistenceMode;
+	}
+	
+	public AtomicBoolean counterEnabled() {
+		return counterEnabled;
+	}
+	
+	public AtomicBoolean threadProcessingTimeEnabled() {
+		return threadProcessingTimeEnabled;
+	}
+	
+	public int maxStatisticValues() {
+		return maxStatisticValues;
+	}
+	
+	public long horizontalPodAutoscalerSyncTime() {
+		return horizontalPodAutoscalerSyncTime;
+	}
+	
+	public long horizontalPodAutoscalerMeasurementTime() {
+		return horizontalPodAutoscalerMeasurementTime;
+	}
+	
+	public Database<?> podDatabase() {
+		return podDatabase;
+	}
+	
+	public long watchdogSyncTime() {
+		return watchdogSyncTime;
+	}
+	
+	public long watchdogTimeout() {
+		return watchdogTimeout;
+	}
+	
+	public String serviceNodeName() {
+		return serviceNodeName;
+	}
+	
+	public List<ActorServiceNode> serviceNodes() {
+		return serviceNodes;
+	}
+	
+	public boolean serverMode() {
+		return serverMode;
+	}
+	
+	public boolean clientMode() {
+		return clientMode;
+	}
+	
+	public ActorClientRunnable clientRunnable() {
+		return clientRunnable;
+	}
+	
 	public static abstract class Builder<T extends ActorSystemConfig> {
 		protected String name;
 		
@@ -152,33 +260,33 @@ public class ActorSystemConfig {
 		
 		public Builder(T config) {
 			super();
-			this.name = config.name;
-			this.debugUnhandled = config.debugUnhandled;
-			this.debugUndelivered = config.debugUndelivered;
-			this.queueSize = config.queueSize;
-			this.bufferQueueSize = config.bufferQueueSize;
-			this.parallelism = config.parallelism;
-			this.parallelismFactor = config.parallelismFactor;
-			this.throughput = config.throughput;
-			this.idle = config.idle;
-			this.load = config.load;
-			this.threadMode = config.threadMode;
-			this.sleepTime = config.sleepTime;
-			this.persistenceDriver = config.persistenceDriver;
-			this.persistenceMode = config.persistenceMode;
-			this.counterEnabled = config.counterEnabled.get();
-			this.threadProcessingTimeEnabled = config.threadProcessingTimeEnabled.get();
-			this.maxStatisticValues = config.maxStatisticValues;
-			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime;
-			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime;
-			this.podDatabase = config.podDatabase;
-			this.watchdogSyncTime = config.watchdogSyncTime;
-			this.watchdogTimeout = config.watchdogTimeout;
-			this.serviceNodeName = config.serviceNodeName;
-			this.serviceNodes = new LinkedList<>(config.serviceNodes);
-			this.clientMode = config.clientMode;
-			this.serverMode = config.serverMode;
-			this.clientRunnable = config.clientRunnable;
+			this.name = config.name();
+			this.debugUnhandled = config.debugUnhandled();
+			this.debugUndelivered = config.debugUndelivered();
+			this.queueSize = config.queueSize();
+			this.bufferQueueSize = config.bufferQueueSize();
+			this.parallelism = config.parallelism();
+			this.parallelismFactor = config.parallelismFactor();
+			this.throughput = config.throughput();
+			this.idle = config.idle();
+			this.load = config.load();
+			this.threadMode = config.threadMode();
+			this.sleepTime = config.sleepTime();
+			this.persistenceDriver = config.persistenceDriver();
+			this.persistenceMode = config.persistenceMode();
+			this.counterEnabled = config.counterEnabled().get();
+			this.threadProcessingTimeEnabled = config.threadProcessingTimeEnabled().get();
+			this.maxStatisticValues = config.maxStatisticValues();
+			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime();
+			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime();
+			this.podDatabase = config.podDatabase();
+			this.watchdogSyncTime = config.watchdogSyncTime();
+			this.watchdogTimeout = config.watchdogTimeout();
+			this.serviceNodeName = config.serviceNodeName();
+			this.serviceNodes = new LinkedList<>(config.serviceNodes());
+			this.clientMode = config.clientMode();
+			this.serverMode = config.serverMode();
+			this.clientRunnable = config.clientRunnable();
 		}
 
 		public Builder<T> name(String name) {

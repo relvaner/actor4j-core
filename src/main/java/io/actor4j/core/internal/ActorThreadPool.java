@@ -37,9 +37,9 @@ public class ActorThreadPool {
 		actorThreads = new ArrayList<>();
 		actorThreadPoolHandler = new ActorThreadPoolHandler(system);
 		
-		countDownLatch = new CountDownLatch(system.getConfig().parallelism*system.getConfig().parallelismFactor);
-		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.getConfig().name);
-		for (int i=0; i<system.getConfig().parallelism*system.getConfig().parallelismFactor; i++) {
+		countDownLatch = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.getConfig().name());
+		for (int i=0; i<system.getConfig().parallelism()*system.getConfig().parallelismFactor(); i++) {
 			try {
 				ActorThread t = defaultActorThreadFactory.newThread(system);
 				t.onTermination = new Runnable() {

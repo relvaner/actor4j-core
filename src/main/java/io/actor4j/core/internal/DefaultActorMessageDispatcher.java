@@ -63,7 +63,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				boolean result = false;
 				
 				if (!isDirective(message)) {
-					int bound = (int)(queue.size()/(double)system.getConfig().queueSize*10);
+					int bound = (int)(queue.size()/(double)system.getConfig().queueSize()*10);
 					if (bound>=8)
 						result = true;
 					else if (bound>=2)
@@ -105,7 +105,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			consumerPseudo.apply(message.copy(dest));
 			return;
 		}
-		else if (system.getConfig().clientMode && !system.getCells().containsKey(dest)) {
+		else if (system.getConfig().clientMode() && !system.getCells().containsKey(dest)) {
 			system.getExecuterService().clientViaAlias(message.copy(dest), alias);
 			return;
 		}
@@ -248,7 +248,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
-		if (system.getConfig().debugUndelivered) {
+		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
 			system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());

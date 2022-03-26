@@ -175,7 +175,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				if (config.threadMode==ActorThreadMode.PARK)
+				if (config.threadMode()==ActorThreadMode.PARK)
 					countDownLatchPark.decrementAndGet();
 				else
 					countDownLatch.get().countDown();
@@ -190,7 +190,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				if (config.threadMode==ActorThreadMode.PARK)
+				if (config.threadMode()==ActorThreadMode.PARK)
 					countDownLatchPark.decrementAndGet();
 				else
 					countDownLatch.get().countDown();
@@ -205,7 +205,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			
 			@Override
 			public void postStop() {
-				if (config.threadMode==ActorThreadMode.PARK)
+				if (config.threadMode()==ActorThreadMode.PARK)
 					countDownLatchPark.decrementAndGet();
 				else
 					countDownLatch.get().countDown();
@@ -221,7 +221,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	}
 	
 	protected void resetCountdownLatch() {
-		if (config.threadMode==ActorThreadMode.PARK)
+		if (config.threadMode()==ActorThreadMode.PARK)
 			countDownLatchPark.set(3);
 		else
 			countDownLatch.set(new CountDownLatch(3));
@@ -851,10 +851,10 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 					send(ActorMessage.create(null, INTERNAL_STOP, USER_ID, USER_ID));
 					send(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
 					send(ActorMessage.create(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
-					if (config.threadMode==ActorThreadMode.PARK) {
+					if (config.threadMode()==ActorThreadMode.PARK) {
 						while (countDownLatchPark.get()>0) {
 							try {
-								Thread.sleep(config.sleepTime);
+								Thread.sleep(config.sleepTime());
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt();
 							}

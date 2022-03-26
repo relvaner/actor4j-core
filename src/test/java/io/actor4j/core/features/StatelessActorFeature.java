@@ -44,7 +44,7 @@ public class StatelessActorFeature {
 	
 	@Test(timeout=30000)
 	public void test() {
-		CountDownLatch testDone = new CountDownLatch(system.getConfig().parallelism*system.getConfig().parallelismFactor);
+		CountDownLatch testDone = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		
 		ActorGroup group = new ActorGroupSet();
 		system.setAlias(system.addActor(() -> new StatelessActor(group) {
@@ -57,7 +57,7 @@ public class StatelessActorFeature {
 					first=false;
 				}
 			}
-		}, system.getConfig().parallelism*system.getConfig().parallelismFactor), "instances");
+		}, system.getConfig().parallelism()*system.getConfig().parallelismFactor()), "instances");
 		
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {

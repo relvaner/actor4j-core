@@ -320,7 +320,7 @@ public class DefaultActorCell implements InternalActorCell {
 	
 	@Override
 	public void unhandled(ActorMessage<?> message) {
-		if (system.getConfig().debugUnhandled) {
+		if (system.getConfig().debugUnhandled()) {
 			Actor sourceActor = system.getCells().get(message.source()).getActor();
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
@@ -429,7 +429,7 @@ public class DefaultActorCell implements InternalActorCell {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
-		if (system.getConfig().persistenceMode && events!=null) {
+		if (system.getConfig().persistenceMode() && events!=null) {
 			List<ActorPersistenceObject> list = new ArrayList<>(Arrays.asList(events));
 			for (ActorPersistenceObject obj : list)
 				obj.persistenceId = persistenceId();
@@ -443,7 +443,7 @@ public class DefaultActorCell implements InternalActorCell {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
-		if (system.getConfig().persistenceMode && state!=null) {
+		if (system.getConfig().persistenceMode() && state!=null) {
 			state.persistenceId = persistenceId();
 			List<ActorPersistenceObject> list = new ArrayList<>();
 			list.add(state);
@@ -454,7 +454,7 @@ public class DefaultActorCell implements InternalActorCell {
 	}
 	
 	public void recover(ActorMessage<?> message) {
-		if (system.getConfig().persistenceMode && actor instanceof PersistentActor) {
+		if (system.getConfig().persistenceMode() && actor instanceof PersistentActor) {
 			((PersistentActor<?, ?>)actor).recover(message.valueAsString());
 			active.set(true);
 		}

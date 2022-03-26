@@ -88,44 +88,44 @@ public abstract class DefaultActorThread extends ActorThread {
 			while (poll(priorityQueue)) 
 				hasNextPriority=true;
 			
-			if (system.getConfig().serverMode) {
-				for (; hasNextServer<system.getConfig().throughput && poll(serverQueueL1); hasNextServer++);
-				if (hasNextServer<system.getConfig().throughput && serverQueueL2.peek()!=null) {
+			if (system.getConfig().serverMode()) {
+				for (; hasNextServer<system.getConfig().throughput() && poll(serverQueueL1); hasNextServer++);
+				if (hasNextServer<system.getConfig().throughput() && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; j<system.getConfig().bufferQueueSize && (message=serverQueueL2.poll())!=null; j++)
+					for (int j=0; j<system.getConfig().bufferQueueSize() && (message=serverQueueL2.poll())!=null; j++)
 						serverQueueL1.offer(message);
 				
-					for (; hasNextServer<system.getConfig().throughput && poll(serverQueueL1); hasNextServer++);
+					for (; hasNextServer<system.getConfig().throughput() && poll(serverQueueL1); hasNextServer++);
 				}
 			}
 			
-			for (; hasNextOuter<system.getConfig().throughput && poll(outerQueueL1); hasNextOuter++);
-			if (hasNextOuter<system.getConfig().throughput && outerQueueL2.peek()!=null) {
+			for (; hasNextOuter<system.getConfig().throughput() && poll(outerQueueL1); hasNextOuter++);
+			if (hasNextOuter<system.getConfig().throughput() && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; j<system.getConfig().bufferQueueSize && (message=outerQueueL2.poll())!=null; j++)
+				for (int j=0; j<system.getConfig().bufferQueueSize() && (message=outerQueueL2.poll())!=null; j++)
 					outerQueueL1.offer(message);
 
-				for (; hasNextOuter<system.getConfig().throughput && poll(outerQueueL1); hasNextOuter++);
+				for (; hasNextOuter<system.getConfig().throughput() && poll(outerQueueL1); hasNextOuter++);
 			}
 			
-			for (; hasNextInner<system.getConfig().throughput && poll(innerQueue); hasNextInner++);
+			for (; hasNextInner<system.getConfig().throughput() && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
-				if (idle>system.getConfig().load) {
+				if (idle>system.getConfig().load()) {
 					load = 0;
 					threadLoad.set(false);
 				}
 				idle++;
-				if (idle>system.getConfig().idle) {
+				if (idle>system.getConfig().idle()) {
 					idle = 0;
-					if (system.getConfig().threadMode==ActorThreadMode.PARK) {
+					if (system.getConfig().threadMode()==ActorThreadMode.PARK) {
 						LockSupport.park(blocker);
 						if (isInterrupted())
 							interrupt();
 					}
-					else if (system.getConfig().threadMode==ActorThreadMode.SLEEP) {
+					else if (system.getConfig().threadMode()==ActorThreadMode.SLEEP) {
 						try {
-							sleep(system.getConfig().sleepTime);
+							sleep(system.getConfig().sleepTime());
 						} catch (InterruptedException e) {
 							interrupt();
 						}
@@ -136,7 +136,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			}
 			else {
 				idle = 0;
-				if (load>system.getConfig().load)
+				if (load>system.getConfig().load())
 					threadLoad.set(true);
 				else
 					load++;
@@ -146,7 +146,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-		if (system.getConfig().threadMode==ActorThreadMode.PARK)
+		if (system.getConfig().threadMode()==ActorThreadMode.PARK)
 			LockSupport.unpark(this);			
 	}
 	

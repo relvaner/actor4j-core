@@ -51,7 +51,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorGroupMember() {
-		int instances = system.getConfig().parallelism+1;
+		int instances = system.getConfig().parallelism()+1;
 		CountDownLatch testDone = new CountDownLatch(instances*2);
 		AtomicReference<String> threadName1 = new AtomicReference<>("");
 		AtomicReference<String> threadName2 = new AtomicReference<>("");
@@ -106,7 +106,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorDistributedGroupMember() {
-		int instances = system.getConfig().parallelism;
+		int instances = system.getConfig().parallelism();
 		CountDownLatch testDone = new CountDownLatch(instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
 		
@@ -147,7 +147,7 @@ public class ActorGroupMemberFeature {
 	
 	@Test(timeout=30000)
 	public void test_ActorWithBothGroups_with_ActorWithGroup() {
-		int instances = system.getConfig().parallelism;
+		int instances = system.getConfig().parallelism();
 		CountDownLatch testDone = new CountDownLatch(instances+instances*instances);
 		Map<String, Boolean> map = new ConcurrentHashMap<String, Boolean>();
 		Map<UUID, String> threadMap = new ConcurrentHashMap<UUID, String>();

@@ -43,7 +43,7 @@ public class PrimarySecondaryActorFeature {
 	
 	@Test(timeout=5000)
 	public void test() {
-		CountDownLatch testDone = new CountDownLatch(system.getConfig().parallelism*system.getConfig().parallelismFactor);
+		CountDownLatch testDone = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		
 		AtomicBoolean primaryReceivedFromSystem = new AtomicBoolean(false);
 		AtomicInteger secondaryReceived = new AtomicInteger(0);
@@ -61,7 +61,7 @@ public class PrimarySecondaryActorFeature {
 						else if (message.source()==system.SYSTEM_ID())
 							publish(message);
 					}
-				}, system.getConfig().parallelism*system.getConfig().parallelismFactor-1) {
+				}, system.getConfig().parallelism()*system.getConfig().parallelismFactor()-1) {
 					@Override
 					public void preStart() {
 						super.preStart();
@@ -92,7 +92,7 @@ public class PrimarySecondaryActorFeature {
 			e.printStackTrace();
 		}
 		assertTrue(primaryReceivedFromSystem.get());
-		assertEquals(system.getConfig().parallelism*system.getConfig().parallelismFactor-1, secondaryReceived.get());
+		assertEquals(system.getConfig().parallelism()*system.getConfig().parallelismFactor()-1, secondaryReceived.get());
 		assertTrue(primaryReceived.get());
 		
 		system.shutdownWithActors(true);
