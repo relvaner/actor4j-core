@@ -22,6 +22,10 @@ public final class RemotePodMessageDTO {
 	private final String alias;
 	private final Object auth;
 	private final boolean reply;
+	
+	protected RemotePodMessageDTO() {
+		this(null, 0, null, null, false);
+	}
 
 	public RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
 		super();
@@ -103,5 +107,30 @@ public final class RemotePodMessageDTO {
 	public String toString() {
 		return "RemotePodMessageDTO [payload=" + payload + ", tag=" + tag + ", alias=" + alias + ", auth=" + auth
 				+ ", reply=" + reply + "]";
+	}
+
+	@Deprecated
+	public Object getPayload() {
+		return payload;
+	}
+
+	@Deprecated
+	public int getTag() {
+		return tag;
+	}
+
+	@Deprecated
+	public String getAlias() {
+		return alias;
+	}
+
+	@Deprecated
+	public Object getAuth() {
+		return auth;
+	}
+
+	@Deprecated
+	public boolean isReply() {
+		return reply;
 	}
 }
