@@ -20,9 +20,11 @@ import java.util.UUID;
 import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
-public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol,
-		String domain) implements ActorMessage<T> {
-
+public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) implements ActorMessage<T> {
+	public DefaultActorMessage {
+		// empty
+	}
+	
 	public DefaultActorMessage(T value, int tag, UUID source, UUID dest) {
 		this(value, tag, source, dest, null, null, null);
 	}

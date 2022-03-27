@@ -91,7 +91,7 @@
     		<plugin>
       			<groupId>org.apache.maven.plugins</groupId>
       			<artifactId>maven-javadoc-plugin</artifactId>
-      			<version>3.1.1</version>
+      			<version>3.3.1</version>
       			<executions>
         			<execution>
           				<id>attach-javadocs</id>
@@ -123,9 +123,8 @@
     		<plugin>
        			<groupId>org.apache.maven.plugins</groupId>
         		<artifactId>maven-assembly-plugin</artifactId>
-        		<version>3.2.0</version>
+        		<version>3.3.0</version>
         		<configuration>
-        			<skip>true</skip>
         			<descriptorRefs>
             			<descriptorRef>jar-with-dependencies</descriptorRef>
           			</descriptorRefs>
@@ -133,13 +132,9 @@
               		<appendAssemblyId>false</appendAssemblyId>
               		<archive>
             			<manifestEntries>
-                			<Multi-Release>true</Multi-Release>
                 			<Automatic-Module-Name>io.actor4j.core</Automatic-Module-Name>
             			</manifestEntries>
         			</archive>
-              		<includes>
-                		<include>META-INF/LICENSE</include>
-              		</includes>
             	</configuration>
         		<executions>
           			<execution>
@@ -160,7 +155,7 @@
 			<plugin>
     			<groupId>org.jacoco</groupId>
     			<artifactId>jacoco-maven-plugin</artifactId>
-    			<version>0.8.6</version>
+    			<version>0.8.7</version>
     			<executions>
         			<execution>
             			<id>prepare-agent</id>

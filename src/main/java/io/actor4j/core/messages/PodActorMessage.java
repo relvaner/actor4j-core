@@ -20,8 +20,10 @@ import java.util.UUID;
 import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
-public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol,
-	String domain)  implements ActorMessage<T> {
+public record PodActorMessage<T, U>(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain)  implements ActorMessage<T> {
+	public PodActorMessage {
+		// empty
+	}
 
 	public PodActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
 		this(value, tag.ordinal(), source, dest, domain);
