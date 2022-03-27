@@ -23,4 +23,8 @@ public record PodReplicationTuple(PodConfiguration podConfiguration, PodSystemCo
 	public PodReplicationTuple(PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration) {
 		this(podConfiguration, podSystemConfiguration, null);
 	}
+	
+	public boolean hasJarFile() {
+		return jarFileName!=null;
+	}
 }
