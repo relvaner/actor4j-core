@@ -15,57 +15,5 @@
  */
 package io.actor4j.core;
 
-public final class ActorServiceNode {
-	private final String name;
-	private final String uri;
-	
-	public ActorServiceNode(String name, String uri) {
-		super();
-		this.name = name;
-		this.uri = uri;
-	}
-	
-	public String name() {
-		return name;
-	}
-
-	public String uri() {
-		return uri;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((uri == null) ? 0 : uri.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ActorServiceNode other = (ActorServiceNode) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (uri == null) {
-			if (other.uri != null)
-				return false;
-		} else if (!uri.equals(other.uri))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "ActorServiceNode [name=" + name + ", uri=" + uri + "]";
-	}
+public record ActorServiceNode(String name, String uri) {
 }
