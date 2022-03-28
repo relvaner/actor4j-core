@@ -17,21 +17,10 @@ package io.actor4j.core.persistence;
 
 import java.util.UUID;
 
-import io.actor4j.core.utils.Shareable;
-
-public class ActorPersistenceObject implements Shareable {
-	public UUID persistenceId;
-	public long timeStamp;
-	public int index; // only used, if it has the same timestamp as the last one
-
-	public ActorPersistenceObject() {
-		super();
-		timeStamp = System.currentTimeMillis();
-	}
-
-	@Override
-	public String toString() {
-		return "ActorPersistenceObject [persistenceId=" + persistenceId + ", timeStamp=" + timeStamp + ", index="
-				+ index + "]";
-	}
+// timeStamp = System.currentTimeMillis();
+public record ActorPersistenceDTO<T>(
+	T value, 
+	UUID persistenceId, 
+	long timeStamp, 
+	int index /*only used, if it has the same timestamp as the last one*/) {
 }

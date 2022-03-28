@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.persistence.ActorPersistenceObject;
+import io.actor4j.core.persistence.ActorPersistenceDTO;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface ActorCell {
@@ -53,6 +53,6 @@ public interface ActorCell {
 	public void watch(UUID dest);
 	public void unwatch(UUID dest);
 	
-	public <E extends ActorPersistenceObject> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, @SuppressWarnings("unchecked") E... events);
-	public <S extends ActorPersistenceObject> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state);
+	public <E> void persist(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, @SuppressWarnings("unchecked") E... events);
+	public <S> void saveSnapshot(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, S state);
 }
