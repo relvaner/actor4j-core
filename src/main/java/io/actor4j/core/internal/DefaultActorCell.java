@@ -18,6 +18,7 @@ package io.actor4j.core.internal;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -54,11 +55,11 @@ import static io.actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorCell implements InternalActorCell {
 	static class PersistenceTuple {
-		protected final Consumer<ActorPersistenceDTO<?>> onSuccess;
+		protected final Consumer<Object> onSuccess;
 		protected final Consumer<Exception> onFailure;
-		protected final List<ActorPersistenceDTO<?>> objects;
+		protected final List<Object> objects;
 		
-		public PersistenceTuple(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, List<ActorPersistenceDTO<?>> objects) {
+		public PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
 			super();
 			this.onSuccess = onSuccess;
 			this.onFailure = onFailure;
@@ -427,24 +428,25 @@ public class DefaultActorCell implements InternalActorCell {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E> void persist(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, E... events) {	
+	public <E> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
 		if (system.getConfig().persistenceMode() && events!=null) {
-			List<ActorPersistenceDTO<?>> list = new ArrayList<>(events.length);
+			List<ActorPersistenceDTO<Object>> list = new ArrayList<>(events.length);
 			for (int i=0; i<events.length; i++)
 				list.add(new ActorPersistenceDTO<>(events[i], persistenceId(), System.currentTimeMillis(), 0));
-			PersistenceTuple tuple = new PersistenceTuple(onSuccess, onFailure, list);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, Arrays.asList(events));
 			system.getMessageDispatcher().postPersistence(ActorMessage.create(new ImmutableList<>(list), PersistenceServiceActor.PERSIST_EVENTS, id, null));
 			persistenceTuples.offer(tuple);
 			
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public <S> void saveSnapshot(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, S state) {
+	public <S> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
 		if (system.getConfig().persistenceMode() && state!=null) {
-			List<ActorPersistenceDTO<?>> list = new ArrayList<>();
+			List<ActorPersistenceDTO<Object>> list = new ArrayList<>();
 			list.add(new ActorPersistenceDTO<>(state, persistenceId(), System.currentTimeMillis(), 0));
-			PersistenceTuple tuple = new PersistenceTuple(onSuccess, onFailure, list);
+			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, Arrays.asList(state));
 			system.getMessageDispatcher().postPersistence(ActorMessage.create(list.get(0), PersistenceServiceActor.PERSIST_STATE, id, null));
 			persistenceTuples.offer(tuple);
 		}

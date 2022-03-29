@@ -19,8 +19,6 @@ import static io.actor4j.core.internal.protocols.ActorProtocolTag.INTERNAL_RECOV
 
 import java.util.function.Consumer;
 
-import io.actor4j.core.persistence.ActorPersistenceDTO;
-
 public abstract class PersistentActor<S, E> extends Actor implements PersistenceId {
 	public static final int RECOVER = INTERNAL_RECOVER;
 	
@@ -33,11 +31,11 @@ public abstract class PersistentActor<S, E> extends Actor implements Persistence
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void persist(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, E... events) {	
+	public void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, E... events) {	
 		cell.persist(onSuccess, onFailure, events);
 	}
 	
-	public void saveSnapshot(Consumer<ActorPersistenceDTO<?>> onSuccess, Consumer<Exception> onFailure, S state) {
+	public void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state) {
 		cell.saveSnapshot(onSuccess, onFailure, state);
 	}
 	

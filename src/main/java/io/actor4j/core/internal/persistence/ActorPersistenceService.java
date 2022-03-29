@@ -36,6 +36,7 @@ public class ActorPersistenceService {
 			.name("actor4j-persistence")
 			.parallelism(parallelism)
 			.parallelismFactor(parallelismFactor)
+			.horizontalPodAutoscalerSyncTime(Integer.MAX_VALUE) // TODO: disabled
 			.build();
 		service = ActorService.create(config);
 		
