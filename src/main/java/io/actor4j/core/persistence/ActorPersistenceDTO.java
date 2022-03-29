@@ -17,7 +17,6 @@ package io.actor4j.core.persistence;
 
 import java.util.UUID;
 
-// timeStamp = System.currentTimeMillis();
 public record ActorPersistenceDTO<T>(
 	T value, 
 	UUID persistenceId, 
