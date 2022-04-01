@@ -120,6 +120,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			system.getExecuterService().actorThreadPool.actorThreadPoolHandler.postInnerOuter(message, source, dest);
 	}
 	
+	@Deprecated
 	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
 		if (message==null)
 			throw new NullPointerException();

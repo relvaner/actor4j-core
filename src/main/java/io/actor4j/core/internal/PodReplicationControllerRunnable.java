@@ -25,7 +25,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	
 	protected final InternalActorSystem system;
 	
-	protected Runnable onTermination;
+//	protected final Runnable onTermination;
 	
 	public PodReplicationControllerRunnable(InternalActorSystem system) {
 		super();
@@ -43,8 +43,8 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 			public void run(UUID uuid) {
 				onRun();
 				
-				if (onTermination!=null)
-					onTermination.run();
+//				if (onTermination!=null)
+//					onTermination.run();
 			}
 			
 			@Override

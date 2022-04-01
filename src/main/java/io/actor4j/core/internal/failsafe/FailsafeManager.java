@@ -34,8 +34,13 @@ import java.util.UUID;
 
 //Adapted for actor4j
 public final class FailsafeManager {
-	protected ErrorHandler errorHandler;
-		
+	protected /*final*/ ErrorHandler errorHandler; //TODO: change to final, adapt test case
+	
+	public FailsafeManager(ErrorHandler errorHandler) {
+		super();
+		this.errorHandler = errorHandler;
+	}
+
 	public ErrorHandler getErrorHandler() {
 		return errorHandler;
 	}
@@ -43,7 +48,7 @@ public final class FailsafeManager {
 	public void setErrorHandler(ErrorHandler errorHandler) {
 		this.errorHandler = errorHandler;
 	}
-	
+
 	public synchronized void notifyErrorHandler(Throwable t, String message, UUID uuid) {
 		if (errorHandler!=null)
 			errorHandler.handle(t, message, uuid);

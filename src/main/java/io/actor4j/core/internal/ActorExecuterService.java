@@ -50,25 +50,25 @@ public class ActorExecuterService {
 	
 	protected final FailsafeManager failsafeManager;
 	
-	protected ActorThreadPool actorThreadPool;
-	protected Runnable onTermination;
+	protected /*quasi final*/ ActorThreadPool actorThreadPool;
+	protected /*quasi final*/ Runnable onTermination;
 	
 	protected final AtomicBoolean started;
 	
-	protected ActorTimerExecuterService globalTimerExecuterService;
-	protected ActorTimerExecuterService timerExecuterService;
-	protected ExecutorService clientExecuterService;
-	protected ExecutorService resourceExecuterService;
+	protected /*quasi final*/ ActorTimerExecuterService globalTimerExecuterService;
+	protected /*quasi final*/ ActorTimerExecuterService timerExecuterService;
+	protected /*quasi final*/ ExecutorService clientExecuterService;
+	protected /*quasi final*/ ExecutorService resourceExecuterService;
 	
-	protected ActorPersistenceService persistenceService;
+	protected /*quasi final*/ ActorPersistenceService persistenceService;
 	
-	protected ScheduledExecutorService podReplicationControllerExecuterService;
-	protected PodReplicationControllerRunnable podReplicationControllerRunnable;
+	protected /*quasi final*/ ScheduledExecutorService podReplicationControllerExecuterService;
+	protected /*quasi final*/ PodReplicationControllerRunnable podReplicationControllerRunnable;
 	
-	protected ScheduledExecutorService watchdogExecuterService;
-	protected WatchdogRunnable watchdogRunnable;
+	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
+	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
 	
-	protected int maxResourceThreads;
+	protected final int maxResourceThreads; // TODO: Add to config
 	
 	public ActorExecuterService(final InternalActorSystem system) {
 		super();
@@ -79,8 +79,7 @@ public class ActorExecuterService {
 		
 		maxResourceThreads = 200;
 		
-		failsafeManager = new FailsafeManager();
-		failsafeManager.setErrorHandler(new ErrorHandler() {
+		failsafeManager = new FailsafeManager(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				if (message!=null) {
@@ -228,6 +227,7 @@ public class ActorExecuterService {
 			};
 	}
 	
+	@Deprecated
 	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
 		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
 			try {

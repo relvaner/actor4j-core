@@ -54,21 +54,11 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorCell implements InternalActorCell {
-	static class PersistenceTuple {
-		protected final Consumer<Object> onSuccess;
-		protected final Consumer<Exception> onFailure;
-		protected final List<Object> objects;
-		
-		public PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
-			super();
-			this.onSuccess = onSuccess;
-			this.onFailure = onFailure;
-			this.objects = objects;
-		}
+	static record PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
 	}
 	
 	protected final InternalActorSystem system;
-	protected Actor actor;
+	protected /*quasi final*/ Actor actor;
 	
 	protected final UUID id;
 	
@@ -152,14 +142,14 @@ public class DefaultActorCell implements InternalActorCell {
 						recover(message);
 					else if (message.tag()==INTERNAL_PERSISTENCE_SUCCESS) {
 						PersistenceTuple tuple = persistenceTuples.poll();
-						if (tuple.onSuccess!=null)
-							for (int i=0; i<tuple.objects.size(); i++)
-								tuple.onSuccess.accept(tuple.objects.get(i));
+						if (tuple.onSuccess()!=null)
+							for (int i=0; i<tuple.objects().size(); i++)
+								tuple.onSuccess().accept(tuple.objects().get(i));
 					}
 					else if (message.tag()==INTERNAL_PERSISTENCE_FAILURE) {
 						PersistenceTuple tuple = persistenceTuples.poll();
-						if (tuple.onFailure!=null)
-							tuple.onFailure.accept((Exception)message.value());
+						if (tuple.onFailure()!=null)
+							tuple.onFailure().accept((Exception)message.value());
 					}
 					else
 						result = false;

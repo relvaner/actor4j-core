@@ -21,13 +21,13 @@ import java.util.concurrent.locks.LockSupport;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class DefaultActorThread extends ActorThread {
-	protected Queue<ActorMessage<?>> directiveQueue;
-	protected Queue<ActorMessage<?>> priorityQueue;
-	protected Queue<ActorMessage<?>> innerQueue;
-	protected Queue<ActorMessage<?>> outerQueueL2;
-	protected Queue<ActorMessage<?>> outerQueueL1;
-	protected Queue<ActorMessage<?>> serverQueueL2;
-	protected Queue<ActorMessage<?>> serverQueueL1;
+	protected /*quasi final*/ Queue<ActorMessage<?>> directiveQueue;
+	protected /*quasi final*/ Queue<ActorMessage<?>> priorityQueue;
+	protected /*quasi final*/ Queue<ActorMessage<?>> innerQueue;
+	protected /*quasi final*/ Queue<ActorMessage<?>> outerQueueL2;
+	protected /*quasi final*/ Queue<ActorMessage<?>> outerQueueL1;
+	protected /*quasi final*/ Queue<ActorMessage<?>> serverQueueL2;
+	protected /*quasi final*/ Queue<ActorMessage<?>> serverQueueL1;
 	
 	protected final Object blocker = new Object();
 	

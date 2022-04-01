@@ -27,24 +27,31 @@ import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ResourceActorCell extends DefaultActorCell {
-	protected boolean stateful;
+	protected final boolean stateful;
 	protected volatile boolean status; // volatile not necessary!
-	protected AtomicBoolean lock;
-	protected Queue<ActorMessage<?>> queue;
-	protected boolean bulk;
+	protected final AtomicBoolean lock;
+	protected final Queue<ActorMessage<?>> queue;
+	protected final boolean bulk;
 
 	public ResourceActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
-	}
-	
-	@Override
-	public void preStart() {
+		
 		if (actor instanceof ResourceActor && ((ResourceActor)actor).isStateful()) {
 			stateful = true;
 			lock   	 = new AtomicBoolean(false);
 			queue  	 = new ConcurrentLinkedQueue<>();
 			bulk     = ((ResourceActor)actor).isBulk();
 		}
+		else {
+			stateful = false;
+			lock = null;
+			queue = null;
+			bulk = false;
+		}
+	}
+	
+	@Override
+	public void preStart() {
 		super.preStart();
 	}
 	

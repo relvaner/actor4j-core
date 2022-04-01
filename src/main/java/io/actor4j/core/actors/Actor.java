@@ -36,7 +36,7 @@ import io.actor4j.core.utils.ActorFactory;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor implements ActorRef {
-	protected ActorCell cell;
+	protected /*quasi final*/ ActorCell cell;
 	
 	protected final String name;
 	
@@ -232,6 +232,7 @@ public abstract class Actor implements ActorRef {
 			send(message, dest);
 	}
 	
+	@Deprecated
 	public void sendViaPath(ActorMessage<?> message, String nodeName, String path) {
 		ActorServiceNode found = null;
 		for (ActorServiceNode node : cell.getSystem().getConfig().serviceNodes())
@@ -244,6 +245,7 @@ public abstract class Actor implements ActorRef {
 			sendViaPath(message, found, path);
 	}
 	
+	@Deprecated
 	public void sendViaPath(ActorMessage<?> message, ActorServiceNode node, String path) {
 		cell.send(message, node, path);
 	}

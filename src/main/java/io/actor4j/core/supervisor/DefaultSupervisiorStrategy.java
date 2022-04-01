@@ -21,8 +21,8 @@ import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.exceptions.ActorKilledException;
 
 public class DefaultSupervisiorStrategy extends OneForOneSupervisorStrategy {
-	public static int MAX_RETRIES = 3;
-	public static int WITHIN_TIME_RANGE = 2_000;
+	public static int MAX_RETRIES = 3; // TODO: Add to config
+	public static int WITHIN_TIME_RANGE = 2_000; // TODO: Add to config
 	
 	public DefaultSupervisiorStrategy() {
 		// super(-1, Integer.MAX_VALUE); // old default behaviour

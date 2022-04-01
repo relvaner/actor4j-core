@@ -33,8 +33,8 @@ import static io.actor4j.core.logging.ActorLogger.*;
 public class LoggerFactory {
 	protected static final Map<Level, String> LEVEL_AS_STRING;
 
-	protected Logger logger;
-	protected String name;
+	protected final Logger logger;
+	protected final String name;
 	
 	static {
 		LEVEL_AS_STRING = new HashMap<>();

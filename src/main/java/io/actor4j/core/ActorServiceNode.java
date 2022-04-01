@@ -15,5 +15,6 @@
  */
 package io.actor4j.core;
 
+@Deprecated
 public record ActorServiceNode(String name, String uri) {
 }

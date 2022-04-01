@@ -37,8 +37,8 @@ import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultWatchdogRunnable extends WatchdogRunnable {
 	protected final UUID mediator;
-	protected AtomicReferenceArray<Boolean> upArray;
-	protected AtomicInteger downCount;
+	protected final AtomicReferenceArray<Boolean> upArray;
+	protected final AtomicInteger downCount;
 	
 	public DefaultWatchdogRunnable(InternalActorSystem system, List<UUID> watchdogActors) {
 		super(system, watchdogActors);

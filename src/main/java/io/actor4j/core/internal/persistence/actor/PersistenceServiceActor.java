@@ -20,7 +20,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.drivers.PersistenceImpl;
 
 public class PersistenceServiceActor extends Actor {
-	protected PersistenceImpl impl;
+	protected final PersistenceImpl impl;
 	
 	public static final int PERSIST_EVENTS = 100;
 	public static final int PERSIST_STATE  = 101;
