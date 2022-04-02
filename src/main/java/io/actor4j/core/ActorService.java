@@ -17,12 +17,13 @@ package io.actor4j.core;
 
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
+
+import static io.actor4j.core.internal.ActorEnvironmentSettings.defaultFactory;
 
 public interface ActorService extends ActorSystem {
 	public static ActorService create() {
-		return create((c) -> new DefaultActorSystemImpl(c));
+		return create(defaultFactory);
 	}
 	
 	public static ActorSystem create(String name) {
@@ -34,7 +35,7 @@ public interface ActorService extends ActorSystem {
 	}
 	
 	public static ActorService create(ActorServiceConfig config) {
-		return create((c) -> new DefaultActorSystemImpl(c), config);
+		return create(defaultFactory, config);
 	}
 	
 	public static ActorService create(ActorSystemFactory factory, ActorServiceConfig config) {

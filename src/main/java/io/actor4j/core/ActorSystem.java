@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.DefaultActorSystemImpl;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
@@ -28,9 +27,11 @@ import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
+import static io.actor4j.core.internal.ActorEnvironmentSettings.defaultFactory;
+
 public interface ActorSystem {
 	public static ActorSystem create() {
-		return create((c) -> new DefaultActorSystemImpl(c));
+		return create(defaultFactory);
 	}
 	
 	public static ActorSystem create(String name) {
@@ -42,7 +43,7 @@ public interface ActorSystem {
 	}
 	
 	public static ActorSystem create(ActorSystemConfig config) {
-		return create((c) -> new DefaultActorSystemImpl(c), config);
+		return create(defaultFactory, config);
 	}
 	
 	public static ActorSystem create(ActorSystemFactory factory, ActorSystemConfig config) {

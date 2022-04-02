@@ -20,15 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.actor4j.core.function.TriConsumer;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 
+import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_callback;
+import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_request;
+
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
-	public static TriConsumer<String, Object, Integer> internal_server_callback;
-	public static TriConsumer<Object, UUID, String> internal_server_request;
-	
 	protected Map<UUID, RemotePodMessage> remoteMap;
 	protected Map<UUID, Object> requestMap;
 

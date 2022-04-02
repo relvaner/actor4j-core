@@ -25,8 +25,10 @@ import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
 import io.actor4j.core.utils.Pair;
+
+import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_callback;
+import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_request; // TODO:
 
 public abstract class RemoteFunctionPod extends ActorPod {
 	@Override
@@ -91,8 +93,8 @@ public abstract class RemoteFunctionPod extends ActorPod {
 	}
 	
 	protected void internal_callback(RemotePodMessage remoteMessage, Pair<Object, Integer> result) {
-		if (remoteMessage.remotePodMessageDTO().reply() && RemoteHandlerPodActor.internal_server_callback!=null)
-			RemoteHandlerPodActor.internal_server_callback.accept(remoteMessage.replyAddress(), result.a(), result.b());
+		if (remoteMessage.remotePodMessageDTO().reply() && internal_server_callback!=null)
+			internal_server_callback.accept(remoteMessage.replyAddress(), result.a(), result.b());
 	}
 	
 	public abstract PodRemoteFunction createFunction(ActorRef host, PodContext context);
