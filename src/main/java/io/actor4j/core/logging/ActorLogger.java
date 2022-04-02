@@ -25,8 +25,13 @@ public class ActorLogger {
 	public static final Level DEBUG = Level.CONFIG;
 	public static final Level TRACE = Level.FINE;
 	
-	public static Logger system_logger = LoggerFactory.create("SYSTEM", INFO);
-	public static Logger user_logger = LoggerFactory.create("USER", DEBUG);
+	protected static Logger system_logger;
+	protected static Logger user_logger;
+	
+	static {
+		system_logger = LoggerFactory.create("SYSTEM", INFO);
+		user_logger = LoggerFactory.create("USER", DEBUG);
+	}
 	
 	public static Logger systemLogger() {
 		return system_logger;
@@ -34,5 +39,13 @@ public class ActorLogger {
 	
 	public static Logger logger() {
 		return user_logger;
+	}
+	
+	public static void systemLogger(Logger logger) {
+		system_logger = logger;
+	}
+	
+	public static void logger(Logger logger) {
+		user_logger = logger;
 	}
 }
