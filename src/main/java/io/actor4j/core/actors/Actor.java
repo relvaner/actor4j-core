@@ -30,7 +30,7 @@ import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
+import io.actor4j.core.supervisor.DefaultSupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 import static io.actor4j.core.utils.ActorUtils.*;
@@ -332,7 +332,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public SupervisorStrategy supervisorStrategy() {
-		return new DefaultSupervisiorStrategy();
+		return new DefaultSupervisorStrategy(getSystem().getConfig().maxRetries(), getSystem().getConfig().withinTimeRange());
 	}
 	
 	/**

@@ -44,6 +44,10 @@ public class ActorSystemConfig {
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
 	
+	// Supervisor
+	private final int maxRetries;
+	private final long withinTimeRange;
+	
 	// Persistence
 	private final PersistenceDriver persistenceDriver;
 	private final boolean persistenceMode;
@@ -115,6 +119,14 @@ public class ActorSystemConfig {
 	
 	public long sleepTime() {
 		return sleepTime;
+	}
+	
+	public int maxRetries() {
+		return maxRetries;
+	}
+	
+	public long withinTimeRange() {
+		return withinTimeRange;
 	}
 	
 	public PersistenceDriver persistenceDriver() {
@@ -195,6 +207,10 @@ public class ActorSystemConfig {
 		protected ActorThreadMode threadMode;
 		protected long sleepTime;
 		
+		// Supervisor
+		protected int maxRetries;
+		protected long withinTimeRange;
+		
 		// Persistence
 		protected PersistenceDriver persistenceDriver;
 		protected boolean persistenceMode;
@@ -237,6 +253,10 @@ public class ActorSystemConfig {
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			
+			// Supervisor
+			maxRetries = 3;
+			withinTimeRange = 2_000;
+			
 			// Persistence
 			persistenceMode = false;
 
@@ -272,6 +292,8 @@ public class ActorSystemConfig {
 			this.load = config.load();
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
+			this.maxRetries = config.maxRetries();
+			this.withinTimeRange = config.withinTimeRange();
 			this.persistenceDriver = config.persistenceDriver();
 			this.persistenceMode = config.persistenceMode();
 			this.counterEnabled = config.counterEnabled().get();
@@ -380,6 +402,18 @@ public class ActorSystemConfig {
 			return this;
 		}
 		
+		public Builder<T> maxRetries(int maxRetries) {
+			this.maxRetries = maxRetries;
+
+			return this;
+		}
+		
+		public Builder<T> withinTimeRange(long withinTimeRange) {
+			this.withinTimeRange = withinTimeRange;
+
+			return this;
+		}
+		
 		public Builder<T> persistenceMode(PersistenceDriver persistenceDriver) {
 			this.persistenceDriver = persistenceDriver;
 			this.persistenceMode = true;
@@ -478,6 +512,8 @@ public class ActorSystemConfig {
 		this.load = builder.load;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
+		this.maxRetries = builder.maxRetries;
+		this.withinTimeRange = builder.withinTimeRange;
 		this.persistenceDriver = builder.persistenceDriver;
 		this.persistenceMode = builder.persistenceMode;
 		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);

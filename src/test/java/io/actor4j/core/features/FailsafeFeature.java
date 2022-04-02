@@ -30,7 +30,6 @@ import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.supervisor.DefaultSupervisiorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
 public class FailsafeFeature {
@@ -97,7 +96,7 @@ public class FailsafeFeature {
 	
 	@Test(timeout=5000)
 	public void test_n_times() {
-		final int maxRetries = DefaultSupervisiorStrategy.MAX_RETRIES;
+		final int maxRetries = system.getConfig().maxRetries();
 		
 		AtomicInteger counterPreRestart = new AtomicInteger(0);
 		AtomicInteger counterPostStop = new AtomicInteger(0);
