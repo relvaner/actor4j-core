@@ -67,18 +67,14 @@ public class ActorExecuterService {
 	
 	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
 	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
-	
-	protected final int maxResourceThreads; // TODO: Add to config
-	
+
 	public ActorExecuterService(final InternalActorSystem system) {
 		super();
 		
 		this.system = system;
 		
 		started = new AtomicBoolean();
-		
-		maxResourceThreads = 200;
-		
+
 		failsafeManager = new FailsafeManager(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
@@ -150,7 +146,7 @@ public class ActorExecuterService {
 		globalTimerExecuterService = new ActorTimerExecuterService(system, 1, "actor4j-global-timer-thread");
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, maxResourceThreads, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
 		if (system.getConfig().clientMode())
 			clientExecuterService = Executors.newSingleThreadExecutor();
 		

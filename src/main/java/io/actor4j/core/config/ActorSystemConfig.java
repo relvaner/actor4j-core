@@ -44,6 +44,8 @@ public class ActorSystemConfig {
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
 	
+	private final int maxResourceThreads;
+	
 	// Supervisor
 	private final int maxRetries;
 	private final long withinTimeRange;
@@ -119,6 +121,10 @@ public class ActorSystemConfig {
 	
 	public long sleepTime() {
 		return sleepTime;
+	}
+	
+	public int maxResourceThreads() {
+		return maxResourceThreads;
 	}
 	
 	public int maxRetries() {
@@ -207,6 +213,8 @@ public class ActorSystemConfig {
 		protected ActorThreadMode threadMode;
 		protected long sleepTime;
 		
+		protected int maxResourceThreads;
+		
 		// Supervisor
 		protected int maxRetries;
 		protected long withinTimeRange;
@@ -253,6 +261,8 @@ public class ActorSystemConfig {
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			
+			maxResourceThreads = 200;
+			
 			// Supervisor
 			maxRetries = 3;
 			withinTimeRange = 2_000;
@@ -292,6 +302,7 @@ public class ActorSystemConfig {
 			this.load = config.load();
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
+			this.maxResourceThreads = config.maxResourceThreads();
 			this.maxRetries = config.maxRetries();
 			this.withinTimeRange = config.withinTimeRange();
 			this.persistenceDriver = config.persistenceDriver();
@@ -398,6 +409,12 @@ public class ActorSystemConfig {
 
 		public Builder<T> yieldMode() {
 			threadMode = ActorThreadMode.YIELD;
+
+			return this;
+		}
+		
+		public Builder<T> maxResourceThreads(int maxResourceThreads) {
+			this.maxResourceThreads = maxResourceThreads;
 
 			return this;
 		}
@@ -512,6 +529,7 @@ public class ActorSystemConfig {
 		this.load = builder.load;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
+		this.maxResourceThreads = builder.maxResourceThreads;
 		this.maxRetries = builder.maxRetries;
 		this.withinTimeRange = builder.withinTimeRange;
 		this.persistenceDriver = builder.persistenceDriver;
