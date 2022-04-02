@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@ package io.actor4j.core.utils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorMessageMatcherHandler {
-	protected final Map<UUID, Pair<UUID, ActorMessageMatcher>> handlerMap;
+	protected final Map<UUID, Pair<ActorMessage<?>, ActorMessageMatcher>> handlerMap;
 
 	public ActorMessageMatcherHandler() {
 		super();
@@ -34,14 +35,14 @@ public class ActorMessageMatcherHandler {
 		handlerMap.clear();
 	}
 	
-	public void define(UUID interaction, UUID source, ActorMessageMatcher matcher) {
-		handlerMap.put(interaction, Pair.of(source, matcher));
+	public void define(UUID interaction, ActorMessage<?> message, ActorMessageMatcher matcher) {
+		handlerMap.put(interaction, Pair.of(message, matcher));
 	}
 
 	public boolean match(ActorMessage<?> message) {
 		boolean result = false;
 		
-		Pair<UUID, ActorMessageMatcher> pair = handlerMap.get(message.interaction());
+		Pair<ActorMessage<?>, ActorMessageMatcher> pair = handlerMap.get(message.interaction());
 		if (pair!=null && pair.b()!=null) {
 			result = pair.b().apply(message);
 			if (result)
@@ -51,9 +52,39 @@ public class ActorMessageMatcherHandler {
 		return result;
 	}
 	
-	public UUID source(UUID interaction) {
-		Pair<UUID, ActorMessageMatcher> pair = handlerMap.get(interaction);
+	public ActorMessage<?> origin(UUID interaction) {
+		Pair<ActorMessage<?>, ActorMessageMatcher> pair = handlerMap.get(interaction);
 		
 		return pair!=null && pair.a()!=null ? pair.a() : null;
+	}
+	
+	public Optional<Integer> tag(UUID interaction) {
+		ActorMessage<?> message = origin(interaction);
+
+		return message!=null ? Optional.of(message.tag()) : Optional.empty();
+	}
+	
+	public Optional<UUID> source(UUID interaction) {
+		ActorMessage<?> message = origin(interaction);
+
+		return message!=null ? Optional.of(message.source()) : Optional.empty();
+	}
+	
+	public Optional<UUID> dest(UUID interaction) {
+		ActorMessage<?> message = origin(interaction);
+
+		return message!=null ? Optional.of(message.dest()) : Optional.empty();
+	}
+	
+	public Optional<String> protocol(UUID interaction) {
+		ActorMessage<?> message = origin(interaction);
+
+		return message!=null ? Optional.of(message.protocol()) : Optional.empty();
+	}
+	
+	public Optional<String> domain(UUID interaction) {
+		ActorMessage<?> message = origin(interaction);
+
+		return message!=null ? Optional.of(message.domain()) : Optional.empty();
 	}
 }

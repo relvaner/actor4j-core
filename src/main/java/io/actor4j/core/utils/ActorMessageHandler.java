@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorMessageHandler<T> {
-	protected final Map<UUID, BiConsumer<T, Integer>> handlerMap;
+	protected final Map<UUID, BiConsumer<T, ActorMessage<?>>> handlerMap;
 	
 	protected final Class<T> clazz;
 	protected final Predicate<ActorMessage<?>> predicate;
@@ -45,7 +45,7 @@ public class ActorMessageHandler<T> {
 		handlerMap.clear();
 	}
 	
-	public void define(UUID interaction, BiConsumer<T, Integer> action) {
+	public void define(UUID interaction, BiConsumer<T, ActorMessage<?>> action) {
 		handlerMap.put(interaction, action);
 	}
 
@@ -53,12 +53,12 @@ public class ActorMessageHandler<T> {
 	public boolean match(ActorMessage<?> message) {
 		boolean result = true;
 		
-		BiConsumer<T, Integer> handler = handlerMap.get(message.interaction());
+		BiConsumer<T, ActorMessage<?>> handler = handlerMap.get(message.interaction());
 		if (handler!=null && message.value()!=null && message.value().getClass().equals(clazz)) {
 			if (predicate!=null)
 				result = predicate.test(message);
 			if (result) {
-				handler.accept((T)message.value(), message.tag());
+				handler.accept((T)message.value(), message);
 				handlerMap.remove(message.interaction());
 			}
 		}
@@ -72,14 +72,14 @@ public class ActorMessageHandler<T> {
 	public boolean matchOfNullable(ActorMessage<?> message) {
 		boolean result = true;
 		
-		BiConsumer<T, Integer> handler = handlerMap.get(message.interaction());
+		BiConsumer<T, ActorMessage<?>> handler = handlerMap.get(message.interaction());
 		if (handler!=null) {
 			if (message.value()!=null) {
 				if (message.value().getClass().equals(clazz)) {
 					if (predicate!=null)
 						result = predicate.test(message);
 					if (result) {
-						handler.accept((T)message.value(), message.tag());
+						handler.accept((T)message.value(), message);
 						handlerMap.remove(message.interaction());
 					}
 				}
@@ -90,7 +90,7 @@ public class ActorMessageHandler<T> {
 				if (predicate!=null)
 					result = predicate.test(message);
 				if (result) {
-					handler.accept(null, message.tag());
+					handler.accept(null, message);
 					handlerMap.remove(message.interaction());
 				}
 			}

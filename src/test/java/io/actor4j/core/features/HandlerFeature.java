@@ -32,7 +32,7 @@ public class HandlerFeature {
 	@Test
 	public void test_match() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class);
-		BiConsumer<String, Integer> action = (value, tag) -> {
+		BiConsumer<String, ActorMessage<?>> action = (value, msg) -> {
 			if (value.equals("Hello World!"))
 				postcondition = true;
 		};
@@ -56,7 +56,7 @@ public class HandlerFeature {
 	@Test
 	public void test_predicate() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class, (msg) -> msg.domain().equals("domainA"));
-		BiConsumer<String, Integer> action = (value, tag) -> {
+		BiConsumer<String, ActorMessage<?>> action = (value, msg) -> {
 			if (value.equals("Hello World!"))
 				postcondition = true;
 		};
@@ -80,7 +80,7 @@ public class HandlerFeature {
 	@Test
 	public void test_matchOfNullable() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class);
-		BiConsumer<String, Integer> action = (value, tag) -> {
+		BiConsumer<String, ActorMessage<?>> action = (value, msg) -> {
 			if (value!=null) {
 				if (value.equals("Hello World!"))
 					postcondition = true;
