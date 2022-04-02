@@ -18,18 +18,18 @@ package io.actor4j.core.utils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorMessageHandler<T> {
-	protected Map<UUID, Consumer<T>> handlerMap;
+	protected final Map<UUID, BiConsumer<T, Integer>> handlerMap;
 	
-	protected Class<?> clazz;
-	protected Predicate<ActorMessage<?>> predicate;
+	protected final Class<T> clazz;
+	protected final Predicate<ActorMessage<?>> predicate;
 	
-	public ActorMessageHandler(Class<?> clazz, Predicate<ActorMessage<?>> predicate) {
+	public ActorMessageHandler(Class<T> clazz, Predicate<ActorMessage<?>> predicate) {
 		super();
 		this.clazz = clazz;
 		this.predicate = predicate;
@@ -37,11 +37,15 @@ public class ActorMessageHandler<T> {
 		handlerMap = new LinkedHashMap<>();
 	}
 	
-	public ActorMessageHandler(Class<?> clazz) {
+	public ActorMessageHandler(Class<T> clazz) {
 		this(clazz, null);
 	}
 	
-	public void define(UUID interaction, Consumer<T> action) {
+	public void clear() {
+		handlerMap.clear();
+	}
+	
+	public void define(UUID interaction, BiConsumer<T, Integer> action) {
 		handlerMap.put(interaction, action);
 	}
 
@@ -49,12 +53,12 @@ public class ActorMessageHandler<T> {
 	public boolean match(ActorMessage<?> message) {
 		boolean result = true;
 		
-		Consumer<T> handler = handlerMap.get(message.interaction());
+		BiConsumer<T, Integer> handler = handlerMap.get(message.interaction());
 		if (handler!=null && message.value()!=null && message.value().getClass().equals(clazz)) {
 			if (predicate!=null)
 				result = predicate.test(message);
 			if (result) {
-				handler.accept((T)message.value());
+				handler.accept((T)message.value(), message.tag());
 				handlerMap.remove(message.interaction());
 			}
 		}
@@ -68,14 +72,14 @@ public class ActorMessageHandler<T> {
 	public boolean matchOfNullable(ActorMessage<?> message) {
 		boolean result = true;
 		
-		Consumer<T> handler = handlerMap.get(message.interaction());
+		BiConsumer<T, Integer> handler = handlerMap.get(message.interaction());
 		if (handler!=null) {
 			if (message.value()!=null) {
 				if (message.value().getClass().equals(clazz)) {
 					if (predicate!=null)
 						result = predicate.test(message);
 					if (result) {
-						handler.accept((T)message.value());
+						handler.accept((T)message.value(), message.tag());
 						handlerMap.remove(message.interaction());
 					}
 				}
@@ -86,7 +90,7 @@ public class ActorMessageHandler<T> {
 				if (predicate!=null)
 					result = predicate.test(message);
 				if (result) {
-					handler.accept(null);
+					handler.accept(null, message.tag());
 					handlerMap.remove(message.interaction());
 				}
 			}

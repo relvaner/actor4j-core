@@ -18,7 +18,7 @@ package io.actor4j.core.features;
 import static org.junit.Assert.*;
 
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class HandlerFeature {
 	@Test
 	public void test_match() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class);
-		Consumer<String> action = (value) -> {
+		BiConsumer<String, Integer> action = (value, tag) -> {
 			if (value.equals("Hello World!"))
 				postcondition = true;
 		};
@@ -56,7 +56,7 @@ public class HandlerFeature {
 	@Test
 	public void test_predicate() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class, (msg) -> msg.domain().equals("domainA"));
-		Consumer<String> action = (value) -> {
+		BiConsumer<String, Integer> action = (value, tag) -> {
 			if (value.equals("Hello World!"))
 				postcondition = true;
 		};
@@ -80,7 +80,7 @@ public class HandlerFeature {
 	@Test
 	public void test_matchOfNullable() {
 		ActorMessageHandler<String> handler = new ActorMessageHandler<>(String.class);
-		Consumer<String> action = (value) -> {
+		BiConsumer<String, Integer> action = (value, tag) -> {
 			if (value!=null) {
 				if (value.equals("Hello World!"))
 					postcondition = true;
