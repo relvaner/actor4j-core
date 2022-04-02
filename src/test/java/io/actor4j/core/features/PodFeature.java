@@ -33,7 +33,7 @@ import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequest;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteFunctionPod;
 import io.actor4j.core.features.pod.ExampleShardingWithActorPod;
-import io.actor4j.core.internal.ActorEnvironmentSettings;
+import io.actor4j.core.internal.ActorGlobalSettings;
 import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
@@ -246,7 +246,7 @@ public class PodFeature {
 		});
 		system.start();
 		
-		ActorEnvironmentSettings.internal_server_request = (msg, interaction, domain) -> {
+		ActorGlobalSettings.internal_server_request = (msg, interaction, domain) -> {
 			if (interaction!=null) {
 				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client.toString(), null);
 				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
@@ -372,7 +372,7 @@ public class PodFeature {
 		});
 		system.start();
 		
-		ActorEnvironmentSettings.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), UUID.fromString(replyAddress)));
+		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), UUID.fromString(replyAddress)));
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");

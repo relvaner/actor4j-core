@@ -20,7 +20,7 @@ import java.util.UUID;
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.function.TriConsumer;
 
-public class ActorEnvironmentSettings {
+public class ActorGlobalSettings {
 	// @See: ActorSystem, ActorService
 	public static ActorSystemFactory defaultFactory = (c) -> new DefaultActorSystemImpl(c);
 	

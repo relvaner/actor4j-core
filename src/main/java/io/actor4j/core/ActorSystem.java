@@ -27,7 +27,7 @@ import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
-import static io.actor4j.core.internal.ActorEnvironmentSettings.defaultFactory;
+import static io.actor4j.core.internal.ActorGlobalSettings.defaultFactory;
 
 public interface ActorSystem {
 	public static ActorSystem create() {

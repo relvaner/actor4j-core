@@ -24,8 +24,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 
-import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_callback;
-import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_request;
+import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_callback;
+import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_request;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;

@@ -27,8 +27,8 @@ import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.Pair;
 
-import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_callback;
-import static io.actor4j.core.internal.ActorEnvironmentSettings.internal_server_request; // TODO:
+import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_callback;
+import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_request; // TODO:
 
 public abstract class RemoteFunctionPod extends ActorPod {
 	@Override
