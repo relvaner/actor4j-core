@@ -38,6 +38,14 @@ public class ImmutableMap<K, V> implements Shareable {
 	public Map<K, V> get() {
 		return map;
 	}
+	
+	public static <K, V> ImmutableMap<K, V> of() {
+		return new ImmutableMap<>();
+	}
+	
+	public static <K, V> ImmutableMap<K, V> of(Map<K, V> map) {
+		return new ImmutableMap<>(map);
+	}
 
 	@Override
 	public String toString() {

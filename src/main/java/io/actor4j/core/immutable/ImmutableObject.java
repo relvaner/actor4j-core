@@ -26,7 +26,7 @@ public class ImmutableObject<T> implements Shareable {
 		super();
 		
 		if (value!=null)
-			if (!(ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Shareable || value instanceof DeepCopyable || value instanceof Exception))
+			if (!(ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable || value instanceof DeepCopyable || value instanceof Exception))
 				throw new IllegalArgumentException();
 		
 		this.value = value;
@@ -34,6 +34,10 @@ public class ImmutableObject<T> implements Shareable {
 	
 	public T get() {
 		return value;
+	}
+	
+	public static <T> ImmutableObject<T> of(T value) {
+		return new ImmutableObject<>(value);
 	}
 
 	@Override

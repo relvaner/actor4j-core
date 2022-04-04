@@ -38,6 +38,14 @@ public class ImmutableSet<T> implements Shareable {
 	public Set<T> get() {
 		return set;
 	}
+	
+	public static <T> ImmutableSet<T> of() {
+		return new ImmutableSet<>();
+	}
+	
+	public static <T> ImmutableSet<T> of(Set<T> set) {
+		return new ImmutableSet<>(set);
+	}
 
 	@Override
 	public String toString() {
