@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@
 package io.actor4j.core.pods.actors;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -29,23 +31,23 @@ import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_reque
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;
-	protected Map<UUID, Object> requestMap;
+	protected Set<UUID> requestSet;
 
 	public RemoteHandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(alias, groupId, context);
 		
 		this.remoteMap = new HashMap<>();
-		this.requestMap = new HashMap<>();
+		this.requestSet = new HashSet<>();
 	}
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
 		RemotePodMessage remoteMessage = null;
-		Object requestMessage = null;
+		boolean requestReply = false;
 		if (message.interaction()!=null) {
 			remoteMessage = remoteMap.get(message.interaction());
 			if (remoteMessage==null)
-				requestMessage = requestMap.get(message.interaction());
+				requestReply = requestSet.contains(message.interaction());
 		}
 			
 		if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
@@ -59,8 +61,8 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 				handle((RemotePodMessage)message.value(), interaction);
 			}
 		}
-		else if (requestMessage!=null && message.value() instanceof RemotePodMessage) {
-			requestMap.remove(message.interaction());
+		else if (requestReply && message.value() instanceof RemotePodMessage) {
+			requestSet.remove(message.interaction());
 			handle((RemotePodMessage)message.value(), message.interaction());
 		}
 		else
@@ -77,22 +79,30 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	public abstract Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage);
 	
 	public void request(Object message) {
-		request(message, null);
+		request(message, 0, null);
 	}
 	
-	public boolean request(Object message, UUID interaction) {
+	public void request(Object message, int tag) {
+		request(message, tag, null);
+	}
+	
+	public void request(Object message, UUID interaction) {
+		request(message, 0, interaction);
+	}
+	
+	public boolean request(Object message, int tag, UUID interaction) {
 		boolean result = false;
 		
 		if (internal_server_request!=null) {
-			if (interaction!=null) {
-				if (remoteMap.get(interaction)==null && requestMap.get(interaction)==null) {
-					requestMap.put(interaction, message); 
-					internal_server_request.accept(message, interaction, context.domain());
+			if (interaction!=null) { // with reply
+				if (remoteMap.get(interaction)==null && !requestSet.contains(interaction)) {
+					requestSet.add(interaction); 
+					internal_server_request.accept(message, tag, interaction, context.domain());
 					result = true;
 				}
 			}
 			else {
-				internal_server_request.accept(message, null, null);
+				internal_server_request.accept(message, tag, null, context.domain());
 				result = true;
 			}
 		}

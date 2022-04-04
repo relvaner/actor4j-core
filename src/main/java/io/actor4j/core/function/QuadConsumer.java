@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.function;
 
-import java.util.UUID;
+import java.util.Objects;
 
-import io.actor4j.core.ActorSystemFactory;
-import io.actor4j.core.function.QuadConsumer;
-import io.actor4j.core.function.TriConsumer;
+@FunctionalInterface
+public interface QuadConsumer<T, U, V, W> {
+	void accept(T t, U u, V v, W w);
 
-public class ActorGlobalSettings {
-	// @See: ActorSystem, ActorService
-	public static ActorSystemFactory defaultFactory = (c) -> new DefaultActorSystemImpl(c);
-	
-	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static TriConsumer<String, Object, Integer> internal_server_callback;
-	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static QuadConsumer<Object, Integer, UUID, String> internal_server_request;
+    default QuadConsumer<T, U, V, W> andThen(QuadConsumer<? super T, ? super U, ? super V, ? super W> after) {
+        Objects.requireNonNull(after);
+
+        return (t, u, v, w) -> {
+            accept(t, u, v, w);
+            after.accept(t, u, v, w);
+        };
+    }
 }
