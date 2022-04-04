@@ -38,6 +38,14 @@ public class ImmutableList<T> implements Shareable {
 	public List<T> get() {
 		return list;
 	}
+	
+	public static <T> ImmutableList<T> of() {
+		return new ImmutableList<>();
+	}
+	
+	public static <T> ImmutableList<T> of(List<T> list) {
+		return new ImmutableList<>(list);
+	}
 
 	@Override
 	public String toString() {
