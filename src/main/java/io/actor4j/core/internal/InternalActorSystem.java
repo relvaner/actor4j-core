@@ -53,7 +53,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public ActorExecuterService getExecuterService(); // TODO: make abstract/interface
 	public ActorThreadFactory getActorThreadFactory();
-	public ActorStrategyOnFailure getActorStrategyOnFailure(); // TODO: make abstract/interface
+	public ActorStrategyOnFailure getActorStrategyOnFailure();
 	
 	public InternalActorCell generateCell(Actor actor);
 	public InternalActorCell generateCell(Class<? extends Actor> clazz);

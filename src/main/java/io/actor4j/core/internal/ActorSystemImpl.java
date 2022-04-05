@@ -117,7 +117,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executerService = new ActorExecuterService(this);
 		
-		actorStrategyOnFailure = new ActorStrategyOnFailure(this);
+		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
