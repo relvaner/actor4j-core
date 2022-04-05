@@ -78,7 +78,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	protected final AtomicBoolean messagingEnabled;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
-	protected final ActorExecuterService executerService;
+	protected final DefaultActorExecuterService executerService;
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
@@ -115,7 +115,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		messagingEnabled = new AtomicBoolean();
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
-		executerService = new ActorExecuterService(this);
+		executerService = new DefaultActorExecuterService(this);
 		
 		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		
@@ -362,7 +362,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	}
 	
 	@Override
-	public ActorExecuterService getExecuterService() {
+	public DefaultActorExecuterService getExecuterService() {
 		return executerService;
 	}
 	

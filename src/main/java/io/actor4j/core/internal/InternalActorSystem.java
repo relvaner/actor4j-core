@@ -51,7 +51,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorMessageDispatcher getMessageDispatcher();
 	public Queue<ActorMessage<?>> getBufferQueue();
 	
-	public ActorExecuterService getExecuterService(); // TODO: make abstract/interface
+	public DefaultActorExecuterService getExecuterService(); // TODO: make abstract/interface
 	public ActorThreadFactory getActorThreadFactory();
 	public ActorStrategyOnFailure getActorStrategyOnFailure();
 	
