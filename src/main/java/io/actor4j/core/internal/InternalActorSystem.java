@@ -34,7 +34,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public UUID PSEUDO_ID();
 	
 	public DIContainer<UUID> getContainer();
-	public PodReplicationController getPodReplicationController(); // TODO: make abstract/interface
+	public PodReplicationController getPodReplicationController();
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();
 	public WatchdogRunnableFactory getWatchdogRunnableFactory();
 	

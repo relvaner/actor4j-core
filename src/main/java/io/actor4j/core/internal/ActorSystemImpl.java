@@ -43,6 +43,7 @@ import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
+import io.actor4j.core.internal.pods.DefaultPodReplicationController;
 import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
@@ -98,7 +99,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			this.config = ActorSystemConfig.create();
 		
 		container = DefaultDIContainer.create();
-		podReplicationController = new PodReplicationController(this);
+		podReplicationController = new DefaultPodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
 		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);
 		
