@@ -219,8 +219,8 @@ public class ActorThreadPoolHandler {
 	
 	public void postPersistence(ActorMessage<?> message) {
 		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
-		UUID dest = system.getExecuterService().persistenceService.getService().getActorFromAlias(persistenceMap.get(id_source));
-		system.getExecuterService().persistenceService.getService().send(message.copy(dest));
+		UUID dest = system.getExecuterService().getPersistenceService().getService().getActorFromAlias(persistenceMap.get(id_source));
+		system.getExecuterService().getPersistenceService().getService().send(message.copy(dest));
 	}
 	
 	public void registerCell(InternalActorCell cell) {

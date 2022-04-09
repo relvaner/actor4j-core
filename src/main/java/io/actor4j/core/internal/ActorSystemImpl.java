@@ -78,7 +78,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	protected final AtomicBoolean messagingEnabled;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
-	protected final DefaultActorExecuterService executerService;
+	protected final ActorExecuterService executerService;
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
@@ -362,7 +362,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	}
 	
 	@Override
-	public DefaultActorExecuterService getExecuterService() {
+	public ActorExecuterService getExecuterService() {
 		return executerService;
 	}
 	
@@ -724,7 +724,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
 			else
-				executerService.globalTimerExecuterService.schedule(new Runnable() {
+				((ActorTimerExecuterService)executerService.globalTimer()).schedule(new Runnable() {
 					@Override
 					public void run() {
 						if (cell.isActive()) {

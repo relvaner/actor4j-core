@@ -123,7 +123,7 @@ public class PseudoActorCell extends DefaultActorCell {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecuterService().failsafeManager.notifyErrorHandler(e, "pseudo", id);
+			system.getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", id);
 			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}

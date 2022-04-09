@@ -85,7 +85,7 @@ public abstract class ActorThread extends Thread {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecuterService().failsafeManager.notifyErrorHandler(e, "actor", cell.getId());
+			system.getExecuterService().getFailsafeManager().notifyErrorHandler(e, "actor", cell.getId());
 			system.getActorStrategyOnFailure().handle(cell, e);
 		}	
 	}
@@ -125,7 +125,7 @@ public abstract class ActorThread extends Thread {
 		
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().failsafeManager, new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().getFailsafeManager(), new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

@@ -40,7 +40,7 @@ public abstract class WatchdogRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().failsafeManager, "watchdog", new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().getFailsafeManager(), "watchdog", new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

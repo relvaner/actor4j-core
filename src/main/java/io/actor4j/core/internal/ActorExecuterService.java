@@ -15,6 +15,36 @@
  */
 package io.actor4j.core.internal;
 
-public interface ActorExecuterService {
+import java.util.List;
+import java.util.Set;
 
+import io.actor4j.core.ActorServiceNode;
+import io.actor4j.core.internal.failsafe.FailsafeManager;
+import io.actor4j.core.internal.persistence.ActorPersistenceService;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.utils.ActorTimer;
+
+public interface ActorExecuterService {
+	public FailsafeManager getFailsafeManager(); // TODO: abstract/interface
+	public ActorThreadPool getActorThreadPool(); // TODO: abstract/interface
+	public ActorPersistenceService getPersistenceService(); // TODO: abstract/interface
+	
+	public boolean isStarted();
+	
+	public ActorTimer timer();
+	public ActorTimer globalTimer();
+	
+	public void run(Runnable onStartup);
+	public void start(Runnable onStartup, Runnable onTermination);
+	public void shutdown(boolean await);
+	
+	public void clientViaAlias(final ActorMessage<?> message, final String alias);
+	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path);
+	public void resource(final ActorMessage<?> message);
+	
+	public long getCount();
+	public List<Long> getCounts();
+	
+	public Set<Long> nonResponsiveThreads();
+	public int nonResponsiveThreadsCount();
 }

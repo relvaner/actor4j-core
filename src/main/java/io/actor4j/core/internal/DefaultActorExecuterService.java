@@ -125,18 +125,27 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 		started.set(false);
 	}
 	
+	@Override
 	public FailsafeManager getFailsafeManager() {
 		return failsafeManager;
 	}
 	
+	@Override
 	public ActorThreadPool getActorThreadPool() {
 		return actorThreadPool;
 	}
+	
+	@Override
+	public ActorPersistenceService getPersistenceService() {
+		return persistenceService;
+	}
 
+	@Override
 	public void run(Runnable onStartup) {
 		start(onStartup, null);
 	}
 	
+	@Override
 	public void start(Runnable onStartup, Runnable onTermination) {
 		if (system.getCells().size()==0)
 			return;
@@ -191,18 +200,22 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
+	@Override
 	public boolean isStarted() {
 		return started.get();
 	}
 
+	@Override
 	public ActorTimer timer() {
 		return timerExecuterService;
 	}
 	
+	@Override
 	public ActorTimer globalTimer() {
 		return globalTimerExecuterService;
 	}
 
+	@Override
 	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
 		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
 			try {
@@ -219,11 +232,12 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 				});
 			}
 			catch (RejectedExecutionException e) {
-				system.getExecuterService().failsafeManager.notifyErrorHandler(e, "executer_client", null);
+				failsafeManager.notifyErrorHandler(e, "executer_client", null);
 			};
 	}
 	
 	@Deprecated
+	@Override
 	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
 		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
 			try {
@@ -240,10 +254,11 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 				});
 			}
 			catch (RejectedExecutionException e) {
-				system.getExecuterService().failsafeManager.notifyErrorHandler(e, "executer_client", null);
+				failsafeManager.notifyErrorHandler(e, "executer_client", null);
 			};
 	}
 	
+	@Override
 	public void resource(final ActorMessage<?> message) {
 		final ResourceActorCell cell = (ResourceActorCell)system.getCells().get(message.dest());
 		if (cell!=null && cell.beforeRun(message)) {
@@ -262,11 +277,12 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 					});
 				}
 				catch (RejectedExecutionException e) {
-					system.getExecuterService().failsafeManager.notifyErrorHandler(e, "executer_resource", cell.getId());
+					failsafeManager.notifyErrorHandler(e, "executer_resource", cell.getId());
 				}
 		}
 	}
 	
+	@Override
 	public void shutdown(boolean await) {
 		watchdogExecuterService.shutdown();
 		podReplicationControllerExecuterService.shutdown();
@@ -286,22 +302,26 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 		reset();
 	}
 	
+	@Override
 	public long getCount() {
 		return actorThreadPool!=null ? actorThreadPool.getCount() : 0;
 	}
 	
+	@Override
 	public List<Long> getCounts() {
 		return actorThreadPool!=null ? actorThreadPool.getCounts() : new ArrayList<>();
 	}
-	
+
 	public boolean isResponsiveThread(int index) {
 		return watchdogRunnable!=null ? watchdogRunnable.isResponsiveThread(index) : true;
 	}
 	
+	@Override
 	public Set<Long> nonResponsiveThreads() {
 		return watchdogRunnable!=null ? watchdogRunnable.nonResponsiveThreads() : new HashSet<>();
 	}
 	
+	@Override
 	public int nonResponsiveThreadsCount() {	
 		return watchdogRunnable!=null ? watchdogRunnable.nonResponsiveThreadsCount() : 0;
 	}

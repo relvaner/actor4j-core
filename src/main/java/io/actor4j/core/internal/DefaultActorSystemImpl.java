@@ -32,10 +32,10 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
-		return executerService.actorThreadPool.getWorkerInnerQueueSizes();
+		return executerService.getActorThreadPool().getWorkerInnerQueueSizes();
 	}
 	
 	public List<Integer> getWorkerOuterQueueSizes() {
-		return executerService.actorThreadPool.getWorkerOuterQueueSizes();
+		return executerService.getActorThreadPool().getWorkerOuterQueueSizes();
 	}
 }
