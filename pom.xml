@@ -19,7 +19,7 @@
   	<groupId>io.actor4j</groupId>
   	<artifactId>actor4j-core</artifactId>
   	<version>1.2.0</version>
-  	<packaging>jar</packaging>
+  	<packaging>pom</packaging>
   	
 	<name>actor4j-core</name>
 	<description>Actor4j is an actor-oriented Java framework.</description>
@@ -63,15 +63,6 @@
   		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	    
-	<dependencies>	
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
-			<scope>test</scope>
-		</dependency>
-    </dependencies>
     
     <build>
 		<plugins>
@@ -167,4 +158,9 @@
 			</plugin>
     	</plugins>
     </build>
+    
+    <modules>
+    	<module>actor4j-core-sdk</module>
+    	<module>actor4j-core-runtime</module>
+    </modules>
 </project>
