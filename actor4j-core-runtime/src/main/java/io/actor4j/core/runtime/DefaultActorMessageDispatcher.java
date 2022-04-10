@@ -98,7 +98,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			if (dest==null)
-				dest = UUID_ALIAS;
+				dest = ALIAS_ID;
 		}
 		
 		UUID redirect = system.getRedirector().get(dest);
