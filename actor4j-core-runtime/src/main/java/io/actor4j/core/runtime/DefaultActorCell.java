@@ -294,7 +294,7 @@ public class DefaultActorCell implements InternalActorCell {
 					else
 						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 				}
-				dest = (dest!=null) ? dest : ActorMessageDispatcher.UUID_ALIAS;
+				dest = (dest!=null) ? dest : ActorMessageDispatcher.ALIAS_ID();
 				system.getBufferQueue().offer(message.copy(dest));
 			}
 		}

@@ -25,12 +25,16 @@ import io.actor4j.core.messages.ActorMessage;
 public abstract class ActorMessageDispatcher {
 	protected final InternalActorSystem system;
 	
-	protected static final UUID UUID_ALIAS = UUID_ZERO;
+	protected static final UUID ALIAS_ID = UUID_ZERO;
 	
 	public ActorMessageDispatcher(InternalActorSystem system) {
 		super();
 		
 		this.system = system;
+	}
+	
+	public static UUID ALIAS_ID() {
+		return ALIAS_ID;
 	}
 
 	public void post(ActorMessage<?> message, UUID source) {
