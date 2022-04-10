@@ -18,7 +18,6 @@ package io.actor4j.core.actors;
 import java.util.Queue;
 import java.util.UUID;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -36,8 +35,6 @@ public interface ActorRef {
 	
 	public void send(ActorMessage<?> message);
 	public void sendViaPath(ActorMessage<?> message, String path);
-	public void sendViaPath(ActorMessage<?> message, String nodeName, String path);
-	public void sendViaPath(ActorMessage<?> message, ActorServiceNode node, String path);
 	public void sendViaAlias(ActorMessage<?> message, String alias);
 	public void send(ActorMessage<?> message, UUID dest);
 	public <T> void tell(T value, int tag, UUID dest);

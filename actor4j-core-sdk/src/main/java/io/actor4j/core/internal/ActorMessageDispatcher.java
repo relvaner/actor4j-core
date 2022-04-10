@@ -19,7 +19,6 @@ import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.UUID;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class ActorMessageDispatcher {
@@ -42,8 +41,6 @@ public abstract class ActorMessageDispatcher {
 	}
 	
 	public abstract void post(ActorMessage<?> message, UUID source, String alias);
-	
-	public abstract void post(ActorMessage<?> message, ActorServiceNode node, String path);
 	
 	public abstract void postOuter(ActorMessage<?> message);
 	

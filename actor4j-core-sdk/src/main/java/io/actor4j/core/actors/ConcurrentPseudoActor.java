@@ -23,7 +23,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.internal.InternalActorCell;
 import io.actor4j.core.internal.InternalActorSystem;
@@ -130,14 +129,6 @@ public abstract class ConcurrentPseudoActor {
 	
 	public void sendViaPath(ActorMessage<?> message, String path) {
 		actor.sendViaPath(message, path);
-	}
-	
-	public void sendViaPath(ActorMessage<?> message, String nodeName, String path) {
-		actor.sendViaPath(message, nodeName, path);
-	}
-	
-	public void sendViaPath(ActorMessage<?> message, ActorServiceNode node, String path) {
-		actor.sendViaPath(message, node, path);
 	}
 	
 	public void sendViaAlias(ActorMessage<?> message, String alias) {

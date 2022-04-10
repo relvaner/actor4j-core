@@ -15,13 +15,8 @@
  */
 package io.actor4j.core.config;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.actor4j.core.ActorClientRunnable;
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.internal.ActorThreadMode;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.pods.Database;
@@ -69,11 +64,7 @@ public class ActorSystemConfig {
 	private final long watchdogTimeout;
 	
 	// As Service
-	private final String serviceNodeName;
-	private final List<ActorServiceNode> serviceNodes;
 	private final boolean serverMode;
-	private final boolean clientMode;
-	private final ActorClientRunnable clientRunnable;
 	
 	public String name() {
 		return name;
@@ -175,24 +166,8 @@ public class ActorSystemConfig {
 		return watchdogTimeout;
 	}
 	
-	public String serviceNodeName() {
-		return serviceNodeName;
-	}
-	
-	public List<ActorServiceNode> serviceNodes() {
-		return serviceNodes;
-	}
-	
 	public boolean serverMode() {
 		return serverMode;
-	}
-	
-	public boolean clientMode() {
-		return clientMode;
-	}
-	
-	public ActorClientRunnable clientRunnable() {
-		return clientRunnable;
 	}
 	
 	public static abstract class Builder<T extends ActorSystemConfig> {
@@ -238,11 +213,7 @@ public class ActorSystemConfig {
 		protected long watchdogTimeout;
 		
 		// As Service
-		protected String serviceNodeName;
-		protected List<ActorServiceNode> serviceNodes;
-		protected boolean clientMode;
 		protected boolean serverMode;
-		protected ActorClientRunnable clientRunnable;
 
 		public Builder() {
 			super();
@@ -282,10 +253,6 @@ public class ActorSystemConfig {
 			// Watchdog
 			watchdogSyncTime = 5_000;
 			watchdogTimeout = 2_000;
-
-			// As Service
-			serviceNodeName = "Default Node";
-			serviceNodes = new LinkedList<>();
 		}
 		
 		public Builder(T config) {
@@ -315,11 +282,7 @@ public class ActorSystemConfig {
 			this.podDatabase = config.podDatabase();
 			this.watchdogSyncTime = config.watchdogSyncTime();
 			this.watchdogTimeout = config.watchdogTimeout();
-			this.serviceNodeName = config.serviceNodeName();
-			this.serviceNodes = new LinkedList<>(config.serviceNodes());
-			this.clientMode = config.clientMode();
 			this.serverMode = config.serverMode();
-			this.clientRunnable = config.clientRunnable();
 		}
 
 		public Builder<T> name(String name) {
@@ -485,29 +448,9 @@ public class ActorSystemConfig {
 			
 			return this;
 		}
-
-		public Builder<T> serviceNodeName(String serviceNodeName) {
-			this.serviceNodeName = serviceNodeName;
-
-			return this;
-		}
-
-		public Builder<T> addServiceNode(ActorServiceNode serviceNode) {
-			serviceNodes.add(serviceNode);
-
-			return this;
-		}
 		
 		public Builder<T> serverMode() {
 			serverMode = true;
-
-			return this;
-		}
-
-		public Builder<T> clientRunnable(ActorClientRunnable clientRunnable) {
-			clientMode = (clientRunnable != null);
-
-			this.clientRunnable = clientRunnable;
 
 			return this;
 		}
@@ -542,11 +485,7 @@ public class ActorSystemConfig {
 		this.podDatabase = builder.podDatabase;
 		this.watchdogSyncTime = builder.watchdogSyncTime;
 		this.watchdogTimeout = builder.watchdogTimeout;
-		this.serviceNodeName = builder.serviceNodeName;
-		this.serviceNodes = Collections.unmodifiableList(builder.serviceNodes);
-		this.clientMode = builder.clientMode;
 		this.serverMode = builder.serverMode;
-		this.clientRunnable = builder.clientRunnable;
 	}
 	
 	public static ActorSystemConfig create() {

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.internal.ActorExecuterService;
@@ -63,7 +61,6 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 	
 	protected /*quasi final*/ ActorTimerExecuterService globalTimerExecuterService;
 	protected /*quasi final*/ ActorTimerExecuterService timerExecuterService;
-	protected /*quasi final*/ ExecutorService clientExecuterService;
 	protected /*quasi final*/ ExecutorService resourceExecuterService;
 	
 	protected /*quasi final*/ ActorPersistenceService persistenceService;
@@ -162,8 +159,6 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
-		if (system.getConfig().clientMode())
-			clientExecuterService = Executors.newSingleThreadExecutor();
 		
 		if (system.getConfig().persistenceMode()) {
 			persistenceService = new ActorPersistenceService(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
@@ -220,49 +215,6 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 	public ActorTimer globalTimer() {
 		return globalTimerExecuterService;
 	}
-
-	@Override
-	public void clientViaAlias(final ActorMessage<?> message, final String alias) {
-		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
-			try {
-				clientExecuterService.submit(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							system.getConfig().clientRunnable().runViaAlias(message, alias);
-						}
-						catch(Throwable t) {
-							t.printStackTrace();
-						}	
-					}
-				});
-			}
-			catch (RejectedExecutionException e) {
-				failsafeManager.notifyErrorHandler(e, "executer_client", null);
-			};
-	}
-	
-	@Deprecated
-	@Override
-	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path) {
-		if (system.getConfig().clientRunnable()!=null && !clientExecuterService.isShutdown())
-			try {
-				clientExecuterService.submit(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							system.getConfig().clientRunnable().runViaPath(message, node, path);
-						}
-						catch(Throwable t) {
-							t.printStackTrace();
-						}	
-					}
-				});
-			}
-			catch (RejectedExecutionException e) {
-				failsafeManager.notifyErrorHandler(e, "executer_client", null);
-			};
-	}
 	
 	@Override
 	public void resource(final ActorMessage<?> message) {
@@ -297,8 +249,6 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 		timerExecuterService.shutdown();
 		
 		resourceExecuterService.shutdown();
-		if (system.getConfig().clientMode())
-			clientExecuterService.shutdown();
 		
 		actorThreadPool.shutdown(onTermination, await);
 		

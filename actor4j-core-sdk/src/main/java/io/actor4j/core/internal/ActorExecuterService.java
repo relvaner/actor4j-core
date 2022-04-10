@@ -18,7 +18,6 @@ package io.actor4j.core.internal;
 import java.util.List;
 import java.util.Set;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.internal.failsafe.FailsafeManager;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
@@ -37,9 +36,7 @@ public interface ActorExecuterService {
 	public void run(Runnable onStartup);
 	public void start(Runnable onStartup, Runnable onTermination);
 	public void shutdown(boolean await);
-	
-	public void clientViaAlias(final ActorMessage<?> message, final String alias);
-	public void clientViaPath(final ActorMessage<?> message, final ActorServiceNode node, final String path);
+
 	public void resource(final ActorMessage<?> message);
 	
 	public long getCount();

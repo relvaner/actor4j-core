@@ -39,8 +39,6 @@ public interface ActorCell {
 	
 	public void send(ActorMessage<?> message);
 	public void send(ActorMessage<?> message, String alias);
-	@Deprecated
-	public void send(ActorMessage<?> message, ActorServiceNode node, String path);
 	public void priority(ActorMessage<?> message);
 	public void unhandled(ActorMessage<?> message);
 	

@@ -44,14 +44,10 @@ public class ConfigFeature {
 		assertEquals(50_000, system.getConfig().queueSize());
 		assertEquals(10_000, system.getConfig().bufferQueueSize());
 		assertEquals(false, system.getConfig().persistenceMode());
-		assertEquals("Default Node", system.getConfig().serviceNodeName());
 		
 		assertEquals(null, system.getConfig().persistenceDriver());
 		assertEquals(null, system.getConfig().podDatabase());
-		assertEquals(0, system.getConfig().serviceNodes().size());
-		assertEquals(false, system.getConfig().clientMode());
 		assertEquals(false, system.getConfig().serverMode());
-		assertEquals(null, system.getConfig().clientRunnable());
 	}
 	
 	@Test
@@ -70,7 +66,6 @@ public class ConfigFeature {
 			.maxStatisticValues(12_000)
 			.queueSize(55_000)
 			.bufferQueueSize(13_000)
-			.serviceNodeName("test-node")
 			.serverMode()
 			.build();
 		ActorSystem system = ActorSystem.create(config);
@@ -91,13 +86,9 @@ public class ConfigFeature {
 		assertEquals(55_000, system.getConfig().queueSize());
 		assertEquals(13_000, system.getConfig().bufferQueueSize());
 		assertEquals(false, system.getConfig().persistenceMode());
-		assertEquals("test-node", system.getConfig().serviceNodeName());
 		
 		assertEquals(null, system.getConfig().persistenceDriver());
 		assertEquals(null, system.getConfig().podDatabase());
-		assertEquals(0, system.getConfig().serviceNodes().size());
-		assertEquals(false, system.getConfig().clientMode());
 		assertEquals(true, system.getConfig().serverMode());
-		assertEquals(null, system.getConfig().clientRunnable());
 	}
 }

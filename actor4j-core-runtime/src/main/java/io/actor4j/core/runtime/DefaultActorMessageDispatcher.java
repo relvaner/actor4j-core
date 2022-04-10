@@ -29,7 +29,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.internal.ActorMessageDispatcher;
 import io.actor4j.core.internal.ActorThread;
 import io.actor4j.core.internal.InternalActorCell;
@@ -109,10 +108,6 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			consumerPseudo.apply(message.copy(dest));
 			return;
 		}
-		else if (system.getConfig().clientMode() && !system.getCells().containsKey(dest)) {
-			system.getExecuterService().clientViaAlias(message.copy(dest), alias);
-			return;
-		}
 		else if (system.getResourceCells().containsKey(dest)) {
 			system.getExecuterService().resource(message.copy(dest));
 			return;
@@ -122,15 +117,6 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 			system.getExecuterService().getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
 		else
 			system.getExecuterService().getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
-	}
-	
-	@Deprecated
-	public void post(ActorMessage<?> message, ActorServiceNode node, String path) {
-		if (message==null)
-			throw new NullPointerException();
-		
-		if (node!=null && path!=null)
-			system.getExecuterService().clientViaPath(message, node, path);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {

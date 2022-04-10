@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistenceId;
@@ -298,11 +297,6 @@ public class DefaultActorCell implements InternalActorCell {
 				system.getBufferQueue().offer(message.copy(dest));
 			}
 		}
-	}
-	
-	@Override
-	public void send(ActorMessage<?> message, ActorServiceNode node, String path) {
-		system.getMessageDispatcher().post(message, node, path);
 	}
 	
 	@Override
