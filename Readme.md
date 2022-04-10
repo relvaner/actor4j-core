@@ -5,7 +5,7 @@
 
 `Actor4j` is an actor-oriented Java framework, based on the actor model. `Actor4j` uses `Akka` as a base reference implementation. `Akka` is in turn influenced by `Erlang`, especially by the supervision concept. A new thread pool architecture was designed, specially designed for the exchange of messages between the actors. In contrast to `Akka`, with `Actor4j` not every actor has its own queue, but there are several task-specific queues that are located in the assigned thread. Incoming messages are injected into the actor via the corresponding thread. Each actor is permanently assigned to a thread. With this new thread pool architecture, `Actor4j` has significantly better performance compared to `Akka`. It exists also a [specification](https://github.com/relvaner/actor4j-spec) for Actor4j.
 
-For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`. Fallback documentation under https://github.com/relvaner/actor4j-core/blob/master/Fallback.md
+For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`.
 
 The `Actor4j - Core` library (`v1.2.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is now encapsulated as a Java `Record`.
 
