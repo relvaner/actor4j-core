@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -39,12 +39,15 @@ import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.immutable.ImmutableList;
+import io.actor4j.core.internal.ActorMessageDispatcher;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
-import io.actor4j.core.internal.protocols.RecoverProtocol;
-import io.actor4j.core.internal.protocols.RestartProtocol;
-import io.actor4j.core.internal.protocols.StopProtocol;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
+import io.actor4j.core.runtime.protocols.RecoverProtocol;
+import io.actor4j.core.runtime.protocols.RestartProtocol;
+import io.actor4j.core.runtime.protocols.StopProtocol;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
@@ -37,6 +37,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.actor4j.core.ActorServiceNode;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
+import io.actor4j.core.internal.ActorExecuterService;
+import io.actor4j.core.internal.ActorThreadPool;
+import io.actor4j.core.internal.DefaultThreadFactory;
+import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.internal.PodReplicationControllerRunnable;
+import io.actor4j.core.internal.WatchdogRunnable;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.internal.failsafe.FailsafeManager;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;

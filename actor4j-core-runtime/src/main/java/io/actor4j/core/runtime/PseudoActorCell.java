@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.utils.ActorUtils.*;
 
@@ -33,6 +33,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.internal.InternalPseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 

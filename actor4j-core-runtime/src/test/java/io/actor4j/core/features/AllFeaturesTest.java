@@ -17,7 +17,7 @@ package io.actor4j.core.features;
 
 import org.junit.runners.Suite;
 
-import io.actor4j.core.internal.DefaultActorGlobalSettings;
+import io.actor4j.core.runtime.DefaultActorGlobalSettings;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 

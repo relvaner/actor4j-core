@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 
@@ -41,6 +41,15 @@ import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.internal.ActorExecuterService;
+import io.actor4j.core.internal.ActorMessageDispatcher;
+import io.actor4j.core.internal.ActorStrategyOnFailure;
+import io.actor4j.core.internal.ActorThreadFactory;
+import io.actor4j.core.internal.ActorThreadMode;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.internal.PodReplicationControllerRunnableFactory;
+import io.actor4j.core.internal.WatchdogRunnableFactory;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
 import io.actor4j.core.internal.pods.DefaultPodReplicationController;

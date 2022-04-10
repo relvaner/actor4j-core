@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.logging.ActorLogger.WARN;
 import static io.actor4j.core.logging.ActorLogger.systemLogger;
@@ -30,6 +30,10 @@ import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorServiceNode;
+import io.actor4j.core.internal.ActorMessageDispatcher;
+import io.actor4j.core.internal.ActorThread;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {

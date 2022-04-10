@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal.protocols;
+package io.actor4j.core.runtime.protocols;
 
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.internal.InternalActorCell;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -23,6 +23,9 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 import java.util.Iterator;
 import java.util.UUID;
 
+import io.actor4j.core.internal.ActorStrategyOnFailure;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import io.actor4j.core.supervisor.OneForOneSupervisorStrategy;

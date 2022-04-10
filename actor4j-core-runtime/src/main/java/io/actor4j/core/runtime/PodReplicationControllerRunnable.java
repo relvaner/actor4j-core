@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import java.util.UUID;
 
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.failsafe.FailsafeMethod;
 import io.actor4j.core.internal.failsafe.Method;
 

@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import static io.actor4j.core.logging.ActorLogger.*;
+
+import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.internal.PodReplicationControllerRunnable;
 
 public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
 	public DefaultPodReplicationControllerRunnable(InternalActorSystem system) {

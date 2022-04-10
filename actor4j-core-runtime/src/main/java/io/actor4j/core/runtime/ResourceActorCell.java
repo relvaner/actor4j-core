@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableList;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ResourceActorCell extends DefaultActorCell {

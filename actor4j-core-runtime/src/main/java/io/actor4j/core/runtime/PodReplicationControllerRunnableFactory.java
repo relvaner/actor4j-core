@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import java.util.function.Function;
+
+import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.internal.PodReplicationControllerRunnable;
 
 public interface PodReplicationControllerRunnableFactory extends Function<InternalActorSystem, PodReplicationControllerRunnable>{
 }
