@@ -24,10 +24,7 @@ import io.actor4j.core.function.TriConsumer;
 public class ActorGlobalSettings {
 	// @See: ActorSystem, ActorService
 	public static ActorSystemFactory defaultFactory;
-	
-	// @See: PseudoActor
-	public static PseudoActorCellFactory pseudoActorCellFactory; 
-	
+
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 	public static TriConsumer<String, Object, Integer> internal_server_callback;
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod

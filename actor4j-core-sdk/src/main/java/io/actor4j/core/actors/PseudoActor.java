@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.internal.ActorGlobalSettings;
 import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.InternalPseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
@@ -38,7 +37,7 @@ public abstract class PseudoActor extends Actor {
 	public PseudoActor(String name, ActorSystem system, boolean blocking) {
 		super(name);
 		
-		InternalPseudoActorCell cell = ActorGlobalSettings.pseudoActorCellFactory.apply((InternalActorSystem)system, this, blocking);
+		InternalPseudoActorCell cell = ((InternalActorSystem)system).getPseudoActorCellFactory().apply((InternalActorSystem)system, this, blocking);
 		setCell(cell);
 		cell.pseudo_addCell(cell);
 		/* preStart */

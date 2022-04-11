@@ -38,6 +38,8 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();
 	public WatchdogRunnableFactory getWatchdogRunnableFactory();
 	
+	public PseudoActorCellFactory getPseudoActorCellFactory();
+	
 	public Map<UUID, InternalActorCell> getCells();
 	public Map<UUID, InternalActorCell> getPseudoCells();
 	public Map<UUID, Boolean> getResourceCells();

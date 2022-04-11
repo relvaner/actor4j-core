@@ -49,6 +49,7 @@ import io.actor4j.core.internal.ActorThreadMode;
 import io.actor4j.core.internal.InternalActorCell;
 import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.PodReplicationControllerRunnableFactory;
+import io.actor4j.core.internal.PseudoActorCellFactory;
 import io.actor4j.core.internal.WatchdogRunnableFactory;
 import io.actor4j.core.internal.di.DIContainer;
 import io.actor4j.core.internal.di.DefaultDIContainer;
@@ -72,6 +73,8 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	protected /*quasi final*/ WatchdogRunnableFactory watchdogRunnableFactory;
+	
+	protected final PseudoActorCellFactory pseudoActorCellFactory;
 	
 	protected final Map<UUID, InternalActorCell> cells; // ActorCellID    -> ActorCell
 	protected final Map<String, Queue<UUID>> aliases;  // ActorCellAlias -> ActorCellID
@@ -111,6 +114,8 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		podReplicationController = new DefaultPodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
 		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);
+		
+		pseudoActorCellFactory = (system, actor, blocking) -> new PseudoActorCell(system, actor, blocking);
 		
 		cells          = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
@@ -305,6 +310,11 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	public WatchdogRunnableFactory getWatchdogRunnableFactory() {
 		return watchdogRunnableFactory;
 	}
+	
+	@Override
+	public PseudoActorCellFactory getPseudoActorCellFactory() {
+		return pseudoActorCellFactory;
+	}
 
 	@Override
 	public Map<UUID, InternalActorCell> getCells() {
@@ -415,7 +425,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		cells.get(PSEUDO_ID).getChildren().add(cell.getId());
 		return internal_addCell(cell);
 	}
-
+	
 	@Override
 	public UUID addActor(ActorFactory factory) {
 		InternalActorCell cell = generateCell(factory.create());

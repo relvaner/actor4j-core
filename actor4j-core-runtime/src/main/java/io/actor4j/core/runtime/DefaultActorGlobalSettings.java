@@ -20,7 +20,5 @@ import io.actor4j.core.internal.ActorGlobalSettings;
 public final class DefaultActorGlobalSettings {
 	public static void override() {
 		ActorGlobalSettings.defaultFactory = (c) -> new DefaultActorSystemImpl(c);
-		
-		ActorGlobalSettings.pseudoActorCellFactory =  (system, actor, blocking) -> new PseudoActorCell(system, actor, blocking);
 	}	
 }
