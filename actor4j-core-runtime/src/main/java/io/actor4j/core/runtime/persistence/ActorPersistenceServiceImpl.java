@@ -23,11 +23,11 @@ import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 
-public class DefaultActorPersistenceService implements ActorPersistenceService {
+public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 	protected final ActorService service;
 	protected final PersistenceDriver driver;
 	
-	public DefaultActorPersistenceService(ActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
+	public ActorPersistenceServiceImpl(ActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
 		super();
 		
 		this.driver = driver;
@@ -47,9 +47,8 @@ public class DefaultActorPersistenceService implements ActorPersistenceService {
 			service.setAlias(id, alias);
 		}
 	}
-	
-	@Override
-	public String getAlias(int index) {
+
+	public static String getAlias(int index) {
 		return "persistence-actor-"+String.valueOf(index);
 	}
 	

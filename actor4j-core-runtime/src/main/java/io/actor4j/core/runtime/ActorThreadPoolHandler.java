@@ -27,6 +27,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.annotations.concurrent.Readonly;
 import io.actor4j.core.runtime.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.runtime.balancing.ActorLoadBalancingBeforeStart;
+import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
 public class ActorThreadPoolHandler {
 	protected final InternalActorSystem system;
@@ -81,7 +82,7 @@ public class ActorThreadPoolHandler {
 		for(ActorThread t : actorThreads) {
 			threadsMap.put(t.getId(), t);
 			threadsList.add(t.getId());
-			persistenceMap.put(t.getId(), system.getExecuterService().getPersistenceService().getAlias(i));
+			persistenceMap.put(t.getId(), ActorPersistenceServiceImpl.getAlias(i));
 			i++;
 		}
 	}

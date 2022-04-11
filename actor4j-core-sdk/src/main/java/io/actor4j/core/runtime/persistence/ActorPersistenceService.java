@@ -18,8 +18,6 @@ package io.actor4j.core.runtime.persistence;
 import io.actor4j.core.ActorService;
 
 public interface ActorPersistenceService {
-	public String getAlias(int index);
-	
 	public ActorService getService();
 
 	public void start();

@@ -38,7 +38,7 @@ import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.runtime.failsafe.ErrorHandler;
 import io.actor4j.core.runtime.failsafe.FailsafeManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
-import io.actor4j.core.runtime.persistence.DefaultActorPersistenceService;
+import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
@@ -155,7 +155,7 @@ public class ActorExecuterServiceImpl implements ActorExecuterService {
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
 		
 		if (system.getConfig().persistenceMode()) {
-			persistenceService = new DefaultActorPersistenceService(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
+			persistenceService = new ActorPersistenceServiceImpl(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
 			persistenceService.start();
 		}
 		
