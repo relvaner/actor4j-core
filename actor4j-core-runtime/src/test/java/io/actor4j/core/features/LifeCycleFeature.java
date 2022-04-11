@@ -38,7 +38,7 @@ public class LifeCycleFeature {
 	public void test_start() {
 		CountDownLatch testDone = new CountDownLatch(2);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		system.addActor(() -> new Actor("parent") {
 			@Override
@@ -77,7 +77,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(3);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -137,7 +137,7 @@ public class LifeCycleFeature {
 	@Test(timeout=5000)
 	public void test_stop_for_all() {
 		CountDownLatch testDone = new CountDownLatch(4);
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child1;
@@ -229,7 +229,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(3);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -289,7 +289,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(4);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -362,7 +362,7 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(4);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			@Override
@@ -434,7 +434,7 @@ public class LifeCycleFeature {
 	@Test(timeout=5000)
 	public void test_restart_for_all() {
 		CountDownLatch testDone = new CountDownLatch(9);
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID parent = system.addActor(() -> new Actor("parent") {
 			protected UUID child2;

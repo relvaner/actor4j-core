@@ -13,10 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core;
 
-public final class DefaultActorGlobalSettings {
-	public static void override() {
-		ActorGlobalSettings.defaultFactory = (c) -> new DefaultActorSystemImpl(c);
-	}	
+import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.runtime.DefaultActorSystemImpl;
+
+public class ActorRuntime {
+	public static ActorSystemFactory factory() {
+		return (c) -> new DefaultActorSystemImpl(c);
+	}
+	
+	public static ActorSystem create() {
+		return create(ActorSystemConfig.create());
+	}
+	
+	public static ActorSystem create(String name) {
+		return create(ActorSystemConfig.builder().name(name).build());
+	}
+	
+	public static ActorSystem create(ActorSystemConfig config) {
+		return factory().apply(config);
+	}
 }

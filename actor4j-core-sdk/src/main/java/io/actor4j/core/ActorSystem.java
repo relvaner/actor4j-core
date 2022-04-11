@@ -15,8 +15,6 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.runtime.ActorGlobalSettings.defaultFactory;
-
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -30,20 +28,12 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
 public interface ActorSystem {
-	public static ActorSystem create() {
-		return create(defaultFactory);
-	}
-	
-	public static ActorSystem create(String name) {
-		return create(ActorSystemConfig.builder().name(name).build());
+	public static ActorSystem create(ActorSystemFactory factory, String name) {
+		return create(factory, ActorSystemConfig.builder().name(name).build());
 	}
 	
 	public static ActorSystem create(ActorSystemFactory factory) {
-		return create(factory, null);
-	}
-	
-	public static ActorSystem create(ActorSystemConfig config) {
-		return create(defaultFactory, config);
+		return create(factory, ActorSystemConfig.create());
 	}
 	
 	public static ActorSystem create(ActorSystemFactory factory, ActorSystemConfig config) {

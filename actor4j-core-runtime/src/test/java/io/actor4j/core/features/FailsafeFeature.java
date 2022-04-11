@@ -40,7 +40,7 @@ public class FailsafeFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(1)
 			.build();
-		system = ActorSystem.create(config);
+		system = ActorSystem.create(AllFeaturesTest.factory(), config);
 	}
 	
 	@Test(timeout=5000)

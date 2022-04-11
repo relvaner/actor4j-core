@@ -26,7 +26,7 @@ import io.actor4j.core.runtime.ActorThreadMode;
 public class ConfigFeature {
 	@Test
 	public void test_default() {
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		assertEquals("actor4j", system.getConfig().name());
 		assertEquals(false, system.getConfig().counterEnabled().get());
@@ -68,7 +68,7 @@ public class ConfigFeature {
 			.bufferQueueSize(13_000)
 			.serverMode()
 			.build();
-		ActorSystem system = ActorSystem.create(config);
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory(), config);
 		
 		assertEquals("test", system.getConfig().name());
 		assertEquals(true, system.getConfig().counterEnabled().get());

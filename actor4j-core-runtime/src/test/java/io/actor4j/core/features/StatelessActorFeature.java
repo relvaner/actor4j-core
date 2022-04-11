@@ -39,7 +39,7 @@ public class StatelessActorFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(2)
 			.build();
-		system = ActorSystem.create(config);
+		system = ActorSystem.create(AllFeaturesTest.factory(), config);
 	}
 	
 	@Test(timeout=30000)

@@ -44,7 +44,7 @@ public class WatchdogFeature {
 			.watchdogSyncTime(200)
 			.watchdogTimeout(100)
 			.build();
-		system = ActorSystem.create(config);
+		system = ActorSystem.create(AllFeaturesTest.factory(), config);
 	}
 	
 	@Test(timeout=5000)

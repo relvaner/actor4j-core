@@ -37,7 +37,7 @@ public class EmbeddedActorFeature {
 		CountDownLatch testDone = new CountDownLatch(2);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
 			protected EmbeddedActor client;

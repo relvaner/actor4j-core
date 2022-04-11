@@ -17,14 +17,10 @@ package io.actor4j.core.runtime;
 
 import java.util.UUID;
 
-import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.function.QuadConsumer;
 import io.actor4j.core.function.TriConsumer;
 
 public class ActorGlobalSettings {
-	// @See: ActorSystem, ActorService
-	public static ActorSystemFactory defaultFactory;
-
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 	public static TriConsumer<String, Object, Integer> internal_server_callback;
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod

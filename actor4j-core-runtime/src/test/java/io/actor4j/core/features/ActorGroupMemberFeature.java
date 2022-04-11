@@ -46,7 +46,7 @@ public class ActorGroupMemberFeature {
 		ActorSystemConfig config = ActorSystemConfig.builder()
 			.parallelism(3) /* temporary solution */
 			.build();
-		system = ActorSystem.create(config);
+		system = ActorSystem.create(AllFeaturesTest.factory(), config);
 	}
 	
 	@Test(timeout=30000)

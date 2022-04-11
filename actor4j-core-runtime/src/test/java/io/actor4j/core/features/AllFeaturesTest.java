@@ -17,7 +17,8 @@ package io.actor4j.core.features;
 
 import org.junit.runners.Suite;
 
-import io.actor4j.core.runtime.DefaultActorGlobalSettings;
+import io.actor4j.core.ActorRuntime;
+import io.actor4j.core.ActorSystemFactory;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
@@ -60,9 +61,11 @@ import org.junit.runner.RunWith;
 public class AllFeaturesTest {
 	@BeforeClass
 	public static void beforeClass() {
-		DefaultActorGlobalSettings.override();
-		
 		systemLogger().setLevel(ERROR);
 		logger().setLevel(ERROR);
+	}
+	
+	public static ActorSystemFactory factory() {
+		return ActorRuntime.factory();
 	}
 }

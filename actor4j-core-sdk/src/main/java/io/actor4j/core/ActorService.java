@@ -15,27 +15,17 @@
  */
 package io.actor4j.core;
 
-import static io.actor4j.core.runtime.ActorGlobalSettings.defaultFactory;
-
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface ActorService extends ActorSystem {
-	public static ActorService create() {
-		return create(defaultFactory);
-	}
-	
-	public static ActorSystem create(String name) {
-		return create(ActorServiceConfig.builder().name(name).build());
+	public static ActorSystem create(ActorSystemFactory factory, String name) {
+		return create(factory, ActorServiceConfig.builder().name(name).build());
 	}
 	
 	public static ActorService create(ActorSystemFactory factory) {
-		return create(factory, null);
-	}
-	
-	public static ActorService create(ActorServiceConfig config) {
-		return create(defaultFactory, config);
+		return create(factory, ActorServiceConfig.create());
 	}
 	
 	public static ActorService create(ActorSystemFactory factory, ActorServiceConfig config) {

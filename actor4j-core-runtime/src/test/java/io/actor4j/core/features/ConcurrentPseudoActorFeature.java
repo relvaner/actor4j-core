@@ -39,7 +39,7 @@ public class ConcurrentPseudoActorFeature {
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(10);
 		
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		ConcurrentPseudoActor main = new ConcurrentPseudoActor(system, false) {
 			@Override
@@ -107,7 +107,7 @@ public class ConcurrentPseudoActorFeature {
 	
 	@Test(timeout=10000)
 	public void test_await() {
-		ActorSystem system = ActorSystem.create();
+		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		ConcurrentPseudoActor main = new ConcurrentPseudoActor(system, true) {
 			@Override

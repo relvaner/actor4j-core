@@ -17,6 +17,7 @@ package io.actor4j.core.runtime.persistence;
 
 import java.util.UUID;
 
+import io.actor4j.core.ActorRuntime;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.config.ActorServiceConfig;
@@ -38,7 +39,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 			.parallelismFactor(parallelismFactor)
 			.horizontalPodAutoscalerSyncTime(Integer.MAX_VALUE) // TODO: disabled
 			.build();
-		service = ActorService.create(config);
+		service = ActorService.create(ActorRuntime.factory(), config);
 		
 		driver.open();
 		for (int i=0; i<parallelism*parallelismFactor; i++) {
