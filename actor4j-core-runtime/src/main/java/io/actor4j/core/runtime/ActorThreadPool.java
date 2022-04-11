@@ -24,14 +24,14 @@ import java.util.function.BiConsumer;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPool {
-	protected final InternalActorSystem system;
+	protected final InternalActorRuntimeSystem system;
 	
 	protected final List<ActorThread> actorThreads;
 	protected final ActorThreadPoolHandler actorThreadPoolHandler;
 	
 	protected final CountDownLatch countDownLatch;
 	
-	public ActorThreadPool(ActorSystemImpl system) {
+	public ActorThreadPool(InternalActorRuntimeSystem system) {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();

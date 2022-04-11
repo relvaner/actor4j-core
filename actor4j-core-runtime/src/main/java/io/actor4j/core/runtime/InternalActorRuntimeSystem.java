@@ -21,4 +21,6 @@ import io.actor4j.core.runtime.di.DIContainer;
 
 public interface InternalActorRuntimeSystem extends InternalActorSystem {
 	public DIContainer<UUID> getContainer();
+	
+	public ActorThreadFactory getActorThreadFactory();
 }

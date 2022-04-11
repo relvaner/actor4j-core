@@ -45,7 +45,7 @@ import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
 public class ActorExecuterServiceImpl implements ActorExecuterService {
-	protected final ActorSystemImpl system;
+	protected final InternalActorRuntimeSystem system;
 	
 	protected final FailsafeManager failsafeManager;
 	
@@ -66,7 +66,7 @@ public class ActorExecuterServiceImpl implements ActorExecuterService {
 	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
 	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
 
-	public ActorExecuterServiceImpl(final ActorSystemImpl system) {
+	public ActorExecuterServiceImpl(final InternalActorRuntimeSystem system) {
 		super();
 		
 		this.system = system;

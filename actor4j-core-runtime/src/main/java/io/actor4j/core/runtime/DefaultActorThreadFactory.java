@@ -21,7 +21,7 @@ public class DefaultActorThreadFactory extends DefaultThreadFactory {
     	super(name);
     }
 
-    public ActorThread newThread(ActorSystemImpl system) {
+    public ActorThread newThread(InternalActorRuntimeSystem system) {
     	ActorThread t = system.getActorThreadFactory().apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
     	
     	if (t.isDaemon())
