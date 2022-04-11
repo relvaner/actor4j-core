@@ -26,7 +26,7 @@ import io.actor4j.core.utils.ActorTimer;
 public interface ActorExecuterService {
 	public FailsafeManager getFailsafeManager(); // TODO: abstract/interface
 	public ActorThreadPool getActorThreadPool(); // TODO: abstract/interface
-	public ActorPersistenceService getPersistenceService(); // TODO: abstract/interface
+	public ActorPersistenceService getPersistenceService();
 	
 	public boolean isStarted();
 	

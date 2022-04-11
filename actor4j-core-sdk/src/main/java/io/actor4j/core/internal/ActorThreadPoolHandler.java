@@ -26,7 +26,6 @@ import java.util.function.BiConsumer;
 import io.actor4j.core.internal.annotations.concurrent.Readonly;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingBeforeStart;
-import io.actor4j.core.internal.persistence.ActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPoolHandler {
@@ -82,7 +81,7 @@ public class ActorThreadPoolHandler {
 		for(ActorThread t : actorThreads) {
 			threadsMap.put(t.getId(), t);
 			threadsList.add(t.getId());
-			persistenceMap.put(t.getId(), ActorPersistenceService.getAlias(i));
+			persistenceMap.put(t.getId(), system.getExecuterService().getPersistenceService().getAlias(i));
 			i++;
 		}
 	}

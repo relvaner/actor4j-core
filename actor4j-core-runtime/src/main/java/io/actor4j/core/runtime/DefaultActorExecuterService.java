@@ -44,6 +44,7 @@ import io.actor4j.core.internal.WatchdogRunnable;
 import io.actor4j.core.internal.failsafe.ErrorHandler;
 import io.actor4j.core.internal.failsafe.FailsafeManager;
 import io.actor4j.core.internal.persistence.ActorPersistenceService;
+import io.actor4j.core.runtime.persistence.DefaultActorPersistenceService;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
@@ -161,7 +162,7 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
 		
 		if (system.getConfig().persistenceMode()) {
-			persistenceService = new ActorPersistenceService(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
+			persistenceService = new DefaultActorPersistenceService(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
 			persistenceService.start();
 		}
 		
