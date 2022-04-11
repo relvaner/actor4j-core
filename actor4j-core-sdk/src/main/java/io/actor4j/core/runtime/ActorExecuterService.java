@@ -24,7 +24,7 @@ import io.actor4j.core.runtime.persistence.ActorPersistenceService;
 import io.actor4j.core.utils.ActorTimer;
 
 public interface ActorExecuterService {
-	public FailsafeManager getFailsafeManager(); // TODO: abstract/interface
+	public FailsafeManager getFailsafeManager();
 	public ActorPersistenceService getPersistenceService();
 	
 	public boolean isStarted();
