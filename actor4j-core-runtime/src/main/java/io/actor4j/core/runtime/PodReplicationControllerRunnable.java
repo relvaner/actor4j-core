@@ -17,9 +17,9 @@ package io.actor4j.core.runtime;
 
 import java.util.UUID;
 
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.failsafe.FailsafeMethod;
-import io.actor4j.core.internal.failsafe.Method;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.failsafe.FailsafeMethod;
+import io.actor4j.core.runtime.failsafe.Method;
 
 public abstract class PodReplicationControllerRunnable implements Runnable {
 	protected final UUID uuid; // for failsafe

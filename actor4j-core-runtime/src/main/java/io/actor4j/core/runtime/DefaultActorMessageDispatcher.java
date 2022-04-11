@@ -29,11 +29,11 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
-import io.actor4j.core.internal.ActorMessageDispatcher;
-import io.actor4j.core.internal.ActorThread;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorMessageDispatcher;
+import io.actor4j.core.runtime.ActorThread;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	protected final Function<ActorMessage<?>, Boolean> consumerPseudo;

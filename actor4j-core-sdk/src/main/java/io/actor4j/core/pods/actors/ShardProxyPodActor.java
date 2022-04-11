@@ -19,11 +19,11 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.actor4j.core.function.TriConsumer;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.pods.PodReplicationTuple;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.Shard;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.pods.PodReplicationTuple;
 
 // One-Way
 public abstract class ShardProxyPodActor extends PodChildActor implements Shard {

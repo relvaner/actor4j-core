@@ -24,9 +24,9 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.InternalPseudoActorCell;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.InternalPseudoActorCell;
 import io.actor4j.core.utils.ActorFactory;
 
 public abstract class PseudoActor extends Actor {

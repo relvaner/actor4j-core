@@ -16,6 +16,9 @@
 
 package io.actor4j.core.pods.actors;
 
+import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_callback;
+import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_request;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,9 +28,6 @@ import java.util.UUID;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
-
-import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_callback;
-import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_request;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;

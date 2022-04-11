@@ -33,13 +33,13 @@ import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequest;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteFunctionPod;
 import io.actor4j.core.features.pod.ExampleShardingWithActorPod;
-import io.actor4j.core.internal.ActorGlobalSettings;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.utils.PodRequestMethod;
+import io.actor4j.core.runtime.ActorGlobalSettings;
+import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.logging.ActorLogger.*;

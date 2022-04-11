@@ -23,13 +23,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-import io.actor4j.core.internal.ActorThread;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.annotations.concurrent.Readonly;
-import io.actor4j.core.internal.balancing.ActorLoadBalancingAfterStart;
-import io.actor4j.core.internal.balancing.ActorLoadBalancingBeforeStart;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorThread;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.annotations.concurrent.Readonly;
+import io.actor4j.core.runtime.balancing.ActorLoadBalancingAfterStart;
+import io.actor4j.core.runtime.balancing.ActorLoadBalancingBeforeStart;
 
 public class ActorThreadPoolHandler {
 	protected final InternalActorSystem system;

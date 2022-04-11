@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.runtime;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -41,25 +41,25 @@ import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.ActorExecuterService;
-import io.actor4j.core.internal.ActorMessageDispatcher;
-import io.actor4j.core.internal.ActorStrategyOnFailure;
-import io.actor4j.core.internal.ActorThreadFactory;
-import io.actor4j.core.internal.ActorThreadMode;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.PodReplicationControllerRunnableFactory;
-import io.actor4j.core.internal.PseudoActorCellFactory;
-import io.actor4j.core.internal.WatchdogRunnableFactory;
-import io.actor4j.core.internal.di.DIContainer;
-import io.actor4j.core.internal.di.DefaultDIContainer;
-import io.actor4j.core.internal.pods.DefaultPodReplicationController;
-import io.actor4j.core.internal.pods.PodReplicationController;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
+import io.actor4j.core.runtime.ActorExecuterService;
+import io.actor4j.core.runtime.ActorMessageDispatcher;
+import io.actor4j.core.runtime.ActorStrategyOnFailure;
+import io.actor4j.core.runtime.ActorThreadFactory;
+import io.actor4j.core.runtime.ActorThreadMode;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.PodReplicationControllerRunnableFactory;
+import io.actor4j.core.runtime.PseudoActorCellFactory;
+import io.actor4j.core.runtime.WatchdogRunnableFactory;
+import io.actor4j.core.runtime.di.DIContainer;
+import io.actor4j.core.runtime.di.DefaultDIContainer;
+import io.actor4j.core.runtime.pods.DefaultPodReplicationController;
+import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;

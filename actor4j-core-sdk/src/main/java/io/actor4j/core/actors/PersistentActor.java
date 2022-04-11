@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.actors;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.INTERNAL_RECOVER;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.INTERNAL_RECOVER;
 
 import java.util.function.Consumer;
 

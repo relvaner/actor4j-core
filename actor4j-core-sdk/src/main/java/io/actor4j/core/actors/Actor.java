@@ -15,8 +15,6 @@
  */
 package io.actor4j.core.actors;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
-
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -32,6 +30,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
+
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 public abstract class Actor implements ActorRef {

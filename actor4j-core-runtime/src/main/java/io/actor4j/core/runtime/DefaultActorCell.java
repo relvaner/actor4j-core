@@ -38,21 +38,21 @@ import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.immutable.ImmutableList;
-import io.actor4j.core.internal.ActorMessageDispatcher;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
+import io.actor4j.core.runtime.ActorMessageDispatcher;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
 import io.actor4j.core.runtime.protocols.RestartProtocol;
 import io.actor4j.core.runtime.protocols.StopProtocol;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.actors.Actor.*;
 import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 public class DefaultActorCell implements InternalActorCell {

@@ -21,9 +21,9 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 
-import io.actor4j.core.internal.ActorThread;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorThread;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public class ActorThreadPool {
 	protected final InternalActorSystem system;

@@ -20,9 +20,9 @@ import java.util.UUID;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.config.ActorServiceConfig;
-import io.actor4j.core.internal.persistence.ActorPersistenceService;
-import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
+import io.actor4j.core.runtime.persistence.ActorPersistenceService;
+import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 
 public class DefaultActorPersistenceService implements ActorPersistenceService {
 	protected final ActorService service;

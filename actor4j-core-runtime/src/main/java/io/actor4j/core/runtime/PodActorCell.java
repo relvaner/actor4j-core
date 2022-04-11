@@ -20,9 +20,9 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.InternalPodActorCell;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.InternalPodActorCell;
 
 public class PodActorCell extends DefaultActorCell implements InternalPodActorCell {
 	protected final AtomicReference<PodContext> contextReference;

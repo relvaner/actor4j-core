@@ -15,6 +15,8 @@
  */
 package io.actor4j.core;
 
+import static io.actor4j.core.runtime.ActorGlobalSettings.defaultFactory;
+
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -26,8 +28,6 @@ import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
-
-import static io.actor4j.core.internal.ActorGlobalSettings.defaultFactory;
 
 public interface ActorSystem {
 	public static ActorSystem create() {

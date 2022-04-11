@@ -15,11 +15,11 @@
  */
 package io.actor4j.core;
 
+import static io.actor4j.core.runtime.ActorGlobalSettings.defaultFactory;
+
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
-
-import static io.actor4j.core.internal.ActorGlobalSettings.defaultFactory;
 
 public interface ActorService extends ActorSystem {
 	public static ActorService create() {

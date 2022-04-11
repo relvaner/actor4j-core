@@ -15,18 +15,18 @@
  */
 package io.actor4j.core.runtime;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.supervisor.SupervisorStrategyDirective.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.Iterator;
 import java.util.UUID;
 
-import io.actor4j.core.internal.ActorStrategyOnFailure;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorStrategyOnFailure;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import io.actor4j.core.supervisor.OneForOneSupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;

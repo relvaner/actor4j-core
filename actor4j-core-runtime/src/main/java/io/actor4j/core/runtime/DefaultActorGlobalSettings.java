@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.runtime;
 
-import io.actor4j.core.internal.ActorGlobalSettings;
+import io.actor4j.core.runtime.ActorGlobalSettings;
 
 public final class DefaultActorGlobalSettings {
 	public static void override() {

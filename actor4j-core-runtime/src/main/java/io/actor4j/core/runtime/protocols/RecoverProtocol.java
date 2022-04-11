@@ -16,10 +16,10 @@
 package io.actor4j.core.runtime.protocols;
 
 import io.actor4j.core.actors.PersistentActor;
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 
 public class RecoverProtocol {
 	protected final InternalActorCell cell;

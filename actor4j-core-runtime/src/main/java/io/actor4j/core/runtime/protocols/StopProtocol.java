@@ -15,8 +15,8 @@
  */
 package io.actor4j.core.runtime.protocols;
 
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import io.actor4j.core.internal.InternalActorCell;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public class StopProtocol {
 	protected final InternalActorCell cell;

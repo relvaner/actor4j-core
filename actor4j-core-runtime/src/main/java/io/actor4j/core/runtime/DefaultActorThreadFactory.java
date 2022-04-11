@@ -15,9 +15,9 @@
  */
 package io.actor4j.core.runtime;
 
-import io.actor4j.core.internal.ActorThread;
-import io.actor4j.core.internal.DefaultThreadFactory;
-import io.actor4j.core.internal.InternalActorSystem;
+import io.actor4j.core.runtime.ActorThread;
+import io.actor4j.core.runtime.DefaultThreadFactory;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public class DefaultActorThreadFactory extends DefaultThreadFactory {
    

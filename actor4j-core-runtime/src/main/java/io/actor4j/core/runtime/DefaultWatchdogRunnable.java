@@ -16,6 +16,7 @@
 package io.actor4j.core.runtime;
 
 import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,11 +32,9 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableList;
-import io.actor4j.core.internal.InternalActorSystem;
-import io.actor4j.core.internal.WatchdogRunnable;
-
-import static io.actor4j.core.internal.protocols.ActorProtocolTag.*;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.WatchdogRunnable;
 
 public class DefaultWatchdogRunnable extends WatchdogRunnable {
 	protected final UUID mediator;

@@ -19,8 +19,8 @@ import java.util.UUID;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorGroupMember;
-import io.actor4j.core.internal.InternalPodActorCell;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.runtime.InternalPodActorCell;
 
 public abstract class PodActor extends Actor implements ActorGroupMember {
 	protected final UUID groupId;

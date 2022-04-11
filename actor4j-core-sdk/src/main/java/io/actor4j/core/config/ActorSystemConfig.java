@@ -17,9 +17,9 @@ package io.actor4j.core.config;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.actor4j.core.internal.ActorThreadMode;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.pods.Database;
+import io.actor4j.core.runtime.ActorThreadMode;
 
 public class ActorSystemConfig {
 	private final String name;

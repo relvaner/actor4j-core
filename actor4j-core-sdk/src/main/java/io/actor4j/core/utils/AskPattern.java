@@ -25,8 +25,8 @@ import java.util.concurrent.TimeoutException;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public final class AskPattern {
 	private static final class AskPatternRessourceActor extends ResourceActor {

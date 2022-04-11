@@ -15,6 +15,9 @@
  */
 package io.actor4j.core.pods.functions;
 
+import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_callback;
+import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_request;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,9 +29,6 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.Pair;
-
-import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_callback;
-import static io.actor4j.core.internal.ActorGlobalSettings.internal_server_request; // TODO:
 
 public abstract class RemoteFunctionPod extends ActorPod {
 	@Override

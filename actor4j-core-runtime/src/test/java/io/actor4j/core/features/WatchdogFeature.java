@@ -28,8 +28,8 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.utils.AskPattern;
 
 import static io.actor4j.core.actors.Actor.*;

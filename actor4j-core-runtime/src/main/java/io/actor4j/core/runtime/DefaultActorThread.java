@@ -18,10 +18,10 @@ package io.actor4j.core.runtime;
 import java.util.Queue;
 import java.util.concurrent.locks.LockSupport;
 
-import io.actor4j.core.internal.ActorThread;
-import io.actor4j.core.internal.ActorThreadMode;
-import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorThread;
+import io.actor4j.core.runtime.ActorThreadMode;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public abstract class DefaultActorThread extends ActorThread {
 	protected /*quasi final*/ Queue<ActorMessage<?>> directiveQueue;

@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.internal.ActorThreadMode;
+import io.actor4j.core.runtime.ActorThreadMode;
 
 public class ConfigFeature {
 	@Test
