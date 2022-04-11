@@ -35,11 +35,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
-import io.actor4j.core.runtime.ActorExecuterService;
-import io.actor4j.core.runtime.DefaultThreadFactory;
-import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.PodReplicationControllerRunnable;
-import io.actor4j.core.runtime.WatchdogRunnable;
 import io.actor4j.core.runtime.failsafe.ErrorHandler;
 import io.actor4j.core.runtime.failsafe.FailsafeManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
@@ -50,7 +45,7 @@ import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
 public class ActorExecuterServiceImpl implements ActorExecuterService {
-	protected final InternalActorSystem system;
+	protected final ActorSystemImpl system;
 	
 	protected final FailsafeManager failsafeManager;
 	
@@ -71,7 +66,7 @@ public class ActorExecuterServiceImpl implements ActorExecuterService {
 	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
 	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
 
-	public ActorExecuterServiceImpl(final InternalActorSystem system) {
+	public ActorExecuterServiceImpl(final ActorSystemImpl system) {
 		super();
 		
 		this.system = system;

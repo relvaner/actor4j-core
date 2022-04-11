@@ -33,8 +33,6 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.WatchdogRunnable;
 
 public class DefaultWatchdogRunnable extends WatchdogRunnable {
 	protected final UUID mediator;

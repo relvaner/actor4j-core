@@ -20,8 +20,6 @@ import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import io.actor4j.core.runtime.InternalActorSystem;
-
 public class DefaultUnboundedActorThread extends DefaultActorThread {
 	public DefaultUnboundedActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);

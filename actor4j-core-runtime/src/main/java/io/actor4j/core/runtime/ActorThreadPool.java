@@ -22,8 +22,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.ActorThread;
-import io.actor4j.core.runtime.InternalActorSystem;
 
 public class ActorThreadPool {
 	protected final InternalActorSystem system;
@@ -33,7 +31,7 @@ public class ActorThreadPool {
 	
 	protected final CountDownLatch countDownLatch;
 	
-	public ActorThreadPool(InternalActorSystem system) {
+	public ActorThreadPool(ActorSystemImpl system) {
 		this.system = system;
 		
 		actorThreads = new ArrayList<>();

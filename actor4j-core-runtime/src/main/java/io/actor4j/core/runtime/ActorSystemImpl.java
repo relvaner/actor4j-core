@@ -46,16 +46,6 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.runtime.ActorExecuterService;
-import io.actor4j.core.runtime.ActorMessageDispatcher;
-import io.actor4j.core.runtime.ActorStrategyOnFailure;
-import io.actor4j.core.runtime.ActorThreadFactory;
-import io.actor4j.core.runtime.ActorThreadMode;
-import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.PodReplicationControllerRunnableFactory;
-import io.actor4j.core.runtime.PseudoActorCellFactory;
-import io.actor4j.core.runtime.WatchdogRunnableFactory;
 import io.actor4j.core.runtime.di.DIContainer;
 import io.actor4j.core.runtime.di.DefaultDIContainer;
 import io.actor4j.core.runtime.pods.DefaultPodReplicationController;
@@ -66,7 +56,7 @@ import io.actor4j.core.utils.ActorGroupSet;
 import io.actor4j.core.utils.ActorTimer;
 import io.actor4j.core.utils.PodActorFactory;
 
-public abstract class ActorSystemImpl implements InternalActorSystem {
+public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	
 	protected /*quasi final*/ DIContainer<UUID> container;
@@ -355,8 +345,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 	public ActorMessageDispatcher getMessageDispatcher() {
 		return messageDispatcher;
 	}
-	
-	@Override
+
 	public ActorThreadFactory getActorThreadFactory() {
 		return actorThreadFactory;
 	}

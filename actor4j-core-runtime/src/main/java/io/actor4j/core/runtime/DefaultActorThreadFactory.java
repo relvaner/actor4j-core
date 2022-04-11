@@ -15,17 +15,13 @@
  */
 package io.actor4j.core.runtime;
 
-import io.actor4j.core.runtime.ActorThread;
-import io.actor4j.core.runtime.DefaultThreadFactory;
-import io.actor4j.core.runtime.InternalActorSystem;
-
 public class DefaultActorThreadFactory extends DefaultThreadFactory {
    
     public DefaultActorThreadFactory(String name) {
     	super(name);
     }
 
-    public ActorThread newThread(InternalActorSystem system) {
+    public ActorThread newThread(ActorSystemImpl system) {
     	ActorThread t = system.getActorThreadFactory().apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
     	
     	if (t.isDaemon())

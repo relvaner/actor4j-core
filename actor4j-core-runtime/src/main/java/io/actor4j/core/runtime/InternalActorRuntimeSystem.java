@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.function.Function;
+import java.util.UUID;
 
-import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.PodReplicationControllerRunnable;
+import io.actor4j.core.runtime.di.DIContainer;
 
-public interface PodReplicationControllerRunnableFactory extends Function<InternalActorSystem, PodReplicationControllerRunnable>{
+public interface InternalActorRuntimeSystem extends InternalActorSystem {
+	public DIContainer<UUID> getContainer();
 }

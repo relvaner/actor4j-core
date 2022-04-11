@@ -26,8 +26,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.DefaultThreadFactory;
-import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 

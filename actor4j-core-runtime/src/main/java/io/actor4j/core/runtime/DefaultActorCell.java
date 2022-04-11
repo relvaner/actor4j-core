@@ -40,9 +40,6 @@ import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
-import io.actor4j.core.runtime.ActorMessageDispatcher;
-import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
 import io.actor4j.core.runtime.protocols.RestartProtocol;
@@ -334,7 +331,7 @@ public class DefaultActorCell implements InternalActorCell {
 	@Override
 	public UUID addChild(ActorFactory factory) {
 		InternalActorCell cell = system.generateCell(factory.create());
-		system.getContainer().register(cell.getId(), factory);
+		((InternalActorRuntimeSystem)system).getContainer().register(cell.getId(), factory);
 		
 		return internal_addChild(cell);
 	}

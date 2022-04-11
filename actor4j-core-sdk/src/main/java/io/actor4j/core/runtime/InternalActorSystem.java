@@ -25,15 +25,13 @@ import io.actor4j.core.ActorPodService;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.di.DIContainer;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public UUID UNKNOWN_ID();
 	public UUID PSEUDO_ID();
-	
-	public DIContainer<UUID> getContainer();
+
 	public PodReplicationController getPodReplicationController();
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();
 	public WatchdogRunnableFactory getWatchdogRunnableFactory();
@@ -54,7 +52,6 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public Queue<ActorMessage<?>> getBufferQueue();
 	
 	public ActorExecuterService getExecuterService();
-	public ActorThreadFactory getActorThreadFactory();
 	public ActorStrategyOnFailure getActorStrategyOnFailure();
 	
 	public InternalActorCell generateCell(Actor actor);
