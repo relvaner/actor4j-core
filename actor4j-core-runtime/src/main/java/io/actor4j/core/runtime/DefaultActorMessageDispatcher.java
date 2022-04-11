@@ -110,9 +110,9 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		}
 		
 		if (alias==null && redirect==null)
-			((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
 		else
-			((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
@@ -131,7 +131,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -141,7 +141,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -164,7 +164,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -174,7 +174,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -197,7 +197,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -207,7 +207,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -230,7 +230,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postPersistence(message);
+		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postPersistence(message);
 	}
 	
 	@Override
@@ -238,7 +238,7 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
-			((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 			systemLogger().log(WARN,
 				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
 					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
@@ -248,16 +248,16 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void registerCell(InternalActorCell cell) {
-		((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
+		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
 	}
 	
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
-		((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
+		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
 	}
 	
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return ((ActorExecuterServiceImpl)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().isRegisteredCell(cell);
+		return ((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().isRegisteredCell(cell);
 	}
 }

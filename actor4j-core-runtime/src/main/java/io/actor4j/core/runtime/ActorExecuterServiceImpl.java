@@ -44,7 +44,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
-public class ActorExecuterServiceImpl implements ActorExecuterService {
+public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 	protected final InternalActorRuntimeSystem system;
 	
 	protected final FailsafeManager failsafeManager;
@@ -128,6 +128,7 @@ public class ActorExecuterServiceImpl implements ActorExecuterService {
 		return failsafeManager;
 	}
 
+	@Override
 	public ActorThreadPool getActorThreadPool() {
 		return actorThreadPool;
 	}
