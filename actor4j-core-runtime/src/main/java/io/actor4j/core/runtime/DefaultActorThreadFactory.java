@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
+
+import io.actor4j.core.internal.ActorThread;
+import io.actor4j.core.internal.DefaultThreadFactory;
+import io.actor4j.core.internal.InternalActorSystem;
 
 public class DefaultActorThreadFactory extends DefaultThreadFactory {
    

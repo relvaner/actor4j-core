@@ -36,7 +36,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.internal.ActorExecuterService;
-import io.actor4j.core.internal.ActorThreadPool;
 import io.actor4j.core.internal.DefaultThreadFactory;
 import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.PodReplicationControllerRunnable;
@@ -133,8 +132,7 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 	public FailsafeManager getFailsafeManager() {
 		return failsafeManager;
 	}
-	
-	@Override
+
 	public ActorThreadPool getActorThreadPool() {
 		return actorThreadPool;
 	}

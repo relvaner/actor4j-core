@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.internal;
+package io.actor4j.core.runtime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
+import io.actor4j.core.internal.ActorThread;
+import io.actor4j.core.internal.InternalActorCell;
+import io.actor4j.core.internal.InternalActorSystem;
 import io.actor4j.core.internal.annotations.concurrent.Readonly;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.internal.balancing.ActorLoadBalancingBeforeStart;
