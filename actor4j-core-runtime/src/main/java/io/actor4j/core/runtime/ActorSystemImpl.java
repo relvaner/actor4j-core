@@ -129,7 +129,7 @@ public abstract class ActorSystemImpl implements InternalActorSystem {
 		messagingEnabled = new AtomicBoolean();
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
-		executerService = new DefaultActorExecuterService(this);
+		executerService = new ActorExecuterServiceImpl(this);
 		
 		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		

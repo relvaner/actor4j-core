@@ -49,7 +49,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
-public class DefaultActorExecuterService implements ActorExecuterService {
+public class ActorExecuterServiceImpl implements ActorExecuterService {
 	protected final InternalActorSystem system;
 	
 	protected final FailsafeManager failsafeManager;
@@ -71,7 +71,7 @@ public class DefaultActorExecuterService implements ActorExecuterService {
 	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
 	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
 
-	public DefaultActorExecuterService(final InternalActorSystem system) {
+	public ActorExecuterServiceImpl(final InternalActorSystem system) {
 		super();
 		
 		this.system = system;
