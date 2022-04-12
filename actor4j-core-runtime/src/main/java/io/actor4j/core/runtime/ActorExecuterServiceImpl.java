@@ -44,12 +44,11 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
-public class ActorExecuterServiceImpl implements InternalActorExecuterService {
+public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 	protected final InternalActorRuntimeSystem system;
 	
 	protected final FailsafeManager failsafeManager;
-	
-	protected /*quasi final*/ ActorThreadPool actorThreadPool;
+
 	protected /*quasi final*/ Runnable onTermination;
 	
 	protected final AtomicBoolean started;
@@ -127,11 +126,6 @@ public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 	public FailsafeManager getFailsafeManager() {
 		return failsafeManager;
 	}
-
-	@Override
-	public ActorThreadPool getActorThreadPool() {
-		return actorThreadPool;
-	}
 	
 	@Override
 	public ActorPersistenceService getPersistenceService() {
@@ -173,7 +167,7 @@ public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 		}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		
-		actorThreadPool = new ActorThreadPool(system);
+		createActorThreadPool();
 		
 		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
 		podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
@@ -195,6 +189,9 @@ public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 		if (watchdogRunnable!=null)
 			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
+	
+	public abstract void createActorThreadPool();
+	public abstract void shutdownActorThreadPool(Runnable onTermination, boolean await);
 	
 	@Override
 	public boolean isStarted() {
@@ -245,7 +242,7 @@ public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 		
 		resourceExecuterService.shutdown();
 		
-		actorThreadPool.shutdown(onTermination, await);
+		shutdownActorThreadPool(onTermination, await);
 		
 		if (system.getConfig().persistenceMode())
 			persistenceService.shutdown();
@@ -255,12 +252,12 @@ public class ActorExecuterServiceImpl implements InternalActorExecuterService {
 	
 	@Override
 	public long getCount() {
-		return actorThreadPool!=null ? actorThreadPool.getCount() : 0;
+		return 0;
 	}
 	
 	@Override
 	public List<Long> getCounts() {
-		return actorThreadPool!=null ? actorThreadPool.getCounts() : new ArrayList<>();
+		return new ArrayList<>();
 	}
 
 	public boolean isResponsiveThread(int index) {
