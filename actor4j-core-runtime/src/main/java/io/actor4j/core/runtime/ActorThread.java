@@ -26,7 +26,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.failsafe.FailsafeMethod;
 import io.actor4j.core.runtime.failsafe.Method;
 
-public abstract class ActorThread extends Thread {
+public abstract class ActorThread extends Thread implements ActorProcess {
 	protected final UUID uuid; // for failsafe
 	
 	protected final InternalActorSystem system;

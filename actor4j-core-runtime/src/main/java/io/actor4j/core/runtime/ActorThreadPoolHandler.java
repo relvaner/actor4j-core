@@ -15,76 +15,14 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.annotations.concurrent.Readonly;
-import io.actor4j.core.runtime.balancing.ActorLoadBalancingAfterStart;
-import io.actor4j.core.runtime.balancing.ActorLoadBalancingBeforeStart;
-import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
-public class ActorThreadPoolHandler {
-	protected final InternalActorSystem system;
-	
-	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
-	@Readonly
-	protected final Map<Long, ActorThread> threadsMap;
-	@Readonly
-	protected final List<Long> threadsList;
-	@Readonly
-	protected final Map<Long, String> persistenceMap;
-	
-	protected final Map<UUID, Long> groupsMap; // GroupID -> ThreadID
-	protected final Map<UUID, Integer> groupsDistributedMap; // GroupID -> ThreadIndex
-	
-	protected final ActorLoadBalancingBeforeStart actorLoadBalancingBeforeStart;
-	protected final ActorLoadBalancingAfterStart actorLoadBalancingAfterStart;
-	
+public class ActorThreadPoolHandler extends ActorProcessPoolHandler<ActorThread> {
 	public ActorThreadPoolHandler(InternalActorSystem system) {
-		super();
-		
-		this.system = system;
-		
-		cellsMap = new ConcurrentHashMap<>();
-		threadsMap = new HashMap<>();
-		threadsList = new ArrayList<>();
-		persistenceMap = new HashMap<>();
-		
-		groupsMap = new ConcurrentHashMap<>();
-		groupsDistributedMap = new ConcurrentHashMap<>();
-		
-		actorLoadBalancingBeforeStart = new ActorLoadBalancingBeforeStart();
-		actorLoadBalancingAfterStart = new ActorLoadBalancingAfterStart();
-	}
-	
-	public Map<UUID, Long> getCellsMap() {
-		return cellsMap;
-	}
-
-	public Map<Long, ActorThread> getThreadsMap() {
-		return threadsMap;
-	}
-	
-	public List<Long> getThreadsList() {
-		return threadsList;
-	}
-
-	public void beforeStart(List<ActorThread> actorThreads) {
-		int i=0;
-		for(ActorThread t : actorThreads) {
-			threadsMap.put(t.getId(), t);
-			threadsList.add(t.getId());
-			persistenceMap.put(t.getId(), ActorPersistenceServiceImpl.getAlias(i));
-			i++;
-		}
-		
-		actorLoadBalancingBeforeStart.registerCells(cellsMap, threadsList, groupsMap, groupsDistributedMap, system.getCells());
+		super(system);
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
@@ -215,23 +153,5 @@ public class ActorThreadPoolHandler {
 		}
 		
 		return id_dest!=null;
-	}
-	
-	public void postPersistence(ActorMessage<?> message) {
-		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
-		UUID dest = system.getExecuterService().getPersistenceService().getService().getActorFromAlias(persistenceMap.get(id_source));
-		system.getExecuterService().getPersistenceService().getService().send(message.copy(dest));
-	}
-	
-	public void registerCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
-	}
-	
-	public void unregisterCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
-	}
-	
-	public boolean isRegisteredCell(InternalActorCell cell) {
-		return cellsMap.containsKey(cell.getId());
 	}
 }
