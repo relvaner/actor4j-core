@@ -27,11 +27,10 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ResourceActor;
-import io.actor4j.core.runtime.ActorThread;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingBeforeStart {
-	public void registerCells(Map<UUID, Long> cellsMap, List<ActorThread> actorThreads, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
+	public void registerCells(Map<UUID, Long> cellsMap, List<Long> threadsList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
 		List<UUID> buffer = new LinkedList<>();
 		for (InternalActorCell cell : cells.values()) 
 			if (!(cell.getActor() instanceof ResourceActor))
@@ -48,20 +47,20 @@ public class ActorLoadBalancingBeforeStart {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = actorThreads.get(j).getId();
+					threadId = threadsList.get(j);
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j);
 				}
 				else {
 					threadIndex++;
-					if (threadIndex==actorThreads.size())
+					if (threadIndex==threadsList.size())
 						threadIndex = 0;
-					threadId = actorThreads.get(threadIndex).getId();
+					threadId = threadsList.get(threadIndex);
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
 				}
 				if (buffer.remove(cell.getId()))
 					cellsMap.put(cell.getId(), threadId);
 				j++;
-				if (j==actorThreads.size())
+				if (j==threadsList.size())
 					j = 0;
 				
 				if (actor instanceof ActorGroupMember) {
@@ -74,10 +73,10 @@ public class ActorLoadBalancingBeforeStart {
 			else if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 				if (threadId==null) {
-					threadId = actorThreads.get(i).getId();
+					threadId = threadsList.get(i);
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
 					i++;
-					if (i==actorThreads.size())
+					if (i==threadsList.size())
 						i = 0;
 				}
 				if (buffer.remove(cell.getId()))
@@ -87,18 +86,18 @@ public class ActorLoadBalancingBeforeStart {
 						
 		i=0;
 		for (UUID id : buffer) {
-			cellsMap.put(id, actorThreads.get(i).getId());
+			cellsMap.put(id, threadsList.get(i));
 			i++;
-			if (i==actorThreads.size())
+			if (i==threadsList.size())
 				i = 0;
 		}
 			
 		/*
 		int i=0;
 		for (UUID id : system.cells.keySet()) {
-			cellsMap.put(id, actorThreads.get(i).getId());
+			cellsMap.put(id, threadsList.get(i).getId());
 			i++;
-			if (i==actorThreads.size())
+			if (i==threadsList.size())
 				i = 0;
 		}
 		*/

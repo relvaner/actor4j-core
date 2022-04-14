@@ -76,8 +76,6 @@ public class ActorThreadPoolHandler {
 	}
 
 	public void beforeStart(List<ActorThread> actorThreads) {
-		actorLoadBalancingBeforeStart.registerCells(cellsMap, actorThreads, groupsMap, groupsDistributedMap, system.getCells());
-		
 		int i=0;
 		for(ActorThread t : actorThreads) {
 			threadsMap.put(t.getId(), t);
@@ -85,6 +83,8 @@ public class ActorThreadPoolHandler {
 			persistenceMap.put(t.getId(), ActorPersistenceServiceImpl.getAlias(i));
 			i++;
 		}
+		
+		actorLoadBalancingBeforeStart.registerCells(cellsMap, threadsList, groupsMap, groupsDistributedMap, system.getCells());
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
@@ -224,11 +224,11 @@ public class ActorThreadPoolHandler {
 	}
 	
 	public void registerCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, threadsMap, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public void unregisterCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsMap, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public boolean isRegisteredCell(InternalActorCell cell) {
