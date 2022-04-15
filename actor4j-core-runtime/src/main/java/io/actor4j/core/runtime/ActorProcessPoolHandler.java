@@ -31,16 +31,16 @@ import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 public class ActorProcessPoolHandler<P extends ActorProcess> {
 	protected final InternalActorSystem system;
 	
-	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ThreadID
+	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ProcessID
 	@Readonly
-	protected final Map<Long, P> threadsMap;
+	protected final Map<Long, P> processMap;
 	@Readonly
-	protected final List<Long> threadsList;
+	protected final List<Long> processList;
 	@Readonly
 	protected final Map<Long, String> persistenceMap;
 	
-	protected final Map<UUID, Long> groupsMap; // GroupID -> ThreadID
-	protected final Map<UUID, Integer> groupsDistributedMap; // GroupID -> ThreadIndex
+	protected final Map<UUID, Long> groupsMap; // GroupID -> ProcessID
+	protected final Map<UUID, Integer> groupsDistributedMap; // GroupID -> ProcessIndex
 	
 	protected final ActorLoadBalancingBeforeStart actorLoadBalancingBeforeStart;
 	protected final ActorLoadBalancingAfterStart actorLoadBalancingAfterStart;
@@ -51,8 +51,8 @@ public class ActorProcessPoolHandler<P extends ActorProcess> {
 		this.system = system;
 		
 		cellsMap = new ConcurrentHashMap<>();
-		threadsMap = new HashMap<>();
-		threadsList = new ArrayList<>();
+		processMap = new HashMap<>();
+		processList = new ArrayList<>();
 		persistenceMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
@@ -66,24 +66,24 @@ public class ActorProcessPoolHandler<P extends ActorProcess> {
 		return cellsMap;
 	}
 
-	public Map<Long, P> getThreadsMap() {
-		return threadsMap;
+	public Map<Long, P> getProcessMap() {
+		return processMap;
 	}
 	
-	public List<Long> getThreadsList() {
-		return threadsList;
+	public List<Long> getProcessList() {
+		return processList;
 	}
 
-	public void beforeStart(List<P> actorThreads) {
+	public void beforeStart(List<P> actorProcessList) {
 		int i=0;
-		for(P p : actorThreads) {
-			threadsMap.put(p.getId(), p);
-			threadsList.add(p.getId());
+		for(P p : actorProcessList) {
+			processMap.put(p.getId(), p);
+			processList.add(p.getId());
 			persistenceMap.put(p.getId(), ActorPersistenceServiceImpl.getAlias(i));
 			i++;
 		}
 		
-		actorLoadBalancingBeforeStart.registerCells(cellsMap, threadsList, groupsMap, groupsDistributedMap, system.getCells());
+		actorLoadBalancingBeforeStart.registerCells(cellsMap, processList, groupsMap, groupsDistributedMap, system.getCells());
 	}
 	
 	public void postPersistence(ActorMessage<?> message) {
@@ -93,11 +93,11 @@ public class ActorProcessPoolHandler<P extends ActorProcess> {
 	}
 	
 	public void registerCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.registerCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.registerCell(cellsMap, processList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public void unregisterCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.unregisterCell(cellsMap, threadsList, groupsMap, groupsDistributedMap, cell);
+		actorLoadBalancingAfterStart.unregisterCell(cellsMap, processList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	public boolean isRegisteredCell(InternalActorCell cell) {

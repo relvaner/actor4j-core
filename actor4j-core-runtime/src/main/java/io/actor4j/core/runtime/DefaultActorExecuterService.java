@@ -25,11 +25,11 @@ public class DefaultActorExecuterService extends ActorExecuterServiceImpl implem
 		super(system);
 	}
 	
-	public void createActorThreadPool() {
+	public void createActorProcessPool() {
 		actorThreadPool = new ActorThreadPool(system);
 	}
 	
-	public void shutdownActorThreadPool(Runnable onTermination, boolean await) {
+	public void shutdownActorProcessPool(Runnable onTermination, boolean await) {
 		actorThreadPool.shutdown(onTermination, await);
 	}
 	

@@ -153,11 +153,13 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		return counter.longValue();
 	}
 	
-	public AtomicBoolean getThreadLoad() {
+	@Override
+	public AtomicBoolean getLoad() {
 		return threadLoad;
 	}
 	
-	public long getThreadProcessingTimeStatistics() {
+	@Override
+	public long getProcessingTimeStatistics() {
 		long sum = 0;
 		int count = 0;
 		for (Long value=null; (value=threadProcessingTimeStatistics.poll())!=null; count++) 

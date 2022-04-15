@@ -15,6 +15,12 @@
  */
 package io.actor4j.core.runtime;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public interface ActorProcess extends Runnable {
 	public long getId();
+	
+	public long getCount();
+	public AtomicBoolean getLoad();
+	public long getProcessingTimeStatistics();
 }

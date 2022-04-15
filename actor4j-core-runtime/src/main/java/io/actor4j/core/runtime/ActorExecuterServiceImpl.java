@@ -167,7 +167,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		
-		createActorThreadPool();
+		createActorProcessPool();
 		
 		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
 		podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
@@ -190,8 +190,8 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
-	public abstract void createActorThreadPool();
-	public abstract void shutdownActorThreadPool(Runnable onTermination, boolean await);
+	public abstract void createActorProcessPool();
+	public abstract void shutdownActorProcessPool(Runnable onTermination, boolean await);
 	
 	@Override
 	public boolean isStarted() {
@@ -242,7 +242,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		
 		resourceExecuterService.shutdown();
 		
-		shutdownActorThreadPool(onTermination, await);
+		shutdownActorProcessPool(onTermination, await);
 		
 		if (system.getConfig().persistenceMode())
 			persistenceService.shutdown();

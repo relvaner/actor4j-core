@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,19 +23,11 @@ import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorThreadPool {
-	protected final InternalActorRuntimeSystem system;
-	
-	protected final List<ActorThread> actorThreads;
-	protected final ActorThreadPoolHandler actorThreadPoolHandler;
-	
+public class ActorThreadPool extends ActorProcessPool<ActorThread> {
 	protected final CountDownLatch countDownLatch;
 	
 	public ActorThreadPool(InternalActorRuntimeSystem system) {
-		this.system = system;
-		
-		actorThreads = new ArrayList<>();
-		actorThreadPoolHandler = new ActorThreadPoolHandler(system);
+		super(system, new ActorThreadPoolHandler(system));
 		
 		countDownLatch = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.getConfig().name());
@@ -48,21 +40,21 @@ public class ActorThreadPool {
 						countDownLatch.countDown();
 					}
 				};
-				actorThreads.add(t);
+				actorProcessList.add(t);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
-		actorThreadPoolHandler.beforeStart(actorThreads);
-		for (ActorThread t : actorThreads)
+		actorProcessPoolHandler.beforeStart(actorProcessList);
+		for (ActorThread t : actorProcessList)
 			t.start();
 	}
 	
 	public void shutdown(Runnable onTermination, boolean await) {
-		if (actorThreads.size()>0) {
-			for (ActorThread t : actorThreads)
+		if (actorProcessList.size()>0) {
+			for (ActorThread t : actorProcessList)
 				t.interrupt();
 		}
 		
@@ -97,69 +89,36 @@ public class ActorThreadPool {
 		}
 	}
 	
-	public List<ActorThread> getActorThreads() {
-		return actorThreads;
-	}
-
 	public ActorThreadPoolHandler getActorThreadPoolHandler() {
-		return actorThreadPoolHandler;
+		return (ActorThreadPoolHandler)actorProcessPoolHandler;
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
-		return actorThreadPoolHandler.postInnerOuter(message, source);
+		return getActorThreadPoolHandler().postInnerOuter(message, source);
 	}
 	
 	public boolean postOuter(ActorMessage<?> message) {
-		return actorThreadPoolHandler.postOuter(message);
+		return getActorThreadPoolHandler().postOuter(message);
 	}
 	
 	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
-		return actorThreadPoolHandler.postQueue(message, biconsumer);
+		return getActorThreadPoolHandler().postQueue(message, biconsumer);
 	}
 	
 	public void postPersistence(ActorMessage<?> message) {
-		actorThreadPoolHandler.postPersistence(message);
-	}
-	
-	public List<Boolean> getThreadLoads() {
-		List<Boolean> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getThreadLoad().get());
-		return list;
-	}
-	
-	public List<Long> getProcessingTimeStatistics() {
-		List<Long> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getThreadProcessingTimeStatistics());
-		return list;
-	}
-	
-	public long getCount() {
-		long sum = 0;
-		for (ActorThread t : actorThreads)
-			sum += t.getCount();
-		
-		return sum;
-	}
-	
-	public List<Long> getCounts() {
-		List<Long> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
-			list.add(t.getCount());
-		return list;
+		getActorThreadPoolHandler().postPersistence(message);
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
 		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
+		for (ActorThread t : actorProcessList)
 			list.add(t.getInnerQueue().size());
 		return list;
 	}
 	
 	public List<Integer> getWorkerOuterQueueSizes() {
 		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorThreads)
+		for (ActorThread t : actorProcessList)
 			list.add(t.getOuterQueue().size());
 		return list;
 	}
