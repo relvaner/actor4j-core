@@ -28,7 +28,7 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 		super(config);
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
-		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system);
+		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecuterService
 	}
 	
 	protected ActorExecuterService createActorExecuterService() {
