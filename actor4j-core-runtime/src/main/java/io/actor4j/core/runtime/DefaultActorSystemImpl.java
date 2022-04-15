@@ -31,6 +31,10 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system);
 	}
 	
+	protected ActorExecuterService createActorExecuterService() {
+		return new DefaultActorExecuterService(this);
+	}
+	
 	public List<Integer> getWorkerInnerQueueSizes() {
 		return ((InternalActorExecuterService)executerService).getActorThreadPool().getWorkerInnerQueueSizes();
 	}

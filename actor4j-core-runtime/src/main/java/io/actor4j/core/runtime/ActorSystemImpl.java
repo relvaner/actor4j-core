@@ -119,7 +119,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		messagingEnabled = new AtomicBoolean();
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
-		executerService = new DefaultActorExecuterService(this);
+		executerService = createActorExecuterService();
 		
 		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		
@@ -280,6 +280,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		return result;
 	}
+	
+	protected abstract ActorExecuterService createActorExecuterService();
 
 	@Override
 	public DIContainer<UUID> getContainer() {
