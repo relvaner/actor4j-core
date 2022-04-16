@@ -864,9 +864,9 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {
-					send(ActorMessage.create(null, INTERNAL_STOP, USER_ID, USER_ID));
-					send(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
-					send(ActorMessage.create(null, INTERNAL_STOP, UNKNOWN_ID, UNKNOWN_ID));
+					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, USER_ID));
+					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
+					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, UNKNOWN_ID));
 					if (config.threadMode()==ActorThreadMode.PARK) {
 						while (countDownLatchPark.get()>0) {
 							try {
