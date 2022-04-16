@@ -16,7 +16,9 @@
 package io.actor4j.core.runtime;
 
 import java.util.List;
+import java.util.UUID;
 
+import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 
 public class DefaultActorSystemImpl extends ActorSystemImpl {
@@ -31,6 +33,22 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecuterService
 	}
 	
+	@Override
+	protected InternalActorCell createActorCell(Actor actor) {
+		return new DefaultActorCell(this, actor);
+	}
+	
+	@Override
+	protected InternalActorCell createActorCell(Actor actor, UUID id) {
+		return new DefaultActorCell(this, actor, id);
+	}
+	
+	@Override
+	protected InternalActorCell createPodActorCell(Actor actor) {
+		return new PodActorCell(this, actor);
+	}
+	
+	@Override
 	protected ActorExecuterService createActorExecuterService() {
 		return new DefaultActorExecuterService(this);
 	}

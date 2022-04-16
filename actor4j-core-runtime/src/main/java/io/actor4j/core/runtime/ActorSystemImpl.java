@@ -172,7 +172,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected void resetCells() {
 		resetCountdownLatch();
 		
-		internal_addCell(new DefaultActorCell(this, new Actor("user") {
+		internal_addCell(createActorCell(new Actor("user") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -187,7 +187,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			}
 		}, USER_ID));
 		
-		internal_addCell(new DefaultActorCell(this, new Actor("system") {
+		internal_addCell(createActorCell(new Actor("system") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -202,7 +202,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			}
 		}, SYSTEM_ID));
 		
-		internal_addCell(new DefaultActorCell(this, new Actor("unknown") {
+		internal_addCell(createActorCell(new Actor("unknown") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -217,7 +217,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			}
 		}, UNKNOWN_ID));
 		
-		internal_addCell(new DefaultActorCell(this, new Actor("pseudo") {
+		internal_addCell(createActorCell(new Actor("pseudo") {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -236,19 +236,23 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		if (actor instanceof ResourceActor)
 			return new ResourceActorCell(this, actor);
 		else if (actor instanceof PodActor)
-			return new PodActorCell(this, actor);
+			return createPodActorCell(actor);
 		else
-			return new DefaultActorCell(this, actor);
+			return createActorCell(actor);
 	}
 	
 	public InternalActorCell generateCell(Class<? extends Actor> clazz) {
 		if (clazz==ResourceActor.class)
 			return new ResourceActorCell(this, null);
 		else if (clazz==PodActor.class)
-			return new PodActorCell(this, null);
+			return createPodActorCell(null);
 		else
-			return new DefaultActorCell(this, null);
+			return createActorCell(null);
 	}
+	
+	protected abstract InternalActorCell createActorCell(Actor actor);
+	protected abstract InternalActorCell createActorCell(Actor actor, UUID id);
+	protected abstract InternalActorCell createPodActorCell(Actor actor);
 
 	@Override
 	public ActorSystemConfig getConfig() {
@@ -469,10 +473,10 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public UUID addPodActor(PodActorFactory factory, PodContext context) {
-		PodActorCell cell = (PodActorCell)generateCell(factory.create());
+		InternalPodActorCell cell = (InternalPodActorCell)generateCell(factory.create());
 		cell.setContext(context);
-		setPodDomain(cell.id, context.domain());
-		container.register(cell.id, factory);
+		setPodDomain(cell.getId(), context.domain());
+		container.register(cell.getId(), factory);
 		
 		return user_addCell(cell);
 	}

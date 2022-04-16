@@ -36,6 +36,7 @@ public class PodActorCell extends DefaultActorCell implements InternalPodActorCe
 		return contextReference.get();
 	}
 	
+	@Override
 	public void setContext(PodContext context) {
 		contextReference.set(context);
 	}

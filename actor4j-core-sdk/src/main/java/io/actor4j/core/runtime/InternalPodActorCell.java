@@ -19,4 +19,5 @@ import io.actor4j.core.pods.PodContext;
 
 public interface InternalPodActorCell extends InternalActorCell {
 	public PodContext getContext();
+	public void setContext(PodContext context);
 }
