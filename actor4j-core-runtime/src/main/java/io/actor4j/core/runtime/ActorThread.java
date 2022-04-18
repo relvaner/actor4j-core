@@ -27,7 +27,7 @@ import io.actor4j.core.runtime.failsafe.FailsafeMethod;
 import io.actor4j.core.runtime.failsafe.Method;
 
 public abstract class ActorThread extends Thread implements ActorProcess {
-	protected final UUID uuid; // for failsafe
+	protected final UUID failsafeId;
 	
 	protected final InternalActorSystem system;
 	
@@ -46,7 +46,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		super(group, name);
 		
 		this.system = system;
-		uuid = UUID.randomUUID();
+		failsafeId = UUID.randomUUID();
 		
 		threadLoad = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
@@ -142,7 +142,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 			@Override
 			public void after() {
 			}
-		}, uuid);
+		}, failsafeId);
 	}
 	
 	public AtomicLong getCounter() {
@@ -186,8 +186,4 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 	public abstract Queue<ActorMessage<?>> getInnerQueue();
 	
 	public abstract Queue<ActorMessage<?>> getOuterQueue();
-	
-	public UUID getUUID() {
-		return uuid;
-	}
 }
