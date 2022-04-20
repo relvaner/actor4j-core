@@ -81,14 +81,26 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 							String.format("[SAFETY] Exception in initialization of an actor"));
 					}
 					else if (message.equals("actor") || message.equals("resource")) {
-						Actor actor = system.getCells().get(uuid).getActor();
-						systemLogger().log(ERROR,
+						InternalActorCell cell = system.getCells().get(uuid);
+						if (cell!=null) {
+							Actor actor = cell.getActor();
+							systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
+						}
+						else
+							systemLogger().log(ERROR,
+								String.format("[SAFETY] Exception in actor: %s", uuid.toString()));
 					}
 					else if (message.equals("pseudo")) {
-						Actor actor = system.getPseudoCells().get(uuid).getActor();
-						systemLogger().log(ERROR,
+						InternalActorCell cell = system.getPseudoCells().get(uuid);
+						if (cell!=null) {
+							Actor actor = cell.getActor();
+							systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", actorLabel(actor)));
+						}
+						else
+							systemLogger().log(ERROR,
+								String.format("[SAFETY] Exception in actor: %s", uuid.toString()));
 					}
 					else if (message.equals("replication")) {
 						systemLogger().log(ERROR,
@@ -99,9 +111,15 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 								String.format("[FAILSAFE] Exception in WatchdogThread"));
 					}
 					else if (message.equals("executer_resource")) {
-						Actor actor = system.getCells().get(uuid).getActor();
-						systemLogger().log(ERROR,
+						InternalActorCell cell = system.getCells().get(uuid);
+						if (cell!=null) {
+							Actor actor = cell.getActor();
+							systemLogger().log(ERROR,
 								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
+						}
+						else
+							systemLogger().log(ERROR,
+								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", uuid.toString()));
 					}
 					else if (message.equals("executer_client")) {
 						systemLogger().log(ERROR,
@@ -110,7 +128,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 				}
 				else {
 					systemLogger().log(ERROR,
-						String.format("[SAFETY][FATAL] Exception in ActorThread"));
+						String.format("[SAFETY][FATAL] Exception in Thread/Runnable"));
 				}
 				
 				t.printStackTrace();
