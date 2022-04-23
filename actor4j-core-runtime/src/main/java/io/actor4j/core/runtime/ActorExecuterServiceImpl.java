@@ -174,25 +174,30 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		
 		this.onTermination = onTermination;
 		
-		/* necessary before actorThreadPool instantiation */
-		ActorGroup watchdogActorGroup = new ActorGroupList();
-		final AtomicInteger watchdogIndex = new AtomicInteger(0);
-		List<UUID> watchdogActors = system.addSystemActor(() -> new ActorWithDistributedGroup("watchdog-"+watchdogIndex.getAndIncrement(), watchdogActorGroup) {
-			@Override
-			public void receive(ActorMessage<?> message) {
-				// empty
-			}
-		}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
-		watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
+		if (system.getConfig().watchdogEnabled()) {
+			/* necessary before actorThreadPool instantiation */
+			ActorGroup watchdogActorGroup = new ActorGroupList();
+			final AtomicInteger watchdogIndex = new AtomicInteger(0);
+			List<UUID> watchdogActors = system.addSystemActor(() -> new ActorWithDistributedGroup("watchdog-"+watchdogIndex.getAndIncrement(), watchdogActorGroup) {
+				@Override
+				public void receive(ActorMessage<?> message) {
+					// empty
+				}
+			}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+			watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
+		}
 		
 		createActorProcessPool();
 		
-		podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
-		podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
-		if (podReplicationControllerRunnable!=null)
-			podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime(), system.getConfig().horizontalPodAutoscalerSyncTime(), TimeUnit.MILLISECONDS);
+		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
+			podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
+			podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
+			if (podReplicationControllerRunnable!=null)
+				podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime(), system.getConfig().horizontalPodAutoscalerSyncTime(), TimeUnit.MILLISECONDS);
+		}
 		
-		watchdogExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
+		if (system.getConfig().watchdogEnabled())
+			watchdogExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
 		
 		/*
 		 * necessary before executing onStartup; 
@@ -204,7 +209,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		if (onStartup!=null)
 			onStartup.run();
 		
-		if (watchdogRunnable!=null)
+		if (system.getConfig().watchdogEnabled() && watchdogRunnable!=null)
 			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
@@ -252,8 +257,10 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 	
 	@Override
 	public void shutdown(boolean await) {
-		watchdogExecuterService.shutdown();
-		podReplicationControllerExecuterService.shutdown();
+		if (system.getConfig().watchdogEnabled())
+			watchdogExecuterService.shutdown();
+		if (system.getConfig().horizontalPodAutoscalerEnabled())
+			podReplicationControllerExecuterService.shutdown();
 		
 		globalTimerExecuterService.shutdown();
 		timerExecuterService.shutdown();

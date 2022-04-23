@@ -37,7 +37,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 			.name("actor4j-persistence")
 			.parallelism(parallelism)
 			.parallelismFactor(parallelismFactor)
-			.horizontalPodAutoscalerSyncTime(Integer.MAX_VALUE) // TODO: disabled
+			.horizontalPodAutoscalerEnabled(false)
 			.build();
 		service = ActorService.create(ActorRuntime.factory(), config);
 		

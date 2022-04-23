@@ -29,25 +29,42 @@ public class ConfigFeature {
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		assertEquals("actor4j", system.getConfig().name());
-		assertEquals(false, system.getConfig().counterEnabled().get());
-		assertEquals(false, system.getConfig().threadProcessingTimeEnabled().get());
+		
 		assertEquals(Runtime.getRuntime().availableProcessors(), system.getConfig().parallelism());
 		assertEquals(1, system.getConfig().parallelismFactor());
+		
+		assertEquals(50_000, system.getConfig().queueSize());
+		assertEquals(10_000, system.getConfig().bufferQueueSize());
+		
 		assertEquals(100, system.getConfig().throughput());
 		assertEquals(100_000, system.getConfig().idle());
 		assertEquals(100_000/100, system.getConfig().load());
 		assertEquals(ActorThreadMode.PARK, system.getConfig().threadMode());
+		assertEquals(false, system.getConfig().serverMode());
 		assertEquals(25, system.getConfig().sleepTime());
-		assertEquals(15_000, system.getConfig().horizontalPodAutoscalerSyncTime());
-		assertEquals(2_000, system.getConfig().horizontalPodAutoscalerMeasurementTime());
-		assertEquals(10_000, system.getConfig().maxStatisticValues());
-		assertEquals(50_000, system.getConfig().queueSize());
-		assertEquals(10_000, system.getConfig().bufferQueueSize());
-		assertEquals(false, system.getConfig().persistenceMode());
+		
+		assertEquals(200, system.getConfig().maxResourceThreads());
+		
+		assertEquals(2_000, system.getConfig().awaitTerminationTimeout());
+		
+		assertEquals(3, system.getConfig().maxRetries());
+		assertEquals(2_000, system.getConfig().withinTimeRange());
 		
 		assertEquals(null, system.getConfig().persistenceDriver());
+		assertEquals(false, system.getConfig().persistenceMode());
+		
+		assertEquals(false, system.getConfig().counterEnabled().get());
+		assertEquals(false, system.getConfig().threadProcessingTimeEnabled().get());
+		assertEquals(10_000, system.getConfig().maxStatisticValues());
+		
+		assertEquals(true, system.getConfig().horizontalPodAutoscalerEnabled());
+		assertEquals(15_000, system.getConfig().horizontalPodAutoscalerSyncTime());
+		assertEquals(2_000, system.getConfig().horizontalPodAutoscalerMeasurementTime());
 		assertEquals(null, system.getConfig().podDatabase());
-		assertEquals(false, system.getConfig().serverMode());
+		
+		assertEquals(true, system.getConfig().watchdogEnabled());
+		assertEquals(5_000, system.getConfig().watchdogSyncTime());
+		assertEquals(2_000, system.getConfig().watchdogTimeout());
 	}
 	
 	@Test
@@ -86,7 +103,6 @@ public class ConfigFeature {
 		assertEquals(55_000, system.getConfig().queueSize());
 		assertEquals(13_000, system.getConfig().bufferQueueSize());
 		assertEquals(false, system.getConfig().persistenceMode());
-		
 		assertEquals(null, system.getConfig().persistenceDriver());
 		assertEquals(null, system.getConfig().podDatabase());
 		assertEquals(true, system.getConfig().serverMode());
