@@ -41,6 +41,8 @@ public class ActorSystemConfig {
 	
 	private final int maxResourceThreads;
 	
+	private final long awaitTerminationTimeout;
+	
 	// Supervisor
 	private final int maxRetries;
 	private final long withinTimeRange;
@@ -55,11 +57,13 @@ public class ActorSystemConfig {
 	private final int maxStatisticValues;
 	
 	// Pods
+	private final boolean horizontalPodAutoscalerEnabled;
 	private final long horizontalPodAutoscalerSyncTime;
 	private final long horizontalPodAutoscalerMeasurementTime;
 	private final Database<?> podDatabase;
 	
 	// Watchdog
+	private final boolean watchdogEnabled;
 	private final long watchdogSyncTime;
 	private final long watchdogTimeout;
 	
@@ -118,6 +122,10 @@ public class ActorSystemConfig {
 		return maxResourceThreads;
 	}
 	
+	public long awaitTerminationTimeout() {
+		return awaitTerminationTimeout;
+	}
+	
 	public int maxRetries() {
 		return maxRetries;
 	}
@@ -146,6 +154,10 @@ public class ActorSystemConfig {
 		return maxStatisticValues;
 	}
 	
+	public boolean horizontalPodAutoscalerEnabled() {
+		return horizontalPodAutoscalerEnabled;
+	}
+	
 	public long horizontalPodAutoscalerSyncTime() {
 		return horizontalPodAutoscalerSyncTime;
 	}
@@ -156,6 +168,10 @@ public class ActorSystemConfig {
 	
 	public Database<?> podDatabase() {
 		return podDatabase;
+	}
+	
+	public boolean watchdogEnabled() {
+		return watchdogEnabled;
 	}
 	
 	public long watchdogSyncTime() {
@@ -190,6 +206,8 @@ public class ActorSystemConfig {
 		
 		protected int maxResourceThreads;
 		
+		protected long awaitTerminationTimeout;
+		
 		// Supervisor
 		protected int maxRetries;
 		protected long withinTimeRange;
@@ -204,11 +222,13 @@ public class ActorSystemConfig {
 		protected int maxStatisticValues;
 		
 		// Pods
+		protected boolean horizontalPodAutoscalerEnabled;
 		protected long horizontalPodAutoscalerSyncTime;
 		protected long horizontalPodAutoscalerMeasurementTime;
 		protected Database<?> podDatabase;
 		
 		// Watchdog
+		protected boolean watchdogEnabled;
 		protected long watchdogSyncTime;
 		protected long watchdogTimeout;
 		
@@ -234,6 +254,8 @@ public class ActorSystemConfig {
 			
 			maxResourceThreads = 200;
 			
+			awaitTerminationTimeout = 2_000;
+			
 			// Supervisor
 			maxRetries = 3;
 			withinTimeRange = 2_000;
@@ -247,10 +269,12 @@ public class ActorSystemConfig {
 			maxStatisticValues = 10_000;
 
 			// Pods
+			horizontalPodAutoscalerEnabled = true;
 			horizontalPodAutoscalerSyncTime = 15_000;
 			horizontalPodAutoscalerMeasurementTime = 2_000;
 			
 			// Watchdog
+			watchdogEnabled = true;
 			watchdogSyncTime = 5_000;
 			watchdogTimeout = 2_000;
 		}
@@ -270,6 +294,7 @@ public class ActorSystemConfig {
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
 			this.maxResourceThreads = config.maxResourceThreads();
+			this.awaitTerminationTimeout = config.awaitTerminationTimeout();
 			this.maxRetries = config.maxRetries();
 			this.withinTimeRange = config.withinTimeRange();
 			this.persistenceDriver = config.persistenceDriver();
@@ -277,9 +302,11 @@ public class ActorSystemConfig {
 			this.counterEnabled = config.counterEnabled().get();
 			this.threadProcessingTimeEnabled = config.threadProcessingTimeEnabled().get();
 			this.maxStatisticValues = config.maxStatisticValues();
+			this.horizontalPodAutoscalerEnabled = config.horizontalPodAutoscalerEnabled();
 			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime();
 			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime();
 			this.podDatabase = config.podDatabase();
+			this.watchdogEnabled = config.watchdogEnabled();
 			this.watchdogSyncTime = config.watchdogSyncTime();
 			this.watchdogTimeout = config.watchdogTimeout();
 			this.serverMode = config.serverMode();
@@ -382,6 +409,12 @@ public class ActorSystemConfig {
 			return this;
 		}
 		
+		public Builder<T> awaitTerminationTimeout(long awaitTerminationTimeout) {
+			this.awaitTerminationTimeout = awaitTerminationTimeout;
+			
+			return this;
+		}
+		
 		public Builder<T> maxRetries(int maxRetries) {
 			this.maxRetries = maxRetries;
 
@@ -419,6 +452,12 @@ public class ActorSystemConfig {
 			return this;
 		}
 		
+		public Builder<T> horizontalPodAutoscalerEnabled(boolean enabled) {
+			this.horizontalPodAutoscalerEnabled = enabled;
+			
+			return this;
+		}
+		
 		public Builder<T> horizontalPodAutoscalerSyncTime(long horizontalPodAutoscalerSyncTime) {
 			this.horizontalPodAutoscalerSyncTime = horizontalPodAutoscalerSyncTime;
 			
@@ -434,6 +473,12 @@ public class ActorSystemConfig {
 		public Builder<T> podDatabase(Database<?> podDatabase) {
 			this.podDatabase = podDatabase;
 
+			return this;
+		}
+		
+		public Builder<T> watchdogEnabled(boolean enabled) {
+			this.watchdogEnabled = enabled;
+			
 			return this;
 		}
 		
@@ -473,6 +518,7 @@ public class ActorSystemConfig {
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
 		this.maxResourceThreads = builder.maxResourceThreads;
+		this.awaitTerminationTimeout = builder.awaitTerminationTimeout;
 		this.maxRetries = builder.maxRetries;
 		this.withinTimeRange = builder.withinTimeRange;
 		this.persistenceDriver = builder.persistenceDriver;
@@ -480,9 +526,11 @@ public class ActorSystemConfig {
 		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);
 		this.threadProcessingTimeEnabled = new AtomicBoolean(builder.threadProcessingTimeEnabled);
 		this.maxStatisticValues = builder.maxStatisticValues;
+		this.horizontalPodAutoscalerEnabled = builder.horizontalPodAutoscalerEnabled;
 		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
 		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
 		this.podDatabase = builder.podDatabase;
+		this.watchdogEnabled = builder.watchdogEnabled;
 		this.watchdogSyncTime = builder.watchdogSyncTime;
 		this.watchdogTimeout = builder.watchdogTimeout;
 		this.serverMode = builder.serverMode;
