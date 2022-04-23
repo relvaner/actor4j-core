@@ -257,15 +257,35 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 	
 	@Override
 	public void shutdown(boolean await) {
-		if (system.getConfig().watchdogEnabled())
-			watchdogExecuterService.shutdown();
-		if (system.getConfig().horizontalPodAutoscalerEnabled())
-			podReplicationControllerExecuterService.shutdown();
+		if (system.getConfig().watchdogEnabled()) {
+			watchdogExecuterService.shutdownNow();
+			if (await)
+				try {
+					watchdogExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		}
+		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
+			podReplicationControllerExecuterService.shutdownNow();
+			if (await)
+				try {
+					podReplicationControllerExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		}
 		
 		globalTimerExecuterService.shutdown();
 		timerExecuterService.shutdown();
 		
-		resourceExecuterService.shutdown();
+		resourceExecuterService.shutdownNow();
+		if (await)
+			try {
+				resourceExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		
 		shutdownActorProcessPool(onTermination, await);
 		
