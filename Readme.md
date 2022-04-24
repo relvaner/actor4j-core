@@ -7,7 +7,7 @@
 
 For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`.
 
-The `Actor4j - Core` library (`v2.0.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is now encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to be able to provide more runtimes in the future.
+The `Actor4j - Core` library (`v2.0.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to be able to provide more runtimes in the future.
 
 ## License ##
 This framework is released under an open source Apache 2.0 license.
