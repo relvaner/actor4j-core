@@ -165,7 +165,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		globalTimerExecuterService = new ActorTimerExecuterService(system, 1, "actor4j-global-timer-thread");
 		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
 		
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+		createActorResourcePool(poolSize);
 		
 		if (system.getConfig().persistenceMode()) {
 			persistenceService = new ActorPersistenceServiceImpl(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
@@ -212,6 +212,21 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		if (system.getConfig().watchdogEnabled() && watchdogRunnable!=null)
 			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
+	
+	public void createActorResourcePool(int poolSize) {
+		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+	}
+	
+	public void shutdownActorResourcePool(boolean await) {
+		resourceExecuterService.shutdownNow();
+		if (await)
+			try {
+				resourceExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+	}
+	
 	
 	public abstract void createActorProcessPool();
 	public abstract void shutdownActorProcessPool(Runnable onTermination, boolean await);
@@ -279,13 +294,7 @@ public abstract class ActorExecuterServiceImpl implements ActorExecuterService {
 		globalTimerExecuterService.shutdown();
 		timerExecuterService.shutdown();
 		
-		resourceExecuterService.shutdownNow();
-		if (await)
-			try {
-				resourceExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		shutdownActorResourcePool(await);
 		
 		shutdownActorProcessPool(onTermination, await);
 		
