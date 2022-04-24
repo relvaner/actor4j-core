@@ -394,7 +394,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			else if (actor instanceof PodActor)
 				podCells.put(cell.getId(), false);
 			if (executerService.isStarted()) {
-				if (!(actor instanceof ResourceActor))
+				/* if (!(actor instanceof ResourceActor)) @See: ActorMessageDispatcher */
 					messageDispatcher.registerCell(cell);
 				/* preStart */
 				cell.preStart();

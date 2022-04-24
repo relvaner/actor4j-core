@@ -386,7 +386,8 @@ public class DefaultActorCell implements InternalActorCell {
 	public void internal_stop() {
 		if (parent!=null)
 			system.getCells().get(parent).getChildren().remove(id);
-		system.getMessageDispatcher().unregisterCell(this);
+		/*if (!(actor instanceof ResourceActor) && !(actor instanceof PseudoActor)) @See: ActorMessageDispatcher */
+			system.getMessageDispatcher().unregisterCell(this);
 		system.removeActor(id);
 		
 		Iterator<UUID> iterator = deathWatcher.iterator();

@@ -29,6 +29,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
+import io.actor4j.core.actors.PseudoActor;
+import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
@@ -248,12 +250,14 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	
 	@Override
 	public void registerCell(InternalActorCell cell) {
-		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
+		if (!(cell.getActor() instanceof ResourceActor))
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
 	}
 	
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
-		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
+		if (!(cell.getActor() instanceof ResourceActor) && !(cell.getActor() instanceof PseudoActor))
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
 	}
 	
 	@Override
