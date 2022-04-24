@@ -34,6 +34,11 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 	}
 	
 	@Override
+	protected InternalActorCell createResourceActorCell(Actor actor) {
+		return new ResourceActorCell(this, actor);
+	}
+	
+	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
 		return new DefaultActorCell(this, actor);
 	}

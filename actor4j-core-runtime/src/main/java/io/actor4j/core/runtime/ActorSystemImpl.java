@@ -234,7 +234,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	public InternalActorCell generateCell(Actor actor) {
 		if (actor instanceof ResourceActor)
-			return new ResourceActorCell(this, actor);
+			return createResourceActorCell(actor);
 		else if (actor instanceof PodActor)
 			return createPodActorCell(actor);
 		else
@@ -243,13 +243,14 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	public InternalActorCell generateCell(Class<? extends Actor> clazz) {
 		if (clazz==ResourceActor.class)
-			return new ResourceActorCell(this, null);
+			return createResourceActorCell(null);
 		else if (clazz==PodActor.class)
 			return createPodActorCell(null);
 		else
 			return createActorCell(null);
 	}
 	
+	protected abstract InternalActorCell createResourceActorCell(Actor actor);
 	protected abstract InternalActorCell createActorCell(Actor actor);
 	protected abstract InternalActorCell createActorCell(Actor actor, UUID id);
 	protected abstract InternalActorCell createPodActorCell(Actor actor);
