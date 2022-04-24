@@ -6,4 +6,25 @@
 		<version>2.0.0</version>
 	</parent>
 	<artifactId>actor4j-core-sdk</artifactId>
+	<packaging>jar</packaging>
+	
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Actor4j is an actor-oriented Java framework.</description>
+	<url>https://github.com/relvaner/actor4j-core</url>
+	<inceptionYear>2015</inceptionYear>
+	
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>David A. Bauer</name>
+			<email>relvaner.github@gmail.com</email>
+		</developer>
+	</developers>
 </project>
