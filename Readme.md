@@ -7,7 +7,7 @@
 
 For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`.
 
-The `Actor4j - Core` library (`v1.2.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is now encapsulated as a Java `Record`.
+The `Actor4j - Core` library (`v2.0.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is now encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to be able to provide more runtimes in the future.
 
 ## License ##
 This framework is released under an open source Apache 2.0 license.
@@ -22,7 +22,7 @@ This software framework is currently in a prototype state.
 
 ## Installation ##
 
-I am currently working on a new version `1.2.x` for `Actor4j`. In the near future the new version and also the other libraries will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `1.2.x`.
+I am currently working on a new version `2.0.x` for `Actor4j`. In the near future the new version and also the other libraries will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `2.0.x`.
 
 Currently you can add the following Maven dependency to your `pom.xml` file:
 
@@ -34,7 +34,7 @@ Currently you can add the following Maven dependency to your `pom.xml` file:
 </dependency>
 ```
 
-or a SNAPSHOT (`v1.2.0`) with JitPack.io
+or a SNAPSHOT (`v2.0.0`) with JitPack.io
 
 ```xml
 <repositories>
