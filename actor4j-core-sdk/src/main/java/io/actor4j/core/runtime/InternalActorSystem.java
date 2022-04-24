@@ -23,12 +23,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.ActorService;
+import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
+	public ActorSystemFactory factory();
+	
 	public UUID UNKNOWN_ID();
 	public UUID PSEUDO_ID();
 

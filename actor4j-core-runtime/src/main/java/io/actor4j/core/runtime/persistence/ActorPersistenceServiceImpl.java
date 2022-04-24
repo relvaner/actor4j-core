@@ -17,18 +17,17 @@ package io.actor4j.core.runtime.persistence;
 
 import java.util.UUID;
 
-import io.actor4j.core.ActorRuntime;
 import io.actor4j.core.ActorService;
-import io.actor4j.core.ActorSystem;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
+import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 
 public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 	protected final ActorService service;
 	protected final PersistenceDriver driver;
 	
-	public ActorPersistenceServiceImpl(ActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
+	public ActorPersistenceServiceImpl(InternalActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
 		super();
 		
 		this.driver = driver;
@@ -39,7 +38,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 			.parallelismFactor(parallelismFactor)
 			.horizontalPodAutoscalerEnabled(false)
 			.build();
-		service = ActorService.create(ActorRuntime.factory(), config);
+		service = ActorService.create(parent.factory(), config);
 		
 		driver.open();
 		for (int i=0; i<parallelism*parallelismFactor; i++) {

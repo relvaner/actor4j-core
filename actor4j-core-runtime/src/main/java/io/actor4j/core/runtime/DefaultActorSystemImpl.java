@@ -18,6 +18,7 @@ package io.actor4j.core.runtime;
 import java.util.List;
 import java.util.UUID;
 
+import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 
@@ -31,6 +32,11 @@ public class DefaultActorSystemImpl extends ActorSystemImpl {
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecuterService
+	}
+	
+	@Override
+	public ActorSystemFactory factory() {
+		return (config) -> new DefaultActorSystemImpl(config);
 	}
 	
 	@Override
