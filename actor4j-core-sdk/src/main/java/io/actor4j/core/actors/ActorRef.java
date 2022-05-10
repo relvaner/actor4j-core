@@ -47,6 +47,7 @@ public interface ActorRef {
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol);
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain);
 	public void forward(ActorMessage<?> message, UUID dest);
+	public void forward(ActorMessage<?> message, String alias);
 	public void priority(ActorMessage<?> message);
 	public void priority(ActorMessage<?> message, UUID dest);
 	public <T> void priority(T value, int tag, UUID dest);

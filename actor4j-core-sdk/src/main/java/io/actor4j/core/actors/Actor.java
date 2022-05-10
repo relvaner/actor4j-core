@@ -88,34 +88,42 @@ public abstract class Actor implements ActorRef {
 		return cell.getSystem();
 	}
 	
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public UUID getId() {
 		return cell.getId();
 	}
 	
+	@Override
 	public UUID self() {
 		return cell.getId();
 	}
 	
+	@Override
 	public String getPath() {
 		return cell.getSystem().getActorPath(cell.getId());
 	}
 	
+	@Override
 	public UUID getParent() {
 		return cell.getParent();
 	}
 	
+	@Override
 	public Queue<UUID> getChildren() {
 		return cell.getChildren();
 	}
 	
+	@Override
 	public boolean isRoot() {
 		return cell.isRoot();
 	}
 	
+	@Override
 	public boolean isRootInUser() {
 		return cell.isRootInUser();
 	}
@@ -221,76 +229,94 @@ public abstract class Actor implements ActorRef {
 		await(predicate, action, timeout, unit, true);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message) {
 		cell.send(message);
 	}
 	
+	@Override
 	public void sendViaPath(ActorMessage<?> message, String path) {
 		UUID dest = cell.getSystem().getActorFromPath(path);
 		if (dest!=null)
 			send(message, dest);
 	}
 	
+	@Override
 	public void sendViaAlias(ActorMessage<?> message, String alias) {
 		cell.send(message, alias);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message, UUID dest) {
 		send(message.shallowCopy(self(), dest));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest) {
 		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest, String domain) {
 		send(ActorMessage.create(value, tag, self(), dest, domain));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol, domain));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, String alias) {
 		sendViaAlias(ActorMessage.create(value, tag, self(), null), alias);
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, String alias, UUID interaction) {
 		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction), alias);
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol) {
 		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction, protocol), alias);
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain) {
 		sendViaAlias(ActorMessage.create(value, tag, self(), null, interaction, protocol, domain), alias);
 	}
 	
+	@Override
 	public void forward(ActorMessage<?> message, UUID dest) {
 		send(message.shallowCopy(dest));
 	}
 	
+	@Override
 	public void forward(ActorMessage<?> message, String alias) {
 		sendViaAlias(message, alias);
 	}
 	
+	@Override
 	public void priority(ActorMessage<?> message) {
 		cell.priority(message);
 	}
 	
+	@Override
 	public void priority(ActorMessage<?> message, UUID dest) {
 		priority(message.shallowCopy(self(), dest));
 	}
 	
+	@Override
 	public <T> void priority(T value, int tag, UUID dest) {
 		priority(ActorMessage.create(value, tag, self(), dest));
 	}
@@ -340,10 +366,12 @@ public abstract class Actor implements ActorRef {
 		cell.stop();
 	}
 	
+	@Override
 	public void watch(UUID dest) {
 		cell.watch(dest);
 	}
 	
+	@Override
 	public void unwatch(UUID dest) {
 		cell.unwatch(dest);
 	}
