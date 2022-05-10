@@ -24,15 +24,15 @@ import java.util.function.Predicate;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class EmbeddedActor {
-	protected EmbeddedHostActor host;
+	protected /*quasi final*/ EmbeddedHostActor host;
 	
-	protected String name;
+	protected final String name;
 	
-	protected UUID id;
+	protected final UUID id;
 	
 	protected boolean active;
 	
-	protected Deque<Predicate<ActorMessage<?>>> behaviourStack;
+	protected final Deque<Predicate<ActorMessage<?>>> behaviourStack;
 	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	

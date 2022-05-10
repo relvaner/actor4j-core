@@ -27,21 +27,21 @@ public class HandlerActor extends EmbeddedHostActor {
 	protected ActorMessageMatcher matcher;
 	
 	public HandlerActor() {
-		this(null, false);
+		this(null, false, false);
 	}
 
 	public HandlerActor(boolean redirectEnabled) {
-		this(null, redirectEnabled);
+		this(null, redirectEnabled, false);
 	}
 
-	public HandlerActor(String name, boolean redirectEnabled) {
-		super(name, redirectEnabled);
+	public HandlerActor(String name, boolean redirectEnabled, boolean messageQueueEnabled) {
+		super(name, redirectEnabled, messageQueueEnabled);
 		
 		matcher = new ActorMessageMatcher();
 	}
 
 	public HandlerActor(String name) {
-		this(name, false);
+		this(name, false, false);
 	}
 
 	@Override

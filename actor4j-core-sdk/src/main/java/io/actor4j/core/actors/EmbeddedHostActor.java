@@ -15,32 +15,44 @@
  */
 package io.actor4j.core.actors;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorEmbeddedRouter;
 
 public abstract class EmbeddedHostActor extends Actor {
-	protected ActorEmbeddedRouter router;
-	protected boolean redirectEnabled;
+	protected final ActorEmbeddedRouter router;
+	protected final boolean redirectEnabled;
+	
+	protected final Queue<ActorMessage<?>> messageQueue;
+	protected final boolean messageQueueEnabled;
 	
 	public EmbeddedHostActor() {
-		this(null, false);
+		this(null, false, false);
 	}
 	
 	public EmbeddedHostActor(String name) {
-		this(name, false);
+		this(name, false, false);
 	}
 	
 	public EmbeddedHostActor(boolean redirectEnabled) {
-		this(null, redirectEnabled);
+		this(null, redirectEnabled, false);
 	}
 	
-	public EmbeddedHostActor(String name, boolean redirectEnabled) {
+	public EmbeddedHostActor(boolean redirectEnabled, boolean messageQueueEnabled) {
+		this(null, redirectEnabled, messageQueueEnabled);
+	}
+	
+	public EmbeddedHostActor(String name, boolean redirectEnabled, boolean messageQueueEnabled) {
 		super(name);
 		
 		this.redirectEnabled = redirectEnabled;
 		this.router = new ActorEmbeddedRouter();
+		
+		messageQueue = new LinkedList<>(); /* unbounded */
+		this.messageQueueEnabled = messageQueueEnabled;
 	}
 	
 	public ActorEmbeddedRouter getRouter() {
@@ -70,11 +82,16 @@ public abstract class EmbeddedHostActor extends Actor {
 	public boolean embedded(ActorMessage<?> message) {
 		boolean result = false;
 		
+		if (message==null)
+			throw new NullPointerException();
+		
 		EmbeddedActor embeddedActor = router.get(message.dest());
 		if (embeddedActor!=null)
 			result = embeddedActor.embedded(message);
 		else if (message.dest().equals(self()))
 			receive(message);
+		
+		internal_embedded();
 		
 		return result;
 	}
@@ -88,15 +105,36 @@ public abstract class EmbeddedHostActor extends Actor {
 		else if (dest.equals(self()))
 			receive(ActorMessage.create(value, tag, self(), dest));
 		
+		internal_embedded();
+		
 		return result;
 	}
 	
+	public void embedded() {
+		internal_embedded();
+	}
+	
+	protected void internal_embedded() {
+		if (messageQueueEnabled) {
+			ActorMessage<?> message = null;
+			while((message=messageQueue.poll())!=null) {
+				EmbeddedActor embeddedActor = router.get(message.dest());
+				if (embeddedActor!=null)
+					embeddedActor.embedded(message);
+			}
+		}
+	}
+	
 	public void sendWithinHost(ActorMessage<?> message) {
-		EmbeddedActor embeddedActor = router.get(message.dest());
-		if (embeddedActor!=null)
-			embeddedActor.embedded(message.copy());
-		else if (message.dest().equals(self()))
-			receive(message.copy());
+		if (messageQueueEnabled) 
+			messageQueue.offer(message);
+		else {
+			EmbeddedActor embeddedActor = router.get(message.dest());
+			if (embeddedActor!=null)
+				embeddedActor.embedded(message.copy());
+			else if (message.dest().equals(self()))
+				receive(message.copy());
+		}
 	}
 	
 	@Override
