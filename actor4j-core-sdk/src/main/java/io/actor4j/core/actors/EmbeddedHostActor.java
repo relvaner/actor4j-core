@@ -97,17 +97,7 @@ public abstract class EmbeddedHostActor extends Actor {
 	}
 	
 	public <T> boolean embedded(T value, int tag, UUID dest) {
-		boolean result = false;
-		
-		EmbeddedActor embeddedActor = router.get(dest);
-		if (embeddedActor!=null)
-			result = embeddedActor.embedded(value, tag, dest);
-		else if (dest.equals(self()))
-			receive(ActorMessage.create(value, tag, self(), dest));
-		
-		internal_embedded();
-		
-		return result;
+		return embedded(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	public void embedded() {
