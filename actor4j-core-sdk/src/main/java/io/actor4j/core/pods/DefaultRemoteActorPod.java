@@ -35,7 +35,7 @@ public abstract class DefaultRemoteActorPod extends ActorPod {
 				@Override
 				public void handle(ActorMessage<?> message, UUID interaction) {
 					if (message instanceof PodActorMessage)
-						sendViaAlias(new PodActorMessage<>(message.value(), message.tag(), self(), null, interaction, ((PodActorMessage<?,?>) message).user(), message.protocol(), message.domain()), getAbsoluteAlias(domain()));
+						sendViaAlias(new PodActorMessage<>(message.value(), message.tag(), self(), null, interaction, ((PodActorMessage<?, ?>) message).user(), message.protocol(), message.domain()), getAbsoluteAlias(domain()));
 					else
 						sendViaAlias(ActorMessage.create(message.value(), message.tag(), self(), null, interaction, message.protocol(), message.domain()), getAbsoluteAlias(domain()));
 				}
