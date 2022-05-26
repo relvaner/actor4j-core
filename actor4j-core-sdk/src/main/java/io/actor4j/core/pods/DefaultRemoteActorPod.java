@@ -20,18 +20,18 @@ import java.util.UUID;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.messages.PodActorMessage;
 import io.actor4j.core.pods.actors.DefaultPodActor;
-import io.actor4j.core.pods.actors.HandlerPodActor;
 import io.actor4j.core.pods.actors.PodActor;
+import io.actor4j.core.pods.actors.RemoteHandlerPodActor;
 import io.actor4j.core.utils.ActorFactory;
 
-public abstract class DefaultActorPod extends ActorPod {
-	public DefaultActorPod() {
+public abstract class DefaultRemoteActorPod extends ActorPod {
+	public DefaultRemoteActorPod() {
 		super();
 	}
 
 	@Override
 	public PodActor create() {
-		return new DefaultPodActor((groupId, context) -> new HandlerPodActor(domain(), groupId, context) {
+		return new DefaultPodActor((groupId, context) -> new RemoteHandlerPodActor(domain(), groupId, context) {
 				@Override
 				public void handle(ActorMessage<?> message, UUID interaction) {
 					if (message instanceof PodActorMessage)
@@ -43,6 +43,16 @@ public abstract class DefaultActorPod extends ActorPod {
 				@Override
 				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
 					tell(message.value(), message.tag(), dest, interaction, message.protocol(), domain());
+				}
+
+				@Override
+				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
+					sendViaAlias(new PodActorMessage<>(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), self(), null, interaction, remoteMessage.user(), null, null), getAbsoluteAlias(domain()));
+				}
+
+				@Override
+				public Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
+					return message.value();
 				}
 			}) {
 			@Override
