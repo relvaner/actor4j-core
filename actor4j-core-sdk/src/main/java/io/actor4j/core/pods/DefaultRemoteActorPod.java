@@ -57,7 +57,7 @@ public abstract class DefaultRemoteActorPod extends ActorPod {
 			}) {
 			@Override
 			public void register() {
-				addChild(factory());
+				addChild(factory(groupId, getContext()));
 			}
 
 			@Override
@@ -67,5 +67,5 @@ public abstract class DefaultRemoteActorPod extends ActorPod {
 		};
 	}
 	
-	public abstract ActorFactory factory();
+	public abstract ActorFactory factory(UUID groupId, PodContext context);
 }
