@@ -7,13 +7,13 @@ For more information on `Actor4j`, see the following more complete [documentatio
 
 ## Status of Development ##
 
-The `Actor4j - Core` library (`v2.0.x`) has no external dependencies and is also compilable as a native image with GraalVM. Minimum requirement is currently Java 17, within the branch `java-8` you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to be able to provide more runtimes in the future. It exists also a [specification](https://github.com/relvaner/actor4j-spec) for the core part of Actor4j.
+The `Actor4j - Core` library (`v2.0.x`) has no external dependencies and is also compilable as a native image with GraalVM. The minimum requirement is currently Java 17. Within the branch `java-8`, you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to provide more runtimes in the future. A [specification](https://github.com/relvaner/actor4j-spec) exists for the core part of Actor4j.
 
 ## Installation ##
 
-I am currently working on a new version `2.0.x` for `Actor4j`. In the near future the new version and also the other libraries will be available as a Maven dependency, as far as possible. The entire documentation is more related to the new version `2.0.x`.
+I am working on a new version, `2.0.x` for `Actor4j`. In the near future, the new version and other libraries will be available as a Maven dependency as soon as possible. The entire documentation is more related to the new version `2.0.x`.
 
-Currently you can add the following Maven dependency to your `pom.xml` file:
+Currently, you can add the following Maven dependency to your `pom.xml` file:
 
 ```xml
 <dependency>
