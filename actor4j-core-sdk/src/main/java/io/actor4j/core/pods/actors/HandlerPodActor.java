@@ -51,6 +51,9 @@ public abstract class HandlerPodActor extends PodChildActor {
 			map.remove(message.interaction());
 			callback(message, originalMessage, originalMessage.source(), originalMessage.interaction());
 		}
+		else if (message.interaction()!=null && message.interaction().equals(NO_REPLY)) {
+			handle(message, UUID.randomUUID());
+		}
 		else {
 			/*
 			UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();

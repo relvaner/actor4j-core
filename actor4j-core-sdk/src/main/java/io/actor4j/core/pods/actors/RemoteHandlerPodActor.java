@@ -57,8 +57,13 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 			}
 			else {
 				UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
-				remoteMap.put(interaction, (RemotePodMessage)message.value()); 
-				handle((RemotePodMessage)message.value(), interaction);
+				
+				if (((RemotePodMessage)message.value()).remotePodMessageDTO().reply()) {
+					remoteMap.put(interaction, (RemotePodMessage)message.value()); 
+					handle((RemotePodMessage)message.value(), interaction);
+				}
+				else
+					handle((RemotePodMessage)message.value(), interaction);
 			}
 		}
 		else if (requestReply && message.value() instanceof RemotePodMessage) {

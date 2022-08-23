@@ -25,6 +25,8 @@ public abstract class PodChildActor extends Actor implements ActorGroupMember {
 	protected UUID groupId;
 	protected PodContext context;
 	
+	public final UUID NO_REPLY = UUID.randomUUID();
+	
 	public PodChildActor(String name, UUID groupId, PodContext context) {
 		super(name);
 		this.groupId = groupId;
