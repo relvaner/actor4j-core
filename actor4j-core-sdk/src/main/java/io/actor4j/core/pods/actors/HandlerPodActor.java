@@ -19,8 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.actor4j.core.actors.Actor;
+import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public abstract class HandlerPodActor extends PodChildActor {
 	protected String alias;
@@ -51,10 +55,14 @@ public abstract class HandlerPodActor extends PodChildActor {
 			map.remove(message.interaction());
 			callback(message, originalMessage, originalMessage.source(), originalMessage.interaction());
 		}
+		else if (messagefromPod(message)) { // ignore messages from pod if no callback is defined
+			unhandled(message);
+		}
 		else if (message.interaction()!=null && message.interaction().equals(NO_REPLY)) {
 			handle(message, UUID.randomUUID());
 		}
-		else {
+		else
+		{
 			/*
 			UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
 			map.put(interaction, message.copy()); 
@@ -68,4 +76,17 @@ public abstract class HandlerPodActor extends PodChildActor {
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
 	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
+	
+	public boolean messagefromPod(ActorMessage<?> message) {
+		boolean result = false;
+		
+		InternalActorCell cell = ((InternalActorSystem)getSystem()).getCells().get(message.source());
+		if (cell!=null) {
+			Actor actor = cell.getActor();
+			if (actor!=null && actor instanceof ActorGroupMember)
+				result = ((ActorGroupMember)actor).getGroupId().equals(groupId);
+		}
+		
+		return result;
+	}
 }
