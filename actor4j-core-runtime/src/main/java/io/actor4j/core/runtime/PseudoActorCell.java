@@ -92,6 +92,18 @@ public class PseudoActorCell extends DefaultActorCell implements InternalPseudoA
 	
 	@Deprecated
 	@Override
+	public void unsafe_send(ActorMessage<?> message) {
+		// empty
+	}
+	
+	@Deprecated
+	@Override
+	public void unsafe_send(ActorMessage<?> message, String alias) {
+		// empty
+	}
+	
+	@Deprecated
+	@Override
 	public UUID internal_addChild(InternalActorCell cell) {
 		return null;
 	}

@@ -56,7 +56,9 @@ import org.junit.runner.RunWith;
 	CommPatternFeature.class,
 	OptionalFeature.class,
 	
-	PodFeature.class
+	PodFeature.class,
+	
+	UnsafeFeature.class
 })
 public class AllFeaturesTest {
 	@BeforeClass

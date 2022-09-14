@@ -39,6 +39,9 @@ public interface InternalActorCell extends ActorCell {
 	public void internal_receive(ActorMessage<?> message);
 	public void become(Consumer<ActorMessage<?>> behaviour);
 	
+	public void unsafe_send(ActorMessage<?> message);
+	public void unsafe_send(ActorMessage<?> message, String alias);
+	
 	public SupervisorStrategy supervisorStrategy();
 	public SupervisorStrategy getParentSupervisorStrategy();
 	public void setParentSupervisorStrategy(SupervisorStrategy parentSupervisorStrategy);

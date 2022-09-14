@@ -78,6 +78,38 @@ public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	}
 	
 	@Override
+	public void unsafe_post(ActorMessage<?> message, UUID source, String alias) {
+		if (message==null)
+			throw new NullPointerException();
+		
+		UUID dest = message.dest();
+		
+		if (alias!=null) {
+			List<UUID> destinations = system.getActorsFromAlias(alias);
+
+			dest = null;
+			if (!destinations.isEmpty()) {
+				if (destinations.size()==1)
+					dest = destinations.get(0);
+				else
+					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+			}
+			if (dest==null)
+				dest = ALIAS_ID;
+		}
+		
+		UUID redirect = system.getRedirector().get(dest);
+		if (redirect!=null) 
+			dest = redirect;
+		
+		if (alias==null && redirect==null)
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source);
+		else
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source, dest);
+
+	}
+	
+	@Override
 	public void post(ActorMessage<?> message, UUID source, String alias) {
 		if (message==null)
 			throw new NullPointerException();

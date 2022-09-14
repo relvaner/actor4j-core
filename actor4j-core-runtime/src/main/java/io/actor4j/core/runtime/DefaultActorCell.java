@@ -297,6 +297,35 @@ public class DefaultActorCell implements InternalActorCell {
 	}
 	
 	@Override
+	public void unsafe_send(ActorMessage<?> message) {
+		if (system.getMessagingEnabled().get())
+			system.getMessageDispatcher().unsafe_post(message, id);
+		else
+			system.getBufferQueue().offer(message.copy());
+	}
+	
+	@Override
+	public void unsafe_send(ActorMessage<?> message, String alias) {
+		if (system.getMessagingEnabled().get())
+			system.getMessageDispatcher().unsafe_post(message, id, alias);
+		else {
+			if (alias!=null) {
+				List<UUID> destinations = system.getActorsFromAlias(alias);
+
+				UUID dest = null;
+				if (!destinations.isEmpty()) {
+					if (destinations.size()==1)
+						dest = destinations.get(0);
+					else
+						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+				}
+				dest = (dest!=null) ? dest : ActorMessageDispatcher.ALIAS_ID();
+				system.getBufferQueue().offer(message.copy(dest));
+			}
+		}
+	}
+	
+	@Override
 	public void priority(ActorMessage<?> message) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().postPriority(message);

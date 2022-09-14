@@ -25,6 +25,81 @@ public class ActorThreadPoolHandler extends ActorProcessPoolHandler<ActorThread>
 		super(system);
 	}
 	
+	public void unsafe_call(ActorMessage<?> message, UUID dest, ActorThread t) {
+		InternalActorCell cell = system.getCells().get(dest);
+		if (cell!=null) {
+			cell.getRequestRate().getAndIncrement();
+			t.failsafeMethod(message, cell);
+		}
+		if (system.getConfig().counterEnabled().get())
+			t.counter.getAndIncrement();
+	}
+	
+	public boolean unsafe_postInnerOuter(ActorMessage<?> message, UUID source) {
+		boolean result = false; 
+		
+		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
+			ActorThread t = ((ActorThread)Thread.currentThread());
+			unsafe_call(message.copy(), message.dest(), t);
+			result = true;
+		}
+		else {
+			Long id_source = cellsMap.get(source);
+			Long id_dest   = cellsMap.get(message.dest());
+		
+			if (id_dest!=null) {
+				ActorThread t = processMap.get(id_dest);
+				
+				if (id_source!=null && id_source.equals(id_dest)
+						&& Thread.currentThread().getId()==id_source.longValue()) {
+					unsafe_call(message.copy(), message.dest(), t);	
+				}
+				else {
+					t.outerQueue(message.copy());
+					t.newMessage();
+				}
+				
+				result = true;
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, message.dest());
+		}
+		
+		return result;
+	}
+	
+	public boolean unsafe_postInnerOuter(ActorMessage<?> message, UUID source, UUID dest) {
+		boolean result = false;
+		
+		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
+			ActorThread t = ((ActorThread)Thread.currentThread());
+			unsafe_call(message.copy(dest), dest, t);
+			result = true;
+		}
+		else {
+			Long id_source = cellsMap.get(source);
+			Long id_dest   = cellsMap.get(dest);
+		
+			if (id_dest!=null) {
+				ActorThread t = processMap.get(id_dest);
+				
+				if (id_source!=null && id_source.equals(id_dest)
+						&& Thread.currentThread().getId()==id_source.longValue())
+					unsafe_call(message.copy(dest), dest, t);
+				else {
+					t.outerQueue(message.copy(dest));
+					t.newMessage();
+				}
+				
+				result = true;
+			}	
+			else
+				system.getMessageDispatcher().undelivered(message, source, dest);
+		}
+		
+		return result;
+	}
+	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
 		boolean result = false;
 		

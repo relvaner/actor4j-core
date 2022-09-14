@@ -126,4 +126,16 @@ public class ResourceActorCell extends DefaultActorCell {
 	public void after() {
 		((ResourceActor)actor).after();
 	}
+	
+	@Deprecated
+	@Override
+	public void unsafe_send(ActorMessage<?> message) {
+		// empty
+	}
+	
+	@Deprecated
+	@Override
+	public void unsafe_send(ActorMessage<?> message, String alias) {
+		// empty
+	}
 }

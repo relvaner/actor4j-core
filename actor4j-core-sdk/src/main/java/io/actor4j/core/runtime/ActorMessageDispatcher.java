@@ -35,6 +35,12 @@ public abstract class ActorMessageDispatcher {
 	public static UUID ALIAS_ID() {
 		return ALIAS_ID;
 	}
+	
+	public void unsafe_post(ActorMessage<?> message, UUID source) {
+		unsafe_post(message, source, null);
+	}
+	
+	public abstract void unsafe_post(ActorMessage<?> message, UUID source, String alias);
 
 	public void post(ActorMessage<?> message, UUID source) {
 		post(message, source, null);
