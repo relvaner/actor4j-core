@@ -16,9 +16,13 @@
 
 package io.actor4j.core.pods;
 
-public record RemotePodMessageDTO(Object payload, int tag, String alias, Object auth, boolean reply) {
+public record RemotePodMessageDTO(Object payload, int tag, String alias, Object params, Object auth, boolean reply) {
+	
+	public RemotePodMessageDTO(Object payload, int tag, String alias, Object params, boolean reply) {
+		this(payload, tag, alias, params, null, reply);
+	}
 	
 	public RemotePodMessageDTO(Object payload, int tag, String alias, boolean reply) {
-		this(payload, tag, alias, null, reply);
+		this(payload, tag, alias, null, null, reply);
 	}
 }

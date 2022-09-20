@@ -35,9 +35,9 @@ public abstract class DefaultRemoteActorPod extends ActorPod {
 				@Override
 				public void handle(ActorMessage<?> message, UUID interaction) {
 					if (message instanceof PodActorMessage)
-						sendViaAlias(new PodActorMessage<>(message.value(), message.tag(), self(), null, interaction, ((PodActorMessage<?, ?>) message).user(), message.protocol(), message.domain()), getAbsoluteAlias(domain()));
+						sendViaAlias(PodActorMessage.create(message.value(), message.tag(), self(), null, interaction, ((PodActorMessage<?, ?, ?>) message).user(), ((PodActorMessage<?, ?, ?>) message).params(), message.protocol(), message.domain()), getAbsoluteAlias(domain()));
 					else
-						sendViaAlias(new PodActorMessage<>(message.value(), message.tag(), self(), null, interaction, null, message.protocol(), message.domain()), getAbsoluteAlias(domain()));
+						sendViaAlias(PodActorMessage.create(message.value(), message.tag(), self(), null, interaction, null, null, message.protocol(), message.domain()), getAbsoluteAlias(domain()));
 				}
 
 				@Override
@@ -47,7 +47,7 @@ public abstract class DefaultRemoteActorPod extends ActorPod {
 
 				@Override
 				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
-					sendViaAlias(new PodActorMessage<>(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), self(), null, interaction, remoteMessage.user(), null, null), getAbsoluteAlias(domain()));
+					sendViaAlias(PodActorMessage.create(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), self(), null, interaction, remoteMessage.user(), remoteMessage.remotePodMessageDTO().params(), null, null), getAbsoluteAlias(domain()));
 				}
 
 				@Override
