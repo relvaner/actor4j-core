@@ -108,12 +108,12 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 			if (interaction!=null) { // with reply
 				if (remoteMap.get(interaction)==null && !requestMap.keySet().contains(interaction)) {
 					requestMap.put(interaction, source); 
-					internal_server_request.accept(message, tag, source, interaction, context.domain());
+					internal_server_request.accept(message, tag, source, interaction, self());
 					result = true;
 				}
 			}
 			else {
-				internal_server_request.accept(message, tag, null, null, context.domain());
+				internal_server_request.accept(message, tag, null, null, null);
 				result = true;
 			}
 		}

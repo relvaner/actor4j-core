@@ -24,5 +24,5 @@ public class ActorGlobalSettings {
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 	public static TriConsumer<String, Object, Integer> internal_server_callback;
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static QuintConsumer<Object, Integer, UUID, UUID, String> internal_server_request;
+	public static QuintConsumer<Object, Integer, UUID, UUID, UUID> internal_server_request;
 }
