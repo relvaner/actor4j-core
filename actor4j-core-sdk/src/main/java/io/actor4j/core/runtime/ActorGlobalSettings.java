@@ -17,12 +17,12 @@ package io.actor4j.core.runtime;
 
 import java.util.UUID;
 
-import io.actor4j.core.function.QuadConsumer;
+import io.actor4j.core.function.QuintConsumer;
 import io.actor4j.core.function.TriConsumer;
 
 public class ActorGlobalSettings {
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 	public static TriConsumer<String, Object, Integer> internal_server_callback;
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static QuadConsumer<Object, Integer, UUID, String> internal_server_request;
+	public static QuintConsumer<Object, Integer, UUID, UUID, String> internal_server_request;
 }

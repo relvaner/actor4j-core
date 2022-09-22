@@ -13,11 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.actor4j.core.function;
 
-package io.actor4j.core.pods;
+import java.util.Objects;
 
-public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user, boolean isRequest) {
-	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user) {
-		this(remotePodMessageDTO, replyAddress, user, false);
-	}
+@FunctionalInterface
+public interface QuintConsumer<T, U, V, W, X> {
+	void accept(T t, U u, V v, W w, X x);
+
+    default QuintConsumer<T, U, V, W, X> andThen(QuintConsumer<? super T, ? super U, ? super V, ? super W, ? super X> after) {
+        Objects.requireNonNull(after);
+
+        return (t, u, v, w, x) -> {
+            accept(t, u, v, w, x);
+            after.accept(t, u, v, w, x);
+        };
+    }
 }

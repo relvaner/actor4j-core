@@ -20,9 +20,7 @@ import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_callba
 import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_request;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -31,13 +29,13 @@ import io.actor4j.core.pods.RemotePodMessage;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;
-	protected Set<UUID> requestSet;
+	protected Map<UUID, UUID> requestMap;
 
 	public RemoteHandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(alias, groupId, context);
 		
 		this.remoteMap = new HashMap<>();
-		this.requestSet = new HashSet<>();
+		this.requestMap = new HashMap<>();
 	}
 	
 	@Override
@@ -47,7 +45,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 		if (message.interaction()!=null) {
 			remoteMessage = remoteMap.get(message.interaction());
 			if (remoteMessage==null)
-				requestReply = requestSet.contains(message.interaction());
+				requestReply = requestMap.keySet().contains(message.interaction());
 		}
 			
 		if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
@@ -67,7 +65,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 			}
 		}
 		else if (requestReply && message.value() instanceof RemotePodMessage) {
-			requestSet.remove(message.interaction());
+			requestMap.remove(message.interaction());
 			handle((RemotePodMessage)message.value(), message.interaction());
 		}
 		else
@@ -84,30 +82,38 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	public abstract Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage);
 	
 	public void request(Object message) {
-		request(message, 0, null);
+		request(message, 0, null, null);
 	}
 	
 	public void request(Object message, int tag) {
-		request(message, tag, null);
+		request(message, tag, null, null);
 	}
 	
 	public void request(Object message, UUID interaction) {
-		request(message, 0, interaction);
+		request(message, 0, null, interaction);
 	}
 	
-	public boolean request(Object message, int tag, UUID interaction) {
+	public void request(Object message, int tag, UUID interaction) {
+		request(message, tag, null, interaction);
+	}
+	
+	public void request(Object message, UUID source, UUID interaction) {
+		request(message, 0, source, interaction);
+	}
+	
+	public boolean request(Object message, int tag, UUID source, UUID interaction) {
 		boolean result = false;
 		
 		if (internal_server_request!=null) {
 			if (interaction!=null) { // with reply
-				if (remoteMap.get(interaction)==null && !requestSet.contains(interaction)) {
-					requestSet.add(interaction); 
-					internal_server_request.accept(message, tag, interaction, context.domain());
+				if (remoteMap.get(interaction)==null && !requestMap.keySet().contains(interaction)) {
+					requestMap.put(interaction, source); 
+					internal_server_request.accept(message, tag, source, interaction, context.domain());
 					result = true;
 				}
 			}
 			else {
-				internal_server_request.accept(message, tag, null, context.domain());
+				internal_server_request.accept(message, tag, null, null, context.domain());
 				result = true;
 			}
 		}

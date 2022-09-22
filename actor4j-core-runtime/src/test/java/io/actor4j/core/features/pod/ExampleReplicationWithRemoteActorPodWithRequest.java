@@ -34,7 +34,7 @@ public class ExampleReplicationWithRemoteActorPodWithRequest extends ActorPod {
 					if (message.tag()==PodRequestMethod.ACTION_1)
 						request(message.value());
 					else if (message.tag()==PodRequestMethod.ACTION_2)
-						request(message.value(), interaction);
+						request(message.value(), message.source(), interaction);
 				}
 
 				@Override
@@ -44,7 +44,7 @@ public class ExampleReplicationWithRemoteActorPodWithRequest extends ActorPod {
 
 				@Override
 				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
-					if (remoteMessage.remotePodMessageDTO().tag()==PodRequestMethod.ACTION_1)
+					if (remoteMessage.isRequest())
 						tell(remoteMessage.remotePodMessageDTO().payload(), 42, UUID.fromString(remoteMessage.replyAddress()), interaction, "", "");
 				}
 
