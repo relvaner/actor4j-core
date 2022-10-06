@@ -19,18 +19,18 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ConcurrentActorGroup extends ConcurrentLinkedQueue<UUID> implements ActorGroup {
+public class ConcurrentActorGroupQueue extends ConcurrentLinkedQueue<UUID> implements ActorGroup {
 	protected static final long serialVersionUID = 1L;
 	
 	protected final UUID id;
 
-	public ConcurrentActorGroup() {
+	public ConcurrentActorGroupQueue() {
 		super();
 
 		id = UUID.randomUUID();
 	}
 
-	public ConcurrentActorGroup(Collection<? extends UUID> c) {
+	public ConcurrentActorGroupQueue(Collection<? extends UUID> c) {
 		super(c);
 
 		id = UUID.randomUUID();

@@ -29,7 +29,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.PrimaryActor;
 import io.actor4j.core.actors.SecondaryActor;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.ConcurrentActorGroup;
+import io.actor4j.core.utils.ConcurrentActorGroupSet;
 
 import static org.junit.Assert.*;
 
@@ -49,7 +49,7 @@ public class PrimarySecondaryActorFeature {
 		AtomicInteger secondaryReceived = new AtomicInteger(0);
 		AtomicBoolean primaryReceived = new AtomicBoolean(false);
 		
-		ConcurrentActorGroup group = new ConcurrentActorGroup();
+		ConcurrentActorGroupSet group = new ConcurrentActorGroupSet();
 		UUID primary = system.addActor(() -> new PrimaryActor("primary", group, "instances", 
 				(id) -> () -> new SecondaryActor(group, id) {
 					@Override
@@ -85,7 +85,7 @@ public class PrimarySecondaryActorFeature {
 		system.start();
 		
 		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), primary));
-		system.send(ActorMessage.create(null, 101, system.SYSTEM_ID(), group.peek()));
+		system.send(ActorMessage.create(null, 101, system.SYSTEM_ID(), group.stream().findFirst().get()));
 		try {
 			testDone.await();
 		} catch (InterruptedException e) {
