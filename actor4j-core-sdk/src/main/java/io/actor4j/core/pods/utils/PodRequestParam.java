@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package io.actor4j.core.pods.utils;
 public final class PodRequestParam {
 	public static final String KEY        	 = "key";
 	public static final String VALUE       	 = "value";
+	
+	public static final String ID        	 = "id";
 	
 	public static final int PARAM_1  	 	 = 1;
 	public static final int PARAM_2  	 	 = 2;
