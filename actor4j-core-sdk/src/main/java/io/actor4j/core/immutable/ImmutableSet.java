@@ -18,9 +18,7 @@ package io.actor4j.core.immutable;
 import java.util.Collections;
 import java.util.Set;
 
-import io.actor4j.core.utils.Shareable;
-
-public class ImmutableSet<T> implements Shareable {
+public class ImmutableSet<T> implements ImmutableCollection<Set<T>> {
 	protected final Set<T> set;
 	
 	public ImmutableSet() {
@@ -35,6 +33,7 @@ public class ImmutableSet<T> implements Shareable {
 		this.set = Collections.unmodifiableSet(set);
 	}
 
+	@Override
 	public Set<T> get() {
 		return set;
 	}

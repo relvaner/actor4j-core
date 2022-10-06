@@ -19,7 +19,7 @@ import io.actor4j.core.messages.ActorMessageUtils;
 import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
-public class ImmutableObject<T> implements Shareable {
+public class ImmutableObject<T> implements ImmutableCollection<T> {
 	protected final T value;
 	
 	public ImmutableObject(T value) {
@@ -32,6 +32,7 @@ public class ImmutableObject<T> implements Shareable {
 		this.value = value;
 	}
 	
+	@Override
 	public T get() {
 		return value;
 	}

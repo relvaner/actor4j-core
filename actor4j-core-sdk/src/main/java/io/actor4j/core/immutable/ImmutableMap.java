@@ -18,9 +18,7 @@ package io.actor4j.core.immutable;
 import java.util.Collections;
 import java.util.Map;
 
-import io.actor4j.core.utils.Shareable;
-
-public class ImmutableMap<K, V> implements Shareable {
+public class ImmutableMap<K, V> implements ImmutableCollection<Map<K, V>> {
 	protected final Map<K, V> map;
 	
 	public ImmutableMap() {
@@ -35,6 +33,7 @@ public class ImmutableMap<K, V> implements Shareable {
 		this.map = Collections.unmodifiableMap(map);
 	}
 
+	@Override
 	public Map<K, V> get() {
 		return map;
 	}

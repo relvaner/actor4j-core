@@ -18,9 +18,7 @@ package io.actor4j.core.immutable;
 import java.util.Collections;
 import java.util.List;
 
-import io.actor4j.core.utils.Shareable;
-
-public class ImmutableList<T> implements Shareable {
+public class ImmutableList<T> implements ImmutableCollection<List<T>> {
 	protected final List<T> list;
 	
 	public ImmutableList() {
@@ -35,6 +33,7 @@ public class ImmutableList<T> implements Shareable {
 		this.list = Collections.unmodifiableList(list);
 	}
 
+	@Override
 	public List<T> get() {
 		return list;
 	}
