@@ -58,8 +58,8 @@ public abstract class HandlerPodActor extends PodChildActor {
 		else if (messagefromPod(message)) { // ignore messages from pod if no callback is defined
 			unhandled(message);
 		}
-		else if (message.interaction()!=null && message.interaction().equals(NO_REPLY)) {
-			handle(message, UUID.randomUUID());
+		else if (message.interaction()!=null && message.interaction().equals(ActorMessage.NO_REPLY)) {
+			handle(message, ActorMessage.NO_REPLY);
 		}
 		else
 		{

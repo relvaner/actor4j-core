@@ -18,6 +18,8 @@ package io.actor4j.core.messages;
 import java.util.UUID;
 
 public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
+	public static final UUID NO_REPLY = UUID.randomUUID();
+
 	public T value();
 	public int tag();
 	public UUID source();
