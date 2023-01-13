@@ -246,7 +246,7 @@ public class PodFeature {
 		});
 		system.start();
 		
-		ActorGlobalSettings.internal_server_request = (msg, tag, source, interaction, pod) -> {
+		ActorGlobalSettings.internal_server_request = (msg, tag, source, interaction, params, pod) -> {
 			if (interaction!=null) {
 				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", 0, "ExampleReplicationWithRemoteActorPodWithRequest", false), source.toString(), null, true);
 				system.send(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), pod, interaction));

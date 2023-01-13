@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core.function;
 
-import java.util.UUID;
+import java.util.Objects;
 
-import io.actor4j.core.function.SextConsumer;
-import io.actor4j.core.function.TriConsumer;
+@FunctionalInterface
+public interface SextConsumer<T, U, V, W, X, Y> {
+	void accept(T t, U u, V v, W w, X x, Y y);
 
-public class ActorGlobalSettings {
-	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static TriConsumer<String, Object, Integer> internal_server_callback;
-	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static SextConsumer<Object, Integer, UUID, UUID, Object, UUID> internal_server_request;
+    default SextConsumer<T, U, V, W, X, Y> andThen(SextConsumer<? super T, ? super U, ? super V, ? super W, ? super X, ? super Y> after) {
+        Objects.requireNonNull(after);
+
+        return (t, u, v, w, x, y) -> {
+            accept(t, u, v, w, x, y);
+            after.accept(t, u, v, w, x, y);
+        };
+    }
 }

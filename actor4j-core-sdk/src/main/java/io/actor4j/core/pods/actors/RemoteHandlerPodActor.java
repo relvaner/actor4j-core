@@ -82,38 +82,42 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	public abstract Object callback(ActorMessage<?> message, RemotePodMessage remoteMessage);
 	
 	public void request(Object message) {
-		request(message, 0, null, null);
+		request(message, 0, null, null, null);
 	}
 	
 	public void request(Object message, int tag) {
-		request(message, tag, null, null);
+		request(message, tag, null, null, null);
+	}
+	
+	public void request(Object message, int tag, Object params) {
+		request(message, tag, null, null, params);
 	}
 	
 	public void request(Object message, UUID interaction) {
-		request(message, 0, null, interaction);
+		request(message, 0, null, interaction, null);
 	}
 	
 	public void request(Object message, int tag, UUID interaction) {
-		request(message, tag, null, interaction);
+		request(message, tag, null, interaction, null);
 	}
 	
 	public void request(Object message, UUID source, UUID interaction) {
-		request(message, 0, source, interaction);
+		request(message, 0, source, interaction, null);
 	}
 	
-	public boolean request(Object message, int tag, UUID source, UUID interaction) {
+	public boolean request(Object message, int tag, UUID source, UUID interaction, Object params) {
 		boolean result = false;
 		
 		if (internal_server_request!=null) {
 			if (interaction!=null) { // with reply
 				if (remoteMap.get(interaction)==null && !requestMap.keySet().contains(interaction)) {
 					requestMap.put(interaction, source); 
-					internal_server_request.accept(message, tag, source, interaction, self());
+					internal_server_request.accept(message, tag, source, interaction, params, self());
 					result = true;
 				}
 			}
 			else {
-				internal_server_request.accept(message, tag, null, null, null);
+				internal_server_request.accept(message, tag, null, null, params, null);
 				result = true;
 			}
 		}
