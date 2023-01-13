@@ -617,6 +617,25 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
+	public String getAliasFromActor(UUID id) {
+		String result = null;
+		
+		Iterator<Entry<String, Queue<UUID>>> iteratorAliases = aliases.entrySet().iterator();
+		outer: while (iteratorAliases.hasNext()) {
+			Entry<String, Queue<UUID>> entry = iteratorAliases.next();
+			Iterator<UUID> iteratorQueue = entry.getValue().iterator();
+			while (iteratorQueue.hasNext()) {
+				if (id.equals(iteratorQueue.next())) {
+					result = entry.getKey();
+					break outer;
+				}
+			}
+		}
+			
+		return result;
+	}
+	
+	@Override
 	public String getActorPath(UUID uuid) {
 		String result = null;
 		

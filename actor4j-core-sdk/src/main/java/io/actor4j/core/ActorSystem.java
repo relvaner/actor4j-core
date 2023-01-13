@@ -57,6 +57,7 @@ public interface ActorSystem {
 	public ActorSystem setAlias(List<UUID> ids, String alias);
 	public UUID getActorFromAlias(String alias);
 	public List<UUID> getActorsFromAlias(String alias);
+	public String getAliasFromActor(UUID id);
 	public String getActorPath(UUID uuid);
 	public UUID getActorFromPath(String path);
 	
