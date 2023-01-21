@@ -17,6 +17,22 @@ package io.actor4j.core.pods;
 
 public record PodConfiguration(String domain, String className, int shardCount, int minReplica, int maxReplica,
 		String versionNumber) {
+	
+	public PodConfiguration(String domain, String className) {
+		this(domain, className, 1, 1, null);
+	}
+	
+	public PodConfiguration(String domain, String className, String versionNumber) {
+		this(domain, className, 1, 1, versionNumber);
+	}
+	
+	public PodConfiguration(String domain, String className, int shardCount) {
+		this(domain, className, shardCount, 1, 1);
+	}
+	
+	public PodConfiguration(String domain, String className, int shardCount, String versionNumber) {
+		this(domain, className, shardCount, 1, 1, versionNumber);
+	}
 
 	public PodConfiguration(String domain, String className, int minReplica, int maxReplica) {
 		this(domain, className, minReplica, maxReplica, null);
