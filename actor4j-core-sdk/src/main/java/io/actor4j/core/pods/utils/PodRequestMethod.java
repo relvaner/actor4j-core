@@ -32,4 +32,15 @@ public final class PodRequestMethod {
 	public static final int ACTION_8  = 18;
 	public static final int ACTION_9  = 19;
 	public static final int ACTION_10 = 20;
+	
+	public static final int ACTION_11 = 21;
+	public static final int ACTION_12 = 22;
+	public static final int ACTION_13 = 23;
+	public static final int ACTION_14 = 24;
+	public static final int ACTION_15 = 25;
+	public static final int ACTION_16 = 26;
+	public static final int ACTION_17 = 27;
+	public static final int ACTION_18 = 28;
+	public static final int ACTION_19 = 29;
+	public static final int ACTION_20 = 30;
 }
