@@ -41,7 +41,7 @@ public abstract class ActorProcessPool<P extends ActorProcess> {
 		return actorProcessPoolHandler;
 	}
 	
-	public List<Boolean> getThreadLoads() {
+	public List<Boolean> getProcessLoads() {
 		List<Boolean> list = new ArrayList<>();
 		for (P p : actorProcessList)
 			list.add(p.getLoad().get());
