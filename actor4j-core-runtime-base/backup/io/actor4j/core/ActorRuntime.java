@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core;
 
-public class DefaultActorExecuterService extends ActorExecuterServiceImpl<ActorThread> implements DefaultInternalActorExecuterService {
-	public DefaultActorExecuterService(InternalActorRuntimeSystem system) {
-		super(system);
+import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.runtime.DefaultActorSystemImpl;
+
+public class ActorRuntime {
+	public static ActorSystemFactory factory() {
+		return (c) -> new DefaultActorSystemImpl(c);
 	}
 	
-	public ActorProcessPool<ActorThread> createActorProcessPool() {
-		return new ActorThreadPool((DefaultInternalActorRuntimeSystem)system);
+	public static ActorSystem create() {
+		return create(ActorSystemConfig.create());
 	}
-
-	@Override
-	public ActorThreadPool getActorThreadPool() {
-		return (ActorThreadPool)actorProcessPool;
+	
+	public static ActorSystem create(String name) {
+		return create(ActorSystemConfig.builder().name(name).build());
+	}
+	
+	public static ActorSystem create(ActorSystemConfig config) {
+		return factory().apply(config);
 	}
 }

@@ -15,20 +15,7 @@
  */
 package io.actor4j.core.runtime;
 
-public class DefaultActorThreadFactory extends DefaultThreadFactory {
-   
-    public DefaultActorThreadFactory(String name) {
-    	super(name);
-    }
+import io.actor4j.core.function.TriFunction;
 
-    public ActorThread newThread(DefaultInternalActorRuntimeSystem system) {
-    	ActorThread t = system.getActorThreadFactory().apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
-    	
-    	if (t.isDaemon())
-    		t.setDaemon(false);
-    	if (t.getPriority() != Thread.MAX_PRIORITY)
-    		t.setPriority(Thread.MAX_PRIORITY);
-	        
-        return t;
-    }
+public interface ActorThreadFactory extends TriFunction<ThreadGroup, String, InternalActorSystem, ActorThread> {
 }

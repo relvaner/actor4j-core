@@ -142,6 +142,7 @@
     
     <modules>
     	<module>actor4j-core-sdk</module>
+    	<module>actor4j-core-runtime-base</module>
     	<module>actor4j-core-runtime</module>
     </modules>
 </project>

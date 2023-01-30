@@ -29,9 +29,11 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
+import io.actor4j.core.actors.PseudoActor;
+import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.messages.ActorMessage;
 
-public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
+public class DefaultActorMessageDispatcher extends ActorMessageDispatcher {
 	protected final Function<ActorMessage<?>, Boolean> consumerPseudo;
 	
 	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
@@ -101,9 +103,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 			dest = redirect;
 		
 		if (alias==null && redirect==null)
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source);
 		else
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source, dest);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source, dest);
 
 	}
 	
@@ -142,9 +144,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		}
 		
 		if (alias==null && redirect==null)
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
 		else
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
@@ -163,7 +165,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -173,7 +175,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -196,7 +198,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -206,7 +208,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -229,7 +231,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
@@ -239,7 +241,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
+			if (!((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -259,17 +261,39 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	public void postDirective(ActorMessage<?> message) {
 		postQueue(message, (t, msg) -> t.directiveQueue(message));
 	}
+
+	@Override
+	public void postPersistence(ActorMessage<?> message) {
+		((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postPersistence(message);
+	}
 	
 	@Override
 	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 			systemLogger().log(WARN,
 				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
 					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
 				));
 		}
+	}
+	
+	@Override
+	public void registerCell(InternalActorCell cell) {
+		if (!(cell.getActor() instanceof ResourceActor))
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().registerCell(cell);
+	}
+	
+	@Override
+	public void unregisterCell(InternalActorCell cell) {
+		if (!(cell.getActor() instanceof ResourceActor) && !(cell.getActor() instanceof PseudoActor))
+			((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unregisterCell(cell);
+	}
+	
+	@Override
+	public boolean isRegisteredCell(InternalActorCell cell) {
+		return ((InternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().isRegisteredCell(cell);
 	}
 }

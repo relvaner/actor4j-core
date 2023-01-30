@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,19 @@
  */
 package io.actor4j.core.runtime;
 
-public class DefaultActorThreadFactory extends DefaultThreadFactory {
-   
-    public DefaultActorThreadFactory(String name) {
-    	super(name);
-    }
+import static io.actor4j.core.logging.ActorLogger.*;
 
-    public ActorThread newThread(DefaultInternalActorRuntimeSystem system) {
-    	ActorThread t = system.getActorThreadFactory().apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
-    	
-    	if (t.isDaemon())
-    		t.setDaemon(false);
-    	if (t.getPriority() != Thread.MAX_PRIORITY)
-    		t.setPriority(Thread.MAX_PRIORITY);
-	        
-        return t;
-    }
+public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
+	public DefaultPodReplicationControllerRunnable(InternalActorSystem system) {
+		super(system);
+	}
+
+	@Override
+	public void onRun() {
+		horizontalPodAutoscaler();
+	}
+	
+	public void horizontalPodAutoscaler() {
+		systemLogger().log(DEBUG, String.format("[REPLICATION][AUTOSCALER] sync"));
+	}
 }

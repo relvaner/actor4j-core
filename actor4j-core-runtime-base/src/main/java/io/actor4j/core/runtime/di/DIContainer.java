@@ -13,22 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core.runtime.di;
 
-public class DefaultActorThreadFactory extends DefaultThreadFactory {
-   
-    public DefaultActorThreadFactory(String name) {
-    	super(name);
-    }
-
-    public ActorThread newThread(DefaultInternalActorRuntimeSystem system) {
-    	ActorThread t = system.getActorThreadFactory().apply(group, name + "-worker-thread-" + index.getAndIncrement(), system);
-    	
-    	if (t.isDaemon())
-    		t.setDaemon(false);
-    	if (t.getPriority() != Thread.MAX_PRIORITY)
-    		t.setPriority(Thread.MAX_PRIORITY);
-	        
-        return t;
-    }
+public interface DIContainer<K> {
+	public void register(K key, FactoryInjector<?> factoryInjector);
+	public Object getInstance(K key) throws Exception;
+	public void unregister(K key);
 }

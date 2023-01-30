@@ -26,7 +26,7 @@ import io.actor4j.core.messages.ActorMessage;
 public class ActorThreadPool extends ActorProcessPool<ActorThread> {
 	protected final CountDownLatch countDownLatch;
 	
-	public ActorThreadPool(DefaultInternalActorRuntimeSystem system) {
+	public ActorThreadPool(InternalActorRuntimeSystem system) {
 		super(system, new ActorThreadPoolHandler(system));
 		
 		countDownLatch = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());

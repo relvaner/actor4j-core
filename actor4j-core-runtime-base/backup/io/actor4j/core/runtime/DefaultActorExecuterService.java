@@ -15,17 +15,36 @@
  */
 package io.actor4j.core.runtime;
 
-public class DefaultActorExecuterService extends ActorExecuterServiceImpl<ActorThread> implements DefaultInternalActorExecuterService {
+import java.util.ArrayList;
+import java.util.List;
+
+public class DefaultActorExecuterService extends ActorExecuterServiceImpl implements InternalActorExecuterService {
+	protected /*quasi final*/ ActorThreadPool actorThreadPool;
+	
 	public DefaultActorExecuterService(InternalActorRuntimeSystem system) {
 		super(system);
 	}
 	
-	public ActorProcessPool<ActorThread> createActorProcessPool() {
-		return new ActorThreadPool((DefaultInternalActorRuntimeSystem)system);
+	public void createActorProcessPool() {
+		actorThreadPool = new ActorThreadPool(system);
 	}
-
+	
+	public void shutdownActorProcessPool(Runnable onTermination, boolean await) {
+		actorThreadPool.shutdown(onTermination, await);
+	}
+	
 	@Override
 	public ActorThreadPool getActorThreadPool() {
-		return (ActorThreadPool)actorProcessPool;
+		return actorThreadPool;
+	}
+	
+	@Override
+	public long getCount() {
+		return actorThreadPool!=null ? actorThreadPool.getCount() : 0;
+	}
+	
+	@Override
+	public List<Long> getCounts() {
+		return actorThreadPool!=null ? actorThreadPool.getCounts() : new ArrayList<>();
 	}
 }

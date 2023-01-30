@@ -22,9 +22,7 @@ import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 
-public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultInternalActorRuntimeSystem {
-	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
-	
+public class DefaultActorSystemImpl extends ActorSystemImpl {
 	public DefaultActorSystemImpl() {
 		this(null);
 	}
@@ -35,7 +33,7 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecuterService
 	}
-
+	
 	@Override
 	public ActorSystemFactory factory() {
 		return (config) -> new DefaultActorSystemImpl(config);
@@ -48,12 +46,12 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	
 	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
-		return new BaseActorCell(this, actor);
+		return new DefaultActorCell(this, actor);
 	}
 	
 	@Override
 	protected InternalActorCell createActorCell(Actor actor, UUID id) {
-		return new BaseActorCell(this, actor, id);
+		return new DefaultActorCell(this, actor, id);
 	}
 	
 	@Override
@@ -66,22 +64,11 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 		return new DefaultActorExecuterService(this);
 	}
 	
-	@Override
-	public ActorThreadFactory getActorThreadFactory() {
-		return actorThreadFactory;
-	}
-
-	public void setActorThreadFactory(ActorThreadFactory actorThreadFactory) {
-		this.actorThreadFactory = actorThreadFactory;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public List<Integer> getWorkerInnerQueueSizes() {
-		return ((ActorThreadPool)((InternalActorExecuterService<ActorThread>)executerService).getActorProcessPool()).getWorkerInnerQueueSizes();
+		return ((InternalActorExecuterService)executerService).getActorThreadPool().getWorkerInnerQueueSizes();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Integer> getWorkerOuterQueueSizes() {
-		return ((ActorThreadPool)((InternalActorExecuterService<ActorThread>)executerService).getActorProcessPool()).getWorkerOuterQueueSizes();
+		return ((InternalActorExecuterService)executerService).getActorThreadPool().getWorkerOuterQueueSizes();
 	}
 }
