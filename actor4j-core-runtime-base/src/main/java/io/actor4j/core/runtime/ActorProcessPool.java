@@ -15,58 +15,16 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ActorProcessPool<P extends ActorProcess> {
-	protected final InternalActorRuntimeSystem system;
+public interface ActorProcessPool<P extends ActorProcess> {
+	public void shutdown(Runnable onTermination, boolean await);
 	
-	protected final List<P> actorProcessList;
-	protected final ActorProcessPoolHandler<P> actorProcessPoolHandler;
-
-	public ActorProcessPool(InternalActorRuntimeSystem system, ActorProcessPoolHandler<P> actorProcessPoolHandler) {
-		this.system = system;
-		this.actorProcessPoolHandler = actorProcessPoolHandler;
-		
-		actorProcessList = new ArrayList<>();
-	}
+	public List<P> getActorProcessList();
+	public ActorProcessPoolHandler<P> getActorProcessPoolHandler();
 	
-	public abstract void shutdown(Runnable onTermination, boolean await);
-	
-	public List<P> getActorProcessList() {
-		return actorProcessList;
-	}
-
-	public ActorProcessPoolHandler<P> getActorProcessPoolHandler() {
-		return actorProcessPoolHandler;
-	}
-	
-	public List<Boolean> getProcessLoads() {
-		List<Boolean> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getLoad().get());
-		return list;
-	}
-	
-	public List<Long> getProcessingTimeStatistics() {
-		List<Long> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getProcessingTimeStatistics());
-		return list;
-	}
-	
-	public long getCount() {
-		long sum = 0;
-		for (P p : actorProcessList)
-			sum += p.getCount();
-		
-		return sum;
-	}
-	
-	public List<Long> getCounts() {
-		List<Long> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getCount());
-		return list;
-	}
+	public List<Boolean> getProcessLoads();
+	public List<Long> getProcessingTimeStatistics();
+	public long getCount();
+	public List<Long> getCounts();
 }

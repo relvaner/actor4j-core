@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorThreadPool extends ActorProcessPool<ActorThread> {
+public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
 	protected final CountDownLatch countDownLatch;
 	
 	public ActorThreadPool(DefaultInternalActorRuntimeSystem system) {
@@ -47,7 +47,7 @@ public class ActorThreadPool extends ActorProcessPool<ActorThread> {
 			}
 		}
 		
-		actorProcessPoolHandler.beforeStart(actorProcessList);
+		((DefaultActorProcessPoolHandler<ActorThread>)actorProcessPoolHandler).beforeStart(actorProcessList);
 		for (ActorThread t : actorProcessList)
 			t.start();
 	}

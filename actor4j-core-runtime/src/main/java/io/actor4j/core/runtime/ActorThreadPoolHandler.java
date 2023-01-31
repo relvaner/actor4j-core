@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorThreadPoolHandler extends ActorProcessPoolHandler<ActorThread> {
+public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<ActorThread> {
 	public ActorThreadPoolHandler(InternalActorSystem system) {
 		super(system);
 	}

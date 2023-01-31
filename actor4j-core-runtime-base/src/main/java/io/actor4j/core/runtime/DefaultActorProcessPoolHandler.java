@@ -15,16 +15,14 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public interface ActorProcess extends Runnable {
-	public Object processId();
+public interface DefaultActorProcessPoolHandler<P extends ActorProcess> extends ActorProcessPoolHandler<P> {
+	public Map<UUID, Long> getCellsMap();
+	public Map<Long, P> getProcessMap();
+	public List<Long> getProcessList();
 	
-	public default long processIdAsLong() {
-		return (long)processId();
-	}
-	
-	public long getCount();
-	public AtomicBoolean getLoad();
-	public long getProcessingTimeStatistics();
+	public void beforeStart(List<P> actorProcessList);
 }

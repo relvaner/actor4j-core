@@ -58,6 +58,11 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		cellsProcessingTimeEnabled = new AtomicBoolean(false);
 	}
 	
+	@Override
+	public Object processId() {
+		return getId();
+	}
+	
 	protected void failsafeMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
 			if (system.getConfig().threadProcessingTimeEnabled().get() || cellsProcessingTimeEnabled.get()) {
