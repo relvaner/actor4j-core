@@ -79,7 +79,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected final AtomicBoolean messagingEnabled;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
-	protected final ActorExecuterService executerService;
+	protected final ActorExecutorService executorService;
 	
 	protected final ActorStrategyOnFailure actorStrategyOnFailure;
 	
@@ -118,7 +118,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		messagingEnabled = new AtomicBoolean();
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
-		executerService = createActorExecuterService();
+		executorService = createActorExecutorService();
 		
 		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		
@@ -263,7 +263,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public boolean setConfig(ActorSystemConfig config) {
 		boolean result = false;
 		
-		if (!executerService.isStarted() && config!=null) {
+		if (!executorService.isStarted() && config!=null) {
 			this.config = config;
 			resetCountdownLatch();
 			result = true;
@@ -276,7 +276,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public boolean setConfig(ActorServiceConfig config) {
 		boolean result = false;
 		
-		if (!executerService.isStarted() && config!=null) {
+		if (!executorService.isStarted() && config!=null) {
 			this.config = config;
 			resetCountdownLatch();
 			result = true;
@@ -285,7 +285,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		return result;
 	}
 	
-	protected abstract ActorExecuterService createActorExecuterService();
+	protected abstract ActorExecutorService createActorExecutorService();
 
 	@Override
 	public DIContainer<UUID> getContainer() {
@@ -368,8 +368,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
-	public ActorExecuterService getExecuterService() {
-		return executerService;
+	public ActorExecutorService getExecutorService() {
+		return executorService;
 	}
 	
 	@Override
@@ -384,7 +384,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 				resourceCells.put(cell.getId(), false);
 			else if (actor instanceof PodActor)
 				podCells.put(cell.getId(), false);
-			if (executerService.isStarted()) {
+			if (executorService.isStarted()) {
 				/* if (!(actor instanceof ResourceActor)) @See: ActorMessageDispatcher */
 					messageDispatcher.registerCell(cell);
 				/* preStart */
@@ -745,12 +745,12 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
-		if (executerService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
+		if (executorService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
 			InternalActorCell cell = cells.get(message.dest());
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
 			else
-				((ActorTimerExecuterService)executerService.globalTimer()).schedule(new Runnable() {
+				((ActorTimerExecutorService)executorService.globalTimer()).schedule(new Runnable() {
 					@Override
 					public void run() {
 						if (cell.isActive()) {
@@ -818,12 +818,12 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorTimer timer() {
-		return executerService.timer();
+		return executorService.timer();
 	}
 	
 	@Override
 	public ActorTimer globalTimer() {
-		return executerService.globalTimer();
+		return executorService.globalTimer();
 	}
 	
 	@Override
@@ -835,8 +835,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public boolean start(Runnable onStartup, Runnable onTermination) {
 		boolean result = false;
 		
-		if (!executerService.isStarted()) {
-			executerService.start(new Runnable() {
+		if (!executorService.isStarted()) {
+			executorService.start(new Runnable() {
 				@Override
 				public void run() {
 					/* preStart */
@@ -871,7 +871,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public void shutdownWithActors(final boolean await) {
-		if (executerService.isStarted()) {
+		if (executorService.isStarted()) {
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -897,7 +897,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					messageDispatcher.unregisterCell(cells.get(PSEUDO_ID));
 					removeActor(PSEUDO_ID);
 					
-					executerService.shutdown(await);
+					executorService.shutdown(await);
 				}
 			});
 			
@@ -920,7 +920,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public void shutdown(boolean await) {
-		if (executerService.isStarted())
-			executerService.shutdown(await);
+		if (executorService.isStarted())
+			executorService.shutdown(await);
 	}
 }

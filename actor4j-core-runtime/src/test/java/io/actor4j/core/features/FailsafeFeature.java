@@ -71,8 +71,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecuterService().getFailsafeManager().getErrorHandler();
-		((InternalActorSystem)system).getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
+		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				errorHandler.handle(t, message, uuid);
@@ -136,8 +136,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecuterService().getFailsafeManager().getErrorHandler();
-		((InternalActorSystem)system).getExecuterService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
+		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, String message, UUID uuid) {
 				errorHandler.handle(t, message, uuid);

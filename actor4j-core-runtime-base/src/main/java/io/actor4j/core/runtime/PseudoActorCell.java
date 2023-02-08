@@ -136,7 +136,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", id);
+			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, "pseudo", id);
 			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}

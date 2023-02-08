@@ -114,7 +114,7 @@ public class ResourceActorCell extends BaseActorCell {
 			after();
 		}
 		catch(Exception e) {
-			system.getExecuterService().getFailsafeManager().notifyErrorHandler(e, "resource", id);
+			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, "resource", id);
 			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}

@@ -90,7 +90,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecuterService().getFailsafeManager().notifyErrorHandler(e, "actor", cell.getId());
+			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, "actor", cell.getId());
 			system.getActorStrategyOnFailure().handle(cell, e);
 		}	
 	}
@@ -130,7 +130,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().getFailsafeManager(), new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecutorService().getFailsafeManager(), new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

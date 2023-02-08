@@ -38,7 +38,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecuterService().getFailsafeManager(), "replication", new Method() {
+		FailsafeMethod.runAndCatchThrowable(system.getExecutorService().getFailsafeManager(), "replication", new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

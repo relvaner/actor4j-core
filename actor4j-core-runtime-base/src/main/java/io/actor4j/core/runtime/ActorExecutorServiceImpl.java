@@ -44,7 +44,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
-public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implements InternalActorExecuterService<P> {
+public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implements InternalActorExecutorService<P> {
 	protected final InternalActorRuntimeSystem system;
 	
 	protected final FailsafeManager failsafeManager;
@@ -55,19 +55,19 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 	
 	protected /*quasi final*/ ActorProcessPool<P> actorProcessPool;
 	
-	protected /*quasi final*/ ActorTimerExecuterService globalTimerExecuterService;
-	protected /*quasi final*/ ActorTimerExecuterService timerExecuterService;
-	protected /*quasi final*/ ExecutorService resourceExecuterService;
+	protected /*quasi final*/ ActorTimerExecutorService globalTimerExecutorService;
+	protected /*quasi final*/ ActorTimerExecutorService timerExecutorService;
+	protected /*quasi final*/ ExecutorService resourceExecutorService;
 	
 	protected /*quasi final*/ ActorPersistenceService persistenceService;
 	
-	protected /*quasi final*/ ScheduledExecutorService podReplicationControllerExecuterService;
+	protected /*quasi final*/ ScheduledExecutorService podReplicationControllerExecutorService;
 	protected /*quasi final*/ PodReplicationControllerRunnable podReplicationControllerRunnable;
 	
-	protected /*quasi final*/ ScheduledExecutorService watchdogExecuterService;
+	protected /*quasi final*/ ScheduledExecutorService watchdogExecutorService;
 	protected /*quasi final*/ WatchdogRunnable watchdogRunnable;
 
-	public ActorExecuterServiceImpl(final InternalActorRuntimeSystem system) {
+	public ActorExecutorServiceImpl(final InternalActorRuntimeSystem system) {
 		super();
 		
 		this.system = system;
@@ -112,20 +112,20 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 						systemLogger().log(ERROR,
 								String.format("[FAILSAFE] Exception in WatchdogThread"));
 					}
-					else if (message.equals("executer_resource")) {
+					else if (message.equals("executor_resource")) {
 						InternalActorCell cell = system.getCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
-								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
+								String.format("[SAFETY][EXECUTOR][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[SAFETY][EXECUTER][REJECTION] Exception in resource actor: %s", uuid.toString()));
+								String.format("[SAFETY][EXECUTOR][REJECTION] Exception in resource actor: %s", uuid.toString()));
 					}
-					else if (message.equals("executer_client")) {
+					else if (message.equals("executor_client")) {
 						systemLogger().log(ERROR,
-								String.format("[SAFETY][EXECUTER][REJECTION] Exception in sending a message as a client"));
+								String.format("[SAFETY][EXECUTOR][REJECTION] Exception in sending a message as a client"));
 					}
 				}
 				else {
@@ -164,8 +164,8 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
 		
-		globalTimerExecuterService = new ActorTimerExecuterService(system, 1, "actor4j-global-timer-thread");
-		timerExecuterService = new ActorTimerExecuterService(system, poolSize);
+		globalTimerExecutorService = new ActorTimerExecutorService(system, 1, "actor4j-global-timer-thread");
+		timerExecutorService = new ActorTimerExecutorService(system, poolSize);
 		
 		createActorResourcePool(poolSize);
 		
@@ -192,14 +192,14 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 		actorProcessPool = createActorProcessPool();
 		
 		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
-			podReplicationControllerExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
+			podReplicationControllerExecutorService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
 			podReplicationControllerRunnable = system.getPodReplicationControllerRunnableFactory().apply(system);
 			if (podReplicationControllerRunnable!=null)
-				podReplicationControllerExecuterService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime(), system.getConfig().horizontalPodAutoscalerSyncTime(), TimeUnit.MILLISECONDS);
+				podReplicationControllerExecutorService.scheduleAtFixedRate(podReplicationControllerRunnable, system.getConfig().horizontalPodAutoscalerSyncTime(), system.getConfig().horizontalPodAutoscalerSyncTime(), TimeUnit.MILLISECONDS);
 		}
 		
 		if (system.getConfig().watchdogEnabled())
-			watchdogExecuterService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
+			watchdogExecutorService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-watchdog-thread"));
 		
 		/*
 		 * necessary before executing onStartup; 
@@ -212,18 +212,18 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 			onStartup.run();
 		
 		if (system.getConfig().watchdogEnabled() && watchdogRunnable!=null)
-			watchdogExecuterService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
+			watchdogExecutorService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
 	public void createActorResourcePool(int poolSize) {
-		resourceExecuterService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+		resourceExecutorService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
 	}
 	
 	public void shutdownActorResourcePool(boolean await) {
-		resourceExecuterService.shutdownNow();
+		resourceExecutorService.shutdownNow();
 		if (await)
 			try {
-				resourceExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+				resourceExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -247,21 +247,21 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 
 	@Override
 	public ActorTimer timer() {
-		return timerExecuterService;
+		return timerExecutorService;
 	}
 	
 	@Override
 	public ActorTimer globalTimer() {
-		return globalTimerExecuterService;
+		return globalTimerExecutorService;
 	}
 	
 	@Override
 	public void resource(final ActorMessage<?> message) {
 		final ResourceActorCell cell = (ResourceActorCell)system.getCells().get(message.dest());
 		if (cell!=null && cell.beforeRun(message)) {
-			if (!resourceExecuterService.isShutdown())
+			if (!resourceExecutorService.isShutdown())
 				try {
-					resourceExecuterService.submit(new Runnable() {
+					resourceExecutorService.submit(new Runnable() {
 						@Override
 						public void run() {
 							try {
@@ -274,7 +274,7 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 					});
 				}
 				catch (RejectedExecutionException e) {
-					failsafeManager.notifyErrorHandler(e, "executer_resource", cell.getId());
+					failsafeManager.notifyErrorHandler(e, "executor_resource", cell.getId());
 				}
 		}
 	}
@@ -282,26 +282,26 @@ public abstract class ActorExecuterServiceImpl<P extends ActorProcess> implement
 	@Override
 	public void shutdown(boolean await) {
 		if (system.getConfig().watchdogEnabled()) {
-			watchdogExecuterService.shutdownNow();
+			watchdogExecutorService.shutdownNow();
 			if (await)
 				try {
-					watchdogExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+					watchdogExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 		}
 		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
-			podReplicationControllerExecuterService.shutdownNow();
+			podReplicationControllerExecutorService.shutdownNow();
 			if (await)
 				try {
-					podReplicationControllerExecuterService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+					podReplicationControllerExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 		}
 		
-		globalTimerExecuterService.shutdown();
-		timerExecuterService.shutdown();
+		globalTimerExecutorService.shutdown();
+		timerExecutorService.shutdown();
 		
 		shutdownActorResourcePool(await);
 		

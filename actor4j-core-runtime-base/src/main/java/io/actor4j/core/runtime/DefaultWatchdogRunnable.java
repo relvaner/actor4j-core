@@ -112,7 +112,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 
 		for (int i=0; i<upArray.length(); i++)
 			if (!upArray.get(i)) 
-				if (((InternalActorExecuterService<?>)system.getExecuterService()).getActorProcessPool().getActorProcessPoolHandler() instanceof DefaultActorProcessPoolHandler<?> poolHandler)
+				if (((InternalActorExecutorService<?>)system.getExecutorService()).getActorProcessPool().getActorProcessPoolHandler() instanceof DefaultActorProcessPoolHandler<?> poolHandler)
 					result.add(poolHandler.getCellsMap().get(watchdogActors.get(i)));
 		
 		return result;

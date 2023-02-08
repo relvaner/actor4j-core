@@ -98,9 +98,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 			dest = redirect;
 		
 		if (alias==null && redirect==null)
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source);
+			((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source);
 		else
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source, dest);
+			((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().unsafe_postInnerOuter(message, source, dest);
 
 	}
 	
@@ -134,14 +134,14 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 			return;
 		}
 		else if (system.getResourceCells().containsKey(dest)) {
-			system.getExecuterService().resource(message.copy(dest));
+			system.getExecutorService().resource(message.copy(dest));
 			return;
 		}
 		
 		if (alias==null && redirect==null)
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
+			((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source);
 		else
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
+			((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postInnerOuter(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
@@ -156,21 +156,21 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		if (redirect==null) {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy());
+				system.getExecutorService().resource(message.copy());
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy(dest));
+				system.getExecutorService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postQueue(message, dest, biconsumer)) 
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -189,21 +189,21 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		if (redirect==null) {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy());
+				system.getExecutorService().resource(message.copy());
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy(dest));
+				system.getExecutorService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -222,21 +222,21 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		if (redirect==null) {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy());
+				system.getExecutorService().resource(message.copy());
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message))
 				if (!consumerPseudo.apply(message.copy()))
 					undelivered(message, message.source(), message.dest());
 		}
 		else {
 			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecuterService().resource(message.copy(dest));
+				system.getExecutorService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
+			if (!((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postServer(message, dest))
 				if (!consumerPseudo.apply(message.copy(dest)))
 					undelivered(message, message.source(), dest);
 		}
@@ -264,7 +264,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
-			((DefaultInternalActorExecuterService)system.getExecuterService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
+			((DefaultInternalActorExecutorService)system.getExecutorService()).getActorThreadPool().getActorThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 			systemLogger().log(WARN,
 				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
 					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest

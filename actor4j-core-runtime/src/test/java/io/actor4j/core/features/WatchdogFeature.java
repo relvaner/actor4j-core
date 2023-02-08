@@ -103,8 +103,8 @@ public class WatchdogFeature {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		assertEquals(1, ((InternalActorSystem)system).getExecuterService().nonResponsiveThreadsCount());
-		assertEquals(true, ((InternalActorSystem)system).getExecuterService().nonResponsiveThreads().contains(threadId.get()));
+		assertEquals(1, ((InternalActorSystem)system).getExecutorService().nonResponsiveThreadsCount());
+		assertEquals(true, ((InternalActorSystem)system).getExecutorService().nonResponsiveThreads().contains(threadId.get()));
 		
 		try {
 			testDone.await();

@@ -33,7 +33,7 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 		super(config);
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
-		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecuterService
+		actorThreadFactory  = (group, n, system) -> new DefaultUnboundedActorThread(group, n, system); // TODO -> ActorThreadPool, ActorExecutorService
 	}
 
 	@Override
@@ -62,8 +62,8 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	}
 	
 	@Override
-	protected ActorExecuterService createActorExecuterService() {
-		return new DefaultActorExecuterService(this);
+	protected ActorExecutorService createActorExecutorService() {
+		return new DefaultActorExecutorService(this);
 	}
 	
 	@Override
@@ -76,10 +76,10 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
-		return ((DefaultInternalActorExecuterService)executerService).getActorThreadPool().getWorkerInnerQueueSizes();
+		return ((DefaultInternalActorExecutorService)executorService).getActorThreadPool().getWorkerInnerQueueSizes();
 	}
 
 	public List<Integer> getWorkerOuterQueueSizes() {
-		return ((DefaultInternalActorExecuterService)executerService).getActorThreadPool().getWorkerOuterQueueSizes();
+		return ((DefaultInternalActorExecutorService)executorService).getActorThreadPool().getWorkerOuterQueueSizes();
 	}
 }

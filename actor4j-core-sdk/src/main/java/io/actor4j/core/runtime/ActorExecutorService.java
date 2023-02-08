@@ -23,7 +23,7 @@ import io.actor4j.core.runtime.failsafe.FailsafeManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
 import io.actor4j.core.utils.ActorTimer;
 
-public interface ActorExecuterService {
+public interface ActorExecutorService {
 	public FailsafeManager getFailsafeManager();
 	public ActorPersistenceService getPersistenceService();
 	

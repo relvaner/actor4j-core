@@ -48,7 +48,7 @@ public final class AskPattern {
 	}
 	
 	public static Optional<ActorMessage<?>> ask(ActorMessage<?> message, ActorSystem system) {
-		if (!((InternalActorSystem)system).getExecuterService().isStarted())
+		if (!((InternalActorSystem)system).getExecutorService().isStarted())
 			throw new AskPatternException();
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
@@ -70,7 +70,7 @@ public final class AskPattern {
 	}
 	
 	public static Optional<ActorMessage<?>> ask(ActorMessage<?> message, long timeout, TimeUnit unit, ActorSystem system) {
-		if (!((InternalActorSystem)system).getExecuterService().isStarted())
+		if (!((InternalActorSystem)system).getExecutorService().isStarted())
 			throw new AskPatternException();
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();

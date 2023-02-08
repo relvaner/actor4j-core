@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Expert Group and released to the public domain, as explained at
  * http://creativecommons.org/publicdomain/zero/1.0/
  * 
- * @see java.util.concurrent.Executers -> DefaultThreadFactory
+ * @see java.util.concurrent.Executors -> DefaultThreadFactory
  * 
  * Changes by David A. Bauer
  */

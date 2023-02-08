@@ -66,7 +66,7 @@ public abstract class ConcurrentPseudoActor {
 			receive(message);
 		}
 		catch(Exception e) {
-			((InternalActorSystem)actor.cell.getSystem()).getExecuterService().getFailsafeManager().notifyErrorHandler(e, "pseudo", actor.getId());
+			((InternalActorSystem)actor.cell.getSystem()).getExecutorService().getFailsafeManager().notifyErrorHandler(e, "pseudo", actor.getId());
 			((InternalActorSystem)actor.cell.getSystem()).getActorStrategyOnFailure().handle((InternalActorCell)actor.cell, e);
 		}	
 	}

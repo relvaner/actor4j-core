@@ -15,8 +15,8 @@
  */
 package io.actor4j.core.runtime;
 
-public class DefaultActorExecuterService extends ActorExecuterServiceImpl<ActorThread> implements DefaultInternalActorExecuterService {
-	public DefaultActorExecuterService(InternalActorRuntimeSystem system) {
+public class DefaultActorExecutorService extends ActorExecutorServiceImpl<ActorThread> implements DefaultInternalActorExecutorService {
+	public DefaultActorExecutorService(InternalActorRuntimeSystem system) {
 		super(system);
 	}
 	
