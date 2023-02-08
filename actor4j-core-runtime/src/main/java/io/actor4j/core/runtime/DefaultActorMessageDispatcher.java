@@ -20,12 +20,9 @@ import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
-import java.util.Queue;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
@@ -34,7 +31,7 @@ import io.actor4j.core.messages.ActorMessage;
 public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	protected final Function<ActorMessage<?>, Boolean> consumerPseudo;
 	
-	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
+//	protected final BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>> antiFloodingStrategy;
 	
 	public DefaultActorMessageDispatcher(InternalActorSystem system) {
 		super(system);
@@ -55,24 +52,24 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		};
 		
 		// see weighted random early discard (WRED) strategy, currently not used
-		antiFloodingStrategy = new BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>>() {
-			protected Random random = new Random();
-			@Override
-			public boolean test(ActorMessage<?> message, Queue<ActorMessage<?>> queue) {
-				boolean result = false;
-				
-				if (!isDirective(message)) {
-					int bound = (int)(queue.size()/(double)system.getConfig().queueSize()*10);
-					if (bound>=8)
-						result = true;
-					else if (bound>=2)
-						result = (random.nextInt(10)>=10-bound);
-					//result = queue.size()>25000;
-				}
-				
-				return result;
-			}
-		};
+//		antiFloodingStrategy = new BiPredicate<ActorMessage<?>, Queue<ActorMessage<?>>>() {
+//			protected Random random = new Random();
+//			@Override
+//			public boolean test(ActorMessage<?> message, Queue<ActorMessage<?>> queue) {
+//				boolean result = false;
+//				
+//				if (!isDirective(message)) {
+//					int bound = (int)(queue.size()/(double)system.getConfig().queueSize()*10);
+//					if (bound>=8)
+//						result = true;
+//					else if (bound>=2)
+//						result = (random.nextInt(10)>=10-bound);
+//					//result = queue.size()>25000;
+//				}
+//				
+//				return result;
+//			}
+//		};
 	}
 	
 	@Override
@@ -244,12 +241,14 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 					undelivered(message, message.source(), dest);
 		}
 	}
+	
 	/*
 	@Override
 	public void postServer(ActorMessage<?> message) {
 		postQueue(message, (t, msg) -> t.serverQueue(message));
 	}
 	*/
+	
 	@Override
 	public void postPriority(ActorMessage<?> message) {
 		postQueue(message, (t, msg) -> t.priorityQueue(message));

@@ -68,11 +68,11 @@ public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
 						e1.printStackTrace();
 					}
 					
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
+//					try {
+//						Thread.sleep(100);
+//					} catch (InterruptedException e) {
+//						Thread.currentThread().interrupt();
+//					}
 					
 					if (onTermination!=null)
 						onTermination.run();
