@@ -23,24 +23,24 @@ import java.util.function.Predicate;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorMessageMatcher;
 
-public class HandlerActor extends EmbeddedHostActor {
+public class EmbeddedHandlerActor extends EmbeddedHostActor {
 	protected ActorMessageMatcher matcher;
 	
-	public HandlerActor() {
+	public EmbeddedHandlerActor() {
 		this(null, false, false);
 	}
 
-	public HandlerActor(boolean redirectEnabled) {
+	public EmbeddedHandlerActor(boolean redirectEnabled) {
 		this(null, redirectEnabled, false);
 	}
 
-	public HandlerActor(String name, boolean redirectEnabled, boolean messageQueueEnabled) {
+	public EmbeddedHandlerActor(String name, boolean redirectEnabled, boolean messageQueueEnabled) {
 		super(name, redirectEnabled, messageQueueEnabled);
 		
 		matcher = new ActorMessageMatcher();
 	}
 
-	public HandlerActor(String name) {
+	public EmbeddedHandlerActor(String name) {
 		this(name, false, false);
 	}
 

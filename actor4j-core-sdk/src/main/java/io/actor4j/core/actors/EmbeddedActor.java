@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public abstract class EmbeddedActor {
+public abstract class EmbeddedActor implements EmbeddedActorRef {
 	protected /*quasi final*/ EmbeddedHostActor host;
 	
 	protected final String name;
@@ -53,22 +53,27 @@ public abstract class EmbeddedActor {
 		this(name, host, UUID.randomUUID());
 	}
 	
+	@Override
 	public ActorRef host() {
 		return host;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 	
+	@Override
 	public UUID getId() {
 		return id;
 	}
 	
+	@Override
 	public UUID self() {
 		return id;
 	}
 	
+	@Override
 	public UUID getParent() {
 		return host.getId();
 	}
@@ -183,19 +188,23 @@ public abstract class EmbeddedActor {
 		await(predicate, action, true);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message) {
 		if (host!=null)
 			host.sendWithinHost(message);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message, UUID dest) {
 		send(message.shallowCopy(self(), dest));
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest) {
 		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
+	@Override
 	public void forward(ActorMessage<?> message, UUID dest) {
 		send(message.shallowCopy(dest));
 	}

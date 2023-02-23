@@ -18,17 +18,18 @@ package io.actor4j.core.pods.actors;
 import java.util.UUID;
 
 import io.actor4j.core.actors.ActorGroupMember;
+import io.actor4j.core.actors.EmbeddedHandlerActor;
 import io.actor4j.core.pods.PodContext;
 
-public class HandlerActor extends io.actor4j.core.actors.HandlerActor implements ActorGroupMember {
+public class EmbeddedHandlerPodActor extends EmbeddedHandlerActor implements ActorGroupMember {
 	protected UUID groupId;
 	protected PodContext context;
 	
-	public HandlerActor(UUID groupId, PodContext context) {
+	public EmbeddedHandlerPodActor(UUID groupId, PodContext context) {
 		this(false, groupId, context);
 	}
 
-	public HandlerActor(boolean redirectEnabled, UUID groupId, PodContext context) {
+	public EmbeddedHandlerPodActor(boolean redirectEnabled, UUID groupId, PodContext context) {
 		super(redirectEnabled);
 		this.groupId = groupId;
 		this.context = context;
