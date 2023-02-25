@@ -80,7 +80,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
 				if (t instanceof ActorInitializationException) {
 					systemLogger().log(ERROR,
-						String.format("[FAULT] Exception in initialization of an actor"));
+						String.format("[FT] Exception in initialization of an actor"));
 				}
 				else if (systemError!=null) {
 					if (systemError==ActorSystemError.ACTOR || systemError==ActorSystemError.RESOURCE_ACTOR) {
@@ -88,22 +88,22 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in actor: %s", actorLabel(actor)));
+								String.format("[FT] Exception in actor: %s", actorLabel(actor)));
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in actor: %s", uuid.toString()));
+								String.format("[FT] Exception in actor: %s", uuid.toString()));
 					}
 					else if (systemError==ActorSystemError.EMBEDDED_ACTOR) {
 						InternalActorCell cell = system.getCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in embedded actor: %s (host: %s)", message, actorLabel(actor)));
+								String.format("[FT] Exception in embedded actor: %s (host: %s)", message, actorLabel(actor)));
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in embedded actor: %s (host: %s)", message, uuid.toString()));
+								String.format("[FT] Exception in embedded actor: %s (host: %s)", message, uuid.toString()));
 						
 					}
 					else if (systemError==ActorSystemError.PSEUDO_ACTOR) {
@@ -111,39 +111,39 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in actor: %s", actorLabel(actor)));
+								String.format("[FT] Exception in actor: %s", actorLabel(actor)));
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in actor: %s", uuid.toString()));
+								String.format("[FT] Exception in actor: %s", uuid.toString()));
 					}
 					else if (systemError==ActorSystemError.REPLICATION) {
 						systemLogger().log(ERROR,
-								String.format("[FAULT][FATAL] Exception in PodReplicationControllerThread"));
+								String.format("[FT][FATAL] Exception in PodReplicationControllerThread"));
 					}
 					else if (systemError==ActorSystemError.WATCHDOG) {
 						systemLogger().log(ERROR,
-								String.format("[FAULT] Exception in WatchdogThread"));
+								String.format("[FT] Exception in WatchdogThread"));
 					}
 					else if (systemError==ActorSystemError.EXECUTER_RESOURCE) {
 						InternalActorCell cell = system.getCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
-								String.format("[FAULT][EXECUTOR][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
+								String.format("[FT][EXECUTOR][REJECTION] Exception in resource actor: %s", actorLabel(actor)));
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FAULT][EXECUTOR][REJECTION] Exception in resource actor: %s", uuid.toString()));
+								String.format("[FT][EXECUTOR][REJECTION] Exception in resource actor: %s", uuid.toString()));
 					}
 					else if (systemError==ActorSystemError.EXECUTER_CLIENT) {
 						systemLogger().log(ERROR,
-								String.format("[FAULT][EXECUTOR][REJECTION] Exception in sending a message as a client"));
+								String.format("[FT][EXECUTOR][REJECTION] Exception in sending a message as a client"));
 					}
 				}
 				else {
 					systemLogger().log(ERROR,
-						String.format("[FAULT][FATAL] Exception in Thread/Runnable"));
+						String.format("[FT][FATAL] Exception in Thread/Runnable"));
 				}
 				
 				t.printStackTrace();

@@ -152,9 +152,9 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 					t.printStackTrace();
 					
 					if (retries_<maxRetries-1)
-						systemLogger().log(WARN, String.format("[FAULT] Thread will be continued"));
+						systemLogger().log(WARN, String.format("[FT] Thread will be continued"));
 					else
-						systemLogger().log(ERROR, String.format("[FAILURE] Thread is aborted"));
+						systemLogger().log(ERROR, String.format("[FT] Thread is aborted"));
 					
 					// define optional fallback
 				}
