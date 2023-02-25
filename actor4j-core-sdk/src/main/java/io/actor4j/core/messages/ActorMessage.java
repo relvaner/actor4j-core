@@ -57,7 +57,7 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	}
 	
 	public default boolean isSelfReferencing(UUID self) {
-		return source()!=null ? source().equals(self) && dest().equals(self) : false;
+		return source()!=null && dest()!=null ? source().equals(self) && dest().equals(self) : false;
 	}
 	
 	public ActorMessage<T> shallowCopy();
