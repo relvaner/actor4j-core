@@ -62,12 +62,12 @@ public abstract class ConcurrentPseudoActor {
 		return actor.getId();
 	}
 	
-	protected void failsafeMethod(ActorMessage<?> message) {
+	protected void failsafeOperationalMethod(ActorMessage<?> message) {
 		try {
 			receive(message);
 		}
 		catch(Exception e) {
-			((InternalActorSystem)actor.cell.getSystem()).getExecutorService().getFailsafeManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, actor.getId());
+			((InternalActorSystem)actor.cell.getSystem()).getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, actor.getId());
 			((InternalActorSystem)actor.cell.getSystem()).getActorStrategyOnFailure().handle((InternalActorCell)actor.cell, e);
 		}	
 	}
@@ -77,7 +77,7 @@ public abstract class ConcurrentPseudoActor {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			failsafeMethod(message);
+			failsafeOperationalMethod(message);
 			result = true;
 		} 
 		

@@ -30,7 +30,7 @@ import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.failsafe.ErrorHandler;
+import io.actor4j.core.runtime.fault.tolerance.ErrorHandler;
 import io.actor4j.core.utils.ActorFactory;
 
 public class FailsafeFeature {
@@ -72,8 +72,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
-		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().getErrorHandler();
+		((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
 				errorHandler.handle(t, systemError, message, uuid);
@@ -137,8 +137,8 @@ public class FailsafeFeature {
 			}
 		});
 		
-		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
-		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
+		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().getErrorHandler();
+		((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
 				errorHandler.handle(t, systemError, message, uuid);

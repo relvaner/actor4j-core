@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.failsafe.FailsafeMethod;
-import io.actor4j.core.runtime.failsafe.Method;
+import io.actor4j.core.runtime.fault.tolerance.FailsafeOperationalMethod;
+import io.actor4j.core.runtime.fault.tolerance.Method;
 
 public abstract class ActorThread extends Thread implements ActorProcess {
 	protected final UUID failsafeId;
@@ -63,7 +63,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		return getId();
 	}
 	
-	protected void failsafeMethod(ActorMessage<?> message, InternalActorCell cell) {
+	protected void failsafeOperationalMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
 			if (system.getConfig().threadProcessingTimeEnabled().get() || cellsProcessingTimeEnabled.get()) {
 				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.getConfig().maxStatisticValues();
@@ -90,7 +90,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getActorStrategyOnFailure().handle(cell, e);
 		}	
 	}
@@ -103,7 +103,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 			InternalActorCell cell = system.getCells().get(message.dest());
 			if (cell!=null) {
 				cell.getRequestRate().getAndIncrement();
-				failsafeMethod(message, cell);
+				failsafeOperationalMethod(message, cell);
 			}
 			if (system.getConfig().counterEnabled().get())
 				counter.getAndIncrement();
@@ -130,7 +130,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecutorService().getFailsafeManager(), new Method() {
+		FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

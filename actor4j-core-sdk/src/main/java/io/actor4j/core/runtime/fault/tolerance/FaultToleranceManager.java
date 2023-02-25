@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.failsafe;
+package io.actor4j.core.runtime.fault.tolerance;
 
 import java.util.UUID;
 
 import io.actor4j.core.runtime.ActorSystemError;
 
 //Adapted for actor4j
-public final class FailsafeManager {
+public final class FaultToleranceManager {
 	protected /*final*/ ErrorHandler errorHandler; //TODO: change to final, adapt test case
 	
-	public FailsafeManager(ErrorHandler errorHandler) {
+	public FaultToleranceManager(ErrorHandler errorHandler) {
 		super();
 		this.errorHandler = errorHandler;
 	}

@@ -17,8 +17,8 @@ package io.actor4j.core.runtime;
 
 import java.util.UUID;
 
-import io.actor4j.core.runtime.failsafe.FailsafeMethod;
-import io.actor4j.core.runtime.failsafe.Method;
+import io.actor4j.core.runtime.fault.tolerance.FailsafeOperationalMethod;
+import io.actor4j.core.runtime.fault.tolerance.Method;
 
 public abstract class PodReplicationControllerRunnable implements Runnable {
 	protected final UUID uuid; // for failsafe
@@ -38,7 +38,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecutorService().getFailsafeManager(), ActorSystemError.REPLICATION, new Method() {
+		FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), ActorSystemError.REPLICATION, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

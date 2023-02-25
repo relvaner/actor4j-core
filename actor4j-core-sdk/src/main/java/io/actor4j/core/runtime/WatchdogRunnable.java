@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import io.actor4j.core.runtime.failsafe.FailsafeMethod;
-import io.actor4j.core.runtime.failsafe.Method;
+import io.actor4j.core.runtime.fault.tolerance.FailsafeOperationalMethod;
+import io.actor4j.core.runtime.fault.tolerance.Method;
 
 public abstract class WatchdogRunnable implements Runnable {
 	protected final UUID uuid; // for failsafe
@@ -40,7 +40,7 @@ public abstract class WatchdogRunnable implements Runnable {
 	
 	@Override
 	public void run() {
-		FailsafeMethod.runAndCatchThrowable(system.getExecutorService().getFailsafeManager(), ActorSystemError.WATCHDOG, new Method() {
+		FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), ActorSystemError.WATCHDOG, new Method() {
 			@Override
 			public void run(UUID uuid) {
 				onRun();

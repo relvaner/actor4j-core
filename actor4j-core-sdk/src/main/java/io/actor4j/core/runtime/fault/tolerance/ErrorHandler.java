@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.failsafe;
+package io.actor4j.core.runtime.fault.tolerance;
 
 import java.util.UUID;
 
-public interface Method {
-	public void run(UUID uuid);
-	public void error(Throwable t);
-	public void after();
+import io.actor4j.core.runtime.ActorSystemError;
+
+public interface ErrorHandler {
+	public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid);
 }

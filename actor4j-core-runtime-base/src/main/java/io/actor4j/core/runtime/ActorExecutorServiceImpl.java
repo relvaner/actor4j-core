@@ -36,8 +36,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.exceptions.ActorInitializationException;
-import io.actor4j.core.runtime.failsafe.ErrorHandler;
-import io.actor4j.core.runtime.failsafe.FailsafeManager;
+import io.actor4j.core.runtime.fault.tolerance.ErrorHandler;
+import io.actor4j.core.runtime.fault.tolerance.FaultToleranceManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
 import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 import io.actor4j.core.messages.ActorMessage;
@@ -48,7 +48,7 @@ import io.actor4j.core.utils.ActorTimer;
 public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implements InternalActorExecutorService<P> {
 	protected final InternalActorRuntimeSystem system;
 	
-	protected final FailsafeManager failsafeManager;
+	protected final FaultToleranceManager faultToleranceManager;
 
 	protected /*quasi final*/ Runnable onTermination;
 	
@@ -75,7 +75,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 		
 		started = new AtomicBoolean();
 
-		failsafeManager = new FailsafeManager(new ErrorHandler() {
+		faultToleranceManager = new FaultToleranceManager(new ErrorHandler() {
 			@Override
 			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
 				if (t instanceof ActorInitializationException) {
@@ -156,8 +156,8 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 	}
 	
 	@Override
-	public FailsafeManager getFailsafeManager() {
-		return failsafeManager;
+	public FaultToleranceManager getFaultToleranceManager() {
+		return faultToleranceManager;
 	}
 	
 	@Override
@@ -287,7 +287,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 					});
 				}
 				catch (RejectedExecutionException e) {
-					failsafeManager.notifyErrorHandler(e, ActorSystemError.EXECUTER_RESOURCE, cell.getId());
+					faultToleranceManager.notifyErrorHandler(e, ActorSystemError.EXECUTER_RESOURCE, cell.getId());
 				}
 		}
 	}

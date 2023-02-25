@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.failsafe;
+package io.actor4j.core.runtime.fault.tolerance;
 
 import java.util.UUID;
 
 import io.actor4j.core.runtime.ActorSystemError;
 
-public final class FailsafeMethod {
-	public static void run(final FailsafeManager failsafeManager, final ActorSystemError systemError, final String message, final Method method, UUID uuid) {
+public final class FailsafeOperationalMethod {
+	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Exception exception = null;
 		
@@ -40,10 +40,10 @@ public final class FailsafeMethod {
 		}
 		
 		if (error)
-			failsafeManager.notifyErrorHandler(exception, systemError, message, uuid);
+			faultToleranceManager.notifyErrorHandler(exception, systemError, message, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FailsafeManager failsafeManager, final ActorSystemError systemError, final String message, final Method method, UUID uuid) {
+	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final Method method, UUID uuid) {
 		boolean error = false;
 		Throwable throwable = null;
 		
@@ -63,22 +63,22 @@ public final class FailsafeMethod {
 		}
 		
 		if (error)
-			failsafeManager.notifyErrorHandler(throwable, systemError, message, uuid);
+			faultToleranceManager.notifyErrorHandler(throwable, systemError, message, uuid);
 	}
 	
-	public static void run(final FailsafeManager failsafeManager, final ActorSystemError systemError, final Method method, UUID uuid) {
-		run(failsafeManager, systemError, "", method, uuid);
+	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final Method method, UUID uuid) {
+		run(faultToleranceManager, systemError, "", method, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FailsafeManager failsafeManager, final ActorSystemError systemError, final Method method, UUID uuid) {
-		runAndCatchThrowable(failsafeManager, systemError, "", method, uuid);
+	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final Method method, UUID uuid) {
+		runAndCatchThrowable(faultToleranceManager, systemError, "", method, uuid);
 	}
 	
-	public static void run(final FailsafeManager failsafeManager, final Method method, UUID uuid) {
+	public static void run(final FaultToleranceManager failsafeManager, final Method method, UUID uuid) {
 		run(failsafeManager, null, null, method, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FailsafeManager failsafeManager, final Method method, UUID uuid) {
+	public static void runAndCatchThrowable(final FaultToleranceManager failsafeManager, final Method method, UUID uuid) {
 		runAndCatchThrowable(failsafeManager, null, null, method, uuid);
 	}
 }

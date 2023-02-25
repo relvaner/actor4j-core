@@ -131,12 +131,12 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		internal_stop();
 	}
 	
-	protected void failsafeMethod(ActorMessage<?> message) {
+	protected void failsafeOperationalMethod(ActorMessage<?> message) {
 		try {
 			internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, id);
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, id);
 			system.getActorStrategyOnFailure().handle(this, e);
 		}	
 	}
@@ -146,7 +146,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			failsafeMethod(message);
+			failsafeOperationalMethod(message);
 			result = true;
 		} 
 		
