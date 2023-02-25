@@ -155,6 +155,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 						systemLogger().log(WARN, String.format("[FAULT] Thread will be continued"));
 					else
 						systemLogger().log(ERROR, String.format("[FAILURE] Thread is aborted"));
+					
 					// define optional fallback
 				}
 				
