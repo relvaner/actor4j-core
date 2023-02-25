@@ -33,7 +33,7 @@ import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.fault.tolerance.ErrorHandler;
 import io.actor4j.core.utils.ActorFactory;
 
-public class FailsafeFeature {
+public class FaultToleranceFeature {
 	protected ActorSystem system;
 
 	@Before
@@ -51,7 +51,7 @@ public class FailsafeFeature {
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
-				return new Actor("FailsafeFeatureActor") {
+				return new Actor("FaultToleranceFeatureActor") {
 					@Override
 					public void receive(ActorMessage<?> message) {
 						throw new NullPointerException();
@@ -107,7 +107,7 @@ public class FailsafeFeature {
 		UUID dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
-				return new Actor("FailsafeFeatureActor") {
+				return new Actor("FaultToleranceFeatureActor") {
 					@Override
 					public void receive(ActorMessage<?> message) {
 						throw new NullPointerException();

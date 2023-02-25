@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 	AwaitFeature.class,
 	MatcherFeature.class,
 	HandlerFeature.class,
-	FailsafeFeature.class,
+	FaultToleranceFeature.class,
 	WatchdogFeature.class,
 	/*UnhandledFeature.class,*/
 	

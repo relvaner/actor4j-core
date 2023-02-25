@@ -27,7 +27,7 @@ import io.actor4j.core.runtime.fault.tolerance.FailsafeOperationalMethod;
 import io.actor4j.core.runtime.fault.tolerance.Method;
 
 public abstract class ActorThread extends Thread implements ActorProcess {
-	protected final UUID failsafeId;
+	protected final UUID failsafeOperationalId;
 	
 	protected final InternalActorSystem system;
 	
@@ -46,7 +46,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		super(group, name);
 		
 		this.system = system;
-		failsafeId = UUID.randomUUID();
+		failsafeOperationalId = UUID.randomUUID();
 		
 		threadLoad = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
@@ -147,7 +147,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 			@Override
 			public void after() {
 			}
-		}, failsafeId);
+		}, failsafeOperationalId);
 	}
 	
 	public AtomicLong getCounter() {
