@@ -15,6 +15,9 @@
  */
 package io.actor4j.core.runtime;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.logging.ActorLogger.systemLogger;
+
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -130,24 +133,39 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		
 	@Override
 	public void run() {
-		FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new Method() {
-			@Override
-			public void run(UUID uuid) {
-				onRun();
+		int retries = 0;
+		final int maxRetries = system.getConfig().maxRetries(); // TODO
+		
+		while (!isInterrupted() && retries<maxRetries) { // stays operational in case of an error up to maxRetries
+			final int retries_ = retries;
+			FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new Method() {
+				@Override
+				public void run(UUID uuid) {
+					onRun();
+					
+					if (onTermination!=null)
+						onTermination.run();
+				}
 				
-				if (onTermination!=null)
-					onTermination.run();
-			}
+				@Override
+				public void error(Throwable t) {
+					t.printStackTrace();
+					
+					if (retries_<maxRetries-1)
+						systemLogger().log(WARN, String.format("[FAULT] Thread will be continued"));
+					else
+						systemLogger().log(ERROR, String.format("[FAILURE] Thread is aborted"));
+					// define optional fallback
+				}
+				
+				@Override
+				public void after() {
+					// empty
+				}
+			}, failsafeOperationalId);
 			
-			@Override
-			public void error(Throwable t) {
-				t.printStackTrace();
-			}
-			
-			@Override
-			public void after() {
-			}
-		}, failsafeOperationalId);
+			retries++;
+		}
 	}
 	
 	public AtomicLong getCounter() {
