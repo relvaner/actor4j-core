@@ -90,7 +90,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 				cell.internal_receive(message);
 		}
 		catch(Exception e) {
-			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, "actor", cell.getId());
+			system.getExecutorService().getFailsafeManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getActorStrategyOnFailure().handle(cell, e);
 		}	
 	}

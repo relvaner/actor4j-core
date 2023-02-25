@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.runtime.failsafe.ErrorHandler;
 import io.actor4j.core.runtime.failsafe.FailsafeManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
@@ -76,13 +77,13 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 
 		failsafeManager = new FailsafeManager(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, String message, UUID uuid) {
-				if (message!=null) {
-					if (message.equals("initialization")) {
-						systemLogger().log(ERROR,
-							String.format("[SAFETY] Exception in initialization of an actor"));
-					}
-					else if (message.equals("actor") || message.equals("resource")) {
+			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
+				if (t instanceof ActorInitializationException) {
+					systemLogger().log(ERROR,
+						String.format("[SAFETY] Exception in initialization of an actor"));
+				}
+				else if (systemError!=null) {
+					if (systemError==ActorSystemError.ACTOR || systemError==ActorSystemError.RESOURCE_ACTOR) {
 						InternalActorCell cell = system.getCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
@@ -93,7 +94,19 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 							systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", uuid.toString()));
 					}
-					else if (message.equals("pseudo")) {
+					else if (systemError==ActorSystemError.EMBEDDED_ACTOR) {
+						InternalActorCell cell = system.getCells().get(uuid);
+						if (cell!=null) {
+							Actor actor = cell.getActor();
+							systemLogger().log(ERROR,
+								String.format("[SAFETY] Exception in embedded actor: %s (host: %s)", message, actorLabel(actor)));
+						}
+						else
+							systemLogger().log(ERROR,
+								String.format("[SAFETY] Exception in embedded actor: %s (host: %s)", message, uuid.toString()));
+						
+					}
+					else if (systemError==ActorSystemError.PSEUDO_ACTOR) {
 						InternalActorCell cell = system.getPseudoCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
@@ -104,15 +117,15 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 							systemLogger().log(ERROR,
 								String.format("[SAFETY] Exception in actor: %s", uuid.toString()));
 					}
-					else if (message.equals("replication")) {
+					else if (systemError==ActorSystemError.REPLICATION) {
 						systemLogger().log(ERROR,
 								String.format("[SAFETY][FATAL] Exception in PodReplicationControllerThread"));
 					}
-					else if (message.equals("watchdog")) {
+					else if (systemError==ActorSystemError.WATCHDOG) {
 						systemLogger().log(ERROR,
 								String.format("[FAILSAFE] Exception in WatchdogThread"));
 					}
-					else if (message.equals("executor_resource")) {
+					else if (systemError==ActorSystemError.EXECUTER_RESOURCE) {
 						InternalActorCell cell = system.getCells().get(uuid);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
@@ -123,7 +136,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 							systemLogger().log(ERROR,
 								String.format("[SAFETY][EXECUTOR][REJECTION] Exception in resource actor: %s", uuid.toString()));
 					}
-					else if (message.equals("executor_client")) {
+					else if (systemError==ActorSystemError.EXECUTER_CLIENT) {
 						systemLogger().log(ERROR,
 								String.format("[SAFETY][EXECUTOR][REJECTION] Exception in sending a message as a client"));
 					}
@@ -274,7 +287,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 					});
 				}
 				catch (RejectedExecutionException e) {
-					failsafeManager.notifyErrorHandler(e, "executor_resource", cell.getId());
+					failsafeManager.notifyErrorHandler(e, ActorSystemError.EXECUTER_RESOURCE, cell.getId());
 				}
 		}
 	}

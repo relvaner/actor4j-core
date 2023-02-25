@@ -28,6 +28,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.failsafe.ErrorHandler;
 import io.actor4j.core.utils.ActorFactory;
@@ -74,10 +75,10 @@ public class FailsafeFeature {
 		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
 		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, String message, UUID uuid) {
-				errorHandler.handle(t, message, uuid);
+			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
+				errorHandler.handle(t, systemError, message, uuid);
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
-				assertEquals("actor", message);
+				assertEquals(ActorSystemError.ACTOR, systemError);
 				assertEquals(dest, uuid);
 				testDone.countDown();
 			}
@@ -139,10 +140,10 @@ public class FailsafeFeature {
 		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFailsafeManager().getErrorHandler();
 		((InternalActorSystem)system).getExecutorService().getFailsafeManager().setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, String message, UUID uuid) {
-				errorHandler.handle(t, message, uuid);
+			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
+				errorHandler.handle(t, systemError, message, uuid);
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
-				assertEquals("actor", message);
+				assertEquals(ActorSystemError.ACTOR, systemError);
 				assertEquals(dest, uuid);
 				testDone.countDown(); // maxRetries+1
 			}
