@@ -41,7 +41,6 @@ import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
@@ -401,7 +400,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		}
 		catch(Exception e) {
 			getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
-			getActorStrategyOnFailure().handle(cell, new ActorInitializationException());
+			getActorStrategyOnFailure().handle(cell, e);
 		}
 	}
 

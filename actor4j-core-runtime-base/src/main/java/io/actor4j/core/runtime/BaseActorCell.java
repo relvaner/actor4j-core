@@ -36,6 +36,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
@@ -383,22 +384,43 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void preStart() {
 		recoverProtocol.apply();
-		actor.preStart();
+		try {
+			actor.preStart();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new ActorInitializationException();
+		}
 	}
 	
 	@Override
 	public void preRestart(Exception reason) {
-		actor.preRestart(reason);
+		try {
+			actor.preRestart(reason);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void postRestart(Exception reason) {
-		actor.postRestart(reason);
+		try {
+			actor.postRestart(reason);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void postStop() {
-		actor.postStop();
+		try {
+			actor.postStop();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
