@@ -41,10 +41,10 @@ public class EmbeddedActorFeature {
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
 		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
-			protected EmbeddedActor client;
+			protected UUID client;
 			@Override
 			public void preStart() {
-				client = new EmbeddedActor("host:client") {
+				client = addEmbeddedChild(() -> new EmbeddedActor("host:client") {
 					@Override
 					public boolean receive(ActorMessage<?> message) {
 						boolean result = false;
@@ -66,14 +66,12 @@ public class EmbeddedActorFeature {
 						
 						return result;
 					}
-				};
-				
-				addEmbeddedChild(() -> client);
+				});
 			}
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (!embedded(message, client.getId()))
+				if (!embedded(message, client))
 					unhandled(message);
 			}
 		});
