@@ -54,6 +54,7 @@ public class RestartProtocol {
 			cell.postRestart(reason);
 			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor()))); 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ActorInitializationException(); // never must occur
 		}
 	}

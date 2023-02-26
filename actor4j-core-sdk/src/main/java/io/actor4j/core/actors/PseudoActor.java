@@ -45,6 +45,7 @@ public abstract class PseudoActor extends Actor {
 		try {
 			preStart();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ActorInitializationException();
 		}
 	}
