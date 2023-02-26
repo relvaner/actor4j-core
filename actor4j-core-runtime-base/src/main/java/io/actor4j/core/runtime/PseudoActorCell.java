@@ -137,7 +137,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, id);
-			system.getActorStrategyOnFailure().handle(this, e);
+			/* Pseudo actors are not part of the actor system, which means 'ActorStrategyOnFailure' is not used! */
 		}	
 	}
 	

@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
-import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPseudoActorCell;
 
@@ -68,7 +67,7 @@ public abstract class ConcurrentPseudoActor {
 		}
 		catch(Exception e) {
 			((InternalActorSystem)actor.cell.getSystem()).getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.PSEUDO_ACTOR, actor.getId());
-			((InternalActorSystem)actor.cell.getSystem()).getActorStrategyOnFailure().handle((InternalActorCell)actor.cell, e);
+			/* Pseudo actors are not part of the actor system, which means 'ActorStrategyOnFailure' is not used! */
 		}	
 	}
 	
