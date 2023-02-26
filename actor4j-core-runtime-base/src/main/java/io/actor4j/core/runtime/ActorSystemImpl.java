@@ -41,6 +41,7 @@ import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
@@ -388,10 +389,20 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 				/* if (!(actor instanceof ResourceActor)) @See: ActorMessageDispatcher */
 					messageDispatcher.registerCell(cell);
 				/* preStart */
-				cell.preStart();
+				internal_preStart(cell);
 			}
 		}
 		return cell.getId();
+	}
+	
+	public void internal_preStart(InternalActorCell cell) {
+		try {
+			cell.preStart();
+		}
+		catch(Exception e) {
+			getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
+			getActorStrategyOnFailure().handle(cell, new ActorInitializationException());
+		}
 	}
 
 	protected UUID user_addCell(InternalActorCell cell) {
@@ -844,7 +855,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					while (iterator.hasNext()) {
 						InternalActorCell cell = iterator.next().getValue();
 						if (cell.isRootInUser() || cell.isRootInSystem() )
-							cell.preStart();
+							internal_preStart(cell);
 					}
 					
 					messagingEnabled.set(true);
