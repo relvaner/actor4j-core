@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,15 @@
  */
 package io.actor4j.core.actors;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.UUID;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.utils.ActorEmbeddedRouter;
+import io.actor4j.core.runtime.embedded.ActorEmbeddedRouter;
+import io.actor4j.core.runtime.embedded.EmbeddedHostActorImpl;
+import io.actor4j.core.utils.EmbeddedActorFactory;
 
 public abstract class EmbeddedHostActor extends Actor {
-	protected final ActorEmbeddedRouter router;
-	protected final boolean redirectEnabled;
-	
-	protected final Queue<ActorMessage<?>> messageQueue;
-	protected final boolean messageQueueEnabled;
+	protected final EmbeddedHostActorImpl impl;
 	
 	public EmbeddedHostActor() {
 		this(null, false, false);
@@ -48,89 +44,49 @@ public abstract class EmbeddedHostActor extends Actor {
 	public EmbeddedHostActor(String name, boolean redirectEnabled, boolean messageQueueEnabled) {
 		super(name);
 		
-		this.redirectEnabled = redirectEnabled;
-		this.router = new ActorEmbeddedRouter();
-		
-		messageQueue = new LinkedList<>(); /* unbounded */
-		this.messageQueueEnabled = messageQueueEnabled;
+		impl = new EmbeddedHostActorImpl(this, redirectEnabled, messageQueueEnabled);
 	}
 	
+	public EmbeddedHostActorImpl underlyingImpl() {
+		return impl;
+	}
+
 	public ActorEmbeddedRouter getRouter() {
-		return router;
+		return impl.getRouter();
 	}
 	
 	public boolean isEmbedded(UUID id) {
-		return router.get(id)!=null;
+		return impl.getRouter().get(id)!=null;
+	}
+
+	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
+		return impl.addEmbeddedChild(factory);
 	}
 	
-	public UUID addEmbeddedChild(EmbeddedActor embeddedActor) {
-		embeddedActor.host = this;
-		router.put(embeddedActor.getId(), embeddedActor);
-		if (redirectEnabled)
-			getSystem().addRedirection(embeddedActor.getId(), self());
-		
-		return embeddedActor.getId();
+	public void removeEmbeddedChild(UUID id) {
+		impl.removeEmbeddedChild(id);
 	}
-	
-	public void removeEmbeddedChild(EmbeddedActor embeddedActor) {
-		embeddedActor.host = null;
-		router.remove(embeddedActor.id);
-		if (redirectEnabled)
-			getSystem().removeRedirection(embeddedActor.getId());
-	}	
 	
 	public boolean embedded(ActorMessage<?> message) {
-		boolean result = false;
-		
-		if (message==null)
-			throw new NullPointerException();
-		
-		EmbeddedActor embeddedActor = router.get(message.dest());
-		if (embeddedActor!=null)
-			result = embeddedActor.embedded(message);
-		else if (message.dest().equals(self()))
-			receive(message);
-		
-		internal_embedded();
-		
-		return result;
+		return impl.embedded(message);
+	}
+	
+	public boolean embedded(ActorMessage<?> message, UUID dest) {
+		return impl.embedded(message, dest);
 	}
 	
 	public <T> boolean embedded(T value, int tag, UUID dest) {
 		return embedded(ActorMessage.create(value, tag, self(), dest));
 	}
 	
-	public void embedded() {
-		internal_embedded();
-	}
-	
-	protected void internal_embedded() {
-		if (messageQueueEnabled) {
-			ActorMessage<?> message = null;
-			while((message=messageQueue.poll())!=null) {
-				EmbeddedActor embeddedActor = router.get(message.dest());
-				if (embeddedActor!=null)
-					embeddedActor.embedded(message);
-			}
-		}
-	}
-	
 	public void sendWithinHost(ActorMessage<?> message) {
-		if (messageQueueEnabled) 
-			messageQueue.offer(message);
-		else {
-			EmbeddedActor embeddedActor = router.get(message.dest());
-			if (embeddedActor!=null)
-				embeddedActor.embedded(message.copy());
-			else if (message.dest().equals(self()))
-				receive(message.copy());
-		}
+		impl.sendWithinHost(message);
 	}
-	
+
 	@Override
 	public void postStop() {
-		for (EmbeddedActor embeddedActor : router.values())
-			if (redirectEnabled)
-				getSystem().removeRedirection(embeddedActor.getId());
+		impl.postStop();
+		
+		super.postStop();
 	}
 }

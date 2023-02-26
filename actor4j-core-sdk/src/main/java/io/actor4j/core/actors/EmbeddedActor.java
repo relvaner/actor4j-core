@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,47 +15,40 @@
  */
 package io.actor4j.core.actors;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import io.actor4j.core.EmbeddedActorCell;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class EmbeddedActor implements EmbeddedActorRef {
-	protected /*quasi final*/ EmbeddedHostActor host;
+	protected /*quasi final*/ EmbeddedActorCell cell;
 	
 	protected final String name;
 	
-	protected final UUID id;
-	
-	protected boolean active;
-	
-	protected final Deque<Predicate<ActorMessage<?>>> behaviourStack;
-	
 	protected Queue<ActorMessage<?>> stash; //must be initialized by hand
 	
-	public EmbeddedActor(EmbeddedHostActor host) {
-		this(null, host);
+	public EmbeddedActor() {
+		this(null);
 	}
 	
-	public EmbeddedActor(String name, EmbeddedHostActor host, UUID id) {
+	public EmbeddedActor(String name) {
 		super();
 		this.name = name;
-		this.host = host;
-		this.id = id;
-		active = true;
-		behaviourStack = new ArrayDeque<>();
 	}
 	
-	public EmbeddedActor(String name, EmbeddedHostActor host) {
-		this(name, host, UUID.randomUUID());
+	public EmbeddedActorCell getCell() {
+		return cell;
+	}
+
+	public void setCell(EmbeddedActorCell cell) {
+		this.cell = cell;
 	}
 	
 	@Override
 	public ActorRef host() {
-		return host;
+		return cell.host();
 	}
 
 	@Override
@@ -65,63 +58,35 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 	
 	@Override
 	public UUID getId() {
-		return id;
+		return cell.getId();
 	}
 	
 	@Override
 	public UUID self() {
-		return id;
+		return cell.getId();
 	}
 	
 	@Override
 	public UUID getParent() {
-		return host.getId();
-	}
-	
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-	
-	public boolean embedded(ActorMessage<?> message) {
-		boolean result = false;
-		
-		if (active) {
-			Predicate<ActorMessage<?>> behaviour = behaviourStack.peek();
-			if (behaviour==null)
-				result = receive(message);
-			else
-				result = behaviour.test(message);	
-		}
-		
-		return result;
-	}
-	
-	public <T> boolean embedded(T value, int tag, UUID dest) {
-		return embedded(ActorMessage.create(value, tag, getParent(), dest));
+		return cell.getParent();
 	}
 	
 	public abstract boolean receive(ActorMessage<?> message);
 	
 	public void become(Predicate<ActorMessage<?>> behaviour, boolean replace) {
-		if (replace && !behaviourStack.isEmpty())
-			behaviourStack.pop();
-		behaviourStack.push(behaviour);
+		cell.become(behaviour, replace);
 	}
 	
 	public void become(Predicate<ActorMessage<?>> behaviour) {
 		become(behaviour, true);
 	}
-	
+
 	public void unbecome() {
-		behaviourStack.pop();
+		cell.unbecome();
 	}
 	
 	public void unbecomeAll() {
-		behaviourStack.clear();
+		cell.unbecomeAll();
 	}
 	
 	public void await(final UUID source, final Predicate<ActorMessage<?>> action, boolean replace) {
@@ -190,8 +155,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 	
 	@Override
 	public void send(ActorMessage<?> message) {
-		if (host!=null)
-			host.sendWithinHost(message);
+		cell.send(message);
 	}
 	
 	@Override
@@ -214,14 +178,18 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 	}
 	
 	public void preRestart(Exception reason) {
-		// empty
+		cell.restart(reason);
 	}
 	
 	public void postRestart(Exception reason) {
-		preStart();
+		cell.preStart();
 	}
 	
 	public void postStop() {
 		// empty
+	}
+	
+	public void stop() {
+		cell.stop();
 	}
 }

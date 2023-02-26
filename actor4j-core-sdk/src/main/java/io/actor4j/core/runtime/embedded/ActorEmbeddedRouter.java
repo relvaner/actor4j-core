@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.utils;
+package io.actor4j.core.runtime.embedded;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.actor4j.core.actors.EmbeddedActor;
-
-public class ActorEmbeddedRouter extends HashMap<UUID, EmbeddedActor> {
+public class ActorEmbeddedRouter extends HashMap<UUID, InternalEmbeddedActorCell> {
 	protected static final long serialVersionUID = 1L;
 
 	public ActorEmbeddedRouter() {
@@ -36,7 +34,7 @@ public class ActorEmbeddedRouter extends HashMap<UUID, EmbeddedActor> {
 		super(initialCapacity);
 	}
 
-	public ActorEmbeddedRouter(Map<? extends UUID, ? extends EmbeddedActor> m) {
+	public ActorEmbeddedRouter(Map<? extends UUID, ? extends InternalEmbeddedActorCell> m) {
 		super(m);
 	}
 }

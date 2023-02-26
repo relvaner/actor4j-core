@@ -24,6 +24,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
+import io.actor4j.core.logging.ActorLogger;
 import io.actor4j.core.messages.ActorMessage;
 
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -43,7 +44,7 @@ public class EmbeddedActorFeature {
 			protected EmbeddedActor client;
 			@Override
 			public void preStart() {
-				client = new EmbeddedActor("host:client", this) {
+				client = new EmbeddedActor("host:client") {
 					@Override
 					public boolean receive(ActorMessage<?> message) {
 						boolean result = false;
@@ -66,15 +67,17 @@ public class EmbeddedActorFeature {
 						return result;
 					}
 				};
+				
+				addEmbeddedChild(() -> client);
 			}
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				if (!client.embedded(message))
+				if (!embedded(message, client.getId()))
 					unhandled(message);
 			}
 		});
-		
+		ActorLogger.systemLogger().setLevel(DEBUG);
 		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID(), host));
 		system.send(ActorMessage.create("Hello World!", 0, system.SYSTEM_ID(), host));
 		system.send(ActorMessage.create(null, SWAP, system.SYSTEM_ID(), host));
