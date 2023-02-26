@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPseudoActorCell;
@@ -41,7 +42,11 @@ public abstract class PseudoActor extends Actor {
 		setCell(cell);
 		cell.pseudo_addCell(cell);
 		/* preStart */
-		preStart();
+		try {
+			preStart();
+		} catch (Exception e) {
+			throw new ActorInitializationException();
+		}
 	}
 	
 	@Deprecated
