@@ -223,6 +223,14 @@ public class EmbeddedHostActorImpl {
 				callbackHost.accept(message.copy());
 		}
 	}
+	
+	public void sendUnsafeWithinHost(ActorMessage<?> message) {
+		InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
+		if (embeddedActorCell!=null)
+			failsafeOperationalMethod(message.copy(), embeddedActorCell);
+		else if (message.dest().equals(self()) && callbackHost!=null)
+			callbackHost.accept(message.copy());
+	}
 
 	public void postStop() {
 		for (InternalEmbeddedActorCell embeddedActorCell : router.values())

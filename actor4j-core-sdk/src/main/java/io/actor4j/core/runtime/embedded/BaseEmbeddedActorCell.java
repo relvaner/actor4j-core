@@ -149,11 +149,8 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	
 	@Override
 	public void unsafe_send(ActorMessage<?> message) {
-		if (host instanceof EmbeddedHostActor h) {
-			InternalEmbeddedActorCell embeddedActorCell = h.getRouter().get(message.dest());
-			if (embeddedActorCell!=null)
-				h.underlyingImpl().failsafeOperationalMethod(message, embeddedActorCell);
-		}
+		if (host instanceof EmbeddedHostActor h)
+			h.underlyingImpl().sendUnsafeWithinHost(message);
 	}
 	
 	@Override
