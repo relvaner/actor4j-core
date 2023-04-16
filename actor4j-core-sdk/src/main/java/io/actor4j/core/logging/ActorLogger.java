@@ -48,4 +48,12 @@ public class ActorLogger {
 	public static void logger(Logger logger) {
 		user_logger = logger;
 	}
+	
+	public static void showSimpleClassName() {
+		showSimpleClassName(true);
+	}
+	
+	public static void showSimpleClassName(boolean enabled) {
+		LoggerFactory.simpleClassName = enabled;
+	}
 }

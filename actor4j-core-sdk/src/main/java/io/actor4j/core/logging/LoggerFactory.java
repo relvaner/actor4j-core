@@ -32,6 +32,7 @@ import static io.actor4j.core.logging.ActorLogger.*;
 
 public class LoggerFactory {
 	protected static final Map<Level, String> LEVEL_AS_STRING;
+	protected static volatile boolean simpleClassName;
 
 	protected final Logger logger;
 	protected final String name;
@@ -47,28 +48,36 @@ public class LoggerFactory {
 	}
 	
 	public LoggerFactory(String name, Level level) {
+		this(name, level, new Formatter () {
+			@Override
+			public String format(LogRecord record) {
+				return LoggerFactory.format(record);
+			}
+		});
+	}
+	
+	public LoggerFactory(String name, Level level, Formatter formatter) {
 		super();
 		this.name = name;
 
 		logger = java.util.logging.Logger.getLogger(name);
 		Handler handler = new ConsoleHandler();
 		handler.setLevel(Level.ALL);
-		handler.setFormatter(new Formatter () {
-			@Override
-			public String format(LogRecord record) {
-				return LoggerFactory.this.format(record);
-			}
-		});
+		handler.setFormatter(formatter);
 		logger.addHandler(handler);
 		logger.setUseParentHandlers(false);
 		logger.setLevel(level);
 	}
-	
+
 	public static Logger create(String name, Level level) {
 		return new LoggerFactory(name, level).logger;
 	}
 	
-	protected String format(LogRecord record) {
+	public static Logger create(String name, Level level, Formatter formatter) {
+		return new LoggerFactory(name, level, formatter).logger;
+	}
+	
+	protected static String format(LogRecord record) {
 		Date date = Calendar.getInstance().getTime();  
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  
 		String dateAsString = dateFormat.format(date);
@@ -77,8 +86,14 @@ public class LoggerFactory {
 				LEVEL_AS_STRING.get(record.getLevel()), 
 				dateAsString, record.getLoggerName(), 
 				Thread.currentThread().getName(), 
-				record.getSourceClassName(), 
+				simpleClassName ? getSimpleClassName(record.getSourceClassName()) : record.getSourceClassName(), 
 				record.getSourceMethodName(),
 				record.getMessage());
+	}
+	
+	protected static String getSimpleClassName(String sourceClassName) {
+		int index = sourceClassName.lastIndexOf(".");
+		
+		return sourceClassName.substring(index!=-1 ? index+1 : 0);
 	}
 }
