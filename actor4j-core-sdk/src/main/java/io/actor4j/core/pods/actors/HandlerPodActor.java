@@ -63,14 +63,12 @@ public abstract class HandlerPodActor extends PodChildActor {
 		}
 		else
 		{
-			/*
 			UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
 			map.put(interaction, message.copy()); 
 			handle(message, interaction);
-			*/
-			UUID interaction = UUID.randomUUID();
-			map.put(interaction, message.copy()); 
-			handle(message, interaction);
+//			UUID interaction = UUID.randomUUID();
+//			map.put(interaction, message.copy()); 
+//			handle(message, interaction);
 		}
 	}
 	
