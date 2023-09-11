@@ -18,6 +18,7 @@ package io.actor4j.core.config;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
+import io.actor4j.core.pods.Caching;
 import io.actor4j.core.pods.Database;
 import io.actor4j.core.runtime.ActorThreadMode;
 
@@ -60,6 +61,7 @@ public class ActorSystemConfig {
 	private final boolean horizontalPodAutoscalerEnabled;
 	private final long horizontalPodAutoscalerSyncTime;
 	private final long horizontalPodAutoscalerMeasurementTime;
+	private final Caching<?> podCaching;
 	private final Database<?> podDatabase;
 	
 	// Watchdog
@@ -166,6 +168,10 @@ public class ActorSystemConfig {
 		return horizontalPodAutoscalerMeasurementTime;
 	}
 	
+	public Caching<?> podCaching() {
+		return podCaching;
+	}
+	
 	public Database<?> podDatabase() {
 		return podDatabase;
 	}
@@ -225,6 +231,7 @@ public class ActorSystemConfig {
 		protected boolean horizontalPodAutoscalerEnabled;
 		protected long horizontalPodAutoscalerSyncTime;
 		protected long horizontalPodAutoscalerMeasurementTime;
+		protected Caching<?> podCaching;
 		protected Database<?> podDatabase;
 		
 		// Watchdog
@@ -305,6 +312,7 @@ public class ActorSystemConfig {
 			this.horizontalPodAutoscalerEnabled = config.horizontalPodAutoscalerEnabled();
 			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime();
 			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime();
+			this.podCaching = config.podCaching();
 			this.podDatabase = config.podDatabase();
 			this.watchdogEnabled = config.watchdogEnabled();
 			this.watchdogSyncTime = config.watchdogSyncTime();
@@ -469,6 +477,12 @@ public class ActorSystemConfig {
 			
 			return this;
 		}
+		
+		public Builder<T> podCaching(Caching<?> podCaching) {
+			this.podCaching = podCaching;
+
+			return this;
+		}
 
 		public Builder<T> podDatabase(Database<?> podDatabase) {
 			this.podDatabase = podDatabase;
@@ -529,6 +543,7 @@ public class ActorSystemConfig {
 		this.horizontalPodAutoscalerEnabled = builder.horizontalPodAutoscalerEnabled;
 		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
 		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
+		this.podCaching = builder.podCaching;
 		this.podDatabase = builder.podDatabase;
 		this.watchdogEnabled = builder.watchdogEnabled;
 		this.watchdogSyncTime = builder.watchdogSyncTime;
@@ -557,9 +572,17 @@ public class ActorSystemConfig {
 			}
 		};
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T podCachingProvider() {
+		if (podCaching!=null)
+			return (T) podCaching.getProvider();
+		else
+			return null;
+	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getPodDatabase() {
+	public <T> T podDatabaseClient() {
 		if (podDatabase!=null)
 			return (T) podDatabase.getClient();
 		else

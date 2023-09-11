@@ -57,7 +57,11 @@ public abstract class PodChildActor extends Actor implements ActorGroupMember {
 		return alias+groupId;
 	}
 	
-	public <T> T getPodDatabase() {
-		return getSystem().getConfig().getPodDatabase();
+	public <T> T getPodCachingProvider() {
+		return getSystem().getConfig().podCachingProvider();
+	}
+	
+	public <T> T getPodDatabaseClient() {
+		return getSystem().getConfig().podDatabaseClient();
 	}
 }
