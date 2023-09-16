@@ -40,6 +40,10 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	public Deque<K> getLru() {
 		return lru;
 	}
+	
+	public int size() {
+		return size;
+	}
 
 	@Override
 	public V get(K key) {
