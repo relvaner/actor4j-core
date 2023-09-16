@@ -17,16 +17,15 @@ package io.actor4j.core.actors;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Cache;
-import io.actor4j.core.utils.CacheLRUWithGC;
+import io.actor4j.core.utils.CacheLRUWithExpiration;
 
 import static io.actor4j.core.utils.ActorUtils.*;
 
 public class ActorWithCache<K, V> extends Actor {
 	protected int cacheSize;
 	protected Cache<K, V> cache;
-	
-	public static final int GC      = checkTag(300);
-	public static final int EVICT   = GC;
+
+	public static final int EVICT   = checkTag(300);
 	public static final int GET     = checkTag(301);
 	public static final int SET     = checkTag(302);
 	public static final int UPDATE  = checkTag(303);
@@ -42,7 +41,7 @@ public class ActorWithCache<K, V> extends Actor {
 		super(name);
 		
 		this.cacheSize = cacheSize;
-		cache = new CacheLRUWithGC<>(cacheSize);
+		cache = new CacheLRUWithExpiration<>(cacheSize);
 	}
 	
 	public ActorWithCache(int cacheSize) {
@@ -51,7 +50,7 @@ public class ActorWithCache<K, V> extends Actor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (message.value()!=null && message.tag()==GC)
-			cache.gc(message.valueAsLong());
+		if (message.value()!=null && message.tag()==EVICT)
+			cache.evict(message.valueAsLong());
 	}
 }

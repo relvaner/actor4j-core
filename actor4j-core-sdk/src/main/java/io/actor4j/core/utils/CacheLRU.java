@@ -87,7 +87,7 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
-	public void gc(long maxTime) {
+	public void evict(long duration) {
 		// empty
 	}
 

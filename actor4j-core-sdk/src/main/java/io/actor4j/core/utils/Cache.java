@@ -21,5 +21,5 @@ public interface Cache<K, V> {
 	public void remove(K key);
 	public void clear();
 	
-	public void gc(long maxTime);
+	public void evict(long duration);
 }

@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
+public class CacheLRUWithExpiration<K, V> implements Cache<K, V>  {
 	protected static class Pair<V> {
 		public V value;
 		public long timestamp;
@@ -38,7 +38,7 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 	
 	protected int size;
 	
-	public CacheLRUWithGC(int size) {
+	public CacheLRUWithExpiration(int size) {
 		map = new HashMap<>(size);
 		lru = new TreeMap<>();
 		
@@ -107,13 +107,13 @@ public class CacheLRUWithGC<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
-	public void gc(long maxTime) {
+	public void evict(long duration) {
 		long currentTime = System.currentTimeMillis();
 		
 		Iterator<Entry<Long, K>> iterator = lru.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<Long, K> entry = iterator.next();
-			if (currentTime-entry.getKey()/1_000_000>maxTime) {
+			if (currentTime-entry.getKey()/1_000_000>duration) {
 				map.remove(entry.getValue());
 				iterator.remove();
 			}
