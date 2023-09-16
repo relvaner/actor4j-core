@@ -87,12 +87,14 @@ public class CacheLRUWithExpiration<K, V> implements Cache<K, V>  {
 		return result;
 	}
 	
+	@Override
 	public void remove(K key) {
 		Pair<V> pair = map.get(key);
 		lru.remove(pair.timestamp);
 		map.remove(key);
 	}
 	
+	@Override
 	public void clear() {
 		map.clear();
 		lru.clear();

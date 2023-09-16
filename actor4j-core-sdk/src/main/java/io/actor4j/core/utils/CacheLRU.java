@@ -73,11 +73,13 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 		return result;
 	}
 	
+	@Override
 	public void remove(K key) {
 		map.remove(key);
 		lru.remove(key);
 	}
 	
+	@Override
 	public void clear() {
 		map.clear();
 		lru.clear();

@@ -39,10 +39,12 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 		return map.put(key, value);
 	}
 	
+	@Override
 	public void remove(K key) {
 		map.remove(key);
 	}
 	
+	@Override
 	public void clear() {
 		map.clear();
 	}
