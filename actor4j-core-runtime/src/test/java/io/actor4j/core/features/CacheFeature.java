@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import io.actor4j.core.utils.CacheLRU;
 import io.actor4j.core.utils.CacheLRUWithGC;
-import io.actor4j.core.utils.DefaultCache;
+import io.actor4j.core.utils.CacheAsMap;
 
 import static org.junit.Assert.*;
 
@@ -132,7 +132,7 @@ public class CacheFeature {
 	
 	@Test
 	public void test_cache_default__get_put() {
-		DefaultCache<String, String> cache = new DefaultCache<>();
+		CacheAsMap<String, String> cache = new CacheAsMap<>();
 		
 		String[][] data = { 
 				{"A", "AA"}, 

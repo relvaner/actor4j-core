@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2023, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,24 +18,24 @@ package io.actor4j.core.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultCache<K, E> implements Cache<K, E> {
-	protected Map<K, E> map;
+public class CacheAsMap<K, V> implements Cache<K, V> {
+	protected Map<K, V> map;
 	
-	public DefaultCache() {
+	public CacheAsMap() {
 		map = new HashMap<>();
 	}
 	
-	public Map<K, E> getMap() {
+	public Map<K, V> getMap() {
 		return map;
 	}
 
 	@Override
-	public E get(K key) {
+	public V get(K key) {
 		return map.get(key);
 	}
 	
 	@Override
-	public E put(K key, E value) {
+	public V put(K key, V value) {
 		return map.put(key, value);
 	}
 	
@@ -47,10 +47,6 @@ public class DefaultCache<K, E> implements Cache<K, E> {
 		map.clear();
 	}
 	
-	protected void resize() {
-		// empty
-	}
-	
 	@Override
 	public void gc(long maxTime) {
 		// empty
@@ -58,6 +54,6 @@ public class DefaultCache<K, E> implements Cache<K, E> {
 
 	@Override
 	public String toString() {
-		return "DefaultCache [map=" + map + "]";
+		return "CacheAsMap [map=" + map + "]";
 	}
 }
