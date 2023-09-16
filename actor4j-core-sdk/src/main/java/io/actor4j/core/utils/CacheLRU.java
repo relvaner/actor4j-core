@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CacheLRU<K, V> implements Cache<K, V> {
-	protected Map<K, V> map;
-	protected Deque<K> lru;
+	protected final Map<K, V> map;
+	protected final Deque<K> lru;
 	
-	protected int size;
+	protected final int size;
 	
 	public CacheLRU(int size) {
 		map = new HashMap<>(size);

@@ -17,7 +17,7 @@ package io.actor4j.core.actors;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Cache;
-import io.actor4j.core.utils.CacheLRUWithExpiration;
+import io.actor4j.core.utils.CacheVolatileLRU;
 
 import static io.actor4j.core.utils.ActorUtils.*;
 
@@ -41,7 +41,7 @@ public class ActorWithCache<K, V> extends Actor {
 		super(name);
 		
 		this.cacheSize = cacheSize;
-		cache = new CacheLRUWithExpiration<>(cacheSize);
+		cache = new CacheVolatileLRU<>(cacheSize);
 	}
 	
 	public ActorWithCache(int cacheSize) {

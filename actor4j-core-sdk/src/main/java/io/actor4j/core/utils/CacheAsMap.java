@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CacheAsMap<K, V> implements Cache<K, V> {
-	protected Map<K, V> map;
+	protected final Map<K, V> map;
 	
 	public CacheAsMap() {
 		map = new HashMap<>();

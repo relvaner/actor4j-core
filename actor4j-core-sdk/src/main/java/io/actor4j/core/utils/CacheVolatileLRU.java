@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class CacheLRUWithExpiration<K, V> implements Cache<K, V>  {
+public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	protected static class Pair<V> {
 		public V value;
 		public long timestamp;
@@ -33,12 +33,12 @@ public class CacheLRUWithExpiration<K, V> implements Cache<K, V>  {
 		}
 	}
 	
-	protected Map<K, Pair<V>> map;
-	protected SortedMap<Long, K> lru;
+	protected final Map<K, Pair<V>> map;
+	protected final SortedMap<Long, K> lru;
 	
-	protected int size;
+	protected final int size;
 	
-	public CacheLRUWithExpiration(int size) {
+	public CacheVolatileLRU(int size) {
 		map = new HashMap<>(size);
 		lru = new TreeMap<>();
 		

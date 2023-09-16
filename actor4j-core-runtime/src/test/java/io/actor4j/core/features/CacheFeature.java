@@ -18,7 +18,7 @@ package io.actor4j.core.features;
 import org.junit.Test;
 
 import io.actor4j.core.utils.CacheLRU;
-import io.actor4j.core.utils.CacheLRUWithExpiration;
+import io.actor4j.core.utils.CacheVolatileLRU;
 import io.actor4j.core.utils.CacheAsMap;
 
 import static org.junit.Assert.*;
@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 public class CacheFeature {
 	@Test
 	public void test_cache_lru_with_gc__get_put_resize() {
-		CacheLRUWithExpiration<String, String> cache = new CacheLRUWithExpiration<>(5);
+		CacheVolatileLRU<String, String> cache = new CacheVolatileLRU<>(5);
 		
 		String[][] data = { 
 				{"A", "AA"}, 
