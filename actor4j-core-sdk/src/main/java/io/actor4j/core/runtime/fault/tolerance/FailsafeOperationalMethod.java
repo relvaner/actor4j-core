@@ -74,11 +74,11 @@ public final class FailsafeOperationalMethod {
 		runAndCatchThrowable(faultToleranceManager, systemError, "", method, uuid);
 	}
 	
-	public static void run(final FaultToleranceManager failsafeManager, final Method method, UUID uuid) {
-		run(failsafeManager, null, null, method, uuid);
+	public static void run(final FaultToleranceManager faultToleranceManager, final Method method, UUID uuid) {
+		run(faultToleranceManager, null, null, method, uuid);
 	}
 	
-	public static void runAndCatchThrowable(final FaultToleranceManager failsafeManager, final Method method, UUID uuid) {
-		runAndCatchThrowable(failsafeManager, null, null, method, uuid);
+	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final Method method, UUID uuid) {
+		runAndCatchThrowable(faultToleranceManager, null, null, method, uuid);
 	}
 }
