@@ -29,7 +29,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null) {
 			cell.getRequestRate().getAndIncrement();
-			t.failsafeOperationalMethod(message, cell);
+			t.faultToleranceMethod(message, cell);
 		}
 		if (system.getConfig().counterEnabled().get())
 			t.counter.getAndIncrement();

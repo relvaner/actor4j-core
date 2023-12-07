@@ -26,11 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.fault.tolerance.FailsafeOperationalMethod;
-import io.actor4j.core.runtime.fault.tolerance.Method;
+import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
+import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
 public abstract class ActorThread extends Thread implements ActorProcess {
-	protected final UUID failsafeOperationalId;
+	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	
@@ -49,7 +49,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		super(group, name);
 		
 		this.system = system;
-		failsafeOperationalId = UUID.randomUUID();
+		faultToleranceId = UUID.randomUUID();
 		
 		threadLoad = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
@@ -66,7 +66,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		return getId();
 	}
 	
-	protected void failsafeOperationalMethod(ActorMessage<?> message, InternalActorCell cell) {
+	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
 			if (system.getConfig().threadProcessingTimeEnabled().get() || cellsProcessingTimeEnabled.get()) {
 				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.getConfig().maxStatisticValues();
@@ -106,7 +106,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 			InternalActorCell cell = system.getCells().get(message.dest());
 			if (cell!=null) {
 				cell.getRequestRate().getAndIncrement();
-				failsafeOperationalMethod(message, cell);
+				faultToleranceMethod(message, cell);
 			}
 			if (system.getConfig().counterEnabled().get())
 				counter.getAndIncrement();
@@ -138,7 +138,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		
 		while (!isInterrupted() && retries<maxRetries) { // stays operational in case of an error up to maxRetries
 			final int retries_ = retries;
-			FailsafeOperationalMethod.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new Method() {
+			FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new FaultToleranceMethod() {
 				@Override
 				public void run(UUID uuid) {
 					onRun();
@@ -160,10 +160,10 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 				}
 				
 				@Override
-				public void after() {
+				public void postRun() {
 					// empty
 				}
-			}, failsafeOperationalId);
+			}, faultToleranceId);
 			
 			retries++;
 		}

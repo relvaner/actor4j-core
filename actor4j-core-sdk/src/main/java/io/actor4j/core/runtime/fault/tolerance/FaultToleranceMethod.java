@@ -17,8 +17,8 @@ package io.actor4j.core.runtime.fault.tolerance;
 
 import java.util.UUID;
 
-public interface Method {
+public interface FaultToleranceMethod {
 	public void run(UUID uuid);
 	public void error(Throwable t);
-	public void after();
+	public void postRun();
 }
