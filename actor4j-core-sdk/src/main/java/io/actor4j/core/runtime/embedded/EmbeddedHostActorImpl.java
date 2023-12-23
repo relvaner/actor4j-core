@@ -153,7 +153,7 @@ public class EmbeddedHostActorImpl {
 		}
 	}
 	
-	protected boolean failsafeOperationalMethod(ActorMessage<?> message, InternalEmbeddedActorCell embeddedActorCell) {
+	protected boolean faultToleranceMethod(ActorMessage<?> message, InternalEmbeddedActorCell embeddedActorCell) {
 		boolean result = false;
 		
 		try {
@@ -177,7 +177,7 @@ public class EmbeddedHostActorImpl {
 		
 		InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
 		if (embeddedActorCell!=null)
-			result = failsafeOperationalMethod(message.copy(), embeddedActorCell);
+			result = faultToleranceMethod(message.copy(), embeddedActorCell);
 		
 		internal_embedded();
 		
@@ -192,7 +192,7 @@ public class EmbeddedHostActorImpl {
 		
 		InternalEmbeddedActorCell embeddedActorCell = router.get(dest);
 		if (embeddedActorCell!=null)
-			result = failsafeOperationalMethod(message.copy(dest), embeddedActorCell);
+			result = faultToleranceMethod(message.copy(dest), embeddedActorCell);
 		
 		internal_embedded();
 		
@@ -209,7 +209,7 @@ public class EmbeddedHostActorImpl {
 			while((message=messageQueue.poll())!=null) {
 				InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
 				if (embeddedActorCell!=null)
-					failsafeOperationalMethod(message, embeddedActorCell);
+					faultToleranceMethod(message, embeddedActorCell);
 				else if (message.dest().equals(self()) && callbackHost!=null)
 					callbackHost.accept(message);
 			}
@@ -222,7 +222,7 @@ public class EmbeddedHostActorImpl {
 		else {
 			InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
 			if (embeddedActorCell!=null)
-				failsafeOperationalMethod(message.copy(), embeddedActorCell);
+				faultToleranceMethod(message.copy(), embeddedActorCell);
 			else if (message.dest().equals(self()) && callbackHost!=null)
 				callbackHost.accept(message.copy());
 		}
@@ -231,7 +231,7 @@ public class EmbeddedHostActorImpl {
 	public void sendUnsafeWithinHost(ActorMessage<?> message) {
 		InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
 		if (embeddedActorCell!=null)
-			failsafeOperationalMethod(message.copy(), embeddedActorCell);
+			faultToleranceMethod(message.copy(), embeddedActorCell);
 		else if (message.dest().equals(self()) && callbackHost!=null)
 			callbackHost.accept(message.copy());
 	}
