@@ -52,11 +52,17 @@ public class EmbeddedHandlerActor extends EmbeddedHostActor {
 	}
 	
 	public void handle(ActorMessage<?> message, BiConsumer<ActorMessage<?>, EmbeddedActorRef> handler, Predicate<ActorMessage<?>> done) {
+		handle(message, null, handler, done);
+	}
+	
+	public void handle(ActorMessage<?> message, Runnable onCreate, BiConsumer<ActorMessage<?>, EmbeddedActorRef> handler, Predicate<ActorMessage<?>> done) {
 		UUID id = message.interaction();
 		InternalEmbeddedActorCell embeddedActorCell = getRouter().get(id);
 		if (embeddedActorCell!=null)
 			embeddedActorCell.embedded(message);
 		else {
+			if (onCreate!=null)
+				onCreate.run();
 			UUID embeddedActorCellId = addEmbeddedChild(() -> new EmbeddedActor() {
 				@Override
 				public boolean receive(ActorMessage<?> message) {
@@ -64,7 +70,7 @@ public class EmbeddedHandlerActor extends EmbeddedHostActor {
 					
 					return true;
 				}
-			});
+			}, id);
 			embeddedActorCell = getRouter().get(embeddedActorCellId);
 			embeddedActorCell.embedded(message);
 		}
@@ -79,7 +85,7 @@ public class EmbeddedHandlerActor extends EmbeddedHostActor {
 		if (embeddedActorCell!=null)
 			done = embeddedActorCell.embedded(message);
 		else {
-			UUID embeddedActorCellId = addEmbeddedChild(factory);
+			UUID embeddedActorCellId = addEmbeddedChild(factory, id);
 			embeddedActorCell = getRouter().get(embeddedActorCellId);
 			done = embeddedActorCell.embedded(message);
 		}

@@ -58,9 +58,13 @@ public abstract class EmbeddedHostActor extends Actor {
 	public boolean isEmbedded(UUID id) {
 		return impl.getRouter().get(id)!=null;
 	}
-
+	
 	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
-		return impl.addEmbeddedChild(factory);
+		return impl.addEmbeddedChild(factory, null);
+	}
+
+	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
+		return impl.addEmbeddedChild(factory, id);
 	}
 	
 	public void removeEmbeddedChild(UUID id) {

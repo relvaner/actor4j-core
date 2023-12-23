@@ -108,12 +108,12 @@ public class EmbeddedHostActorImpl {
 		return router.get(id)!=null;
 	}
 
-	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor) {
-		return new BaseEmbeddedActorCell(host, embeddedActor);
+	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor, UUID id) {
+		return new BaseEmbeddedActorCell(host, embeddedActor, id);
 	}
 	
-	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
-		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create());
+	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
+		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), id);
 		container.register(embeddedActorCell.getId(), factory);
 		
 		router.put(embeddedActorCell.getId(), embeddedActorCell);
