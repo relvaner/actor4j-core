@@ -112,6 +112,10 @@ public class EmbeddedHostActorImpl {
 		return new BaseEmbeddedActorCell(host, embeddedActor, id);
 	}
 	
+	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
+		return addEmbeddedChild(factory, UUID.randomUUID());
+	}
+	
 	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
 		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), id);
 		container.register(embeddedActorCell.getId(), factory);

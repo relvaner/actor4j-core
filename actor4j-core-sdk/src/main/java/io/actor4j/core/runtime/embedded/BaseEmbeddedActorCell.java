@@ -45,14 +45,14 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	protected SupervisorStrategy parentSupervisorStrategy;
 	
 	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor) {
-		this(host, actor, null);
+		this(host, actor, UUID.randomUUID());
 	}
 	
 	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor, UUID id) {
 		super();
 		this.host = host;
 		this.actor = actor;
-		this.id = id!=null ? id : UUID.randomUUID();
+		this.id = id;
 		active = true;
 		behaviourStack = new ArrayDeque<>();
 		restartProtocol = new RestartProtocol(this);

@@ -60,7 +60,7 @@ public abstract class EmbeddedHostActor extends Actor {
 	}
 	
 	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
-		return impl.addEmbeddedChild(factory, null);
+		return impl.addEmbeddedChild(factory);
 	}
 
 	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
