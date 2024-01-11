@@ -101,6 +101,12 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 		return !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
+	
+	@Override
+	public ActorMessage<T> shallowCopy(int tag, UUID dest) {
+		return this.tag!=tag || !ActorMessageUtils.equals(this.dest, dest) ? 
+				new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -97,6 +97,12 @@ public record DefaultPodActorMessage<T, U, P>(T value, int tag, UUID source, UUI
 		return !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
 	}
+	
+	@Override
+	public ActorMessage<T> shallowCopy(int tag, UUID dest) {
+		return this.tag!=tag || !ActorMessageUtils.equals(this.dest, dest) ? 
+				new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

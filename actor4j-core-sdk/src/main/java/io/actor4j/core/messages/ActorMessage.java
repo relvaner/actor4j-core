@@ -69,6 +69,7 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	
 	public ActorMessage<T> shallowCopy(UUID source, UUID dest);
 	public ActorMessage<T> shallowCopy(UUID dest);
+	public ActorMessage<T> shallowCopy(int tag, UUID dest);
 	
 	public ActorMessage<T> copy();
 	public ActorMessage<T> copy(UUID dest);
