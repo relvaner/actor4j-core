@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 	/*UnhandledFeature.class,*/
 	
 	EmbeddedActorFeature.class,
+	EmbeddedActorLifeCycleFeature.class,
 	PseudoActorFeature.class,
 	ConcurrentPseudoActorFeature.class,
 	StatelessActorFeature.class,
