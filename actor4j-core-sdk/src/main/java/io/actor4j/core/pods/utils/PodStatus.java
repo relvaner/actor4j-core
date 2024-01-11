@@ -38,6 +38,7 @@ public class PodStatus {
 	public static final int INTERNAL_SERVER_ERROR 	= 500;
 	public static final int NOT_IMPLEMENTED 		= 501;
 	public static final int SERVICE_UNAVAILABLE 	= 503;
+	public static final int LOOP_DETECTED 	        = 508;
 	
 	static {
 		statusMap = new HashMap<>();
@@ -58,6 +59,7 @@ public class PodStatus {
 		statusMap.put(PodStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
 		statusMap.put(PodStatus.NOT_IMPLEMENTED, "Not Implemented");
 		statusMap.put(PodStatus.SERVICE_UNAVAILABLE, "Service Unavailable");
+		statusMap.put(PodStatus.LOOP_DETECTED, "Loop Detected");
 	}
 	
 	public static String getStatus(int code) {

@@ -15,26 +15,37 @@
  */
 package io.actor4j.core.pods.actors;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-import io.actor4j.core.actors.Actor;
-import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.pods.utils.PodActorMessageProxyHandler;
+import io.actor4j.core.pods.utils.PodStatus;
 
 public abstract class HandlerPodActor extends PodChildActor {
-	protected String alias;
-	protected Map<UUID, ActorMessage<?>> map;
+	protected final String alias;
+	protected final PodActorMessageProxyHandler proxy;
 
 	public HandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(groupId, context);
 		this.alias = alias;
 
-		this.map = new HashMap<>();
+		this.proxy = new PodActorMessageProxyHandler(this, groupId) {
+			@Override
+			public void handle(ActorMessage<?> message, UUID interaction) {
+				HandlerPodActor.this.handle(message, interaction);
+			}
+
+			@Override
+			public void unhandled(ActorMessage<?> message) {
+//				HandlerPodActor.this.send(message.shallowCopy(PodStatus.LOOP_DETECTED, message.source()));
+			}
+			
+			@Override
+			public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
+				HandlerPodActor.this.callback(message, originalMessage, dest, interaction);
+			}
+		};
 	}
 	
 	@Override
@@ -47,44 +58,9 @@ public abstract class HandlerPodActor extends PodChildActor {
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
-		ActorMessage<?> originalMessage = null;
-		if (message.interaction()!=null)
-			originalMessage = map.get(message.interaction());
-		
-		if (originalMessage!=null) {
-			map.remove(message.interaction());
-			callback(message, originalMessage, originalMessage.source(), originalMessage.interaction());
-		}
-		else if (messagefromPod(message)) { // ignore messages from pod if no callback is defined
-			unhandled(message);
-		}
-		else if (message.interaction()!=null && message.interaction().equals(ActorMessage.NO_REPLY)) {
-			handle(message, ActorMessage.NO_REPLY);
-		}
-		else
-		{
-			UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
-			map.put(interaction, message.copy()); 
-			handle(message, interaction);
-//			UUID interaction = UUID.randomUUID();
-//			map.put(interaction, message.copy()); 
-//			handle(message, interaction);
-		}
+		proxy.apply(message);
 	}
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
 	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
-	
-	public boolean messagefromPod(ActorMessage<?> message) {
-		boolean result = false;
-		
-		InternalActorCell cell = ((InternalActorSystem)getSystem()).getCells().get(message.source());
-		if (cell!=null) {
-			Actor actor = cell.getActor();
-			if (actor!=null && actor instanceof ActorGroupMember)
-				result = ((ActorGroupMember)actor).getGroupId().equals(groupId);
-		}
-		
-		return result;
-	}
 }
