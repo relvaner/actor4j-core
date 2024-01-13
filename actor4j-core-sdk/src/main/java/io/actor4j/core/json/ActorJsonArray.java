@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.utils;
+package io.actor4j.core.json;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
+
+import io.actor4j.core.utils.Shareable;
 
 public interface ActorJsonArray extends Shareable {
 	public Object getValue(int pos);

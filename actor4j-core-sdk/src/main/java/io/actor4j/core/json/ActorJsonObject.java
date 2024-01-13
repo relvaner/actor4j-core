@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.utils;
+package io.actor4j.core.json;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
+
+import io.actor4j.core.utils.Shareable;
 
 public interface ActorJsonObject extends Shareable {
 	public ActorJsonObject mapFrom(Object obj);
