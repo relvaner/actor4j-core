@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2024, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,35 @@
  */
 package io.actor4j.core.json;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
 
 import io.actor4j.core.utils.Shareable;
 
 public interface ActorJsonObject extends Shareable {
 	public ActorJsonObject mapFrom(Object obj);
-	public <T> T mapTo(Class<T> type);
 	
 	public Object getValue(String key);
 	public String getString(String key);
-	public int getInteger(String key);
-	public long getLong(String key);
-	public double getDouble(String key);
-	public boolean getBoolean(String key);
+	public Integer getInteger(String key);
+	public Long getLong(String key);
+	public Double getDouble(String key);
+	public Boolean getBoolean(String key);
 	public ActorJsonObject getJsonObject(String key);
 	public ActorJsonArray getJsonArray(String key);
 	
 	public boolean containsKey(String key);
+	public Set<String> fieldNames();
 	
 	public ActorJsonObject put(String key, Object value);
 	public Object remove(String key);
 	
 	public ActorJsonObject mergeIn(ActorJsonObject other);
 	
-	public Iterator<Entry<String,Object>> iterator();
-	
 	public String encode();
 	public String encodePrettily();
+	
+	public Map<String,Object> getMap();
 	
 	public int size();
 	public ActorJsonObject clear();

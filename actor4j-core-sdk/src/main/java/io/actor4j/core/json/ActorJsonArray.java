@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2024, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,17 @@
  */
 package io.actor4j.core.json;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Stream;
 
 import io.actor4j.core.utils.Shareable;
 
 public interface ActorJsonArray extends Shareable {
 	public Object getValue(int pos);
 	public String getString(int pos);
-	public int getInteger(int pos);
-	public long getLong(int pos);
-	public double getDouble(int pos);
-	public boolean getBoolean(int pos);
+	public Integer getInteger(int pos);
+	public Long getLong(int pos);
+	public Double getDouble(int pos);
+	public Boolean getBoolean(int pos);
 	public ActorJsonObject getJsonObject(int pos);
 	public ActorJsonArray getJsonArray(int pos);
 	
@@ -37,7 +35,6 @@ public interface ActorJsonArray extends Shareable {
 	
 	public ActorJsonArray set(int pos, Object value);
 	public boolean contains(Object value);
-	public boolean remove(Object value);
 	public Object remove(int pos);
 	
 	public int size();
@@ -45,10 +42,7 @@ public interface ActorJsonArray extends Shareable {
 	
 	public List<Object> getList();
 	public ActorJsonArray clear();
-	public Iterator<Object> iterator();
 	
 	public String encode();
 	public String encodePrettily();
-	
-	public Stream<Object> stream();
 }
