@@ -28,14 +28,14 @@ import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.embedded.di.DefaultEmbeddedDIContainer;
-import io.actor4j.core.runtime.embedded.di.EmbeddedDIContainer;
+import io.actor4j.core.runtime.di.DIContainer;
+import io.actor4j.core.runtime.di.DefaultDIContainer;
 import io.actor4j.core.utils.EmbeddedActorFactory;
 
 public class EmbeddedHostActorImpl {
 	protected final ActorRef host;
 	
-	protected final EmbeddedDIContainer<UUID> container;
+	protected final DIContainer<UUID> container;
 	protected final EmbeddedActorStrategyOnFailure actorStrategyOnFailure;
 	
 	protected final ActorEmbeddedRouter router;
@@ -60,7 +60,7 @@ public class EmbeddedHostActorImpl {
 		
 		this.host = host;
 		
-		container = DefaultEmbeddedDIContainer.create();
+		container = DefaultDIContainer.create();
 		actorStrategyOnFailure = new DefaultEmbeddedActorStrategyOnFailure(this);
 		
 		this.redirectEnabled = redirectEnabled;
@@ -80,7 +80,7 @@ public class EmbeddedHostActorImpl {
 		return host;
 	}
 
-	public EmbeddedDIContainer<UUID> getContainer() {
+	public DIContainer<UUID> getContainer() {
 		return container;
 	}
 
