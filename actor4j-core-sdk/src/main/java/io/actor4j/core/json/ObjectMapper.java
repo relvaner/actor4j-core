@@ -15,16 +15,14 @@
  */
 package io.actor4j.core.json;
 
-import java.util.Optional;
-import java.util.ServiceLoader;
+import io.actor4j.core.json.api.ObjectMapperService;
+import io.actor4j.core.runtime.service.loader.ServiceLoader;
 
-import io.actor4j.core.json.spi.ActorObjectMapperProvider;
-
-public interface ActorObjectMapper {
-	public static ActorObjectMapper create() {
-		Optional<ActorObjectMapperProvider> provider = ServiceLoader.load(ActorObjectMapperProvider.class).stream().map(ServiceLoader.Provider::get).findFirst();
+public interface ObjectMapper {
+	public static ObjectMapper create() {
+		ObjectMapperService service = ServiceLoader.findFirst(ObjectMapperService.class);
 		
-		return provider.isPresent() ? provider.get().create() : null;
+		return service!=null ? service.create() : null; 
 	}
 	
 	public String mapFrom(Object obj);

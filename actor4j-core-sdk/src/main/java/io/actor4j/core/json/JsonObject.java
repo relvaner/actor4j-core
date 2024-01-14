@@ -20,8 +20,8 @@ import java.util.Set;
 
 import io.actor4j.core.utils.Shareable;
 
-public interface ActorJsonObject extends Shareable {
-	public ActorJsonObject mapFrom(Object obj);
+public interface JsonObject extends Shareable {
+	public JsonObject mapFrom(Object obj);
 	
 	public Object getValue(String key);
 	public String getString(String key);
@@ -29,16 +29,16 @@ public interface ActorJsonObject extends Shareable {
 	public Long getLong(String key);
 	public Double getDouble(String key);
 	public Boolean getBoolean(String key);
-	public ActorJsonObject getJsonObject(String key);
-	public ActorJsonArray getJsonArray(String key);
+	public JsonObject getJsonObject(String key);
+	public JsonArray getJsonArray(String key);
 	
 	public boolean containsKey(String key);
 	public Set<String> fieldNames();
 	
-	public ActorJsonObject put(String key, Object value);
+	public JsonObject put(String key, Object value);
 	public Object remove(String key);
 	
-	public ActorJsonObject mergeIn(ActorJsonObject other);
+	public JsonObject mergeIn(JsonObject other);
 	
 	public String encode();
 	public String encodePrettily();
@@ -46,6 +46,6 @@ public interface ActorJsonObject extends Shareable {
 	public Map<String,Object> getMap();
 	
 	public int size();
-	public ActorJsonObject clear();
+	public JsonObject clear();
 	public boolean isEmpty();
 }

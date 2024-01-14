@@ -19,21 +19,21 @@ import java.util.List;
 
 import io.actor4j.core.utils.Shareable;
 
-public interface ActorJsonArray extends Shareable {
+public interface JsonArray extends Shareable {
 	public Object getValue(int pos);
 	public String getString(int pos);
 	public Integer getInteger(int pos);
 	public Long getLong(int pos);
 	public Double getDouble(int pos);
 	public Boolean getBoolean(int pos);
-	public ActorJsonObject getJsonObject(int pos);
-	public ActorJsonArray getJsonArray(int pos);
+	public JsonObject getJsonObject(int pos);
+	public JsonArray getJsonArray(int pos);
 	
-	public ActorJsonArray add(Object value);
-	public ActorJsonArray add(int pos, Object value);
-	public ActorJsonArray addAll(ActorJsonArray array);
+	public JsonArray add(Object value);
+	public JsonArray add(int pos, Object value);
+	public JsonArray addAll(JsonArray array);
 	
-	public ActorJsonArray set(int pos, Object value);
+	public JsonArray set(int pos, Object value);
 	public boolean contains(Object value);
 	public Object remove(int pos);
 	
@@ -41,7 +41,7 @@ public interface ActorJsonArray extends Shareable {
 	public boolean isEmpty();
 	
 	public List<Object> getList();
-	public ActorJsonArray clear();
+	public JsonArray clear();
 	
 	public String encode();
 	public String encodePrettily();

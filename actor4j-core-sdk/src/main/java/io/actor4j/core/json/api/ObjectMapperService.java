@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.json.spi;
+package io.actor4j.core.json.api;
 
-import io.actor4j.core.json.ActorObjectMapper;
+import io.actor4j.core.json.ObjectMapper;
 
-public interface ActorObjectMapperProvider {
-	public ActorObjectMapper create();
+public interface ObjectMapperService {
+	public ObjectMapper create();
 }
