@@ -32,6 +32,12 @@ public interface JsonArray extends Shareable {
 		return create();
 	}
 	
+	public static JsonArray create(Object obj) {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonArray(obj) : null; 
+	}
+	
 	public static JsonArray create(List<?> list) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		

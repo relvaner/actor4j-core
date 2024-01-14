@@ -26,6 +26,7 @@ public interface JsonFactoryService {
 	public JsonObject createJsonObject(String json);
 	
 	public JsonArray createJsonArray();
+	public JsonArray createJsonArray(Object obj);
 	public JsonArray createJsonArray(List<?> list);
 	public JsonArray createJsonArray(String json);
 }
