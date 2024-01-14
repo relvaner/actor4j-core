@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.json;
+package io.actor4j.core.json.spi;
 
-import java.util.Optional;
-import java.util.ServiceLoader;
+import io.actor4j.core.json.ActorObjectMapper;
 
-import io.actor4j.core.json.spi.ActorObjectMapperProvider;
-
-public interface ActorObjectMapper {
-	public static ActorObjectMapper create() {
-		Optional<ActorObjectMapperProvider> provider = ServiceLoader.load(ActorObjectMapperProvider.class).stream().map(ServiceLoader.Provider::get).findFirst();
-		
-		return provider.isPresent() ? provider.get().create() : null;
-	}
-	
-	public String mapFrom(Object obj);
-	public <T> T mapTo(String json, Class<T> type);
+public interface ActorObjectMapperProvider {
+	public ActorObjectMapper create();
 }
