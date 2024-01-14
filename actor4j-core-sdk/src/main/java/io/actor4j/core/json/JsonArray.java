@@ -17,9 +17,39 @@ package io.actor4j.core.json;
 
 import java.util.List;
 
+import io.actor4j.core.json.api.JsonFactoryService;
+import io.actor4j.core.runtime.service.loader.ServiceLoader;
 import io.actor4j.core.utils.Shareable;
 
 public interface JsonArray extends Shareable {
+	public static JsonArray create() {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonArray() : null; 
+	}
+	
+	public static JsonArray empty() {
+		return create();
+	}
+	
+	public static JsonArray create(List<?> list) {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonArray(list) : null; 
+	}
+	
+	public static JsonArray create(String json) {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonArray(json) : null; 
+	}
+	
+	public static String mapFrom(List<?> list) {
+		JsonArray result = create(list);
+		
+		return result!=null ? result.encode() : null;
+	}
+	
 	public Object getValue(int pos);
 	public String getString(int pos);
 	public Integer getInteger(int pos);

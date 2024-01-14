@@ -18,10 +18,38 @@ package io.actor4j.core.json;
 import java.util.Map;
 import java.util.Set;
 
+import io.actor4j.core.json.api.JsonFactoryService;
+import io.actor4j.core.runtime.service.loader.ServiceLoader;
 import io.actor4j.core.utils.Shareable;
 
 public interface JsonObject extends Shareable {
-	public JsonObject mapFrom(Object obj);
+	public static JsonObject create() {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonObject() : null; 
+	}
+	
+	public static JsonObject empty() {
+		return create();
+	}
+	
+	public static JsonObject create(Object obj) {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonObject(obj) : null; 
+	}
+	
+	public static JsonObject create(String json) {
+		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
+		
+		return service!=null ? service.createJsonObject(json) : null; 
+	}
+	
+	public static String mapFrom(Object obj) {
+		JsonObject result = create(obj);
+		
+		return result!=null ? result.encode() : null;
+	}
 	
 	public Object getValue(String key);
 	public String getString(String key);
