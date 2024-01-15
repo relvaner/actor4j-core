@@ -39,6 +39,7 @@ import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.exceptions.ActorKilledException;
 import io.actor4j.core.immutable.ImmutableList;
+import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
@@ -489,8 +490,8 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	public void recover(ActorMessage<?> message) {
-		if (system.getConfig().persistenceMode() && actor instanceof PersistentActor) {
-			((PersistentActor<?, ?>)actor).recover(message.valueAsString());
+		if (system.getConfig().persistenceMode() && actor instanceof PersistentActor && message.value() instanceof JsonObject) {
+			((PersistentActor<?, ?>)actor).recover(message.valueAsJsonObject());
 			active.set(true);
 		}
 	}

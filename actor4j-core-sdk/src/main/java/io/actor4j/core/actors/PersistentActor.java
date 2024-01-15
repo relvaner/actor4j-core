@@ -19,6 +19,8 @@ import static io.actor4j.core.runtime.protocols.ActorProtocolTag.INTERNAL_RECOVE
 
 import java.util.function.Consumer;
 
+import io.actor4j.core.json.JsonObject;
+
 public abstract class PersistentActor<S, E> extends Actor implements PersistenceId {
 	public static final int RECOVER = INTERNAL_RECOVER;
 	
@@ -39,7 +41,7 @@ public abstract class PersistentActor<S, E> extends Actor implements Persistence
 		cell.saveSnapshot(onSuccess, onFailure, state);
 	}
 	
-	public void recover(String json) {
+	public void recover(JsonObject value) {
 		// empty
 	}
 }
