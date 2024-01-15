@@ -21,7 +21,7 @@ import io.actor4j.core.json.api.JsonFactoryService;
 import io.actor4j.core.runtime.service.loader.ServiceLoader;
 import io.actor4j.core.utils.Shareable;
 
-public interface JsonArray extends Shareable {
+public interface JsonArray extends Shareable, Iterable<Object> {
 	public static JsonArray create() {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
