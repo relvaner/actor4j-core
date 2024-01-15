@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.json;
+package io.actor4j.core.utils;
 
-import io.actor4j.core.json.api.ObjectMapperService;
-import io.actor4j.core.runtime.service.loader.ServiceLoader;
-import io.actor4j.core.utils.GenericType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
-public interface ObjectMapper {
-	public static ObjectMapper create() {
-		ObjectMapperService service = ServiceLoader.findFirst(ObjectMapperService.class);
+public abstract class GenericType<T> {
+	protected final Type type;
+	
+	protected GenericType() {
+		super();
 		
-		return service!=null ? service.create() : null; 
+		type = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
 	
-	public String mapFrom(Object obj);
-	public <T> T mapTo(String json, Class<T> type);
-	public <T> T mapTo(String json, GenericType<T> type);
+	public Type getType() { 
+		return type; 
+	}
 }

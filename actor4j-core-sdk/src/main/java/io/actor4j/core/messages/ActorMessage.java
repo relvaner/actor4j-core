@@ -17,6 +17,9 @@ package io.actor4j.core.messages;
 
 import java.util.UUID;
 
+import io.actor4j.core.json.JsonArray;
+import io.actor4j.core.json.JsonObject;
+
 public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	public static final UUID NO_REPLY = UUID.randomUUID();
 
@@ -50,6 +53,14 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	
 	public default UUID valueAsUUID() {
 		return (UUID)value();
+	}
+	
+	public default JsonObject valueAsJsonObject() {
+		return (JsonObject)value();
+	}
+	
+	public default JsonArray valueAsJsonArray() {
+		return (JsonArray)value();
 	}
 	
 	public default boolean isSelfReferencing() {	
