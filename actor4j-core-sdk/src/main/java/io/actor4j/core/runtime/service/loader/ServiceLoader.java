@@ -24,18 +24,12 @@ public final class ServiceLoader {
 	private static final Object lock = new Object();
 	
 	@SuppressWarnings("unchecked")
-	public static <S> S findFirst(Class<S> service) {
-//		Object result = null;
-//
-//		Optional<S> optional = java.util.ServiceLoader.load(service)/*.stream().map(java.util.ServiceLoader.Provider::get)*/.findFirst();
-//		if (optional.isPresent())
-//			result = optional.get();
-		
+	public static <S> S findFirst(Class<S> service) {		
 		Object result = services.get(service.getName());
 
 		if (result==null)
 			synchronized(lock) {
-				if (services.get(service.getName())==null) {
+				if ((result=services.get(service.getName()))==null) {
 					Optional<S> optional = java.util.ServiceLoader.load(service)/*.stream().map(java.util.ServiceLoader.Provider::get)*/.findFirst();
 					if (optional.isPresent()) {
 						result = optional.get();
