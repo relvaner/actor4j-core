@@ -257,10 +257,12 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return outerQueueL2;
 	}
 
+	@Override
 	public Queue<ActorMessage<?>> getOuterQueueL2() {
 		return outerQueueL2;
 	}
 	
+	@Override
 	public Queue<ActorMessage<?>> getOuterQueueL1() {
 		return outerQueueL1;
 	}

@@ -29,7 +29,7 @@ import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPseudoActorCell;
 import io.actor4j.core.utils.ActorFactory;
 
-public abstract class PseudoActor extends Actor {
+public abstract class PseudoActor extends Actor implements PseudoActorRef {
 	public PseudoActor(ActorSystem system, boolean blocking) {
 		this(null, system, blocking);
 	}
@@ -56,30 +56,42 @@ public abstract class PseudoActor extends Actor {
 		return null;
 	}
 
+	@Override
 	public boolean run() {
 		return ((InternalPseudoActorCell)cell).run();
 	}
 	
+	@Override
+	public boolean runAll() {
+		return ((InternalPseudoActorCell)cell).runAll();
+	}
+	
+	@Override
 	public boolean runOnce() {
 		return ((InternalPseudoActorCell)cell).runOnce();
 	}
 	
+	@Override
 	public Stream<ActorMessage<?>> stream() {
 		return ((InternalPseudoActorCell)cell).stream();
 	}
 	
+	@Override
 	public ActorMessage<?> await() {
 		return ((InternalPseudoActorCell)cell).await();
 	}
 	
+	@Override
 	public ActorMessage<?> await(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return ((InternalPseudoActorCell)cell).await(timeout, unit);
 	}
 	
+	@Override
 	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return ((InternalPseudoActorCell)cell).await(predicate, action, timeout, unit);
 	}
 	
+	@Override
 	public void reset() {
 		((InternalPseudoActorCell)cell).reset();
 	}

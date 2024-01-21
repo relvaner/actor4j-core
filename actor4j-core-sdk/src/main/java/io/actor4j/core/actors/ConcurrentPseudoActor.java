@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2024, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,13 @@ import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPseudoActorCell;
 
-public abstract class ConcurrentPseudoActor {
+public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	protected PseudoActor actor;
-	
+
+	public ConcurrentPseudoActor() {
+		super();
+	}
+
 	public ConcurrentPseudoActor(String name, ActorSystem system) {
 		this(name, system, false);
 	}
@@ -49,14 +53,17 @@ public abstract class ConcurrentPseudoActor {
 		};
 	}
 	
+	@Override
 	public String getName() {
 		return actor.getName();
 	}
 	
+	@Override
 	public UUID getId() {
 		return actor.getId();
 	}
 	
+	@Override
 	public UUID self() {
 		return actor.getId();
 	}
@@ -85,6 +92,7 @@ public abstract class ConcurrentPseudoActor {
 	
 	public abstract void receive(ActorMessage<?> message);
 	
+	@Override
 	public boolean run() {
 		boolean result = false;
 		
@@ -94,6 +102,7 @@ public abstract class ConcurrentPseudoActor {
 		return result;
 	}
 	
+	@Override
 	public boolean runAll() {
 		boolean result = false;
 		
@@ -103,54 +112,67 @@ public abstract class ConcurrentPseudoActor {
 		return result;
 	}
 	
+	@Override
 	public boolean runOnce() {
 		return poll(getOuterQueue());
 	}
 	
+	@Override
 	public Stream<ActorMessage<?>> stream() {
 		return getOuterQueue().stream();
 	}
 	
+	@Override
 	public ActorMessage<?> await() {
 		return actor.await();
 	}
 	
+	@Override
 	public ActorMessage<?> await(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return actor.await(timeout, unit);
 	}
 	
+	@Override
 	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		return actor.await(predicate, action, timeout, unit);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message) {
 		actor.send(message);
 	}
 	
+	@Override
 	public void sendViaPath(ActorMessage<?> message, String path) {
 		actor.sendViaPath(message, path);
 	}
 	
+	@Override
 	public void sendViaAlias(ActorMessage<?> message, String alias) {
 		actor.sendViaAlias(message, alias);
 	}
 	
+	@Override
 	public void send(ActorMessage<?> message, UUID dest) {
 		actor.send(message, dest);
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, UUID dest) {
 		actor.tell(value, tag, dest);
 	}
 	
+	@Override
 	public <T> void tell(T value, int tag, String alias) {
 		actor.tell(value, tag, alias);
 	}
 	
+	@Override
 	public void forward(ActorMessage<?> message, UUID dest) {
 		actor.forward(message, dest);
 	}
 	
+	@Override
 	public void setAlias(String alias) {
 		actor.setAlias(alias);
 	}
@@ -159,6 +181,7 @@ public abstract class ConcurrentPseudoActor {
 		return ((InternalPseudoActorCell)actor.getCell()).getOuterQueue();
 	}
 	
+	@Override
 	public void reset() {
 		((InternalPseudoActorCell)actor.getCell()).getOuterQueue().clear();
 	}
