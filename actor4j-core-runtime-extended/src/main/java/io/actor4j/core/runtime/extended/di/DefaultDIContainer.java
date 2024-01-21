@@ -109,7 +109,6 @@ public class DefaultDIContainer<K> implements DIContainer<K> {
 				if (entry.getConstructorInjector().getParams()!=null)
 					result = buildInstance(entry.getBase(), entry.getConstructorInjector().getParams());
 				else
-					// https://docs.oracle.com/javase/9/docs/api/java/lang/Class.html#newInstance--
 					result = entry.getBase().getDeclaredConstructor().newInstance();
 			}
 		}
