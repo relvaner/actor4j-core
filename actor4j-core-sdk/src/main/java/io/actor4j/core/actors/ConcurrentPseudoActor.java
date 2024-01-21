@@ -68,7 +68,7 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 		return actor.getId();
 	}
 	
-	protected void failsafeOperationalMethod(ActorMessage<?> message) {
+	protected void faultToleranceMethod(ActorMessage<?> message) {
 		try {
 			receive(message);
 		}
@@ -83,7 +83,7 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			failsafeOperationalMethod(message);
+			faultToleranceMethod(message);
 			result = true;
 		} 
 		
