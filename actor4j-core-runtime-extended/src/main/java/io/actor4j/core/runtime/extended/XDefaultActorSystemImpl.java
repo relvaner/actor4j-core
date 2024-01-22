@@ -32,12 +32,12 @@ import io.actor4j.core.runtime.DefaultActorSystemImpl;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.extended.di.DefaultDIContainer;
 
-public class XActorSystemImpl extends DefaultActorSystemImpl implements XActorService {
-	public XActorSystemImpl() {
+public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements XActorService {
+	public XDefaultActorSystemImpl() {
 		this(null);
 	}
 
-	public XActorSystemImpl(XActorSystemConfig config) {
+	public XDefaultActorSystemImpl(XActorSystemConfig config) {
 		super(config!=null ? config : (config=XActorSystemConfig.create()));
 		
 		container = DefaultDIContainer.create(); // override

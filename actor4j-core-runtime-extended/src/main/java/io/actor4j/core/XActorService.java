@@ -19,7 +19,7 @@ import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.extended.XActorSystemImpl;
+import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
 public interface XActorService extends XActorSystem {
 	public static XActorService create() {
@@ -31,7 +31,7 @@ public interface XActorService extends XActorSystem {
 	}
 	
 	public static XActorService create(XActorSystemConfig config) {
-		return new XActorSystemImpl(config);
+		return new XDefaultActorSystemImpl(config);
 	}
 	
 	@Deprecated

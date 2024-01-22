@@ -22,7 +22,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorSystemConfig;
 import io.actor4j.core.exceptions.ActorInitializationException;
-import io.actor4j.core.runtime.extended.XActorSystemImpl;
+import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
 public interface XActorSystem extends ActorSystem {
 	public static XActorSystem create() {
@@ -34,7 +34,7 @@ public interface XActorSystem extends ActorSystem {
 	}
 	
 	public static XActorSystem create(XActorSystemConfig config) {
-		return new XActorSystemImpl(config);
+		return new XDefaultActorSystemImpl(config);
 	}
 	
 	@Deprecated
