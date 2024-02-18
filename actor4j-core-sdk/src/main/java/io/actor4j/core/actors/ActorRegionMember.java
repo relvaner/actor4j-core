@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2024, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core.actors;
 
-public enum ActorSystemError {
-	ACTOR_INITIALIZATION, ACTOR, PSEUDO_ACTOR, RESOURCE_ACTOR, EMBEDDED_ACTOR, REPLICATION, WATCHDOG, EXECUTER_ACTOR, EXECUTER_RESOURCE, EXECUTER_CLIENT
+import java.util.UUID;
+
+public interface ActorRegionMember extends ActorGroupMember {
+	public default UUID getRegionId() {
+		return getGroupId();
+	}
 }
