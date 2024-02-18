@@ -1,0 +1,1 @@
+Alternative to MpscLinkedQueue -> org.agrona.concurrent.ManyToOneConcurrentLinkedQueue
