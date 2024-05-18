@@ -51,7 +51,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 				ActorThread t = processMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
-						&& Thread.currentThread().getId()==id_source.longValue()) {
+						&& Thread.currentThread().threadId()==id_source.longValue()) {
 					unsafe_call(message.copy(), message.dest(), t);	
 				}
 				else {
@@ -84,7 +84,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 				ActorThread t = processMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
-						&& Thread.currentThread().getId()==id_source.longValue())
+						&& Thread.currentThread().threadId()==id_source.longValue())
 					unsafe_call(message.copy(dest), dest, t);
 				else {
 					t.outerQueue(message.copy(dest));
@@ -117,7 +117,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 				ActorThread t = processMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
-						&& Thread.currentThread().getId()==id_source.longValue())
+						&& Thread.currentThread().threadId()==id_source.longValue())
 					t.innerQueue(message.copy());
 				else
 					t.outerQueue(message.copy());
@@ -149,7 +149,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 				ActorThread t = processMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
-						&& Thread.currentThread().getId()==id_source.longValue())
+						&& Thread.currentThread().threadId()==id_source.longValue())
 					t.innerQueue(message.copy(dest));
 				else
 					t.outerQueue(message.copy(dest));
