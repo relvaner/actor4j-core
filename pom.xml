@@ -147,5 +147,7 @@
     	<module>actor4j-core-runtime-base</module>
     	<module>actor4j-core-runtime</module>
     	<module>actor4j-core-runtime-extended</module>
+    	<module>actor4j-core-runtime-classic</module>
+    	<module>actor4j-core-runtime-loom</module>
     </modules>
 </project>
