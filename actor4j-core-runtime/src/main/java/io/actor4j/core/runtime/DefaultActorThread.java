@@ -133,6 +133,8 @@ public abstract class DefaultActorThread extends ActorThread {
 					else
 						Thread.yield();
 				}
+//				else
+//					Thread.onSpinWait();
 			}
 			else {
 				idle = 0;
@@ -146,6 +148,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
+//		if (system.getConfig().threadMode()==ActorThreadMode.PARK && !threadLoad.get())
 		if (system.getConfig().threadMode()==ActorThreadMode.PARK)
 			LockSupport.unpark(this);			
 	}
