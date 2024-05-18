@@ -44,6 +44,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 	
 	protected final AtomicInteger cellsStatisticValuesCounter;
 	protected final AtomicBoolean cellsProcessingTimeEnabled;
+	protected final AtomicBoolean cellsRequestRateEnabled;
 	
 	public ActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name);
@@ -59,11 +60,12 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		
 		cellsStatisticValuesCounter = new AtomicInteger(0);
 		cellsProcessingTimeEnabled = new AtomicBoolean(false);
+		cellsRequestRateEnabled = new AtomicBoolean(false);
 	}
 	
 	@Override
 	public Object processId() {
-		return getId();
+		return threadId();
 	}
 	
 	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
@@ -105,7 +107,8 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		if (message!=null) {
 			InternalActorCell cell = system.getCells().get(message.dest());
 			if (cell!=null) {
-				cell.getRequestRate().getAndIncrement();
+				if (cellsRequestRateEnabled.get())
+					cell.getRequestRate().getAndIncrement();
 				faultToleranceMethod(message, cell);
 			}
 			if (system.getConfig().counterEnabled().get())
@@ -199,6 +202,10 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 
 	public AtomicBoolean getCellsProcessingTimeEnabled() {
 		return cellsProcessingTimeEnabled;
+	}
+
+	public AtomicBoolean getCellsRequestRateEnabled() {
+		return cellsRequestRateEnabled;
 	}
 
 	public abstract Queue<ActorMessage<?>> getDirectiveQueue();
