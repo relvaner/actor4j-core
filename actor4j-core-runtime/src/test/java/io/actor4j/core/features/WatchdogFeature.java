@@ -84,7 +84,7 @@ public class WatchdogFeature {
 		UUID dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
-				threadId.getAndSet(Thread.currentThread().getId());
+				threadId.getAndSet(Thread.currentThread().threadId());
 				try {
 					Thread.sleep(750);
 				} catch (InterruptedException e) {
