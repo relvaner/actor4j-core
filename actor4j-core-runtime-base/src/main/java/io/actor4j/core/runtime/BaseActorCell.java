@@ -460,6 +460,7 @@ public class BaseActorCell implements InternalActorCell {
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
 			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, id, dest));
+			iterator.remove();
 		}
 	}
 	

@@ -18,6 +18,7 @@ package io.actor4j.core.runtime.protocols;
 import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.INTERNAL_STOP;
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.INTERNAL_STOP_SUCCESS;
+import static io.actor4j.core.runtime.protocols.ActorProtocolTag.INTERNAL_STOP_USER_SPACE_SUCCESS;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.ArrayList;
@@ -44,6 +45,11 @@ public class StopUserSpaceProtocol {
 	}
 	
 	protected void postUserSpaceStop() {
+		Iterator<UUID> iterator = cell.getDeathWatcher().iterator();
+		while (iterator.hasNext()) {
+			UUID dest = iterator.next();
+			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_USER_SPACE_SUCCESS, cell.getId(), dest));
+		}
 		systemLogger().log(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
