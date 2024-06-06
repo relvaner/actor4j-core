@@ -46,6 +46,7 @@ import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
 import io.actor4j.core.runtime.protocols.RestartProtocol;
 import io.actor4j.core.runtime.protocols.StopProtocol;
+import io.actor4j.core.runtime.protocols.StopUserSpaceProtocol;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -73,6 +74,7 @@ public class BaseActorCell implements InternalActorCell {
 	protected final RestartProtocol restartProtocol;
 	protected final StopProtocol stopProtocol;
 	protected final RecoverProtocol recoverProtocol;
+	protected final StopUserSpaceProtocol stopUserSpaceProtocol;
 	
 	protected final Queue<UUID> deathWatcher;
 	
@@ -108,6 +110,10 @@ public class BaseActorCell implements InternalActorCell {
 		restartProtocol = new RestartProtocol(this);
 		stopProtocol = new StopProtocol(this);
 		recoverProtocol = new RecoverProtocol(this);
+		if (hasUserId())
+			stopUserSpaceProtocol = new StopUserSpaceProtocol(this);
+		else
+			stopUserSpaceProtocol = null;
 		
 		deathWatcher =  new ConcurrentLinkedQueue<>();
 		
@@ -151,6 +157,10 @@ public class BaseActorCell implements InternalActorCell {
 						PersistenceTuple tuple = persistenceTuples.poll();
 						if (tuple.onFailure()!=null)
 							tuple.onFailure().accept((Exception)message.value());
+					}
+					else if (message.tag()==INTERNAL_STOP_USER_SPACE && hasUserId()) {
+						if (stopUserSpaceProtocol!=null)
+							stopUserSpaceProtocol.apply();
 					}
 					else
 						result = false;
@@ -224,6 +234,10 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public boolean isRoot() {
 		return (parent==null);
+	}
+	
+	public boolean hasUserId() {
+		return id.equals(system.USER_ID());
 	}
 	
 	@Override

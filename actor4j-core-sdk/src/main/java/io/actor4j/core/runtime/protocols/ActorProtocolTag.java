@@ -29,4 +29,6 @@ public final class ActorProtocolTag {
 	
 	public static final int INTERNAL_ACTIVATE            = -10;
 	public static final int INTERNAL_DEACTIVATE          = -11;
+	
+	public static final int INTERNAL_STOP_USER_SPACE     = -12;
 }
