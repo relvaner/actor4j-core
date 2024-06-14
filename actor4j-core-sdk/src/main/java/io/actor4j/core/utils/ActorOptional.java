@@ -20,8 +20,14 @@ import java.util.Optional;
 public final class ActorOptional<T> {
 	protected Optional<T> optional;
 	
+	protected Throwable throwable;
+	
 	private ActorOptional() {
 		// empty
+	}
+	
+	private ActorOptional(Throwable throwable) {
+		this.throwable = throwable;
 	}
 	
 	private ActorOptional(Optional<T> optional) {
@@ -40,6 +46,10 @@ public final class ActorOptional<T> {
 		return new ActorOptional<>(Optional.ofNullable(value));
 	}
 	
+	public static<T> ActorOptional<T> error(Throwable throwable) {
+		return new ActorOptional<>(throwable);
+	}
+	
 	public T get() {
 		return isDone() ? (optional.isPresent() ? optional.get() : null) : null;
 	}
@@ -50,5 +60,13 @@ public final class ActorOptional<T> {
 	
 	public boolean isDone() {
 		return optional!=null;
+	}
+	
+	public boolean hasError() {
+		return throwable!=null;
+	}
+	
+	public Throwable getError() {
+		return throwable;
 	}
 }
