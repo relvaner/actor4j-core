@@ -54,14 +54,14 @@ public class CircuitBreaker {
 		if (failureCount >= failureThreshold) {
 			long currentTime = System.currentTimeMillis();
 			if (currentTime - lastFailureTime >= resetTimeout)
-				state = State.HALF_OPEN;
+				state = HALF_OPEN;
 			else
-				state = State.OPEN;
+				state = OPEN;
 		}
 		else
-			state = State.CLOSED;
+			state = CLOSED;
 
-		return (state==State.CLOSED || state==State.HALF_OPEN);
+		return (state==CLOSED || state==HALF_OPEN);
 	}
 	
 	public synchronized void success() {
