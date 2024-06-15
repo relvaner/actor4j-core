@@ -50,7 +50,7 @@ public class CircuitBreaker {
 		return state;
 	}
 
-	public synchronized boolean isCallable() {
+	public boolean isCallable() {
 		if (failureCount >= failureThreshold) {
 			long currentTime = System.currentTimeMillis();
 			if (currentTime - lastFailureTime >= resetTimeout)
@@ -64,12 +64,12 @@ public class CircuitBreaker {
 		return (state==CLOSED || state==HALF_OPEN);
 	}
 	
-	public synchronized void success() {
+	public void success() {
 		failureCount = 0;
 		lastFailureTime = 0;
 	}
     
-	public synchronized void failure() {
+	public void failure() {
 		failureCount++;
 		lastFailureTime = System.currentTimeMillis();
 	}
