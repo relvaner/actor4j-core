@@ -96,10 +96,10 @@ public class ResourceActorFeature {
 	}
 	
 	@Test(timeout=5000)
-	public void test_statefull() {
+	public void test_stateful() {
 		CountDownLatch testDone = new CountDownLatch(5);
 		
-		UUID resource = system.addActor(() -> new ResourceActor("resource") {
+		UUID resource = system.addActor(() -> new ResourceActor("resource", true) {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				try {
