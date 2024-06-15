@@ -15,29 +15,29 @@
  */
 package io.actor4j.core.utils;
 
-import static io.actor4j.core.utils.CircuitBreaker.State.*;
+import static io.actor4j.core.utils.CircuitBreaker.CircuitBreakerState.*;
 
 // @See: https://martinfowler.com/bliki/CircuitBreaker.html
 public class CircuitBreaker {
-	public enum State {
+	public enum CircuitBreakerState {
 		CLOSED,
 		OPEN,
 		HALF_OPEN
 	}
 	
-	protected State state;
+	protected CircuitBreakerState state;
 	
-	protected final int failureThreshold;
+	protected final int maxFailures;
 	protected final long resetTimeout;
 	
 	protected int failureCount;
 	protected long lastFailureTime;
 	
 	
-	public CircuitBreaker(int failureThreshold, int resetTimeout) {
+	public CircuitBreaker(int maxFailures, long resetTimeout) {
 		super();
 		
-		this.failureThreshold = failureThreshold;
+		this.maxFailures = maxFailures;
 		this.resetTimeout = resetTimeout;
 		
 		failureCount = 0;
@@ -46,12 +46,12 @@ public class CircuitBreaker {
 		state = CLOSED;
 	}
 
-	public State getState() {
+	public CircuitBreakerState getState() {
 		return state;
 	}
 
 	public boolean isCallable() {
-		if (failureCount >= failureThreshold) {
+		if (failureCount >= maxFailures) {
 			long currentTime = System.currentTimeMillis();
 			if (currentTime - lastFailureTime >= resetTimeout)
 				state = HALF_OPEN;
