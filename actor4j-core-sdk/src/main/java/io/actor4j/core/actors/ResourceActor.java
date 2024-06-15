@@ -27,12 +27,12 @@ public abstract class ResourceActor extends Actor {
 		this(name, false, false);
 	}
 	
-	public ResourceActor(boolean bulk) {
-		this(null, true, bulk);
+	public ResourceActor(boolean stateful) {
+		this(null, stateful, false);
 	}
 	
-	public ResourceActor(String name, boolean bulk) {
-		this(name, true, bulk);
+	public ResourceActor(String name, boolean stateful) {
+		this(name, stateful, false);
 	}
 	
 	public ResourceActor(String name, boolean stateful, boolean bulk) {
