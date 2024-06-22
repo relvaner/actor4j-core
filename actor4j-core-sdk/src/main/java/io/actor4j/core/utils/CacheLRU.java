@@ -19,6 +19,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CacheLRU<K, V> implements Cache<K, V> {
 	protected final Map<K, V> map;
@@ -58,6 +60,18 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
+	public Map<K, V> get(Set<K> keys) {
+		return map.entrySet()
+			.stream()
+			.filter(entry -> keys.contains(entry.getKey()))
+			.peek(entry -> {
+				lru.remove(entry.getKey());
+				lru.addLast(entry.getKey());
+			})
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+	
+	@Override
 	public V put(K key, V value) {
 		V result = map.put(key, value);
 		
@@ -74,9 +88,21 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
+	public void put(Map<K, V> entries) {
+		entries.entrySet()
+			.stream()
+			.forEach(entry -> put(entry.getKey(), entry.getValue()));
+	}
+	
+	@Override
 	public void remove(K key) {
 		map.remove(key);
 		lru.remove(key);
+	}
+	
+	@Override
+	public void remove(Set<K> keys) {
+		keys.stream().forEach(key -> remove(key));
 	}
 	
 	@Override

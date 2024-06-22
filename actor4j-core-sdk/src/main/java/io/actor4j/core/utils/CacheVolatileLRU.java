@@ -18,7 +18,10 @@ package io.actor4j.core.utils;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -69,6 +72,19 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
+	public Map<K, V> get(Set<K> keys) {
+		return map.entrySet()
+			.stream()
+			.filter(entry -> keys.contains(entry.getKey()))
+			.peek(entry -> {
+				lru.remove(entry.getValue().timestamp);
+				entry.getValue().timestamp = System.nanoTime();
+				lru.put(entry.getValue().timestamp, entry.getKey());
+			})
+			.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().value));
+	}
+	
+	@Override
 	public V put(K key, V value) {
 		V result = null;
 		
@@ -88,10 +104,22 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
+	public void put(Map<K, V> entries) {
+		entries.entrySet()
+			.stream()
+			.forEach(entry -> put(entry.getKey(), entry.getValue()));
+	}
+	
+	@Override
 	public void remove(K key) {
 		Pair<V> pair = map.get(key);
 		lru.remove(pair.timestamp);
 		map.remove(key);
+	}
+	
+	@Override
+	public void remove(Set<K> keys) {
+		keys.stream().forEach(key -> remove(key));
 	}
 	
 	@Override
