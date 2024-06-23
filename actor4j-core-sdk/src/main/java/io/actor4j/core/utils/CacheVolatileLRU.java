@@ -149,6 +149,11 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 			}
 		}
 	}
+	
+	@Override
+	public void close() {
+		// empty
+	}
 
 	@Override
 	public String toString() {

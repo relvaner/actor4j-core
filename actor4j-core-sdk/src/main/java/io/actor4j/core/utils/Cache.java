@@ -31,4 +31,6 @@ public interface Cache<K, V> {
 	public void clear();
 
 	public void evict(long duration);
+	
+	public void close();
 }

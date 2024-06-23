@@ -78,4 +78,9 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 	public String toString() {
 		return "CacheAsMap [map=" + map + "]";
 	}
+
+	@Override
+	public void close() {
+		// empty
+	}
 }

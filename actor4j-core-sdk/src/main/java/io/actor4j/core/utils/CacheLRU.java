@@ -122,6 +122,11 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	public void evict(long duration) {
 		// empty
 	}
+	
+	@Override
+	public void close() {
+		// empty
+	}
 
 	@Override
 	public String toString() {
