@@ -15,18 +15,18 @@
  */
 package io.actor4j.core.utils;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface Cache<K, V> {
 	public V get(K key);
-	public Map<K, V> get(Set<K> keys);
+	public Map<K, V> get(List<K> keys);
 	
 	public V put(K key, V value);
 	public void put(Map<K, V> entries);
 	
 	public void remove(K key);
-	public void remove(Set<K> keys);
+	public void remove(List<K> keys);
 	
 	public void clear();
 

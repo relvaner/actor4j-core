@@ -17,8 +17,8 @@ package io.actor4j.core.utils;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -72,7 +72,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
-	public Map<K, V> get(Set<K> keys) {
+	public Map<K, V> get(List<K> keys) {
 		return map.entrySet()
 			.stream()
 			.filter(entry -> keys.contains(entry.getKey()))
@@ -118,7 +118,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
-	public void remove(Set<K> keys) {
+	public void remove(List<K> keys) {
 		keys.stream().forEach(key -> remove(key));
 	}
 	

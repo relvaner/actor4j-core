@@ -16,8 +16,8 @@
 package io.actor4j.core.utils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CacheAsMap<K, V> implements Cache<K, V> {
@@ -37,7 +37,7 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
-	public Map<K, V> get(Set<K> keys) {
+	public Map<K, V> get(List<K> keys) {
 		return map.entrySet()
 			.stream()
 			.filter(entry -> keys.contains(entry.getKey()))
@@ -60,7 +60,7 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
-	public void remove(Set<K> keys) {
+	public void remove(List<K> keys) {
 		map.entrySet().removeIf(entry -> keys.contains(entry.getKey()));
 	}
 	
