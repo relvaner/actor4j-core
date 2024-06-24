@@ -574,9 +574,9 @@ public class ActorSystemConfig {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T podCachingProvider() {
+	public <T> T podCacheManager() {
 		if (podCaching!=null)
-			return (T) podCaching.getCachingProvider();
+			return (T) podCaching.getCacheManager();
 		else
 			return null;
 	}

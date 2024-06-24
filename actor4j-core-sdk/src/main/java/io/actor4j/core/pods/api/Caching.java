@@ -16,5 +16,5 @@
 package io.actor4j.core.pods.api;
 
 public interface Caching<T> {
-	public T getCachingProvider();
+	public T getCacheManager();
 }
