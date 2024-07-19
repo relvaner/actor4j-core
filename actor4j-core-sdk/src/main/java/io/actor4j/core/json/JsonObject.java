@@ -76,4 +76,6 @@ public interface JsonObject extends Shareable {
 	public int size();
 	public JsonObject clear();
 	public boolean isEmpty();
+	
+	public Object underlyingImpl();
 }

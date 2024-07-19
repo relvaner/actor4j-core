@@ -81,4 +81,6 @@ public interface JsonArray extends Shareable, Iterable<Object> {
 	
 	public String encode();
 	public String encodePrettily();
+	
+	public Object underlyingImpl();
 }
