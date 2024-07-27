@@ -17,28 +17,29 @@ package io.actor4j.core.pods.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import static io.actor4j.core.messages.ActorReservedTag.*;
 
 public class PodStatus {
 	protected static final Map<Integer, String> statusMap;
 	
-	public static final int OK 						= 200; 
-	public static final int CREATED 				= 201; 
-	public static final int ACCEPTED 				= 202; 
+	public static final int OK 						= RESERVED_POD_STATUS_TAG_MIN+200; 
+	public static final int CREATED 				= RESERVED_POD_STATUS_TAG_MIN+201; 
+	public static final int ACCEPTED 				= RESERVED_POD_STATUS_TAG_MIN+202; 
 	
-	public static final int BAD_REQUEST 			= 400;
-	public static final int UNAUTHORIZED 			= 401;
-	public static final int FORBIDDED 				= 403; 
-	public static final int NOT_FOUND 				= 404; 
-	public static final int METHOD_NOT_ALLOWED 		= 405;
-	public static final int NOT_ACCEPTABALE 		= 406;
-	public static final int AUTHENTICATION_REQUIRED = 407;
-	public static final int CONFLICT 				= 409;
-	public static final int GONE 					= 410;
+	public static final int BAD_REQUEST 			= RESERVED_POD_STATUS_TAG_MIN+400;
+	public static final int UNAUTHORIZED 			= RESERVED_POD_STATUS_TAG_MIN+401;
+	public static final int FORBIDDED 				= RESERVED_POD_STATUS_TAG_MIN+403; 
+	public static final int NOT_FOUND 				= RESERVED_POD_STATUS_TAG_MIN+404; 
+	public static final int METHOD_NOT_ALLOWED 		= RESERVED_POD_STATUS_TAG_MIN+405;
+	public static final int NOT_ACCEPTABALE 		= RESERVED_POD_STATUS_TAG_MIN+406;
+	public static final int AUTHENTICATION_REQUIRED = RESERVED_POD_STATUS_TAG_MIN+407;
+	public static final int CONFLICT 				= RESERVED_POD_STATUS_TAG_MIN+409;
+	public static final int GONE 					= RESERVED_POD_STATUS_TAG_MIN+410;
 	
-	public static final int INTERNAL_SERVER_ERROR 	= 500;
-	public static final int NOT_IMPLEMENTED 		= 501;
-	public static final int SERVICE_UNAVAILABLE 	= 503;
-	public static final int LOOP_DETECTED 	        = 508;
+	public static final int INTERNAL_SERVER_ERROR 	= RESERVED_POD_STATUS_TAG_MIN+500;
+	public static final int NOT_IMPLEMENTED 		= RESERVED_POD_STATUS_TAG_MIN+501;
+	public static final int SERVICE_UNAVAILABLE 	= RESERVED_POD_STATUS_TAG_MIN+503;
+	public static final int LOOP_DETECTED 	        = RESERVED_POD_STATUS_TAG_MIN+508;
 	
 	static {
 		statusMap = new HashMap<>();
