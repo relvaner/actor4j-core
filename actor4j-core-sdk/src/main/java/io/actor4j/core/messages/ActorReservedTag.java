@@ -33,7 +33,7 @@ public final class ActorReservedTag {
 	public static final int RESERVED_CACHE_CLEAR   = reservedTag(Integer.MAX_VALUE-206);
 	public static final int RESERVED_CACHE_CAS     = reservedTag(Integer.MAX_VALUE-207); // CompareAndSet
 	public static final int RESERVED_CACHE_CAU     = reservedTag(Integer.MAX_VALUE-208); // CompareAndUpdate
-	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = checkTag(Integer.MAX_VALUE-209);
+	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(Integer.MAX_VALUE-209);
 	
 	public static final int RESERVED_PUBLISH_SERVICE   = reservedTag(Integer.MAX_VALUE-100);
 	public static final int RESERVED_UNPUBLISH_SERVICE = reservedTag(Integer.MAX_VALUE-101);
