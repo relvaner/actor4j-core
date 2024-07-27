@@ -21,7 +21,8 @@ import io.actor4j.core.json.JsonArray;
 import io.actor4j.core.json.JsonObject;
 
 public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
-	public static final UUID NO_REPLY = UUID.randomUUID();
+	public static final UUID NO_REPLY  = UUID.randomUUID();
+	public static final UUID UNHANDLED = UUID.randomUUID();
 
 	public T value();
 	public int tag();
