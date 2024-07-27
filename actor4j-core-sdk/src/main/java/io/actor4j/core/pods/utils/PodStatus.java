@@ -22,24 +22,26 @@ import static io.actor4j.core.messages.ActorReservedTag.*;
 public class PodStatus {
 	protected static final Map<Integer, String> statusMap;
 	
-	public static final int OK 						= RESERVED_POD_STATUS_TAG_MIN+200; 
-	public static final int CREATED 				= RESERVED_POD_STATUS_TAG_MIN+201; 
-	public static final int ACCEPTED 				= RESERVED_POD_STATUS_TAG_MIN+202; 
+	public static final int OFFSET = RESERVED_POD_STATUS_RANGE_START;
 	
-	public static final int BAD_REQUEST 			= RESERVED_POD_STATUS_TAG_MIN+400;
-	public static final int UNAUTHORIZED 			= RESERVED_POD_STATUS_TAG_MIN+401;
-	public static final int FORBIDDED 				= RESERVED_POD_STATUS_TAG_MIN+403; 
-	public static final int NOT_FOUND 				= RESERVED_POD_STATUS_TAG_MIN+404; 
-	public static final int METHOD_NOT_ALLOWED 		= RESERVED_POD_STATUS_TAG_MIN+405;
-	public static final int NOT_ACCEPTABALE 		= RESERVED_POD_STATUS_TAG_MIN+406;
-	public static final int AUTHENTICATION_REQUIRED = RESERVED_POD_STATUS_TAG_MIN+407;
-	public static final int CONFLICT 				= RESERVED_POD_STATUS_TAG_MIN+409;
-	public static final int GONE 					= RESERVED_POD_STATUS_TAG_MIN+410;
+	public static final int OK 						= OFFSET+200; 
+	public static final int CREATED 				= OFFSET+201; 
+	public static final int ACCEPTED 				= OFFSET+202; 
 	
-	public static final int INTERNAL_SERVER_ERROR 	= RESERVED_POD_STATUS_TAG_MIN+500;
-	public static final int NOT_IMPLEMENTED 		= RESERVED_POD_STATUS_TAG_MIN+501;
-	public static final int SERVICE_UNAVAILABLE 	= RESERVED_POD_STATUS_TAG_MIN+503;
-	public static final int LOOP_DETECTED 	        = RESERVED_POD_STATUS_TAG_MIN+508;
+	public static final int BAD_REQUEST 			= OFFSET+400;
+	public static final int UNAUTHORIZED 			= OFFSET+401;
+	public static final int FORBIDDED 				= OFFSET+403; 
+	public static final int NOT_FOUND 				= OFFSET+404; 
+	public static final int METHOD_NOT_ALLOWED 		= OFFSET+405;
+	public static final int NOT_ACCEPTABALE 		= OFFSET+406;
+	public static final int AUTHENTICATION_REQUIRED = OFFSET+407;
+	public static final int CONFLICT 				= OFFSET+409;
+	public static final int GONE 					= OFFSET+410;
+	
+	public static final int INTERNAL_SERVER_ERROR 	= OFFSET+500;
+	public static final int NOT_IMPLEMENTED 		= OFFSET+501;
+	public static final int SERVICE_UNAVAILABLE 	= OFFSET+503;
+	public static final int LOOP_DETECTED 	        = OFFSET+508;
 	
 	static {
 		statusMap = new HashMap<>();
