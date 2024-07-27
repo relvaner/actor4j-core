@@ -19,23 +19,23 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Cache;
 import io.actor4j.core.utils.CacheVolatileLRU;
 
-import static io.actor4j.core.utils.ActorUtils.*;
+import static io.actor4j.core.messages.ActorReservedTag.*;
 
 public class ActorWithCache<K, V> extends Actor {
 	protected int cacheSize;
 	protected Cache<K, V> cache;
 
-	public static final int EVICT   = checkTag(300);
-	public static final int GET     = checkTag(301);
-	public static final int SET     = checkTag(302);
-	public static final int UPDATE  = checkTag(303);
-	public static final int DEL     = checkTag(304);
-	public static final int DEL_ALL = checkTag(305);
-	public static final int CLEAR   = checkTag(306);
-	public static final int CAS     = checkTag(307); // CompareAndSet
-	public static final int CAU     = checkTag(308); // CompareAndUpdate
+	public static final int EVICT   = RESERVED_CACHE_EVICT;
+	public static final int GET     = RESERVED_CACHE_GET;
+	public static final int SET     = RESERVED_CACHE_SET;
+	public static final int UPDATE  = RESERVED_CACHE_UPDATE;
+	public static final int DEL     = RESERVED_CACHE_DEL;
+	public static final int DEL_ALL = RESERVED_CACHE_DEL_ALL;
+	public static final int CLEAR   = RESERVED_CACHE_CLEAR;
+	public static final int CAS     = RESERVED_CACHE_CAS; // CompareAndSet
+	public static final int CAU     = RESERVED_CACHE_CAU; // CompareAndUpdate
 	
-	public static final int SUBSCRIBE_SECONDARY = checkTag(309);
+	public static final int SUBSCRIBE_SECONDARY = RESERVED_CACHE_SUBSCRIBE_SECONDARY;
 	
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);

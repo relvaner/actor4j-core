@@ -32,7 +32,7 @@ import io.actor4j.core.supervisor.SupervisorStrategy;
 import io.actor4j.core.utils.ActorFactory;
 
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
-import static io.actor4j.core.utils.ActorUtils.*;
+import static io.actor4j.core.messages.ActorReservedTag.*;
 
 public abstract class Actor implements ActorRef {
 	protected /*quasi final*/ ActorCell cell;
@@ -53,8 +53,8 @@ public abstract class Actor implements ActorRef {
 	public static final int ACTIVATE   = INTERNAL_ACTIVATE;
 	public static final int DEACTIVATE = INTERNAL_DEACTIVATE;
 	
-	public static final int UP    	   = checkTag(Integer.MAX_VALUE-1); // HEALTH_CHECK_SUCCESS
-	public static final int TIMEOUT    = checkTag(Integer.MAX_VALUE);
+	public static final int UP    	   = RESERVED_UP; // HEALTH_CHECK_SUCCESS
+	public static final int TIMEOUT    = RESERVED_TIMEOUT;
 	
 	/**
 	 * Don't create here, new actors as child or send messages too other actors. You will 

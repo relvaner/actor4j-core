@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.service.discovery;
 
-import static io.actor4j.core.utils.ActorUtils.checkTag;
+import static io.actor4j.core.messages.ActorReservedTag.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,10 +37,10 @@ public class ServiceDiscoveryActor extends Actor {
 	
 	protected String alias;
 	
-	public static final int PUBLISH_SERVICE   = checkTag(400);
-	public static final int UNPUBLISH_SERVICE = checkTag(401);
-	public static final int LOOKUP_SERVICES   = checkTag(402);
-	public static final int LOOKUP_SERVICE    = checkTag(403);
+	public static final int PUBLISH_SERVICE   = RESERVED_PUBLISH_SERVICE;
+	public static final int UNPUBLISH_SERVICE = RESERVED_UNPUBLISH_SERVICE;
+	public static final int LOOKUP_SERVICES   = RESERVED_LOOKUP_SERVICES;
+	public static final int LOOKUP_SERVICE    = RESERVED_LOOKUP_SERVICE;
 	
 	public ServiceDiscoveryActor(String alias) {
 		this.alias = alias;
