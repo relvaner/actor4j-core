@@ -27,7 +27,7 @@ public final class ActorReservedTag {
 	public static final int RESERVED_TAG_MIN = 10_000;
 	public static final int RESERVED_TAG_MAX = 20_000;
 	
-	public static final int RESERVED_POD_STATUS_TAG_MIN = RESERVED_TAG_MIN+100;
+	public static final int RESERVED_POD_STATUS_TAG_MIN = RESERVED_TAG_MIN;
 	public static final int RESERVED_POD_STATUS_TAG_MAX = RESERVED_TAG_MIN+600;
 	
 	public static final int RESERVED_POD_REQUEST_METHOD_TAG_MIN = RESERVED_TAG_MIN+1000;
