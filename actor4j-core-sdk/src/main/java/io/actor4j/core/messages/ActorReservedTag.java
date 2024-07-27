@@ -23,6 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ActorReservedTag {
 	private static final Set<Integer> actorTags = ConcurrentHashMap.newKeySet();
+	
+	public static final int RESERVED_DATA_ACCESS_HAS_ONE     = reservedTag(Integer.MAX_VALUE-300);
+	public static final int RESERVED_DATA_ACCESS_INSERT_ONE  = reservedTag(Integer.MAX_VALUE-301);
+	public static final int RESERVED_DATA_ACCESS_REPLACE_ONE = reservedTag(Integer.MAX_VALUE-302);
+	public static final int RESERVED_DATA_ACCESS_UPDATE_ONE  = reservedTag(Integer.MAX_VALUE-303);
+	public static final int RESERVED_DATA_ACCESS_DELETE_ONE  = reservedTag(Integer.MAX_VALUE-304);
+	public static final int RESERVED_DATA_ACCESS_FIND_ONE    = reservedTag(Integer.MAX_VALUE-305);
+	public static final int RESERVED_DATA_ACCESS_FLUSH       = reservedTag(Integer.MAX_VALUE-306);
+	public static final int RESERVED_DATA_ACCESS_SUCCESS     = reservedTag(Integer.MAX_VALUE-307);
+	public static final int RESERVED_DATA_ACCESS_FAILURE     = reservedTag(Integer.MAX_VALUE-308);
 
 	public static final int RESERVED_CACHE_EVICT   = reservedTag(Integer.MAX_VALUE-200);
 	public static final int RESERVED_CACHE_GET     = reservedTag(Integer.MAX_VALUE-201);
@@ -33,7 +43,9 @@ public final class ActorReservedTag {
 	public static final int RESERVED_CACHE_CLEAR   = reservedTag(Integer.MAX_VALUE-206);
 	public static final int RESERVED_CACHE_CAS     = reservedTag(Integer.MAX_VALUE-207); // CompareAndSet
 	public static final int RESERVED_CACHE_CAU     = reservedTag(Integer.MAX_VALUE-208); // CompareAndUpdate
-	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(Integer.MAX_VALUE-209);
+	public static final int RESERVED_CACHE_SUCCESS = reservedTag(Integer.MAX_VALUE-209);
+	public static final int RESERVED_CACHE_FAILURE = reservedTag(Integer.MAX_VALUE-210);
+	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(Integer.MAX_VALUE-211);
 	
 	public static final int RESERVED_PUBLISH_SERVICE   = reservedTag(Integer.MAX_VALUE-100);
 	public static final int RESERVED_UNPUBLISH_SERVICE = reservedTag(Integer.MAX_VALUE-101);
