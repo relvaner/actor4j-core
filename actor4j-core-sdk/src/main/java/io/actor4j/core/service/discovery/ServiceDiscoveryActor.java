@@ -51,7 +51,7 @@ public class ServiceDiscoveryActor extends Actor {
 	
 	@Override
 	public void preStart() {
-		// registering alias
+		// Register alias
 		getSystem().setAlias(self(), alias);
 	}
 	
@@ -60,28 +60,28 @@ public class ServiceDiscoveryActor extends Actor {
 		if (message.value()!=null) {
 			if (message.tag()==PUBLISH_SERVICE && message.value() instanceof Service) {
 				Service service = (Service)message.value();
-				services.put(service.id, service);
-				if (service.topics!=null) {
-					for (String topic : service.topics) {
+				services.put(service.id(), service);
+				if (service.topics()!=null) {
+					for (String topic : service.topics()) {
 						Set<UUID> ids = topicsMap.get(topic);
 						if (ids==null) {
 							ids = new HashSet<>();
 							topicsMap.put(topic, ids);
 						}
-						ids.add(service.id);
+						ids.add(service.id());
 					}
 				}
 			}
 			else if (message.tag()==UNPUBLISH_SERVICE && message.value() instanceof UUID) {
 				Service service = services.get(message.value());
-				if (service.topics!=null) {
-					for (String topic : service.topics) {
+				if (service.topics()!=null) {
+					for (String topic : service.topics()) {
 						Set<UUID> ids = topicsMap.get(topic);
 						if (ids!=null)
-							ids.remove(service.id);
+							ids.remove(service.id());
 					}
 				}
-				services.remove(service.id);
+				services.remove(service.id());
 			}
 			else if (message.tag()==LOOKUP_SERVICES && message.value() instanceof String) {
 				List<Service> result = new LinkedList<>();
