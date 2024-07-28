@@ -41,10 +41,10 @@ public final class ActorReservedTag {
 	
 	public static final int RESERVED_UNHANDLED = reservedTag(RESERVED_OFFSET_MAX-2);
 
-	public static final int RESERVED_PUBLISH_SERVICE   = reservedTag(RESERVED_OFFSET_MAX-100);
-	public static final int RESERVED_UNPUBLISH_SERVICE = reservedTag(RESERVED_OFFSET_MAX-101);
-	public static final int RESERVED_LOOKUP_SERVICES   = reservedTag(RESERVED_OFFSET_MAX-102);
-	public static final int RESERVED_LOOKUP_SERVICE    = reservedTag(RESERVED_OFFSET_MAX-103);
+	public static final int RESERVED_SERVICE_DISCOVERY_PUBLISH_SERVICE   = reservedTag(RESERVED_OFFSET_MAX-100);
+	public static final int RESERVED_SERVICE_DISCOVERY_UNPUBLISH_SERVICE = reservedTag(RESERVED_OFFSET_MAX-101);
+	public static final int RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICES   = reservedTag(RESERVED_OFFSET_MAX-102);
+	public static final int RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICE    = reservedTag(RESERVED_OFFSET_MAX-103);
 	
 	public static final int RESERVED_CACHE_EVICT   = reservedTag(RESERVED_OFFSET_MAX-200);
 	public static final int RESERVED_CACHE_GET     = reservedTag(RESERVED_OFFSET_MAX-201);

@@ -37,10 +37,10 @@ public class ServiceDiscoveryActor extends Actor {
 	
 	protected String alias;
 	
-	public static final int PUBLISH_SERVICE   = RESERVED_PUBLISH_SERVICE;
-	public static final int UNPUBLISH_SERVICE = RESERVED_UNPUBLISH_SERVICE;
-	public static final int LOOKUP_SERVICES   = RESERVED_LOOKUP_SERVICES;
-	public static final int LOOKUP_SERVICE    = RESERVED_LOOKUP_SERVICE;
+	public static final int PUBLISH_SERVICE   = RESERVED_SERVICE_DISCOVERY_PUBLISH_SERVICE;
+	public static final int UNPUBLISH_SERVICE = RESERVED_SERVICE_DISCOVERY_UNPUBLISH_SERVICE;
+	public static final int LOOKUP_SERVICES   = RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICES;
+	public static final int LOOKUP_SERVICE    = RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICE;
 	
 	public ServiceDiscoveryActor(String alias) {
 		this.alias = alias;
