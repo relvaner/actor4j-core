@@ -72,6 +72,9 @@ public final class ActorReservedTag {
 	public static final int RESERVED_PUBSUB_GET_TOPIC_ACTOR     = reservedTag(RESERVED_OFFSET_MAX-400);
 	public static final int RESERVED_PUBSUB_CLEAN_UP            = reservedTag(RESERVED_OFFSET_MAX-401);
 	public static final int RESERVED_PUBSUB_FORWARDED_BY_BROKER = reservedTag(RESERVED_OFFSET_MAX-402);
+	public static final int RESERVED_PUBSUB_PUBLISH             = reservedTag(RESERVED_OFFSET_MAX-403);
+	public static final int RESERVED_PUBSUB_SUBSCRIBE           = reservedTag(RESERVED_OFFSET_MAX-404);
+	public static final int RESERVED_PUBSUB_UNSUBSCRIBE         = reservedTag(RESERVED_OFFSET_MAX-405);
 	
 	public static final int RESERVED_REACTIVE_STREAMS_SUBSCRIPTION_REQUEST       = reservedTag(RESERVED_OFFSET_MAX-500);
 	public static final int RESERVED_REACTIVE_STREAMS_SUBSCRIPTION_REQUEST_RESET = reservedTag(RESERVED_OFFSET_MAX-501);
@@ -81,6 +84,12 @@ public final class ActorReservedTag {
 	public static final int RESERVED_REACTIVE_STREAMS_ON_NEXT                    = reservedTag(RESERVED_OFFSET_MAX-505);
 	public static final int RESERVED_REACTIVE_STREAMS_ON_ERROR                   = reservedTag(RESERVED_OFFSET_MAX-506);
 	public static final int RESERVED_REACTIVE_STREAMS_ON_COMPLETE                = reservedTag(RESERVED_OFFSET_MAX-507);
+	
+	public static final int RESERVED_STREAMS_DATA     = reservedTag(RESERVED_OFFSET_MAX-600);
+	public static final int RESERVED_STREAMS_TASK     = reservedTag(RESERVED_OFFSET_MAX-601);
+	public static final int RESERVED_STREAMS_REDUCE   = reservedTag(RESERVED_OFFSET_MAX-602);
+	public static final int RESERVED_STREAMS_RESULT   = reservedTag(RESERVED_OFFSET_MAX-603);
+	public static final int RESERVED_STREAMS_SHUTDOWN = reservedTag(RESERVED_OFFSET_MAX-604);
 
 	static {
 		// PodStatus
