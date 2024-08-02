@@ -46,6 +46,7 @@ import org.junit.runner.RunWith;
 	ResourceActorFeature.class,
 	
 	//ActorGroupMemberFeature.class, // uses Thread.currentThread().getName()
+	CacheFeature.class,
 	CacheHandlerFeature.class,
 	
 	ServiceDiscoveyFeature.class,

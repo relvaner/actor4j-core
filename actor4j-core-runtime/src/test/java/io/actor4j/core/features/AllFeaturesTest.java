@@ -48,6 +48,7 @@ import org.junit.runner.RunWith;
 	ResourceActorFeature.class,
 	
 	ActorGroupMemberFeature.class,
+	CacheFeature.class,
 	CacheHandlerFeature.class,
 	
 	ServiceDiscoveyFeature.class,
