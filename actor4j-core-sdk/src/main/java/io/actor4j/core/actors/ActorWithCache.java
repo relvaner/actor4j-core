@@ -17,11 +17,10 @@ package io.actor4j.core.actors;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Cache;
-import io.actor4j.core.utils.CacheVolatileLRU;
 
 import static io.actor4j.core.messages.ActorReservedTag.*;
 
-public class ActorWithCache<K, V> extends Actor {
+public abstract class ActorWithCache<K, V> extends Actor {
 	protected int cacheSize;
 	protected Cache<K, V> cache;
 
@@ -44,12 +43,14 @@ public class ActorWithCache<K, V> extends Actor {
 		super(name);
 		
 		this.cacheSize = cacheSize;
-		cache = new CacheVolatileLRU<>(cacheSize);
+		cache = createCache(cacheSize);
 	}
 	
 	public ActorWithCache(int cacheSize) {
 		this(null, cacheSize);
 	}
+	
+	public abstract Cache<K, V> createCache(int cacheSize);
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
