@@ -57,7 +57,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
-	public boolean contains(K key) {
+	public boolean containsKey(K key) {
 		return map.containsKey(key);
 	}
 

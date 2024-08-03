@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface Cache<K, V> {
-	public boolean contains(K key);
+	public boolean containsKey(K key);
 	
 	public V get(K key);
 	public Map<K, V> get(List<K> keys);
