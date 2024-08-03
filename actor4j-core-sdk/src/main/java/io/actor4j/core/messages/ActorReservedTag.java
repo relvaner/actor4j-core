@@ -65,7 +65,8 @@ public final class ActorReservedTag {
 	public static final int RESERVED_DATA_ACCESS_UPDATE_ONE  = reservedTag(RESERVED_OFFSET_MAX-303);
 	public static final int RESERVED_DATA_ACCESS_DELETE_ONE  = reservedTag(RESERVED_OFFSET_MAX-304);
 	public static final int RESERVED_DATA_ACCESS_FIND_ONE    = reservedTag(RESERVED_OFFSET_MAX-305);
-	public static final int RESERVED_DATA_ACCESS_FLUSH       = reservedTag(RESERVED_OFFSET_MAX-306);
+	public static final int RESERVED_DATA_ACCESS_FIND_NONE   = reservedTag(RESERVED_OFFSET_MAX-306);
+	public static final int RESERVED_DATA_ACCESS_FLUSH       = reservedTag(RESERVED_OFFSET_MAX-307);
 	public static final int RESERVED_DATA_ACCESS_SUCCESS     = RESERVED_CACHE_SUCCESS;
 	public static final int RESERVED_DATA_ACCESS_FAILURE     = RESERVED_CACHE_FAILURE;
 	
