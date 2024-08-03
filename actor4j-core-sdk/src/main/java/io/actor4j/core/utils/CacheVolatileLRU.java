@@ -55,6 +55,11 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	public SortedMap<Long, K> getLru() {
 		return lru;
 	}
+	
+	@Override
+	public boolean contains(K key) {
+		return map.containsKey(key);
+	}
 
 	@Override
 	public V get(K key) {

@@ -46,6 +46,11 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	public int size() {
 		return size;
 	}
+	
+	@Override
+	public boolean contains(K key) {
+		return map.containsKey(key);
+	}
 
 	@Override
 	public V get(K key) {
