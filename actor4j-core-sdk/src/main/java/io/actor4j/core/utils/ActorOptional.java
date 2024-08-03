@@ -62,6 +62,10 @@ public final class ActorOptional<T> {
 		return optional!=null;
 	}
 	
+	public boolean exists() {
+		return optional!=null;
+	}
+	
 	public boolean hasError() {
 		return throwable!=null;
 	}
