@@ -58,6 +58,7 @@ public final class ActorReservedTag {
 	public static final int RESERVED_CACHE_SUCCESS = reservedTag(RESERVED_OFFSET_MAX-209);
 	public static final int RESERVED_CACHE_FAILURE = reservedTag(RESERVED_OFFSET_MAX-210);
 	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(RESERVED_OFFSET_MAX-211);
+	public static final int RESERVED_CACHE_SYNC_WITH_STORAGE = reservedTag(RESERVED_OFFSET_MAX-212);
 	
 	public static final int RESERVED_DATA_ACCESS_HAS_ONE     = reservedTag(RESERVED_OFFSET_MAX-300);
 	public static final int RESERVED_DATA_ACCESS_INSERT_ONE  = reservedTag(RESERVED_OFFSET_MAX-301);

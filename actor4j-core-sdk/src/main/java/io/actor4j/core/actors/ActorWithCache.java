@@ -39,6 +39,8 @@ public abstract class ActorWithCache<K, V> extends Actor {
 	
 	public static final int SUBSCRIBE_SECONDARY = RESERVED_CACHE_SUBSCRIBE_SECONDARY;
 	
+	public static final int SYNC_WITH_STORAGE = RESERVED_CACHE_SYNC_WITH_STORAGE;
+	
 	public ActorWithCache(String name, int cacheSize) {
 		super(name);
 		
