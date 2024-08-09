@@ -26,6 +26,7 @@ public abstract class ActorWithCache<K, V> extends Actor {
 
 	public static final int EVICT   = RESERVED_CACHE_EVICT;
 	public static final int GET     = RESERVED_CACHE_GET;
+	public static final int GET_ALL = RESERVED_CACHE_GET_ALL;
 	public static final int SET     = RESERVED_CACHE_SET;
 	public static final int UPDATE  = RESERVED_CACHE_UPDATE;
 	public static final int DEL     = RESERVED_CACHE_DEL;
