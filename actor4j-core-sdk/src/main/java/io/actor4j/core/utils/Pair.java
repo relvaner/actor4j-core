@@ -27,4 +27,16 @@ public record Pair<A, B>(A a, B b) {
 	public B right() {
 		return b;
 	}
+	
+	public A key() {
+		return a;
+	}
+	
+	public B value() {
+		return b;
+	}
+	
+	public B entity() {
+		return b;
+	}
 }
