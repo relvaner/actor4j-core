@@ -120,7 +120,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		boolean result = false;
 		
 		Pair<V> pair = map.get(key);
-		if (pair.value.equals(expectedValue)) {
+		if (pair!=null && pair.value!=null && pair.value.equals(expectedValue)) {
 			put(key, newValue);
 			result = true;
 		}

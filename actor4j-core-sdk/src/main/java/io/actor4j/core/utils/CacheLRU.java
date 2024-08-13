@@ -104,7 +104,7 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 		boolean result = false;
 		
 		V value = map.get(key);
-		if (value.equals(expectedValue)) {
+		if (value!=null && value.equals(expectedValue)) {
 			put(key, newValue);
 			result = true;
 		}

@@ -64,7 +64,7 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 		boolean result = false;
 		
 		V value = map.get(key);
-		if (value.equals(expectedValue)) {
+		if (value!=null && value.equals(expectedValue)) {
 			map.put(key, newValue);
 			result = true;
 		}
