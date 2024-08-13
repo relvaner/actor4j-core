@@ -27,6 +27,8 @@ public interface Cache<K, V> {
 	public V put(K key, V value);
 	public void put(Map<K, V> entries);
 	
+	public boolean compareAndSet(K key, V expectedValue, V newValue);
+	
 	public void remove(K key);
 	public void remove(List<K> keys);
 	

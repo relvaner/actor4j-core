@@ -116,6 +116,19 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	@Override
+	public boolean compareAndSet(K key, V expectedValue, V newValue) {
+		boolean result = false;
+		
+		Pair<V> pair = map.get(key);
+		if (pair.value.equals(expectedValue)) {
+			put(key, newValue);
+			result = true;
+		}
+
+		return result;
+	}
+	
+	@Override
 	public void remove(K key) {
 		Pair<V> pair = map.get(key);
 		lru.remove(pair.timestamp);

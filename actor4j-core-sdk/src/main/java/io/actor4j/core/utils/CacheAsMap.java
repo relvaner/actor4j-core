@@ -60,6 +60,19 @@ public class CacheAsMap<K, V> implements Cache<K, V> {
 	}
 	
 	@Override
+	public boolean compareAndSet(K key, V expectedValue, V newValue) {
+		boolean result = false;
+		
+		V value = map.get(key);
+		if (value.equals(expectedValue)) {
+			map.put(key, newValue);
+			result = true;
+		}
+
+		return result;
+	}
+	
+	@Override
 	public void remove(K key) {
 		map.remove(key);
 	}
