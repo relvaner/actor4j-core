@@ -46,21 +46,22 @@ public final class ActorReservedTag {
 	public static final int RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICES   = reservedTag(RESERVED_OFFSET_MAX-102);
 	public static final int RESERVED_SERVICE_DISCOVERY_LOOKUP_SERVICE    = reservedTag(RESERVED_OFFSET_MAX-103);
 	
-	public static final int RESERVED_CACHE_EVICT   = reservedTag(RESERVED_OFFSET_MAX-200);
-	public static final int RESERVED_CACHE_GET     = reservedTag(RESERVED_OFFSET_MAX-201);
-	public static final int RESERVED_CACHE_GET_ALL = reservedTag(RESERVED_OFFSET_MAX-202);
-	public static final int RESERVED_CACHE_SET     = reservedTag(RESERVED_OFFSET_MAX-203);
-	public static final int RESERVED_CACHE_SET_ALL = reservedTag(RESERVED_OFFSET_MAX-204);
-	public static final int RESERVED_CACHE_UPDATE  = reservedTag(RESERVED_OFFSET_MAX-205);
-	public static final int RESERVED_CACHE_DEL     = reservedTag(RESERVED_OFFSET_MAX-206);
-	public static final int RESERVED_CACHE_DEL_ALL = reservedTag(RESERVED_OFFSET_MAX-207);
-	public static final int RESERVED_CACHE_CLEAR   = reservedTag(RESERVED_OFFSET_MAX-208);
-	public static final int RESERVED_CACHE_CAS     = reservedTag(RESERVED_OFFSET_MAX-209); // CompareAndSet
-	public static final int RESERVED_CACHE_CAU     = reservedTag(RESERVED_OFFSET_MAX-210); // CompareAndUpdate
-	public static final int RESERVED_CACHE_SUCCESS = reservedTag(RESERVED_OFFSET_MAX-211);
-	public static final int RESERVED_CACHE_FAILURE = reservedTag(RESERVED_OFFSET_MAX-212);
-	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(RESERVED_OFFSET_MAX-213);
-	public static final int RESERVED_CACHE_SYNC_WITH_STORAGE = reservedTag(RESERVED_OFFSET_MAX-214);
+	public static final int RESERVED_CACHE_EVICT      = reservedTag(RESERVED_OFFSET_MAX-200);
+	public static final int RESERVED_CACHE_GET        = reservedTag(RESERVED_OFFSET_MAX-201);
+	public static final int RESERVED_CACHE_GET_ALL    = reservedTag(RESERVED_OFFSET_MAX-202);
+	public static final int RESERVED_CACHE_SET        = reservedTag(RESERVED_OFFSET_MAX-203);
+	public static final int RESERVED_CACHE_SET_ALL    = reservedTag(RESERVED_OFFSET_MAX-204);
+	public static final int RESERVED_CACHE_UPDATE     = reservedTag(RESERVED_OFFSET_MAX-205);
+	public static final int RESERVED_CACHE_DEL        = reservedTag(RESERVED_OFFSET_MAX-206);
+	public static final int RESERVED_CACHE_DEL_ALL    = reservedTag(RESERVED_OFFSET_MAX-207);
+	public static final int RESERVED_CACHE_CLEAR      = reservedTag(RESERVED_OFFSET_MAX-208);
+	public static final int RESERVED_CACHE_CAS        = reservedTag(RESERVED_OFFSET_MAX-209); // CompareAndSet
+	public static final int RESERVED_CACHE_CAU        = reservedTag(RESERVED_OFFSET_MAX-210); // CompareAndUpdate
+	public static final int RESERVED_CACHE_SUCCESS    = reservedTag(RESERVED_OFFSET_MAX-211);
+	public static final int RESERVED_CACHE_NO_SUCCESS = reservedTag(RESERVED_OFFSET_MAX-212);
+	public static final int RESERVED_CACHE_FAILURE    = reservedTag(RESERVED_OFFSET_MAX-213);
+	public static final int RESERVED_CACHE_SUBSCRIBE_SECONDARY = reservedTag(RESERVED_OFFSET_MAX-214);
+	public static final int RESERVED_CACHE_SYNC_WITH_STORAGE   = reservedTag(RESERVED_OFFSET_MAX-215);
 	
 	public static final int RESERVED_DATA_ACCESS_HAS_ONE     = reservedTag(RESERVED_OFFSET_MAX-300);
 	public static final int RESERVED_DATA_ACCESS_INSERT_ONE  = reservedTag(RESERVED_OFFSET_MAX-301);

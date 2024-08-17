@@ -36,8 +36,9 @@ public abstract class ActorWithCache<K, V> extends Actor {
 	public static final int CAS     = RESERVED_CACHE_CAS; // CompareAndSet
 	public static final int CAU     = RESERVED_CACHE_CAU; // CompareAndUpdate
 	
-	public static final int SUCCESS = RESERVED_CACHE_SUCCESS;
-	public static final int FAILURE = RESERVED_CACHE_FAILURE;
+	public static final int SUCCESS    = RESERVED_CACHE_SUCCESS;
+	public static final int NO_SUCCESS = RESERVED_CACHE_NO_SUCCESS;
+	public static final int FAILURE    = RESERVED_CACHE_FAILURE;
 	
 	public static final int SUBSCRIBE_SECONDARY = RESERVED_CACHE_SUBSCRIBE_SECONDARY;
 	
