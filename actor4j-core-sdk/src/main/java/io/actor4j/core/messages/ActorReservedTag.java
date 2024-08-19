@@ -77,12 +77,14 @@ public final class ActorReservedTag {
 	public static final int RESERVED_DATA_ACCESS_SUCCESS     = RESERVED_CACHE_SUCCESS;
 	public static final int RESERVED_DATA_ACCESS_FAILURE     = RESERVED_CACHE_FAILURE;
 	
-	public static final int RESERVED_PUBSUB_GET_TOPIC_ACTOR     = reservedTag(RESERVED_OFFSET_MAX-400);
-	public static final int RESERVED_PUBSUB_CLEAN_UP            = reservedTag(RESERVED_OFFSET_MAX-401);
-	public static final int RESERVED_PUBSUB_FORWARDED_BY_BROKER = reservedTag(RESERVED_OFFSET_MAX-402);
-	public static final int RESERVED_PUBSUB_PUBLISH             = reservedTag(RESERVED_OFFSET_MAX-403);
-	public static final int RESERVED_PUBSUB_SUBSCRIBE           = reservedTag(RESERVED_OFFSET_MAX-404);
-	public static final int RESERVED_PUBSUB_UNSUBSCRIBE         = reservedTag(RESERVED_OFFSET_MAX-405);
+	public static final int RESERVED_PUBSUB_TOPIC               = reservedTag(RESERVED_OFFSET_MAX-400);
+	public static final int RESERVED_PUBSUB_TOPICS              = reservedTag(RESERVED_OFFSET_MAX-401);
+	public static final int RESERVED_PUBSUB_GET_TOPIC_ACTOR     = reservedTag(RESERVED_OFFSET_MAX-402);
+	public static final int RESERVED_PUBSUB_CLEAN_UP            = reservedTag(RESERVED_OFFSET_MAX-403);
+	public static final int RESERVED_PUBSUB_FORWARDED_BY_BROKER = reservedTag(RESERVED_OFFSET_MAX-404);
+	public static final int RESERVED_PUBSUB_PUBLISH             = reservedTag(RESERVED_OFFSET_MAX-405);
+	public static final int RESERVED_PUBSUB_SUBSCRIBE           = reservedTag(RESERVED_OFFSET_MAX-406);
+	public static final int RESERVED_PUBSUB_UNSUBSCRIBE         = reservedTag(RESERVED_OFFSET_MAX-407);
 	
 	public static final int RESERVED_REACTIVE_STREAMS_SUBSCRIPTION_REQUEST       = reservedTag(RESERVED_OFFSET_MAX-500);
 	public static final int RESERVED_REACTIVE_STREAMS_SUBSCRIPTION_REQUEST_RESET = reservedTag(RESERVED_OFFSET_MAX-501);
