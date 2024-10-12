@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.pods.api.Caching;
 import io.actor4j.core.pods.api.Database;
+import io.actor4j.core.pods.api.Host;
 import io.actor4j.core.runtime.ActorThreadMode;
 
 public class ActorSystemConfig {
@@ -63,6 +64,7 @@ public class ActorSystemConfig {
 	private final long horizontalPodAutoscalerMeasurementTime;
 	private final Caching<?> podCaching;
 	private final Database<?> podDatabase;
+	private final Host<?> podHost;
 	
 	// Watchdog
 	private final boolean watchdogEnabled;
@@ -176,6 +178,10 @@ public class ActorSystemConfig {
 		return podDatabase;
 	}
 	
+	public Host<?> podHost() {
+		return podHost;
+	}
+	
 	public boolean watchdogEnabled() {
 		return watchdogEnabled;
 	}
@@ -233,6 +239,7 @@ public class ActorSystemConfig {
 		protected long horizontalPodAutoscalerMeasurementTime;
 		protected Caching<?> podCaching;
 		protected Database<?> podDatabase;
+		protected Host<?> podHost;
 		
 		// Watchdog
 		protected boolean watchdogEnabled;
@@ -246,6 +253,9 @@ public class ActorSystemConfig {
 			super();
 
 			name = "actor4j";
+			
+			debugUnhandled = true;
+			debugUndelivered = true;
 			
 			parallelism(0);
 			parallelismFactor = 1;
@@ -314,6 +324,7 @@ public class ActorSystemConfig {
 			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime();
 			this.podCaching = config.podCaching();
 			this.podDatabase = config.podDatabase();
+			this.podHost = config.podHost();
 			this.watchdogEnabled = config.watchdogEnabled();
 			this.watchdogSyncTime = config.watchdogSyncTime();
 			this.watchdogTimeout = config.watchdogTimeout();
@@ -490,6 +501,12 @@ public class ActorSystemConfig {
 			return this;
 		}
 		
+		public Builder<T> podHost(Host<?> podHost) {
+			this.podHost = podHost;
+
+			return this;
+		}
+		
 		public Builder<T> watchdogEnabled(boolean enabled) {
 			this.watchdogEnabled = enabled;
 			
@@ -545,6 +562,7 @@ public class ActorSystemConfig {
 		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;
 		this.podCaching = builder.podCaching;
 		this.podDatabase = builder.podDatabase;
+		this.podHost = builder.podHost;
 		this.watchdogEnabled = builder.watchdogEnabled;
 		this.watchdogSyncTime = builder.watchdogSyncTime;
 		this.watchdogTimeout = builder.watchdogTimeout;
@@ -585,6 +603,14 @@ public class ActorSystemConfig {
 	public <T> T podDatabaseClient() {
 		if (podDatabase!=null)
 			return (T) podDatabase.getClient();
+		else
+			return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T podHostInstance() {
+		if (podHost!=null)
+			return (T) podHost.getInstance();
 		else
 			return null;
 	}
