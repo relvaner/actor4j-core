@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2024, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,9 @@ package io.actor4j.core.utils;
 import java.util.List;
 import java.util.Map;
 
-public interface Cache<K, V> extends ReadOnlyCache<K, V> {
+public interface ReadOnlyCache<K, V> {
 	public boolean containsKey(K key);
 	
 	public V get(K key);
 	public Map<K, V> get(List<K> keys);
-	
-	public V put(K key, V value);
-	public void put(Map<K, V> entries);
-	
-	public boolean compareAndSet(K key, V expectedValue, V newValue);
-	
-	public void remove(K key);
-	public void remove(List<K> keys);
-	
-	public void clear();
-
-	public void evict(long duration);
-	
-	public void close();
 }
