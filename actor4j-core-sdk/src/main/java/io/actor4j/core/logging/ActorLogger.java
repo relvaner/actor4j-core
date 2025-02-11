@@ -56,4 +56,12 @@ public class ActorLogger {
 	public static void showSimpleClassName(boolean enabled) {
 		LoggerFactory.simpleClassName = enabled;
 	}
+	
+	public static void log(Level level, String msg, Object... args) {
+		user_logger.log(level, String.format(msg, args));
+	}
+	
+	public static void systemLog(Level level, String msg, Object... args) {
+		system_logger.log(level, String.format(msg, args));
+	}
 }
