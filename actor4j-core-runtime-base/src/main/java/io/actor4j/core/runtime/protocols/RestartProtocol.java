@@ -42,7 +42,10 @@ public class RestartProtocol {
 	protected void postStop() {
 		cell.postStop();
 		cell.internal_stop();
-		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
+			systemPrintLog(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		else
+			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	protected void postRestart(Exception reason) {
@@ -52,7 +55,10 @@ public class RestartProtocol {
 			newActor.setCell(cell);
 			cell.setActor(newActor);
 			cell.postRestart(reason);
-			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor()))); 
+			if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
+				systemPrintLog(INFO, String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor())));
+			else
+				systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) restarted", actorLabel(cell.getActor())));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ActorInitializationException(); // never must occur

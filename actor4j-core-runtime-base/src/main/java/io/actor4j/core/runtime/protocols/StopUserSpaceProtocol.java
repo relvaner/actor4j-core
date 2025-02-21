@@ -53,7 +53,10 @@ public class StopUserSpaceProtocol {
 			UUID dest = iterator.next();
 			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_USER_SPACE_SUCCESS, cell.getId(), dest));
 		}
-		systemLogger().log(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
+		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
+			systemPrintLog(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
+		else
+			systemLogger().log(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	public void apply() {
