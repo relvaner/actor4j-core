@@ -44,4 +44,7 @@ public interface ActorService extends ActorSystem {
 	
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
 	public void sendAsServer(ActorMessage<?> message);
+	
+	public boolean isShutdownHookTriggered();
+	public void shutdownHookTriggered();
 }

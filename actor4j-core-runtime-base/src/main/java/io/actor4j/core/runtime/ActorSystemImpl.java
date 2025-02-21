@@ -77,6 +77,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
 	
 	protected final AtomicBoolean messagingEnabled;
+	protected final AtomicBoolean shutdownHookTriggered;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
 	protected final ActorExecutorService executorService;
@@ -116,6 +117,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		redirector     = new ConcurrentHashMap<>();
 		
 		messagingEnabled = new AtomicBoolean();
+		shutdownHookTriggered = new AtomicBoolean();
 		
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executorService = createActorExecutorService();
@@ -872,6 +874,16 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public boolean isShutdownHookTriggered() {
+		return shutdownHookTriggered.get();
+	}
+	
+	@Override
+	public void shutdownHookTriggered() {
+		shutdownHookTriggered.set(true);
 	}
 	
 	@Override

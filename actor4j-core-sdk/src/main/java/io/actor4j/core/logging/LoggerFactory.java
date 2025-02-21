@@ -96,4 +96,17 @@ public class LoggerFactory {
 		
 		return sourceClassName.substring(index!=-1 ? index+1 : 0);
 	}
+	
+	protected static void printLog(Level level, String msg, String loggerName) {
+		Date date = Calendar.getInstance().getTime();  
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");  
+		String dateAsString = dateFormat.format(date);
+		
+		System.out.printf("[%-5s] %s [%s] [%s] [MESSAGE] %s%n", 
+			LEVEL_AS_STRING.get(level), 
+			dateAsString, loggerName, 
+			Thread.currentThread().getName(),
+			msg
+		);
+	}
 }

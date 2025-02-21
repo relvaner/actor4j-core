@@ -56,4 +56,8 @@ public class ActorLogger {
 	public static void showSimpleClassName(boolean enabled) {
 		LoggerFactory.simpleClassName = enabled;
 	}
+	
+	public static void systemPrintLog(Level level, String msg) {
+		LoggerFactory.printLog(level, msg, system_logger.getName());
+	}
 }

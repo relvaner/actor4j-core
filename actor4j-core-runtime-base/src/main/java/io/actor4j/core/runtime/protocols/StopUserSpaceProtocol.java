@@ -41,7 +41,10 @@ public class StopUserSpaceProtocol {
 	protected void postStop() {
 		cell.postStop();
 		cell.internal_stop();
-		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
+			systemPrintLog(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+		else
+			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	protected void postUserSpaceStop() {
