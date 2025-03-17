@@ -24,7 +24,6 @@ import io.actor4j.core.utils.CacheVolatileLRU;
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 
 public class CacheFeature {
 	@Test
@@ -65,19 +64,19 @@ public class CacheFeature {
 		cache.get(data[5][0]);
 		cache.get(data[4][0]);
 		
-		Iterator<Entry<Long, String>> iterator = cache.getLru().entrySet().iterator();
-		assertEquals(data[2][0], iterator.next().getValue());
-		assertEquals(data[3][0], iterator.next().getValue());
-		assertEquals(data[6][0], iterator.next().getValue());
-		assertEquals(data[5][0], iterator.next().getValue());
-		assertEquals(data[4][0], iterator.next().getValue());
+		Iterator<String> iterator = cache.getLru().iterator();
+		assertEquals(data[2][0], iterator.next());
+		assertEquals(data[3][0], iterator.next());
+		assertEquals(data[6][0], iterator.next());
+		assertEquals(data[5][0], iterator.next());
+		assertEquals(data[4][0], iterator.next());
 		/*
 		String nextToLast = null;
 		String last = null;
-		Iterator<Entry<Long, String>> iterator = cache.getLru().entrySet().iterator();
+		Iterator<String> iterator = cache.getLru().iterator();
 		while (iterator.hasNext()) {
 			nextToLast = last;
-			last = iterator.next().getValue();
+			last = iterator.next();
 		}
 		assertEquals(data[5][0], nextToLast);
 		assertEquals(data[4][0], last);
