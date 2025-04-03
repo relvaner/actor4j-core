@@ -49,6 +49,10 @@ public interface ActorSystem {
 	public UUID addActor(ActorFactory factory);
 	public List<UUID> addActor(ActorFactory factory, int instances);
 	
+	public UUID deployActor(ActorFactory factory);
+	public void undeployActor(UUID id);
+	public void undeployActors(String alias);
+	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration);
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
 	public void undeployPods(String domain);

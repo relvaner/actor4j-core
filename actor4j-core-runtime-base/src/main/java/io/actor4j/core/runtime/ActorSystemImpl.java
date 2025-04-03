@@ -461,6 +461,23 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		return result;
 	}
 	
+	@Override
+	public UUID deployActor(ActorFactory factory) {
+		return addActor(factory);
+	}
+	
+	@Override
+	public void undeployActor(UUID id) {
+		sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, id));
+	}
+	
+	@Override
+	public void undeployActors(String alias) {
+		List<UUID> ids = getActorsFromAlias(alias);
+		for (UUID id : ids)
+			undeployActor(id);
+	}
+	
 	public void setPodDomain(UUID id, String domain) {
 		if (id!=null && domain!=null && !domain.isEmpty()) {
 			Queue<UUID> queue = null;
