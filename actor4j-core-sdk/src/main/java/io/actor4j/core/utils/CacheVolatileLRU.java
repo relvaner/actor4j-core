@@ -67,7 +67,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		Pair<V> pair = map.get(key);
 		if (pair!=null) {
 			lru.remove(key);
-			pair.timestamp = System.nanoTime();
+			pair.timestamp = System.currentTimeMillis();
 			lru.addLast(key);
 			result = pair.value;
 		}
@@ -82,7 +82,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 			.filter(entry -> keys.contains(entry.getKey()))
 			.peek(entry -> {
 				lru.remove(entry.getKey());
-				entry.getValue().timestamp = System.nanoTime();
+				entry.getValue().timestamp = System.currentTimeMillis();
 				lru.addLast(entry.getKey());
 			})
 			.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().value));
@@ -92,7 +92,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	public V put(K key, V value) {
 		V result = null;
 		
-		long timestamp = System.nanoTime();
+		long timestamp = System.currentTimeMillis();
 		Pair<V> pair = map.put(key, new Pair<V>(value, timestamp));
 		if (pair==null) {
 			resize();
