@@ -24,10 +24,10 @@ import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
-import io.actor4j.core.runtime.ActorProcess;
+import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.ActorSystemError;
 
-public abstract class ActorRunnable implements Runnable, ActorProcess {
+public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	protected final long id;
 	
 	protected final UUID failsafeId;
@@ -55,7 +55,7 @@ public abstract class ActorRunnable implements Runnable, ActorProcess {
 	}
 
 	@Override
-	public Object processId() {
+	public Object executionUnitId() {
 		return id;
 	}
 	
@@ -82,7 +82,7 @@ public abstract class ActorRunnable implements Runnable, ActorProcess {
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
-			system.getActorStrategyOnFailure().handle(cell, e);
+			system.getStrategyOnFailure().handle(cell, e);
 		}	
 	}
 	

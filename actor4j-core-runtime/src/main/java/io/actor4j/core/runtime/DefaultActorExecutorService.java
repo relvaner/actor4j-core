@@ -20,12 +20,12 @@ public class DefaultActorExecutorService extends ActorExecutorServiceImpl<ActorT
 		super(system);
 	}
 	
-	public ActorProcessPool<ActorThread> createActorProcessPool() {
+	public ActorExecutionUnitPool<ActorThread> createExecutionUnitPool() {
 		return new ActorThreadPool((DefaultInternalActorRuntimeSystem)system);
 	}
 
 	@Override
 	public ActorThreadPool getActorThreadPool() {
-		return (ActorThreadPool)actorProcessPool;
+		return (ActorThreadPool)executionUnitPool;
 	}
 }

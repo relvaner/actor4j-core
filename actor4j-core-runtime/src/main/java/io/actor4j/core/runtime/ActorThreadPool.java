@@ -23,7 +23,7 @@ import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
+public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread> {
 	protected final CountDownLatch countDownLatch;
 	
 	public ActorThreadPool(DefaultInternalActorRuntimeSystem system) {
@@ -40,21 +40,21 @@ public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
 						countDownLatch.countDown();
 					}
 				};
-				actorProcessList.add(t);
+				executionUnitList.add(t);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
-		((DefaultActorProcessPoolHandler<ActorThread>)actorProcessPoolHandler).beforeStart(actorProcessList);
-		for (ActorThread t : actorProcessList)
+		((DefaultActorExecutionUnitPoolHandler<ActorThread>)executionUnitPoolHandler).beforeStart(executionUnitList);
+		for (ActorThread t : executionUnitList)
 			t.start();
 	}
 	
 	public void shutdown(Runnable onTermination, boolean await) {
-		if (actorProcessList.size()>0) {
-			for (ActorThread t : actorProcessList)
+		if (executionUnitList.size()>0) {
+			for (ActorThread t : executionUnitList)
 				t.interrupt();
 		}
 		
@@ -90,7 +90,7 @@ public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
 	}
 	
 	public ActorThreadPoolHandler getActorThreadPoolHandler() {
-		return (ActorThreadPoolHandler)actorProcessPoolHandler;
+		return (ActorThreadPoolHandler)executionUnitPoolHandler;
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
@@ -111,14 +111,14 @@ public class ActorThreadPool extends AbstractActorProcessPool<ActorThread> {
 	
 	public List<Integer> getWorkerInnerQueueSizes() {
 		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorProcessList)
+		for (ActorThread t : executionUnitList)
 			list.add(t.getInnerQueue().size());
 		return list;
 	}
 	
 	public List<Integer> getWorkerOuterQueueSizes() {
 		List<Integer> list = new ArrayList<>();
-		for (ActorThread t : actorProcessList)
+		for (ActorThread t : executionUnitList)
 			list.add(t.getOuterQueue().size());
 		return list;
 	}

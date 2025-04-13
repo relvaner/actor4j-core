@@ -17,11 +17,11 @@ package io.actor4j.core.runtime;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public interface ActorProcess extends Runnable {
-	public Object processId();
+public interface ActorExecutionUnit extends Runnable {
+	public Object executionUnitId();
 	
-	public default long processIdAsLong() {
-		return (long)processId();
+	public default long executionUnitIdAsLong() {
+		return (long)executionUnitId();
 	}
 	
 	public long getCount();

@@ -19,10 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface DefaultActorProcessPoolHandler<P extends ActorProcess> extends ActorProcessPoolHandler<P> {
+public interface DefaultActorExecutionUnitPoolHandler<U extends ActorExecutionUnit> extends ActorExecutionUnitPoolHandler<U> {
 	public Map<UUID, Long> getCellsMap();
-	public Map<Long, P> getProcessMap();
-	public List<Long> getProcessList();
+	public Map<Long, U> getExecutionUnitMap();
+	public List<Long> getExecutionUnitList();
 	
-	public void beforeStart(List<P> actorProcessList);
+	public void beforeStart(List<U> executionUnitList);
 }

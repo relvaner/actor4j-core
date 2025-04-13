@@ -33,13 +33,13 @@ import java.util.stream.Collectors;
 
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.ActorProcessPool;
-import io.actor4j.core.runtime.ActorProcessPoolHandler;
+import io.actor4j.core.runtime.ActorExecutionUnitPool;
+import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 
-public class VirtualActorRunnablePool implements ActorProcessPool<VirtualActorRunnable> {
+public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualActorRunnable> {
 	protected final InternalActorRuntimeSystem system;
 	
 	protected final Map<UUID, Thread> virtualThreads;
@@ -89,12 +89,12 @@ public class VirtualActorRunnablePool implements ActorProcessPool<VirtualActorRu
 	}
 	
 	@Override
-	public List<VirtualActorRunnable> getActorProcessList() {
+	public List<VirtualActorRunnable> getExecutionUnitList() {
 		return virtualActorRunnablePoolHandler.getVirtualActorRunnables().values().stream().collect(Collectors.toList());
 	}
 	
 	@Override
-	public ActorProcessPoolHandler<VirtualActorRunnable> getActorProcessPoolHandler() {
+	public ActorExecutionUnitPoolHandler<VirtualActorRunnable> getExecutionUnitPoolHandler() {
 		return virtualActorRunnablePoolHandler;
 	}
 	
@@ -180,7 +180,7 @@ public class VirtualActorRunnablePool implements ActorProcessPool<VirtualActorRu
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
-			system.getActorStrategyOnFailure().handle(cell, e);
+			system.getStrategyOnFailure().handle(cell, e);
 		}	
 	}
 	
@@ -226,7 +226,7 @@ public class VirtualActorRunnablePool implements ActorProcessPool<VirtualActorRu
 	}
 
 	@Override
-	public List<Boolean> getProcessLoads() {
+	public List<Boolean> getExecutionUnitLoads() {
 		// Not used!
 		return null;
 	}
@@ -242,7 +242,7 @@ public class VirtualActorRunnablePool implements ActorProcessPool<VirtualActorRu
 	}
 	
 	@Override
-	public List<Long> getProcessingTimeStatistics() {
+	public List<Long> getExecutionUnitTimeStatistics() {
 		List<Long> list = new ArrayList<>();
 		list.add(getProcessingTimeStatisticsSum());
 		return list;

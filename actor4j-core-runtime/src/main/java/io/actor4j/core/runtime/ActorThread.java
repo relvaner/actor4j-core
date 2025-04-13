@@ -29,7 +29,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
-public abstract class ActorThread extends Thread implements ActorProcess {
+public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
@@ -64,7 +64,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 	}
 	
 	@Override
-	public Object processId() {
+	public Object executionUnitId() {
 		return threadId();
 	}
 	
@@ -96,7 +96,7 @@ public abstract class ActorThread extends Thread implements ActorProcess {
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
-			system.getActorStrategyOnFailure().handle(cell, e);
+			system.getStrategyOnFailure().handle(cell, e);
 		}	
 	}
 	

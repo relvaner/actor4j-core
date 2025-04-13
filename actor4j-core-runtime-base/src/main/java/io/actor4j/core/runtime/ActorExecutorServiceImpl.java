@@ -45,7 +45,7 @@ import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupList;
 import io.actor4j.core.utils.ActorTimer;
 
-public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implements InternalActorExecutorService<P> {
+public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> implements InternalActorExecutorService<U> {
 	protected final InternalActorRuntimeSystem system;
 	
 	protected final FaultToleranceManager faultToleranceManager;
@@ -54,7 +54,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 	
 	protected final AtomicBoolean started;
 	
-	protected /*quasi final*/ ActorProcessPool<P> actorProcessPool;
+	protected /*quasi final*/ ActorExecutionUnitPool<U> executionUnitPool;
 	
 	protected /*quasi final*/ ActorTimerExecutorService globalTimerExecutorService;
 	protected /*quasi final*/ ActorTimerExecutorService timerExecutorService;
@@ -202,7 +202,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 			watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		}
 		
-		actorProcessPool = createActorProcessPool();
+		executionUnitPool = createExecutionUnitPool();
 		
 		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
 			podReplicationControllerExecutorService = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("actor4j-replication-controller-thread"));
@@ -242,15 +242,15 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 			}
 	}
 	
-	public abstract ActorProcessPool<P> createActorProcessPool();
+	public abstract ActorExecutionUnitPool<U> createExecutionUnitPool();
 	
-	public void shutdownActorProcessPool(Runnable onTermination, boolean await) {
-		actorProcessPool.shutdown(onTermination, await);
+	public void shutdownExecutionUnitPool(Runnable onTermination, boolean await) {
+		executionUnitPool.shutdown(onTermination, await);
 	}
 	
 	@Override
-	public ActorProcessPool<P> getActorProcessPool() {
-		return actorProcessPool;
+	public ActorExecutionUnitPool<U> getExecutionUnitPool() {
+		return executionUnitPool;
 	}
 	
 	@Override
@@ -318,7 +318,7 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 		
 		shutdownActorResourcePool(await);
 		
-		shutdownActorProcessPool(onTermination, await);
+		shutdownExecutionUnitPool(onTermination, await);
 		
 		if (system.getConfig().persistenceMode())
 			persistenceService.shutdown();
@@ -328,12 +328,12 @@ public abstract class ActorExecutorServiceImpl<P extends ActorProcess> implement
 	
 	@Override
 	public long getCount() {
-		return actorProcessPool!=null ? actorProcessPool.getCount() : 0;
+		return executionUnitPool!=null ? executionUnitPool.getCount() : 0;
 	}
 	
 	@Override
 	public List<Long> getCounts() {
-		return actorProcessPool!=null ? actorProcessPool.getCounts() : new ArrayList<>();
+		return executionUnitPool!=null ? executionUnitPool.getCounts() : new ArrayList<>();
 	}
 
 	public boolean isResponsiveThread(int index) {

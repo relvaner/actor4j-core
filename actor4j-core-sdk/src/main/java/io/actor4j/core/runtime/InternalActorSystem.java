@@ -55,7 +55,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public Queue<ActorMessage<?>> getBufferQueue();
 	
 	public ActorExecutorService getExecutorService();
-	public ActorStrategyOnFailure getActorStrategyOnFailure();
+	public ActorStrategyOnFailure getStrategyOnFailure();
 	
 	public InternalActorCell generateCell(Actor actor);
 	public InternalActorCell generateCell(Class<? extends Actor> clazz);

@@ -16,7 +16,7 @@
 package io.actor4j.core.runtime.classic;
 
 import io.actor4j.core.runtime.ActorExecutorServiceImpl;
-import io.actor4j.core.runtime.ActorProcessPool;
+import io.actor4j.core.runtime.ActorExecutionUnitPool;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 
 public class ClassicDefaultActorExecutorService extends ActorExecutorServiceImpl<ActorRunnable> implements ClassicInternalActorExecutorService {
@@ -25,12 +25,12 @@ public class ClassicDefaultActorExecutorService extends ActorExecutorServiceImpl
 	}
 	
 	@Override
-	public ActorProcessPool<ActorRunnable> createActorProcessPool() {
+	public ActorExecutionUnitPool<ActorRunnable> createExecutionUnitPool() {
 		return new ActorRunnablePool(system);
 	}
 	
 	@Override
 	public ActorRunnablePool getActorRunnablePool() {
-		return (ActorRunnablePool)actorProcessPool;
+		return (ActorRunnablePool)executionUnitPool;
 	}
 }

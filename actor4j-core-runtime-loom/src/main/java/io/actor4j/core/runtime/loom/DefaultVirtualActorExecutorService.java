@@ -17,7 +17,7 @@ package io.actor4j.core.runtime.loom;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorExecutorServiceImpl;
-import io.actor4j.core.runtime.ActorProcessPool;
+import io.actor4j.core.runtime.ActorExecutionUnitPool;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 
@@ -52,7 +52,7 @@ public class DefaultVirtualActorExecutorService extends ActorExecutorServiceImpl
 	}
 	
 	@Override
-	public ActorProcessPool<VirtualActorRunnable> createActorProcessPool() {
+	public ActorExecutionUnitPool<VirtualActorRunnable> createExecutionUnitPool() {
 		return new VirtualActorRunnablePool(system, (pool) -> new DefaultVirtualActorRunnablePoolHandler(system, pool), false);
 	}
 	
@@ -63,6 +63,6 @@ public class DefaultVirtualActorExecutorService extends ActorExecutorServiceImpl
 	
 	@Override
 	public VirtualActorRunnablePool getVirtualActorRunnablePool() {
-		return (VirtualActorRunnablePool)actorProcessPool;
+		return (VirtualActorRunnablePool)executionUnitPool;
 	}
 }

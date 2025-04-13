@@ -20,7 +20,7 @@ import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 
-public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<ActorThread> {
+public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandler<ActorThread> {
 	public ActorThreadPoolHandler(InternalActorSystem system) {
 		super(system);
 	}
@@ -48,7 +48,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 			Long id_dest   = cellsMap.get(message.dest());
 		
 			if (id_dest!=null) {
-				ActorThread t = processMap.get(id_dest);
+				ActorThread t = executionUnitMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
 						&& Thread.currentThread().threadId()==id_source.longValue()) {
@@ -81,7 +81,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 			Long id_dest   = cellsMap.get(dest);
 		
 			if (id_dest!=null) {
-				ActorThread t = processMap.get(id_dest);
+				ActorThread t = executionUnitMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
 						&& Thread.currentThread().threadId()==id_source.longValue())
@@ -114,7 +114,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 			Long id_dest   = cellsMap.get(message.dest());
 		
 			if (id_dest!=null) {
-				ActorThread t = processMap.get(id_dest);
+				ActorThread t = executionUnitMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
 						&& Thread.currentThread().threadId()==id_source.longValue())
@@ -146,7 +146,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 			Long id_dest   = cellsMap.get(dest);
 		
 			if (id_dest!=null) {
-				ActorThread t = processMap.get(id_dest);
+				ActorThread t = executionUnitMap.get(id_dest);
 				
 				if (id_source!=null && id_source.equals(id_dest)
 						&& Thread.currentThread().threadId()==id_source.longValue())
@@ -167,7 +167,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postOuter(ActorMessage<?> message) {
 		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			t.outerQueue(message.copy());
 			t.newMessage();
 		}
@@ -178,7 +178,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postOuter(ActorMessage<?> message, UUID dest) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			t.outerQueue(message.copy(dest));
 			t.newMessage();
 		}
@@ -189,7 +189,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postServer(ActorMessage<?> message) {
 		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			t.serverQueue(message.copy());
 			t.newMessage();
 		}
@@ -200,7 +200,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postServer(ActorMessage<?> message, UUID dest) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			t.serverQueue(message.copy(dest));
 			t.newMessage();
 		}
@@ -211,7 +211,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
 		Long id_dest = cellsMap.get(message.dest());
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			biconsumer.accept(t, message.copy());
 			t.newMessage();
 		}
@@ -222,7 +222,7 @@ public class ActorThreadPoolHandler extends AbstractActorProcessPoolHandler<Acto
 	public boolean postQueue(ActorMessage<?> message, UUID dest, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
-			ActorThread t = processMap.get(id_dest);
+			ActorThread t = executionUnitMap.get(id_dest);
 			biconsumer.accept(t, message.copy(dest));
 			t.newMessage();
 		}

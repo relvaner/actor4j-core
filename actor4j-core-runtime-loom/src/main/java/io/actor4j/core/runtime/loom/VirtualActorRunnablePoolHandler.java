@@ -22,12 +22,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.ActorProcessPoolHandler;
+import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
-public abstract class VirtualActorRunnablePoolHandler implements ActorProcessPoolHandler<VirtualActorRunnable> {
+public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionUnitPoolHandler<VirtualActorRunnable> {
 	protected final InternalActorSystem system;
 	protected final VirtualActorRunnablePool virtualActorRunnablePool;
 

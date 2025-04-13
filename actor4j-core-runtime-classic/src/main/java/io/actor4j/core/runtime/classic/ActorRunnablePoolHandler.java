@@ -17,10 +17,10 @@ package io.actor4j.core.runtime.classic;
 
 import java.util.UUID;
 
-import io.actor4j.core.runtime.AbstractActorProcessPoolHandler;
+import io.actor4j.core.runtime.AbstractActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorSystem;
 
-public class ActorRunnablePoolHandler extends AbstractActorProcessPoolHandler<ActorRunnable> {
+public class ActorRunnablePoolHandler extends AbstractActorExecutionUnitPoolHandler<ActorRunnable> {
 	public ActorRunnablePoolHandler(InternalActorSystem system) {
 		super(system);
 	}
@@ -30,7 +30,7 @@ public class ActorRunnablePoolHandler extends AbstractActorProcessPoolHandler<Ac
 		
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null)
-			result = processMap.get(id_dest);
+			result = executionUnitMap.get(id_dest);
 		
 		return result;
 	}

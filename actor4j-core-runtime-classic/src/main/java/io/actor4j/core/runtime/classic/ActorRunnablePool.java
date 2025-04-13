@@ -21,12 +21,12 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import io.actor4j.core.runtime.AbstractActorProcessPool;
+import io.actor4j.core.runtime.AbstractActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorSystemError;
-import io.actor4j.core.runtime.DefaultActorProcessPoolHandler;
+import io.actor4j.core.runtime.DefaultActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 
-public class ActorRunnablePool extends AbstractActorProcessPool<ActorRunnable> {
+public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunnable> {
 	protected final ExecutorService executorService;
 	
 	public ActorRunnablePool(InternalActorRuntimeSystem system) {
@@ -37,9 +37,9 @@ public class ActorRunnablePool extends AbstractActorProcessPool<ActorRunnable> {
 		executorService = new ForkJoinPool(poolSize);
 		
 		for (int i=0; i<poolSize; i++)
-			actorProcessList.add(new DefaultActorRunnable(system, i));
+			executionUnitList.add(new DefaultActorRunnable(system, i));
 		
-		((DefaultActorProcessPoolHandler<ActorRunnable>)actorProcessPoolHandler).beforeStart(actorProcessList);
+		((DefaultActorExecutionUnitPoolHandler<ActorRunnable>)executionUnitPoolHandler).beforeStart(executionUnitList);
 	}
 	
 	public void submit(Runnable runnable, UUID dest) {
@@ -64,6 +64,6 @@ public class ActorRunnablePool extends AbstractActorProcessPool<ActorRunnable> {
 	}
 	
 	public ActorRunnablePoolHandler getActorRunnablePoolHandler() {
-		return (ActorRunnablePoolHandler)actorProcessPoolHandler;
+		return (ActorRunnablePoolHandler)executionUnitPoolHandler;
 	}
 }

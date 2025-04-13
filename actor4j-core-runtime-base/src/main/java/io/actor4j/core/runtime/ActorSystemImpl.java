@@ -82,7 +82,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected final Queue<ActorMessage<?>> bufferQueue;
 	protected final ActorExecutorService executorService;
 	
-	protected final ActorStrategyOnFailure actorStrategyOnFailure;
+	protected final ActorStrategyOnFailure strategyOnFailure;
 	
 	protected final AtomicReference<CountDownLatch> countDownLatch;
 	protected final AtomicInteger countDownLatchPark;
@@ -122,7 +122,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		bufferQueue = new ConcurrentLinkedQueue<>();
 		executorService = createActorExecutorService();
 		
-		actorStrategyOnFailure = new DefaultActorStrategyOnFailure(this);
+		strategyOnFailure = new DefaultActorStrategyOnFailure(this);
 		
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
@@ -355,8 +355,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 
 	@Override
-	public ActorStrategyOnFailure getActorStrategyOnFailure() {
-		return actorStrategyOnFailure;
+	public ActorStrategyOnFailure getStrategyOnFailure() {
+		return strategyOnFailure;
 	}
 	
 	@Override
@@ -402,7 +402,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		}
 		catch(Exception e) {
 			getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
-			getActorStrategyOnFailure().handle(cell, e);
+			getStrategyOnFailure().handle(cell, e);
 		}
 	}
 

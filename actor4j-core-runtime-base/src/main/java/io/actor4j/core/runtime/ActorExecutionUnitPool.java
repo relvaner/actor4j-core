@@ -15,12 +15,16 @@
  */
 package io.actor4j.core.runtime;
 
-import io.actor4j.core.messages.ActorMessage;
+import java.util.List;
 
-public interface ActorProcessPoolHandler<P extends ActorProcess> {
-	public void postPersistence(ActorMessage<?> message);
+public interface ActorExecutionUnitPool<U extends ActorExecutionUnit> {
+	public void shutdown(Runnable onTermination, boolean await);
 	
-	public void registerCell(InternalActorCell cell);
-	public void unregisterCell(InternalActorCell cell);
-	public boolean isRegisteredCell(InternalActorCell cell);
+	public List<U> getExecutionUnitList();
+	public ActorExecutionUnitPoolHandler<U> getExecutionUnitPoolHandler();
+	
+	public List<Boolean> getExecutionUnitLoads();
+	public List<Long> getExecutionUnitTimeStatistics();
+	public long getCount();
+	public List<Long> getCounts();
 }

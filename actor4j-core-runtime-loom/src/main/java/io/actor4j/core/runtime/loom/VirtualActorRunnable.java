@@ -22,13 +22,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.ActorProcess;
+import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
-public abstract class VirtualActorRunnable implements Runnable, ActorProcess {
+public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUnit {
 	protected final UUID failsafeId;
 	
 	protected final InternalActorSystem system;
@@ -53,7 +53,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorProcess {
 	}
 	
 	@Override
-	public Object processId() {
+	public Object executionUnitId() {
 		return cell.getId(); 
 	}
 	

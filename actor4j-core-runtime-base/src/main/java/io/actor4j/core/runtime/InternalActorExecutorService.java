@@ -15,6 +15,6 @@
  */
 package io.actor4j.core.runtime;
 
-public interface InternalActorExecutorService<P extends ActorProcess> extends ActorExecutorService {
-	public ActorProcessPool<P> getActorProcessPool();
+public interface InternalActorExecutorService<U extends ActorExecutionUnit> extends ActorExecutorService {
+	public ActorExecutionUnitPool<U> getExecutionUnitPool();
 }

@@ -30,7 +30,7 @@ import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingBeforeStart {
-	public void registerCells(Map<UUID, Long> cellsMap, List<Long> processList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
+	public void registerCells(Map<UUID, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
 		List<UUID> buffer = new LinkedList<>();
 		for (InternalActorCell cell : cells.values()) 
 			if (!(cell.getActor() instanceof ResourceActor))
@@ -47,20 +47,20 @@ public class ActorLoadBalancingBeforeStart {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = processList.get(j);
+					threadId = executionUnitList.get(j);
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j);
 				}
 				else {
 					threadIndex++;
-					if (threadIndex==processList.size())
+					if (threadIndex==executionUnitList.size())
 						threadIndex = 0;
-					threadId = processList.get(threadIndex);
+					threadId = executionUnitList.get(threadIndex);
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
 				}
 				if (buffer.remove(cell.getId()))
 					cellsMap.put(cell.getId(), threadId);
 				j++;
-				if (j==processList.size())
+				if (j==executionUnitList.size())
 					j = 0;
 				
 				if (actor instanceof ActorGroupMember) {
@@ -73,10 +73,10 @@ public class ActorLoadBalancingBeforeStart {
 			else if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 				if (threadId==null) {
-					threadId = processList.get(i);
+					threadId = executionUnitList.get(i);
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
 					i++;
-					if (i==processList.size())
+					if (i==executionUnitList.size())
 						i = 0;
 				}
 				if (buffer.remove(cell.getId()))
@@ -86,9 +86,9 @@ public class ActorLoadBalancingBeforeStart {
 						
 		i=0;
 		for (UUID id : buffer) {
-			cellsMap.put(id, processList.get(i));
+			cellsMap.put(id, executionUnitList.get(i));
 			i++;
-			if (i==processList.size())
+			if (i==executionUnitList.size())
 				i = 0;
 		}
 			

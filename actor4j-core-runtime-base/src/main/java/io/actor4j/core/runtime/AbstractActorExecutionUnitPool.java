@@ -18,52 +18,52 @@ package io.actor4j.core.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractActorProcessPool<P extends ActorProcess> implements ActorProcessPool<P>{
+public abstract class AbstractActorExecutionUnitPool<U extends ActorExecutionUnit> implements ActorExecutionUnitPool<U>{
 	protected final InternalActorRuntimeSystem system;
 	
-	protected final List<P> actorProcessList;
-	protected final ActorProcessPoolHandler<P> actorProcessPoolHandler;
+	protected final List<U> executionUnitList;
+	protected final ActorExecutionUnitPoolHandler<U> executionUnitPoolHandler;
 
-	public AbstractActorProcessPool(InternalActorRuntimeSystem system, ActorProcessPoolHandler<P> actorProcessPoolHandler) {
+	public AbstractActorExecutionUnitPool(InternalActorRuntimeSystem system, ActorExecutionUnitPoolHandler<U> executionUnitPoolHandler) {
 		this.system = system;
-		this.actorProcessPoolHandler = actorProcessPoolHandler;
+		this.executionUnitPoolHandler = executionUnitPoolHandler;
 		
-		actorProcessList = new ArrayList<>();
+		executionUnitList = new ArrayList<>();
 	}
 	
 	public abstract void shutdown(Runnable onTermination, boolean await);
 	
 	@Override
-	public List<P> getActorProcessList() {
-		return actorProcessList;
+	public List<U> getExecutionUnitList() {
+		return executionUnitList;
 	}
 
 	@Override
-	public ActorProcessPoolHandler<P> getActorProcessPoolHandler() {
-		return actorProcessPoolHandler;
+	public ActorExecutionUnitPoolHandler<U> getExecutionUnitPoolHandler() {
+		return executionUnitPoolHandler;
 	}
 	
 	@Override
-	public List<Boolean> getProcessLoads() {
+	public List<Boolean> getExecutionUnitLoads() {
 		List<Boolean> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getLoad().get());
+		for (U u : executionUnitList)
+			list.add(u.getLoad().get());
 		return list;
 	}
 	
 	@Override
-	public List<Long> getProcessingTimeStatistics() {
+	public List<Long> getExecutionUnitTimeStatistics() {
 		List<Long> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getProcessingTimeStatistics());
+		for (U u : executionUnitList)
+			list.add(u.getProcessingTimeStatistics());
 		return list;
 	}
 	
 	@Override
 	public long getCount() {
 		long sum = 0;
-		for (P p : actorProcessList)
-			sum += p.getCount();
+		for (U u : executionUnitList)
+			sum += u.getCount();
 		
 		return sum;
 	}
@@ -71,8 +71,8 @@ public abstract class AbstractActorProcessPool<P extends ActorProcess> implement
 	@Override
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
-		for (P p : actorProcessList)
-			list.add(p.getCount());
+		for (U u : executionUnitList)
+			list.add(u.getCount());
 		return list;
 	}
 }

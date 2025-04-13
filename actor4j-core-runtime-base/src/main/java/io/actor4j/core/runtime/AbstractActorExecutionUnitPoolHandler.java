@@ -28,38 +28,38 @@ import io.actor4j.core.runtime.balancing.ActorLoadBalancingAfterStart;
 import io.actor4j.core.runtime.balancing.ActorLoadBalancingBeforeStart;
 import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
-public class AbstractActorProcessPoolHandler<P extends ActorProcess> implements DefaultActorProcessPoolHandler<P> {
+public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit> implements DefaultActorExecutionUnitPoolHandler<U> {
 	protected final InternalActorSystem system;
 	
 	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ProcessID
 	@Readonly
-	protected final Map<Long, P> processMap;
+	protected final Map<Long, U> executionUnitMap;
 	@Readonly
-	protected final List<Long> processList;
+	protected final List<Long> executionUnitList;
 	@Readonly
 	protected final Map<Long, String> persistenceMap;
 	
 	protected final Map<UUID, Long> groupsMap; // GroupID -> ProcessID
 	protected final Map<UUID, Integer> groupsDistributedMap; // GroupID -> ProcessIndex
 	
-	protected final ActorLoadBalancingBeforeStart actorLoadBalancingBeforeStart;
-	protected final ActorLoadBalancingAfterStart actorLoadBalancingAfterStart;
+	protected final ActorLoadBalancingBeforeStart loadBalancingBeforeStart;
+	protected final ActorLoadBalancingAfterStart loadBalancingAfterStart;
 	
-	public AbstractActorProcessPoolHandler(InternalActorSystem system) {
+	public AbstractActorExecutionUnitPoolHandler(InternalActorSystem system) {
 		super();
 		
 		this.system = system;
 		
 		cellsMap = new ConcurrentHashMap<>();
-		processMap = new HashMap<>();
-		processList = new ArrayList<>();
+		executionUnitMap = new HashMap<>();
+		executionUnitList = new ArrayList<>();
 		persistenceMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
 		groupsDistributedMap = new ConcurrentHashMap<>();
 		
-		actorLoadBalancingBeforeStart = new ActorLoadBalancingBeforeStart();
-		actorLoadBalancingAfterStart = new ActorLoadBalancingAfterStart();
+		loadBalancingBeforeStart = new ActorLoadBalancingBeforeStart();
+		loadBalancingAfterStart = new ActorLoadBalancingAfterStart();
 	}
 
 	@Override
@@ -68,26 +68,26 @@ public class AbstractActorProcessPoolHandler<P extends ActorProcess> implements 
 	}
 
 	@Override
-	public Map<Long, P> getProcessMap() {
-		return processMap;
+	public Map<Long, U> getExecutionUnitMap() {
+		return executionUnitMap;
 	}
 
 	@Override
-	public List<Long> getProcessList() {
-		return processList;
+	public List<Long> getExecutionUnitList() {
+		return executionUnitList;
 	}
 
 	@Override
-	public void beforeStart(List<P> actorProcessList) {
+	public void beforeStart(List<U> executionUnitListOfU) {
 		int i=0;
-		for(P p : actorProcessList) {
-			processMap.put(p.processIdAsLong(), p);
-			processList.add(p.processIdAsLong());
-			persistenceMap.put(p.processIdAsLong(), ActorPersistenceServiceImpl.getAlias(i));
+		for(U u : executionUnitListOfU) {
+			executionUnitMap.put(u.executionUnitIdAsLong(), u);
+			executionUnitList.add(u.executionUnitIdAsLong());
+			persistenceMap.put(u.executionUnitIdAsLong(), ActorPersistenceServiceImpl.getAlias(i));
 			i++;
 		}
 		
-		actorLoadBalancingBeforeStart.registerCells(cellsMap, processList, groupsMap, groupsDistributedMap, system.getCells());
+		loadBalancingBeforeStart.registerCells(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, system.getCells());
 	}
 	
 	@Override
@@ -99,12 +99,12 @@ public class AbstractActorProcessPoolHandler<P extends ActorProcess> implements 
 	
 	@Override
 	public void registerCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.registerCell(cellsMap, processList, groupsMap, groupsDistributedMap, cell);
+		loadBalancingAfterStart.registerCell(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
-		actorLoadBalancingAfterStart.unregisterCell(cellsMap, processList, groupsMap, groupsDistributedMap, cell);
+		loadBalancingAfterStart.unregisterCell(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	@Override

@@ -54,7 +54,7 @@ public class ActorLoadBalancingAfterStart {
 		k.set(0);
 	}
 	
-	public void registerCell(Map<UUID, Long> cellsMap, List<Long> processList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
+	public void registerCell(Map<UUID, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		lock.lock();
 		try {
 			Actor actor = cell.getActor();
@@ -62,19 +62,19 @@ public class ActorLoadBalancingAfterStart {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = processList.get(j.get());
+					threadId = executionUnitList.get(j.get());
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j.get());
 				}
 				else {
 					threadIndex++;
-					if (threadIndex==processList.size())
+					if (threadIndex==executionUnitList.size())
 						threadIndex = 0;
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
-					threadId = processList.get(threadIndex);
+					threadId = executionUnitList.get(threadIndex);
 				}
 				cellsMap.put(cell.getId(), threadId);
 				
-				j.updateAndGet((index) -> index==processList.size()-1 ? 0 : index+1);
+				j.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1);
 				
 				if (actor instanceof ActorGroupMember) {
 					if (groupsMap.get(((ActorGroupMember)actor).getGroupId())==null)
@@ -86,14 +86,14 @@ public class ActorLoadBalancingAfterStart {
 			else if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 				if (threadId==null) {
-					threadId = processList.get(i.updateAndGet((index) -> index==processList.size()-1 ? 0 : index+1));
+					threadId = executionUnitList.get(i.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
 				}
 				
 				cellsMap.put(cell.getId(), threadId);
 			}
 			else {
-				Long threadId = processList.get(k.updateAndGet((index) -> index==processList.size()-1 ? 0 : index+1));
+				Long threadId = executionUnitList.get(k.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
 				cellsMap.put(cell.getId(), threadId);
 			}
 		}
