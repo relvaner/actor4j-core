@@ -48,7 +48,19 @@ public interface PodActorMessage<T, U, P> extends ActorMessage<T> {
 	public static <T, U, P> PodActorMessage<T, U, P> create(T value, int tag, UUID source, UUID dest, UUID interaction, U user, String protocol, String domain) {
 		return create(value, tag, source, dest, interaction, user, null, protocol, domain);
 	}
-
+	
+	public static <T, U, P> PodActorMessage<T, U, P> createForForward(ActorMessage<T> message, UUID intercation, String domain) {
+		return createForForward(message, intercation, null, null, domain);
+	}
+	
+	public static <T, U, P> PodActorMessage<T, U, P> createForForward(ActorMessage<T> message, UUID intercation, U user, String domain) {
+		return createForForward(message, intercation, user, null, domain);
+	}
+	
+	public static <T, U, P> PodActorMessage<T, U, P> createForForward(ActorMessage<T> message, UUID intercation, U user, P params, String domain) {
+		return create(message.value(), message.tag(), message.source(), null, intercation, user, params, message.protocol(), domain);
+	}
+	
 	public static <T, U, P> PodActorMessage<T, U, P> create(T value, Enum<?> tag, UUID source, UUID dest) {
 		return create(value, tag.ordinal(), source, dest);
 	}
