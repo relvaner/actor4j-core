@@ -31,9 +31,13 @@ public interface ActorExecutionUnitPool<U extends ActorExecutionUnit> {
 	public List<Long> getCounts();
 	
 	public default List<ProcessingTimeStatistics> getProcessingTimeStatistics() {
+		return getProcessingTimeStatistics(-1);
+	}
+	
+	public default List<ProcessingTimeStatistics> getProcessingTimeStatistics(double zScoreThreshold) {
 		List<ProcessingTimeStatistics> list = new ArrayList<>();
 		for (U u : getExecutionUnitList())
-			list.add(u.getProcessingTimeStatistics());
+			list.add(u.getProcessingTimeStatistics(zScoreThreshold));
 		return list;
 	}
 	

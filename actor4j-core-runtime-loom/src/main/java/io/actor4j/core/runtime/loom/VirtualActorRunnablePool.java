@@ -235,7 +235,12 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	
 	@Override
 	public List<ProcessingTimeStatistics> getProcessingTimeStatistics() {
-		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(processingTimeSamples);
+		return getProcessingTimeStatistics(-1);
+	}
+	
+	@Override
+	public List<ProcessingTimeStatistics> getProcessingTimeStatistics(double zScoreThreshold) {
+		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(processingTimeSamples, zScoreThreshold);
 		processingTimeSampleCount.set(0);
 		
 		return List.of(result);

@@ -37,7 +37,11 @@ public interface ActorExecutionUnit extends Runnable {
 	public AtomicInteger getCellsProcessingTimeSampleCount();
 	
 	public default ProcessingTimeStatistics getProcessingTimeStatistics() {
-		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(getProcessingTimeSamples());
+		return getProcessingTimeStatistics(-1);
+	}
+	
+	public default ProcessingTimeStatistics getProcessingTimeStatistics(double zScoreThreshold) {
+		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(getProcessingTimeSamples(), zScoreThreshold);
 		getProcessingTimeSampleCount().set(0);
 		
 		return result;
