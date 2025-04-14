@@ -25,7 +25,7 @@ public class ActorRunnablePoolHandler extends AbstractActorExecutionUnitPoolHand
 		super(system);
 	}
 	
-	public ActorRunnable getActorProcess(UUID dest) {
+	public ActorRunnable getExecutionUnit(UUID dest) {
 		ActorRunnable result = null;
 		
 		Long id_dest = cellsMap.get(dest);

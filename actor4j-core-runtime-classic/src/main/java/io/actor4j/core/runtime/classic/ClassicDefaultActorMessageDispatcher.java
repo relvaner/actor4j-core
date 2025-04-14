@@ -175,7 +175,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		ActorRunnable actorRunnable = null;
 		
 		if (cell!=null) {
-			actorRunnable = ((ClassicInternalActorExecutorService)system.getExecutorService()).getActorRunnablePool().getActorRunnablePoolHandler().getActorProcess(destination);
+			actorRunnable = ((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().getRunnablePoolHandler().getExecutionUnit(destination);
 			if (actorRunnable!=null) {
 				if (directive) {
 					if (dest!=null)
@@ -203,7 +203,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		if (actorRunnable!=null && aquireAsScheduled(cell.getId())) {
 			AtomicBoolean isScheduled = isScheduledMap.get(cell.getId());
 			
-			((ClassicInternalActorExecutorService)system.getExecutorService()).getActorRunnablePool().submit(
+			((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().submit(
 					() -> actorRunnable.run(cell, isScheduled, this), cell.getId());
 		}
 	}

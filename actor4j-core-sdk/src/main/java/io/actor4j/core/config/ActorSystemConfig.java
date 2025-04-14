@@ -55,8 +55,10 @@ public class ActorSystemConfig {
 	
 	// Metrics
 	private final AtomicBoolean counterEnabled;
-	private final AtomicBoolean threadProcessingTimeEnabled;
-	private final int maxStatisticValues;
+	private final AtomicBoolean processingTimeEnabled;
+	private final int maxProcessingTimeSamples;
+	private final AtomicBoolean trackProcessingTimePerActor;
+	private final AtomicBoolean trackRequestRatePerActor;
 	
 	// Pods
 	private final boolean horizontalPodAutoscalerEnabled;
@@ -150,12 +152,20 @@ public class ActorSystemConfig {
 		return counterEnabled;
 	}
 	
-	public AtomicBoolean threadProcessingTimeEnabled() {
-		return threadProcessingTimeEnabled;
+	public AtomicBoolean processingTimeEnabled() {
+		return processingTimeEnabled;
 	}
 	
-	public int maxStatisticValues() {
-		return maxStatisticValues;
+	public int maxProcessingTimeSamples() {
+		return maxProcessingTimeSamples;
+	}
+	
+	public AtomicBoolean trackProcessingTimePerActor() {
+		return trackProcessingTimePerActor;
+	}
+	
+	public AtomicBoolean trackRequestRatePerActor() {
+		return trackRequestRatePerActor;
 	}
 	
 	public boolean horizontalPodAutoscalerEnabled() {
@@ -230,8 +240,10 @@ public class ActorSystemConfig {
 
 		// Metrics
 		protected boolean counterEnabled;
-		protected boolean threadProcessingTimeEnabled;
-		protected int maxStatisticValues;
+		protected boolean processingTimeEnabled;
+		protected int maxProcessingTimeSamples;
+		protected boolean trackProcessingTimePerActor;
+		protected boolean trackRequestRatePerActor;
 		
 		// Pods
 		protected boolean horizontalPodAutoscalerEnabled;
@@ -282,8 +294,10 @@ public class ActorSystemConfig {
 
 			// Metrics
 			counterEnabled = false;
-			threadProcessingTimeEnabled = false;
-			maxStatisticValues = 10_000;
+			processingTimeEnabled = false;
+			maxProcessingTimeSamples = 10_000;
+			trackProcessingTimePerActor = false;
+			trackRequestRatePerActor = false;
 
 			// Pods
 			horizontalPodAutoscalerEnabled = true;
@@ -317,8 +331,10 @@ public class ActorSystemConfig {
 			this.persistenceDriver = config.persistenceDriver();
 			this.persistenceMode = config.persistenceMode();
 			this.counterEnabled = config.counterEnabled().get();
-			this.threadProcessingTimeEnabled = config.threadProcessingTimeEnabled().get();
-			this.maxStatisticValues = config.maxStatisticValues();
+			this.processingTimeEnabled = config.processingTimeEnabled().get();
+			this.maxProcessingTimeSamples = config.maxProcessingTimeSamples();
+			this.trackProcessingTimePerActor = config.trackProcessingTimePerActor().get();
+			this.trackRequestRatePerActor = config.trackRequestRatePerActor().get();
 			this.horizontalPodAutoscalerEnabled = config.horizontalPodAutoscalerEnabled();
 			this.horizontalPodAutoscalerSyncTime = config.horizontalPodAutoscalerSyncTime();
 			this.horizontalPodAutoscalerMeasurementTime = config.horizontalPodAutoscalerMeasurementTime();
@@ -459,15 +475,27 @@ public class ActorSystemConfig {
 			return this;
 		}
 
-		public Builder<T> threadProcessingTimeEnabled(boolean enabled) {
-			threadProcessingTimeEnabled = enabled;
+		public Builder<T> processingTimeEnabled(boolean enabled) {
+			processingTimeEnabled = enabled;
 
 			return this;
 		}
 		
-		public Builder<T> maxStatisticValues(int maxStatisticValues) {
-			this.maxStatisticValues = maxStatisticValues;
+		public Builder<T> maxProcessingTimeSamples(int maxProcessingTimeSamples) {
+			this.maxProcessingTimeSamples = maxProcessingTimeSamples;
 			
+			return this;
+		}
+		
+		public Builder<T> trackProcessingTimePerActor(boolean enabled) {
+			trackProcessingTimePerActor = enabled;
+
+			return this;
+		}
+		
+		public Builder<T> trackRequestRatePerActor(boolean enabled) {
+			trackRequestRatePerActor = enabled;
+
 			return this;
 		}
 		
@@ -555,8 +583,10 @@ public class ActorSystemConfig {
 		this.persistenceDriver = builder.persistenceDriver;
 		this.persistenceMode = builder.persistenceMode;
 		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);
-		this.threadProcessingTimeEnabled = new AtomicBoolean(builder.threadProcessingTimeEnabled);
-		this.maxStatisticValues = builder.maxStatisticValues;
+		this.processingTimeEnabled = new AtomicBoolean(builder.processingTimeEnabled);
+		this.maxProcessingTimeSamples = builder.maxProcessingTimeSamples;
+		this.trackProcessingTimePerActor = new AtomicBoolean(builder.trackProcessingTimePerActor);
+		this.trackRequestRatePerActor = new AtomicBoolean(builder.trackRequestRatePerActor);
 		this.horizontalPodAutoscalerEnabled = builder.horizontalPodAutoscalerEnabled;
 		this.horizontalPodAutoscalerSyncTime = builder.horizontalPodAutoscalerSyncTime;
 		this.horizontalPodAutoscalerMeasurementTime = builder.horizontalPodAutoscalerMeasurementTime;

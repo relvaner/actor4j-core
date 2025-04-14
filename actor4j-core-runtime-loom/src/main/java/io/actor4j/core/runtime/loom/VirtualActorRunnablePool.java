@@ -38,6 +38,7 @@ import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
+import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
 public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualActorRunnable> {
 	protected final InternalActorRuntimeSystem system;
@@ -50,11 +51,10 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 
 	protected final AtomicLong counter;
 	
-	protected final AtomicInteger threadStatisticValuesCounter;
-	protected final Queue<Long> threadProcessingTimeStatistics;
+	protected final AtomicInteger processingTimeSampleCount;
+	protected final Queue<Long> processingTimeSamples;
 	
-	protected final AtomicInteger cellsStatisticValuesCounter;
-	protected final AtomicBoolean cellsProcessingTimeEnabled;
+	protected final AtomicInteger cellsProcessingTimeSampleCount;
 
 	public VirtualActorRunnablePool(InternalActorRuntimeSystem system, VirtualActorRunnablePoolHandlerFactory factory, boolean onlyResourceActors) {
 		super();
@@ -68,11 +68,10 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 		
 		counter = new AtomicLong(0);
 		
-		threadStatisticValuesCounter = new AtomicInteger(0);
-		threadProcessingTimeStatistics = new ConcurrentLinkedQueue<>();
+		processingTimeSampleCount = new AtomicInteger(0);
+		processingTimeSamples = new ConcurrentLinkedQueue<>();
 		
-		cellsStatisticValuesCounter = new AtomicInteger(0);
-		cellsProcessingTimeEnabled = new AtomicBoolean(false);
+		cellsProcessingTimeSampleCount = new AtomicInteger(0);
 		
 		for (InternalActorCell cell : system.getCells().values())
 			if (onlyResourceActors) {
@@ -144,8 +143,12 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 			else
 				started.set(false);
 		}
-		else
+		else {
+			if (onTermination!=null)
+				onTermination.run();
+			
 			started.set(false);	
+		}
 	}
 
 	public VirtualActorRunnablePoolHandler getVirtualActorRunnablePoolHandler() {
@@ -154,22 +157,22 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 
 	public void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
-			if (system.getConfig().threadProcessingTimeEnabled().get() || cellsProcessingTimeEnabled.get()) {
-				boolean threadStatisticsEnabled = threadStatisticValuesCounter.get()<system.getConfig().maxStatisticValues();
-				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.getConfig().maxStatisticValues();
+			if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
+				boolean statisticsEnabled = processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+				boolean cellsStatisticsEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
 				
-				if (cellsStatisticsEnabled) {
+				if (statisticsEnabled || cellsStatisticsEnabled) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
 
-					if (threadStatisticsEnabled && system.getConfig().threadProcessingTimeEnabled().get()) {
-						threadProcessingTimeStatistics.offer(stopTime-startTime);
-						threadStatisticValuesCounter.incrementAndGet();
+					if (statisticsEnabled && system.getConfig().processingTimeEnabled().get()) {
+						processingTimeSamples.offer(stopTime-startTime);
+						processingTimeSampleCount.incrementAndGet();
 					}
-					if (cellsStatisticsEnabled && cellsProcessingTimeEnabled.get()) {
-						cell.getProcessingTimeStatistics().offer(stopTime-startTime);
-						cellsStatisticValuesCounter.incrementAndGet();
+					if (cellsStatisticsEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+						cell.getProcessingTimeSamples().offer(stopTime-startTime);
+						cellsProcessingTimeSampleCount.incrementAndGet();
 					}
 				}
 				else
@@ -227,33 +230,43 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 
 	@Override
 	public List<Boolean> getExecutionUnitLoads() {
-		// Not used!
-		return null;
-	}
-	
-	public long getProcessingTimeStatisticsSum() {
-		long sum = 0;
-		int count = 0;
-		for (Long value=null; (value=threadProcessingTimeStatistics.poll())!=null; count++) 
-			sum += value;
-		threadStatisticValuesCounter.set(0);
-		
-		return sum>0 ? sum/count : 0;
+		return List.of();
 	}
 	
 	@Override
-	public List<Long> getExecutionUnitTimeStatistics() {
-		List<Long> list = new ArrayList<>();
-		list.add(getProcessingTimeStatisticsSum());
-		return list;
+	public List<ProcessingTimeStatistics> getProcessingTimeStatistics() {
+		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(processingTimeSamples);
+		processingTimeSampleCount.set(0);
+		
+		return List.of(result);
 	}
 	
-	public AtomicInteger getCellsStatisticValuesCounter() {
-		return cellsStatisticValuesCounter;
-	}
-
-	public AtomicBoolean getCellsProcessingTimeEnabled() {
-		return cellsProcessingTimeEnabled;
+	@Override
+	public List<Long> getMeanProcessingTime() {
+		long result = ProcessingTimeStatistics.meanProcessingTime(processingTimeSamples);
+		processingTimeSampleCount.set(0);
+		
+		return List.of(result);
 	}
 	
+	@Override
+	public List<Long> getMedianProcessingTime() {
+		long result = ProcessingTimeStatistics.medianProcessingTime(processingTimeSamples);
+		processingTimeSamples.clear();
+		processingTimeSampleCount.set(0);
+		
+		return List.of(result);
+	}
+	
+	public Queue<Long> getProcessingTimeSamples() {
+		return processingTimeSamples;
+	}
+	
+	public AtomicInteger getProcessingTimeSampleCount() {
+		return processingTimeSampleCount;
+	}
+	
+	public AtomicInteger getCellsProcessingTimeSampleCount() {
+		return cellsProcessingTimeSampleCount;
+	}
 }

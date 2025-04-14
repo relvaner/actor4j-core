@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package io.actor4j.core.runtime;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
 public interface ActorExecutionUnitPool<U extends ActorExecutionUnit> {
 	public void shutdown(Runnable onTermination, boolean await);
@@ -24,7 +27,27 @@ public interface ActorExecutionUnitPool<U extends ActorExecutionUnit> {
 	public ActorExecutionUnitPoolHandler<U> getExecutionUnitPoolHandler();
 	
 	public List<Boolean> getExecutionUnitLoads();
-	public List<Long> getExecutionUnitTimeStatistics();
 	public long getCount();
 	public List<Long> getCounts();
+	
+	public default List<ProcessingTimeStatistics> getProcessingTimeStatistics() {
+		List<ProcessingTimeStatistics> list = new ArrayList<>();
+		for (U u : getExecutionUnitList())
+			list.add(u.getProcessingTimeStatistics());
+		return list;
+	}
+	
+	public default List<Long> getMeanProcessingTime() {
+		List<Long> list = new ArrayList<>();
+		for (U u : getExecutionUnitList())
+			list.add(u.getMeanProcessingTime());
+		return list;
+	}
+	
+	public default List<Long> getMedianProcessingTime() {
+		List<Long> list = new ArrayList<>();
+		for (U u : getExecutionUnitList())
+			list.add(u.getMedianProcessingTime());
+		return list;
+	}
 }

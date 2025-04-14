@@ -55,15 +55,39 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	@Override
 	public void shutdown(Runnable onTermination, boolean await) {
 		executorService.shutdownNow();
-		if (await)
-			try {
-				executorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		
+		if (onTermination!=null || await) {
+			Thread waitOnTermination = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						executorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+					
+//					try {
+//						Thread.sleep(100);
+//					} catch (InterruptedException e) {
+//						Thread.currentThread().interrupt();
+//					}
+
+					if (onTermination!=null)
+						onTermination.run();
+				}
+			});
+			
+			waitOnTermination.start();
+			if (await)
+				try {
+					waitOnTermination.join();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+		}
 	}
 	
-	public ActorRunnablePoolHandler getActorRunnablePoolHandler() {
+	public ActorRunnablePoolHandler getRunnablePoolHandler() {
 		return (ActorRunnablePoolHandler)executionUnitPoolHandler;
 	}
 }

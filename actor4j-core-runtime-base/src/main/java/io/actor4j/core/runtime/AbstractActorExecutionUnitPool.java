@@ -52,14 +52,6 @@ public abstract class AbstractActorExecutionUnitPool<U extends ActorExecutionUni
 	}
 	
 	@Override
-	public List<Long> getExecutionUnitTimeStatistics() {
-		List<Long> list = new ArrayList<>();
-		for (U u : executionUnitList)
-			list.add(u.getProcessingTimeStatistics());
-		return list;
-	}
-	
-	@Override
 	public long getCount() {
 		long sum = 0;
 		for (U u : executionUnitList)

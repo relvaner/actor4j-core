@@ -18,6 +18,7 @@ package io.actor4j.core.runtime.loom;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiConsumer;
@@ -59,7 +60,8 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 			if (hasNextOuter==0 && hasNextDirective==0)
 				LockSupport.park(Thread.currentThread());
 			else {
-//		      	cell.getRequestRate().addAndGet(hasNextDirective+hasNextOuter);
+				if (system.getConfig().trackRequestRatePerActor().get())
+					cell.getRequestRate().addAndGet(hasNextDirective+hasNextOuter);
 				if (system.getConfig().counterEnabled().get())
 					counter.addAndGet(hasNextDirective+hasNextOuter);
 			}
@@ -94,8 +96,20 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	}
 
 	@Override
-	public long getProcessingTimeStatistics() {
+	public Queue<Long> getProcessingTimeSamples() {
 		// Not used!
-		return 0;
+		return null;
+	}
+	
+	@Override
+	public AtomicInteger getProcessingTimeSampleCount() {
+		// Not used!
+		return null;
+	}
+	
+	@Override
+	public AtomicInteger getCellsProcessingTimeSampleCount() {
+		// Not used!
+		return null;
 	}
 }

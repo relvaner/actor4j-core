@@ -15,7 +15,9 @@
  */
 package io.actor4j.core.runtime.classic;
 
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -35,10 +37,12 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	protected final InternalActorSystem system;
 	
 	protected final AtomicLong counter;
-	protected final AtomicBoolean threadLoad;
+	protected final AtomicBoolean load;
 	
-	protected final AtomicInteger cellsStatisticValuesCounter;
-	protected final AtomicBoolean cellsProcessingTimeEnabled;
+	protected final AtomicInteger processingTimeSampleCount;
+	protected final Queue<Long> processingTimeSamples;
+	
+	protected final AtomicInteger cellsProcessingTimeSampleCount;
 	
 	public ActorRunnable(InternalActorSystem system, long id) {
 		super();
@@ -47,11 +51,13 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 		this.id = id;
 		failsafeId = UUID.randomUUID();
 
-		threadLoad = new AtomicBoolean(false);
+		load = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
 		
-		cellsStatisticValuesCounter = new AtomicInteger(0);
-		cellsProcessingTimeEnabled = new AtomicBoolean(false);
+		processingTimeSampleCount = new AtomicInteger(0);
+		processingTimeSamples = new ConcurrentLinkedQueue<>();
+		
+		cellsProcessingTimeSampleCount = new AtomicInteger(0);
 	}
 
 	@Override
@@ -61,17 +67,22 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
-			if (cellsProcessingTimeEnabled.get()) {
-				boolean cellsStatisticsEnabled = cellsStatisticValuesCounter.get()<system.getConfig().maxStatisticValues();
+			if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
+				boolean statisticsEnabled = processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+				boolean cellsStatisticsEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
 				
-				if (cellsStatisticsEnabled) {
+				if (statisticsEnabled || cellsStatisticsEnabled) {
 					long startTime = System.nanoTime();
 					cell.internal_receive(message);
 					long stopTime = System.nanoTime();
 
-					if (cellsStatisticsEnabled && cellsProcessingTimeEnabled.get()) {
-						cell.getProcessingTimeStatistics().offer(stopTime-startTime);
-						cellsStatisticValuesCounter.incrementAndGet();
+					if (statisticsEnabled && system.getConfig().processingTimeEnabled().get()) {
+						processingTimeSamples.offer(stopTime-startTime);
+						processingTimeSampleCount.incrementAndGet();
+					}
+					if (cellsStatisticsEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+						cell.getProcessingTimeSamples().offer(stopTime-startTime);
+						cellsProcessingTimeSampleCount.incrementAndGet();
 					}
 				}
 				else
@@ -125,19 +136,22 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	@Override
 	public AtomicBoolean getLoad() {
-		return threadLoad;
+		// not used
+		return load;
 	}
 	
 	@Override
-	public long getProcessingTimeStatistics() {
-		return 0; // TODO
+	public Queue<Long> getProcessingTimeSamples() {
+		return processingTimeSamples;
 	}
 	
-	public AtomicInteger getCellsStatisticValuesCounter() {
-		return cellsStatisticValuesCounter;
+	@Override
+	public AtomicInteger getProcessingTimeSampleCount() {
+		return processingTimeSampleCount;
 	}
-
-	public AtomicBoolean getCellsProcessingTimeEnabled() {
-		return cellsProcessingTimeEnabled;
+	
+	@Override
+	public AtomicInteger getCellsProcessingTimeSampleCount() {
+		return cellsProcessingTimeSampleCount;
 	}
 }

@@ -84,7 +84,7 @@ public class BaseActorCell implements InternalActorCell {
 	protected final Queue<PersistenceTuple> persistenceTuples;
 	
 	protected final AtomicLong requestRate;
-	protected final Queue<Long> processingTimeStatistics;
+	protected final Queue<Long> processingTimeSamples;
 	
 	protected SupervisorStrategy parentSupervisorStrategy;
 	
@@ -173,7 +173,7 @@ public class BaseActorCell implements InternalActorCell {
 		persistenceTuples = new LinkedList<>();
 		
 		requestRate = new AtomicLong(0);
-		processingTimeStatistics = new ConcurrentLinkedQueue<>();
+		processingTimeSamples = new ConcurrentLinkedQueue<>();
 	}
 	
 	@Override
@@ -525,8 +525,8 @@ public class BaseActorCell implements InternalActorCell {
 	}
 
 	@Override
-	public Queue<Long> getProcessingTimeStatistics() {
-		return processingTimeStatistics;
+	public Queue<Long> getProcessingTimeSamples() {
+		return processingTimeSamples;
 	}
 
 	@Override

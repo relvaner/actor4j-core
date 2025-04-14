@@ -30,7 +30,7 @@ public class ClassicDefaultActorExecutorService extends ActorExecutorServiceImpl
 	}
 	
 	@Override
-	public ActorRunnablePool getActorRunnablePool() {
+	public ActorRunnablePool getRunnablePool() {
 		return (ActorRunnablePool)executionUnitPool;
 	}
 }

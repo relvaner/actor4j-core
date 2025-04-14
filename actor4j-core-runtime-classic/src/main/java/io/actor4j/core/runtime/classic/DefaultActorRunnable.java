@@ -38,7 +38,8 @@ public class DefaultActorRunnable extends ActorRunnable {
 		for (; (msg=cell.directiveQueue().poll())!=null; hasDirective++) 
 			faultToleranceMethod(msg, cell);
 		
-//      cell.getRequestRate().addAndGet(hasDirective+hasNextOuter);
+		if (system.getConfig().trackRequestRatePerActor().get())
+			cell.getRequestRate().addAndGet(hasDirective+hasNextOuter);
 		if (system.getConfig().counterEnabled().get())
 			counter.addAndGet(hasDirective+hasNextOuter);
 	}

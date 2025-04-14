@@ -15,7 +15,11 @@
  */
 package io.actor4j.core.runtime;
 
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
 public interface ActorExecutionUnit extends Runnable {
 	public Object executionUnitId();
@@ -26,5 +30,31 @@ public interface ActorExecutionUnit extends Runnable {
 	
 	public long getCount();
 	public AtomicBoolean getLoad();
-	public long getProcessingTimeStatistics();
+	
+	public Queue<Long> getProcessingTimeSamples();
+	public AtomicInteger getProcessingTimeSampleCount();
+	
+	public AtomicInteger getCellsProcessingTimeSampleCount();
+	
+	public default ProcessingTimeStatistics getProcessingTimeStatistics() {
+		ProcessingTimeStatistics result = ProcessingTimeStatistics.of(getProcessingTimeSamples());
+		getProcessingTimeSampleCount().set(0);
+		
+		return result;
+	}
+	
+	public default long getMeanProcessingTime() {
+		long result = ProcessingTimeStatistics.meanProcessingTime(getProcessingTimeSamples());
+		getProcessingTimeSampleCount().set(0);
+		
+		return result;
+	}
+	
+	public default long getMedianProcessingTime() {
+		long result = ProcessingTimeStatistics.medianProcessingTime(getProcessingTimeSamples());
+		getProcessingTimeSamples().clear();
+		getProcessingTimeSampleCount().set(0);
+		
+		return result;
+	}
 }

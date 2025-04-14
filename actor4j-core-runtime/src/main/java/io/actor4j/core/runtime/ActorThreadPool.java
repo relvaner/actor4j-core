@@ -89,24 +89,24 @@ public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread>
 		}
 	}
 	
-	public ActorThreadPoolHandler getActorThreadPoolHandler() {
+	public ActorThreadPoolHandler getThreadPoolHandler() {
 		return (ActorThreadPoolHandler)executionUnitPoolHandler;
 	}
 	
 	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
-		return getActorThreadPoolHandler().postInnerOuter(message, source);
+		return getThreadPoolHandler().postInnerOuter(message, source);
 	}
 	
 	public boolean postOuter(ActorMessage<?> message) {
-		return getActorThreadPoolHandler().postOuter(message);
+		return getThreadPoolHandler().postOuter(message);
 	}
 	
 	public boolean postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
-		return getActorThreadPoolHandler().postQueue(message, biconsumer);
+		return getThreadPoolHandler().postQueue(message, biconsumer);
 	}
 	
 	public void postPersistence(ActorMessage<?> message) {
-		getActorThreadPoolHandler().postPersistence(message);
+		getThreadPoolHandler().postPersistence(message);
 	}
 	
 	public List<Integer> getWorkerInnerQueueSizes() {

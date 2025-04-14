@@ -25,7 +25,7 @@ public class DefaultActorExecutorService extends ActorExecutorServiceImpl<ActorT
 	}
 
 	@Override
-	public ActorThreadPool getActorThreadPool() {
+	public ActorThreadPool getThreadPool() {
 		return (ActorThreadPool)executionUnitPool;
 	}
 }

@@ -53,5 +53,5 @@ public interface InternalActorCell extends ActorCell {
 	public void internal_stop();
 	
 	public AtomicLong getRequestRate();
-	public Queue<Long> getProcessingTimeStatistics();
+	public Queue<Long> getProcessingTimeSamples();
 }

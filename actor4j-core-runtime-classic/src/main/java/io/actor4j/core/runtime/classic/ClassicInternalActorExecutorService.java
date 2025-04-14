@@ -18,5 +18,5 @@ package io.actor4j.core.runtime.classic;
 import io.actor4j.core.runtime.ActorExecutorService;
 
 public interface ClassicInternalActorExecutorService extends ActorExecutorService {
-	public ActorRunnablePool getActorRunnablePool();
+	public ActorRunnablePool getRunnablePool();
 }
