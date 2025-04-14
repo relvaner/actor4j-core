@@ -15,14 +15,14 @@
  */
 package io.actor4j.core.runtime.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
-public record ProcessingTimeStatistics(long mean, long median, long min, long max) {
+public record ProcessingTimeStatistics(double mean, double median, double sd, long min, long max, int count) {
 	public static ProcessingTimeStatistics of(Queue<Long> values) {
-		long median = medianProcessingTime(values);
+		Queue<Long> copyOfValues = new LinkedList<>(values);
 		
 		long sum = 0, min = 0, max = 0;
 		int count = 0;
@@ -32,29 +32,53 @@ public record ProcessingTimeStatistics(long mean, long median, long min, long ma
 			max = Math.max(max, value);
 		}
 		
-		return new ProcessingTimeStatistics(count>0 ? sum/count : 0, median, min , max);
+		double mean = 0, median = 0, sd = 0;
+		if (count>0) {
+			mean = (double)sum/count;
+			median = medianProcessingTime(copyOfValues);
+			sd = standardDeviationProcessingTime(copyOfValues, mean);
+		}
+		
+		return new ProcessingTimeStatistics(mean, median, sd, min, max, count);
 	}
 	
-	public static long meanProcessingTime(Queue<Long> values) {
+	public static double meanProcessingTime(Queue<Long> values) {
 		long sum = 0;
 		int count = 0;
 		for (Long value=null; (value=values.poll())!=null; count++) 
 			sum += value;
 		
-		return count>0 ? sum/count : 0;
+		return count>0 ? (double)sum/count : 0;
 	}
 	
-	public static long medianProcessingTime(Queue<Long> values) {
+	public static double medianProcessingTime(Queue<Long> values) {
 		if (values.size()>0) {
-			List<Long> sorted = new ArrayList<>(values);
-			Collections.sort(sorted);
-			int size = sorted.size();
+			List<Long> sortedList = values.stream().sorted().collect(Collectors.toList());
+
+			int size = sortedList.size();
 			if (size % 2 == 0) 
-				return (sorted.get(size/2 -1) + sorted.get(size/2)) / 2;
+				return (sortedList.get(size/2 -1) + sortedList.get(size/2)) / 2d;
 			else
-				return sorted.get(size/2);
+				return sortedList.get(size/2);
 		}
 		else
 			return 0;
+	}
+	
+	public static double standardDeviationProcessingTime(Queue<Long> values, double mean) {
+		double variance = values.stream().mapToDouble(v -> Math.pow(v - mean, 2)).sum() / values.size();
+		
+		return Math.sqrt(variance);
+	}
+	
+	public String describe() {
+		return describe(0);
+	}
+	
+	public String describe(int precision) {
+		String floatFormat = "%." + precision + "f";
+		
+		return String.format("mean="+floatFormat+", median="+floatFormat+", sd="+floatFormat+", min=%d, max=%d, count=%d", 
+			mean, median, sd, min, max, count);
 	}
 }

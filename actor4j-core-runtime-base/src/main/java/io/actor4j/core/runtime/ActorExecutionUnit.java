@@ -43,15 +43,15 @@ public interface ActorExecutionUnit extends Runnable {
 		return result;
 	}
 	
-	public default long getMeanProcessingTime() {
-		long result = ProcessingTimeStatistics.meanProcessingTime(getProcessingTimeSamples());
+	public default double getMeanProcessingTime() {
+		double result = ProcessingTimeStatistics.meanProcessingTime(getProcessingTimeSamples());
 		getProcessingTimeSampleCount().set(0);
 		
 		return result;
 	}
 	
-	public default long getMedianProcessingTime() {
-		long result = ProcessingTimeStatistics.medianProcessingTime(getProcessingTimeSamples());
+	public default double getMedianProcessingTime() {
+		double result = ProcessingTimeStatistics.medianProcessingTime(getProcessingTimeSamples());
 		getProcessingTimeSamples().clear();
 		getProcessingTimeSampleCount().set(0);
 		

@@ -37,15 +37,15 @@ public interface ActorExecutionUnitPool<U extends ActorExecutionUnit> {
 		return list;
 	}
 	
-	public default List<Long> getMeanProcessingTime() {
-		List<Long> list = new ArrayList<>();
+	public default List<Double> getMeanProcessingTime() {
+		List<Double> list = new ArrayList<>();
 		for (U u : getExecutionUnitList())
 			list.add(u.getMeanProcessingTime());
 		return list;
 	}
 	
-	public default List<Long> getMedianProcessingTime() {
-		List<Long> list = new ArrayList<>();
+	public default List<Double> getMedianProcessingTime() {
+		List<Double> list = new ArrayList<>();
 		for (U u : getExecutionUnitList())
 			list.add(u.getMedianProcessingTime());
 		return list;
