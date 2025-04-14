@@ -27,7 +27,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 	}
 	
 	public static ProcessingTimeStatistics of(Queue<Long> values, double zScoreThreshold) {
-		Queue<Long> copyOfValues = new LinkedList<>(values);
+		Queue<Long> copyOfValues = new LinkedList<>();
 		
 		long sum = 0, min = 0, max = 0, count = 0;
 		for (Long value=null; (value=values.poll())!=null; count++) {
@@ -36,6 +36,8 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 				min = Math.min(min, value);
 				max = Math.max(max, value);
 			}
+			
+			copyOfValues.add(value);
 		}
 		
 		double mean = 0, median = 0, sd = 0;
@@ -51,11 +53,11 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 					.collect(Collectors.toCollection(LinkedList::new));
 				LongSummaryStatistics statistics = copyOfValues.stream().mapToLong(Long::longValue).summaryStatistics();
 				mean = statistics.getAverage();
-				median = medianProcessingTime(copyOfValues);
-				sd = standardDeviationProcessingTime(copyOfValues, mean);
 				min = statistics.getMin();
 				max = statistics.getMax();
 				count = statistics.getCount();	
+				median = medianProcessingTime(copyOfValues);
+				sd = standardDeviationProcessingTime(copyOfValues, mean);
 			}
 		}
 		
