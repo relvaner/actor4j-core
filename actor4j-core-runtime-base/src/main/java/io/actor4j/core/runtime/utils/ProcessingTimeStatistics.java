@@ -21,7 +21,7 @@ import java.util.LongSummaryStatistics;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public record ProcessingTimeStatistics(double mean, double median, double sd, long min, long max, long count) {
+public record ProcessingTimeStatistics(double mean, double median, double sd, double skewness, long min, long max, long count) {
 	public static ProcessingTimeStatistics of(Queue<Long> values) {
 		return of(values, -1);
 	}
@@ -29,7 +29,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 	public static ProcessingTimeStatistics of(Queue<Long> values, double zScoreThreshold) {
 		Queue<Long> copyOfValues = new LinkedList<>();
 		
-		long sum = 0, min = 0, max = 0, count = 0;
+		long sum = 0, min = Long.MAX_VALUE, max = 0, count = 0;
 		for (Long value=null; (value=values.poll())!=null; count++) {
 			sum += value;
 			if (zScoreThreshold<0) {
@@ -40,13 +40,11 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 			copyOfValues.add(value);
 		}
 		
-		double mean = 0, median = 0, sd = 0;
+		double mean = 0, median = 0, sd = 0, skewness = 0;
 		if (count>0) {
 			mean = (double)sum/count;
 			sd = standardDeviationProcessingTime(copyOfValues, mean);
-			if (zScoreThreshold<0)
-				median = medianProcessingTime(copyOfValues);
-			else {
+			if (zScoreThreshold>=0) {
 				final double mean_ = mean;
 				final double sd_ = sd;
 				copyOfValues = copyOfValues.stream().filter(v -> Math.abs(calculateZScore(v, mean_, sd_)) <= zScoreThreshold)
@@ -56,12 +54,14 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 				min = statistics.getMin();
 				max = statistics.getMax();
 				count = statistics.getCount();	
-				median = medianProcessingTime(copyOfValues);
 				sd = standardDeviationProcessingTime(copyOfValues, mean);
 			}
+			
+			median = medianProcessingTime(copyOfValues);
+			skewness = calculateSkewness(copyOfValues, mean, sd);
 		}
 		
-		return new ProcessingTimeStatistics(mean, median, sd, min, max, count);
+		return new ProcessingTimeStatistics(mean, median, sd, skewness, min, max, count);
 	}
 	
 	public static double meanProcessingTime(Queue<Long> values) {
@@ -88,9 +88,15 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 	}
 	
 	public static double standardDeviationProcessingTime(Queue<Long> values, double mean) {
-		double variance = values.stream().mapToDouble(v -> Math.pow(v-mean, 2)).sum()/values.size();
+		double variance = values.stream().mapToDouble(v -> Math.pow(v-mean, 2)).sum()/(values.size()-1);
 		
 		return Math.sqrt(variance);
+	}
+	
+	public static double calculateSkewness(Queue<Long> values, double mean, double sd) {
+		double numerator = values.stream().mapToDouble(v -> Math.pow(v-mean, 3)).sum();
+		
+		return numerator/((values.size()-1)*Math.pow(sd, 3));
 	}
 	
 	public static double calculateZScore(long value, double mean, double sd) {
@@ -107,7 +113,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, lo
 	public String describe(int precision) {
 		String floatFormat = "%." + precision + "f";
 		
-		return String.format("mean="+floatFormat+", median="+floatFormat+", sd="+floatFormat+", min=%d, max=%d, count=%d", 
-			mean, median, sd, min, max, count);
+		return String.format("mean="+floatFormat+", median="+floatFormat+", sd="+floatFormat+", skewness="+floatFormat+", min=%d, max=%d, count=%d", 
+			mean, median, sd, skewness, min, max, count);
 	}
 }
