@@ -43,7 +43,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, do
 		double mean = 0, median = 0, sd = 0, skewness = 0;
 		if (count>0) {
 			mean = (double)sum/count;
-			sd = standardDeviationProcessingTime(copyOfValues, mean);
+			sd = calculateStandardDeviation(copyOfValues, mean);
 			if (zScoreThreshold>=0) {
 				final double mean_ = mean;
 				final double sd_ = sd;
@@ -54,17 +54,17 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, do
 				min = statistics.getMin();
 				max = statistics.getMax();
 				count = statistics.getCount();	
-				sd = standardDeviationProcessingTime(copyOfValues, mean);
+				sd = calculateStandardDeviation(copyOfValues, mean);
 			}
 			
-			median = medianProcessingTime(copyOfValues);
+			median = calculateMedian(copyOfValues);
 			skewness = calculateSkewness(copyOfValues, mean, sd);
 		}
 		
 		return new ProcessingTimeStatistics(mean, median, sd, skewness, min, max, count);
 	}
 	
-	public static double meanProcessingTime(Queue<Long> values) {
+	public static double calculateMean(Queue<Long> values) {
 		long sum = 0;
 		int count = 0;
 		for (Long value=null; (value=values.poll())!=null; count++) 
@@ -73,7 +73,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, do
 		return count>0 ? (double)sum/count : 0;
 	}
 	
-	public static double medianProcessingTime(Queue<Long> values) {
+	public static double calculateMedian(Queue<Long> values) {
 		if (values.size()>0) {
 			List<Long> sortedList = values.stream().sorted().collect(Collectors.toList());
 
@@ -87,7 +87,7 @@ public record ProcessingTimeStatistics(double mean, double median, double sd, do
 			return 0;
 	}
 	
-	public static double standardDeviationProcessingTime(Queue<Long> values, double mean) {
+	public static double calculateStandardDeviation(Queue<Long> values, double mean) {
 		double variance = values.stream().mapToDouble(v -> Math.pow(v-mean, 2)).sum()/(values.size()-1);
 		
 		return Math.sqrt(variance);

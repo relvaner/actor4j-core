@@ -248,7 +248,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	
 	@Override
 	public List<Double> getMeanProcessingTime() {
-		double result = ProcessingTimeStatistics.meanProcessingTime(processingTimeSamples);
+		double result = ProcessingTimeStatistics.calculateMean(processingTimeSamples);
 		processingTimeSampleCount.set(0);
 		
 		return List.of(result);
@@ -256,7 +256,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	
 	@Override
 	public List<Double> getMedianProcessingTime() {
-		double result = ProcessingTimeStatistics.medianProcessingTime(processingTimeSamples);
+		double result = ProcessingTimeStatistics.calculateMedian(processingTimeSamples);
 		processingTimeSamples.clear();
 		processingTimeSampleCount.set(0);
 		
