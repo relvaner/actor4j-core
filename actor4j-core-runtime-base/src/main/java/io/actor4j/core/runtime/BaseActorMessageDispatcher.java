@@ -24,25 +24,29 @@ public abstract class BaseActorMessageDispatcher extends ActorMessageDispatcher 
 		super(system);
 	}
 	
+	public ActorExecutionUnitPoolHandler<?> getExecutionUnitPoolHandler() {
+		return ((InternalActorExecutorService<?>)system.getExecutorService()).getExecutionUnitPool().getExecutionUnitPoolHandler();
+	}
+	
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		((InternalActorExecutorService<?>)system.getExecutorService()).getExecutionUnitPool().getExecutionUnitPoolHandler().postPersistence(message);
+		getExecutionUnitPoolHandler().postPersistence(message);
 	}
 	
 	@Override
 	public void registerCell(InternalActorCell cell) {
 		if (!(cell.getActor() instanceof ResourceActor))
-			((InternalActorExecutorService<?>)system.getExecutorService()).getExecutionUnitPool().getExecutionUnitPoolHandler().registerCell(cell);
+			getExecutionUnitPoolHandler().registerCell(cell);
 	}
 	
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
 		if (!(cell.getActor() instanceof ResourceActor) && !(cell.getActor() instanceof PseudoActor))
-			((InternalActorExecutorService<?>)system.getExecutorService()).getExecutionUnitPool().getExecutionUnitPoolHandler().unregisterCell(cell);
+			getExecutionUnitPoolHandler().unregisterCell(cell);
 	}
 	
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return ((InternalActorExecutorService<?>)system.getExecutorService()).getExecutionUnitPool().getExecutionUnitPoolHandler().isRegisteredCell(cell);
+		return getExecutionUnitPoolHandler().isRegisteredCell(cell);
 	}
 }
