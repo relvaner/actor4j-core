@@ -31,11 +31,15 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	protected final Queue<ActorMessage<?>> directiveQueue;
 	protected final Queue<ActorMessage<?>> outerQueue;
 	
+	protected volatile boolean parked;
+	
 	public DefaultVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, BiConsumer<ActorMessage<?>, InternalActorCell> failsafeMethod, Runnable onTermination, AtomicLong counter) {
 		super(system, cell, failsafeMethod, onTermination, counter);
 
 		directiveQueue = new ConcurrentLinkedQueue<>();
 		outerQueue = new ConcurrentLinkedQueue<>();
+		
+		parked = false;
 	}
 	
 	@Override
@@ -57,8 +61,13 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
 				faultToleranceMethod.accept(msg, cell);
 			
-			if (hasNextOuter==0 && hasNextDirective==0)
+			if (hasNextOuter==0 && hasNextDirective==0) {
+				parked = true;
 				LockSupport.park(Thread.currentThread());
+				parked = false;
+				if (Thread.interrupted())
+					Thread.currentThread().interrupt();
+			}
 			else {
 				if (system.getConfig().trackRequestRatePerActor().get())
 					cell.getRequestRate().addAndGet(hasNextDirective+hasNextOuter);
@@ -70,7 +79,8 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	
 	@Override
 	public void newMessage(Thread t) {
-		LockSupport.unpark(t);
+		if (parked)
+			LockSupport.unpark(t);
 	}
 	
 	@Override
