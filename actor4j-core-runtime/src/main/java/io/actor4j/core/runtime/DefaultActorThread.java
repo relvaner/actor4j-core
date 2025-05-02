@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,12 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	protected final Object blocker = new Object();
 	
+	protected volatile boolean parked;
+	
 	public DefaultActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
+		
+		parked = false;
 		
 		configQueues();
 	}
@@ -119,7 +123,9 @@ public abstract class DefaultActorThread extends ActorThread {
 				if (idle>system.getConfig().idle()) {
 					idle = 0;
 					if (system.getConfig().threadMode()==ActorThreadMode.PARK) {
+						parked = true;
 						LockSupport.park(blocker);
+						parked = false;
 						if (isInterrupted())
 							interrupt();
 					}
@@ -133,8 +139,8 @@ public abstract class DefaultActorThread extends ActorThread {
 					else
 						Thread.yield();
 				}
-//				else
-//					Thread.onSpinWait();
+				else
+					Thread.onSpinWait();
 			}
 			else {
 				idle = 0;
@@ -148,8 +154,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-//		if (system.getConfig().threadMode()==ActorThreadMode.PARK && !threadLoad.get())
-		if (system.getConfig().threadMode()==ActorThreadMode.PARK)
+		if (system.getConfig().threadMode()==ActorThreadMode.PARK && parked)
 			LockSupport.unpark(this);			
 	}
 	
