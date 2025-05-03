@@ -29,7 +29,7 @@ import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
 public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUnit {
-	protected final UUID failsafeId;
+	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	protected final InternalActorCell cell;
@@ -48,7 +48,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 		this.faultToleranceMethod = faultToleranceMethod;
 		this.counter = counter;
 
-		failsafeId = UUID.randomUUID();
+		faultToleranceId = UUID.randomUUID();
 		terminated = new AtomicBoolean(false);
 	}
 	
@@ -83,7 +83,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 			@Override
 			public void postRun() {
 			}
-		}, failsafeId);
+		}, faultToleranceId);
 	}
 	
 	public abstract Queue<ActorMessage<?>> directiveQueue();

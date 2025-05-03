@@ -32,7 +32,7 @@ import io.actor4j.core.runtime.ActorSystemError;
 public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	protected final long id;
 	
-	protected final UUID failsafeId;
+	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	
@@ -49,7 +49,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 		
 		this.system = system;
 		this.id = id;
-		failsafeId = UUID.randomUUID();
+		faultToleranceId = UUID.randomUUID();
 
 		load = new AtomicBoolean(false);
 		counter = new AtomicLong(0);
@@ -117,7 +117,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			@Override
 			public void postRun() {
 			}
-		}, failsafeId);
+		}, faultToleranceId);
 	}
 
 	@Override
