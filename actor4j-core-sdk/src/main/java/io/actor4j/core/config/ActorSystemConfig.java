@@ -36,8 +36,8 @@ public class ActorSystemConfig {
 	private final int bufferQueueSize;
 
 	private final int throughput;
-	private final int idle;
-	private final int load;
+	private final int maxSpins;
+	private final int highLoad;
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
 	
@@ -108,12 +108,12 @@ public class ActorSystemConfig {
 		return throughput;
 	}
 	
-	public int idle() {
-		return idle;
+	public int maxSpins() {
+		return maxSpins;
 	}
 	
-	public int load() {
-		return load;
+	public int highLoad() {
+		return highLoad;
 	}
 	
 	public ActorThreadMode threadMode() {
@@ -221,8 +221,8 @@ public class ActorSystemConfig {
 		protected int bufferQueueSize;
 
 		protected int throughput;
-		protected int idle;
-		protected int load;
+		protected int maxSpins;
+		protected int highLoad;
 		protected ActorThreadMode threadMode;
 		protected long sleepTime;
 		
@@ -276,8 +276,8 @@ public class ActorSystemConfig {
 			bufferQueueSize = 10_000;
 			
 			throughput = 100;
-			idle = 100_000;
-			calculateLoad();
+			maxSpins = 100_000;
+			calculateHighLoad();
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			
@@ -320,8 +320,8 @@ public class ActorSystemConfig {
 			this.parallelism = config.parallelism();
 			this.parallelismFactor = config.parallelismFactor();
 			this.throughput = config.throughput();
-			this.idle = config.idle();
-			this.load = config.load();
+			this.maxSpins = config.maxSpins();
+			this.highLoad = config.highLoad();
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
 			this.maxResourceThreads = config.maxResourceThreads();
@@ -397,20 +397,20 @@ public class ActorSystemConfig {
 		
 		public Builder<T> throughput(int throughput) {
 			this.throughput = throughput;
-			calculateLoad();
+			calculateHighLoad();
 
 			return this;
 		}
 		
-		public Builder<T> idle(int idle) {
-			this.idle = idle;
-			calculateLoad();
+		public Builder<T> maxSpins(int maxSpins) {
+			this.maxSpins = maxSpins;
+			calculateHighLoad();
 
 			return this;
 		}
 		
-		protected void calculateLoad() {
-			load = idle / throughput;
+		protected void calculateHighLoad() {
+			highLoad = maxSpins / throughput;
 		}
 
 		public Builder<T> parkMode() {
@@ -434,6 +434,12 @@ public class ActorSystemConfig {
 
 		public Builder<T> yieldMode() {
 			threadMode = ActorThreadMode.YIELD;
+
+			return this;
+		}
+		
+		public Builder<T> hybridMode() {
+			threadMode = ActorThreadMode.HYBRID;
 
 			return this;
 		}
@@ -572,8 +578,8 @@ public class ActorSystemConfig {
 		this.parallelism = builder.parallelism;
 		this.parallelismFactor = builder.parallelismFactor;
 		this.throughput = builder.throughput;
-		this.idle = builder.idle;
-		this.load = builder.load;
+		this.maxSpins = builder.maxSpins;
+		this.highLoad = builder.highLoad;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
 		this.maxResourceThreads = builder.maxResourceThreads;

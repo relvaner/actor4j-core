@@ -76,8 +76,8 @@ public abstract class DefaultActorThread extends ActorThread {
 		int hasNextServer;
 		int hasNextOuter;
 		int hasNextInner;
-		int idle = 0;
-		int load = 0;
+		int spins = 0;
+		int loads = 0;
 		
 		while (!isInterrupted()) {
 			hasNextDirective = false;
@@ -115,13 +115,13 @@ public abstract class DefaultActorThread extends ActorThread {
 			for (; hasNextInner<system.getConfig().throughput() && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
-				if (idle>system.getConfig().load()) {
-					load = 0;
+				if (spins>system.getConfig().highLoad()) {
+					loads = 0;
 					threadLoad.set(false);
 				}
-				idle++;
-				if (idle>system.getConfig().idle()) {
-					idle = 0;
+				spins++;
+				if (spins>system.getConfig().maxSpins()) {
+					spins = 0;
 					if (system.getConfig().threadMode()==ActorThreadMode.PARK) {
 						parked = true;
 						LockSupport.park(blocker);
@@ -143,11 +143,11 @@ public abstract class DefaultActorThread extends ActorThread {
 					Thread.onSpinWait();
 			}
 			else {
-				idle = 0;
-				if (load>system.getConfig().load())
+				spins = 0;
+				if (loads>system.getConfig().highLoad())
 					threadLoad.set(true);
 				else
-					load++;
+					loads++;
 			}
 		}		
 	}
