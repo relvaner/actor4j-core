@@ -30,11 +30,31 @@ public abstract class DefaultActorThread extends ActorThread {
 	protected /*quasi final*/ Queue<ActorMessage<?>> serverQueueL1;
 	
 	protected final Object blocker = new Object();
-	
 	protected volatile boolean parked;
+	
+	final ActorThreadMode threadMode;
+	final boolean serverMode;
+	
+	final int maxThroughput;
+	final int bufferQueueSize;
+	
+	final int maxSpins;
+	final int highLoad;
+	
+	final long maxSleepTime;
 	
 	public DefaultActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
+		
+		threadMode		 = system.getConfig().threadMode(); 
+		serverMode       = system.getConfig().serverMode(); 
+		
+		maxThroughput    = system.getConfig().throughput();
+		bufferQueueSize  = system.getConfig().bufferQueueSize();
+		
+		maxSpins         = system.getConfig().maxSpins();
+		highLoad         = system.getConfig().highLoad();
+		maxSleepTime     = system.getConfig().sleepTime();
 		
 		parked = false;
 		
@@ -92,46 +112,46 @@ public abstract class DefaultActorThread extends ActorThread {
 			while (poll(priorityQueue)) 
 				hasNextPriority=true;
 			
-			if (system.getConfig().serverMode()) {
-				for (; hasNextServer<system.getConfig().throughput() && poll(serverQueueL1); hasNextServer++);
-				if (hasNextServer<system.getConfig().throughput() && serverQueueL2.peek()!=null) {
+			if (serverMode) {
+				for (; hasNextServer<maxThroughput && poll(serverQueueL1); hasNextServer++);
+				if (hasNextServer<maxThroughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; j<system.getConfig().bufferQueueSize() && (message=serverQueueL2.poll())!=null; j++)
+					for (int j=0; j<bufferQueueSize && (message=serverQueueL2.poll())!=null; j++)
 						serverQueueL1.offer(message);
 				
-					for (; hasNextServer<system.getConfig().throughput() && poll(serverQueueL1); hasNextServer++);
+					for (; hasNextServer<maxThroughput && poll(serverQueueL1); hasNextServer++);
 				}
 			}
 			
-			for (; hasNextOuter<system.getConfig().throughput() && poll(outerQueueL1); hasNextOuter++);
-			if (hasNextOuter<system.getConfig().throughput() && outerQueueL2.peek()!=null) {
+			for (; hasNextOuter<maxThroughput && poll(outerQueueL1); hasNextOuter++);
+			if (hasNextOuter<maxThroughput && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; j<system.getConfig().bufferQueueSize() && (message=outerQueueL2.poll())!=null; j++)
+				for (int j=0; j<bufferQueueSize && (message=outerQueueL2.poll())!=null; j++)
 					outerQueueL1.offer(message);
 
-				for (; hasNextOuter<system.getConfig().throughput() && poll(outerQueueL1); hasNextOuter++);
+				for (; hasNextOuter<maxThroughput && poll(outerQueueL1); hasNextOuter++);
 			}
 			
-			for (; hasNextInner<system.getConfig().throughput() && poll(innerQueue); hasNextInner++);
+			for (; hasNextInner<maxThroughput && poll(innerQueue); hasNextInner++);
 			
 			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
-				if (spins>system.getConfig().highLoad()) {
+				if (spins>highLoad) {
 					loads = 0;
 					threadLoad.set(false);
 				}
 				spins++;
-				if (spins>system.getConfig().maxSpins()) {
+				if (spins>maxSpins) {
 					spins = 0;
-					if (system.getConfig().threadMode()==ActorThreadMode.PARK) {
+					if (threadMode==ActorThreadMode.PARK) {
 						parked = true;
 						LockSupport.park(blocker);
 						parked = false;
 						if (isInterrupted())
 							interrupt();
 					}
-					else if (system.getConfig().threadMode()==ActorThreadMode.SLEEP) {
+					else if (threadMode==ActorThreadMode.SLEEP) {
 						try {
-							sleep(system.getConfig().sleepTime());
+							sleep(maxSleepTime);
 						} catch (InterruptedException e) {
 							interrupt();
 						}
@@ -144,7 +164,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			}
 			else {
 				spins = 0;
-				if (loads>system.getConfig().highLoad())
+				if (loads>highLoad)
 					threadLoad.set(true);
 				else
 					loads++;
@@ -154,7 +174,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-		if (system.getConfig().threadMode()==ActorThreadMode.PARK && parked)
+		if (threadMode==ActorThreadMode.PARK && parked)
 			LockSupport.unpark(this);			
 	}
 	
