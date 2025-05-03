@@ -36,6 +36,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	final boolean serverMode;
 	
 	final int maxThroughput;
+	final int queueSize;
 	final int bufferQueueSize;
 	
 	final int maxSpins;
@@ -50,6 +51,7 @@ public abstract class DefaultActorThread extends ActorThread {
 		serverMode       = system.getConfig().serverMode(); 
 		
 		maxThroughput    = system.getConfig().throughput();
+		queueSize        = system.getConfig().queueSize();
 		bufferQueueSize  = system.getConfig().bufferQueueSize();
 		
 		maxSpins         = system.getConfig().maxSpins();
@@ -116,7 +118,8 @@ public abstract class DefaultActorThread extends ActorThread {
 				for (; hasNextServer<maxThroughput && poll(serverQueueL1); hasNextServer++);
 				if (hasNextServer<maxThroughput && serverQueueL2.peek()!=null) {
 					ActorMessage<?> message = null;
-					for (int j=0; j<bufferQueueSize && (message=serverQueueL2.poll())!=null; j++)
+					int delta = bufferQueueSize-serverQueueL1.size();
+					for (int j=0; j<delta && (message=serverQueueL2.poll())!=null; j++)
 						serverQueueL1.offer(message);
 				
 					for (; hasNextServer<maxThroughput && poll(serverQueueL1); hasNextServer++);
@@ -126,7 +129,8 @@ public abstract class DefaultActorThread extends ActorThread {
 			for (; hasNextOuter<maxThroughput && poll(outerQueueL1); hasNextOuter++);
 			if (hasNextOuter<maxThroughput && outerQueueL2.peek()!=null) {
 				ActorMessage<?> message = null;
-				for (int j=0; j<bufferQueueSize && (message=outerQueueL2.poll())!=null; j++)
+				int delta = bufferQueueSize-outerQueueL1.size();
+				for (int j=0; j<delta && (message=outerQueueL2.poll())!=null; j++)
 					outerQueueL1.offer(message);
 
 				for (; hasNextOuter<maxThroughput && poll(outerQueueL1); hasNextOuter++);
