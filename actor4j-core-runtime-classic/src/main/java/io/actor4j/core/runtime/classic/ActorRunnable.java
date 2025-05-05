@@ -24,8 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
-import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.ActorSystemError;
 
@@ -41,7 +39,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	protected final AtomicInteger processingTimeSampleCount;
 	protected final Queue<Long> processingTimeSamples;
-	
+
 	protected final AtomicInteger cellsProcessingTimeSampleCount;
 	
 	public ActorRunnable(InternalActorSystem system, long id) {
@@ -67,29 +65,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
-			if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
-				boolean statisticsEnabled = processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-				boolean cellsStatisticsEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-				
-				if (statisticsEnabled || cellsStatisticsEnabled) {
-					long startTime = System.nanoTime();
-					cell.internal_receive(message);
-					long stopTime = System.nanoTime();
-
-					if (statisticsEnabled && system.getConfig().processingTimeEnabled().get()) {
-						processingTimeSamples.offer(stopTime-startTime);
-						processingTimeSampleCount.incrementAndGet();
-					}
-					if (cellsStatisticsEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
-						cell.getProcessingTimeSamples().offer(stopTime-startTime);
-						cellsProcessingTimeSampleCount.incrementAndGet();
-					}
-				}
-				else
-					cell.internal_receive(message);
-			}
-			else
-				cell.internal_receive(message);
+			cell.internal_receive(message);
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
@@ -99,25 +75,58 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	public abstract void onRun(ClassicInternalActorCell cell);
 	
-	public void run(ClassicInternalActorCell cell, AtomicBoolean isScheduled, ActorMessageDispatcherCallback dispatcher) {
-		FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new FaultToleranceMethod() {
-			@Override
-			public void run(UUID uuid) {
+	public void metrics(ClassicInternalActorCell cell) {
+		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
+			boolean euPTEnabled = processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			boolean cellsPTEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			
+			if (euPTEnabled || cellsPTEnabled) {
+				long startTime = System.nanoTime();
 				onRun(cell);
-				isScheduled.set(false);
+				long stopTime = System.nanoTime();
+
+				if (euPTEnabled && system.getConfig().processingTimeEnabled().get()) {
+					processingTimeSamples.offer(stopTime-startTime);
+					processingTimeSampleCount.incrementAndGet();
+				}
+				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+					cell.getProcessingTimeSamples().offer(stopTime-startTime);
+					cellsProcessingTimeSampleCount.incrementAndGet();
+				}
+			}
+			else
+				onRun(cell);
+		}
 		
-				dispatcher.dispatchFromThread(cell, ActorRunnable.this);
-			}
+		if (system.getConfig().trackRequestRatePerActor().get())
+			cell.getRequestRate().incrementAndGet();
+	}
+	
+	public void run(ClassicInternalActorCell cell, AtomicBoolean isScheduled, ActorMessageDispatcherCallback dispatcher) {
+		boolean error = false;
+		Throwable throwable = null;
+		
+		try {
+			if (system.getConfig().metricsEnabled().get())
+				metrics(cell);
+			else
+				onRun(cell);
+			isScheduled.set(false);
+	
+			dispatcher.dispatchFromThread(cell, ActorRunnable.this);
+		}
+		catch(Throwable t) {
+			t.printStackTrace();
 			
-			@Override
-			public void error(Throwable t) {
-				t.printStackTrace();
-			}
-			
-			@Override
-			public void postRun() {
-			}
-		}, faultToleranceId);
+			error = true;
+			throwable = t;
+		}
+		finally {
+			// empty
+		}
+		
+		if (error)
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(throwable, null, null, faultToleranceId);
 	}
 
 	@Override
