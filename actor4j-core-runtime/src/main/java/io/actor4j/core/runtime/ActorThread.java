@@ -66,34 +66,39 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 	
 	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
 		try {
-			if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
-				boolean threadStatisticsEnabled = threadProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-				boolean cellsStatisticsEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-				
-				if (threadStatisticsEnabled || cellsStatisticsEnabled) {
-					long startTime = System.nanoTime();
-					cell.internal_receive(message);
-					long stopTime = System.nanoTime();
-					
-					if (threadStatisticsEnabled && system.getConfig().processingTimeEnabled().get()) {
-						threadProcessingTimeSamples.offer(stopTime-startTime);
-						threadProcessingTimeSampleCount.incrementAndGet();
-					}
-					if (cellsStatisticsEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
-						cell.getProcessingTimeSamples().offer(stopTime-startTime);
-						cellsProcessingTimeSampleCount.incrementAndGet();
-					}
-				}
-				else
-					cell.internal_receive(message);
-			}
-			else
-				cell.internal_receive(message);
+			cell.internal_receive(message);
 		}
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getStrategyOnFailure().handle(cell, e);
 		}	
+	}
+	
+	protected void metrics(ActorMessage<?> message, InternalActorCell cell) {
+		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
+			boolean threadPTEnabled = threadProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			boolean cellsPTEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			
+			if (threadPTEnabled || cellsPTEnabled) {
+				long startTime = System.nanoTime();
+				faultToleranceMethod(message, cell);
+				long stopTime = System.nanoTime();
+				
+				if (threadPTEnabled && system.getConfig().processingTimeEnabled().get()) {
+					threadProcessingTimeSamples.offer(stopTime-startTime);
+					threadProcessingTimeSampleCount.incrementAndGet();
+				}
+				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+					cell.getProcessingTimeSamples().offer(stopTime-startTime);
+					cellsProcessingTimeSampleCount.incrementAndGet();
+				}
+			}
+			else
+				faultToleranceMethod(message, cell);
+		}
+		
+		if (system.getConfig().trackRequestRatePerActor().get())
+			cell.getRequestRate().getAndIncrement();
 	}
 	
 	protected boolean poll(Queue<ActorMessage<?>> queue) {
@@ -103,9 +108,10 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 		if (message!=null) {
 			InternalActorCell cell = system.getCells().get(message.dest());
 			if (cell!=null) {
-				if (system.getConfig().trackRequestRatePerActor().get())
-					cell.getRequestRate().getAndIncrement();
-				faultToleranceMethod(message, cell);
+				if (system.getConfig().metricsEnabled().get())
+					metrics(message, cell);
+				else
+					faultToleranceMethod(message, cell);
 			}
 			if (system.getConfig().counterEnabled().get())
 				counter.getAndIncrement();

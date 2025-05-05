@@ -55,6 +55,7 @@ public class ActorSystemConfig {
 	
 	// Metrics
 	private final AtomicBoolean counterEnabled;
+	private final AtomicBoolean metricsEnabled;
 	private final AtomicBoolean processingTimeEnabled;
 	private final int maxProcessingTimeSamples;
 	private final AtomicBoolean trackProcessingTimePerActor;
@@ -152,6 +153,10 @@ public class ActorSystemConfig {
 		return counterEnabled;
 	}
 	
+	public AtomicBoolean metricsEnabled() {
+		return metricsEnabled;
+	}
+	
 	public AtomicBoolean processingTimeEnabled() {
 		return processingTimeEnabled;
 	}
@@ -240,6 +245,7 @@ public class ActorSystemConfig {
 
 		// Metrics
 		protected boolean counterEnabled;
+		protected boolean metricsEnabled;
 		protected boolean processingTimeEnabled;
 		protected int maxProcessingTimeSamples;
 		protected boolean trackProcessingTimePerActor;
@@ -294,6 +300,7 @@ public class ActorSystemConfig {
 
 			// Metrics
 			counterEnabled = false;
+			metricsEnabled = false;
 			processingTimeEnabled = false;
 			maxProcessingTimeSamples = 10_000;
 			trackProcessingTimePerActor = false;
@@ -331,6 +338,7 @@ public class ActorSystemConfig {
 			this.persistenceDriver = config.persistenceDriver();
 			this.persistenceMode = config.persistenceMode();
 			this.counterEnabled = config.counterEnabled().get();
+			this.metricsEnabled = config.metricsEnabled().get();
 			this.processingTimeEnabled = config.processingTimeEnabled().get();
 			this.maxProcessingTimeSamples = config.maxProcessingTimeSamples();
 			this.trackProcessingTimePerActor = config.trackProcessingTimePerActor().get();
@@ -480,6 +488,12 @@ public class ActorSystemConfig {
 
 			return this;
 		}
+		
+		public Builder<T> metricsEnabled(boolean enabled) {
+			metricsEnabled = enabled;
+
+			return this;
+		}
 
 		public Builder<T> processingTimeEnabled(boolean enabled) {
 			processingTimeEnabled = enabled;
@@ -589,6 +603,7 @@ public class ActorSystemConfig {
 		this.persistenceDriver = builder.persistenceDriver;
 		this.persistenceMode = builder.persistenceMode;
 		this.counterEnabled = new AtomicBoolean(builder.counterEnabled);
+		this.metricsEnabled = new AtomicBoolean(builder.metricsEnabled);
 		this.processingTimeEnabled = new AtomicBoolean(builder.processingTimeEnabled);
 		this.maxProcessingTimeSamples = builder.maxProcessingTimeSamples;
 		this.trackProcessingTimePerActor = new AtomicBoolean(builder.trackProcessingTimePerActor);
