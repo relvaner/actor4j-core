@@ -33,7 +33,6 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 		super(system, new ActorRunnablePoolHandler(system));
 		
 		int poolSize = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		//slow // executorService = new ThreadPoolExecutor(poolSize, poolSize, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory(system.getConfig().name()+ "-worker-thread"));
 		executorService = new ForkJoinPool(poolSize);
 		
 		for (int i=0; i<poolSize; i++)

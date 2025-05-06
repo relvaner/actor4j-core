@@ -20,11 +20,8 @@ import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
@@ -35,14 +32,11 @@ import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.PseudoActorCell;
 
 public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispatcher implements ActorMessageDispatcherCallback {
-	protected final Map<UUID, AtomicBoolean> isScheduledMap;
-	
 	protected final Function<ActorMessage<?>, Boolean> consumerPseudo;
 	
 	public ClassicDefaultActorMessageDispatcher(InternalActorSystem system) {
 		super(system);
-		
-		isScheduledMap = new ConcurrentHashMap<>();
+
 		consumerPseudo = new Function<ActorMessage<?>, Boolean>() {
 			@Override
 			public Boolean apply(ActorMessage<?> msg) {
@@ -200,11 +194,9 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	}
 	
 	protected void dispatch(ClassicInternalActorCell cell, ActorRunnable actorRunnable) {
-		if (actorRunnable!=null && aquireAsScheduled(cell.getId())) {
-			AtomicBoolean isScheduled = isScheduledMap.get(cell.getId());
-			
+		if (actorRunnable!=null && cell.aquireAsScheduled()) {
 			((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().submit(
-					() -> actorRunnable.run(cell, isScheduled, this), cell.getId());
+					() -> actorRunnable.run(cell), cell.getId());
 		}
 	}
 	
@@ -212,18 +204,5 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	public void dispatchFromThread(ClassicInternalActorCell cell, ActorRunnable actorRunnable) {
 		if (cell!=null && cell.hasMessage())
 			dispatch(cell, actorRunnable);
-	}
-	
-	protected boolean aquireAsScheduled(UUID dest) {
-		AtomicBoolean isScheduled = isScheduledMap.get(dest);
-		if (isScheduled==null) {
-			synchronized(this) {
-				isScheduled = isScheduledMap.get(dest);
-				if (isScheduled==null)
-					isScheduledMap.put(dest, isScheduled=new AtomicBoolean(false));
-			}
-		}
-
-		return isScheduled.compareAndSet(false, true);
 	}
 }

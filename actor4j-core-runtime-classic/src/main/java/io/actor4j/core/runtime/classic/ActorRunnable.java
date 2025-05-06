@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			cell.getRequestRate().incrementAndGet();
 	}
 	
-	public void run(ClassicInternalActorCell cell, AtomicBoolean isScheduled, ActorMessageDispatcherCallback dispatcher) {
+	public void run(ClassicInternalActorCell cell) {
 		boolean error = false;
 		Throwable throwable = null;
 		
@@ -111,9 +111,9 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 				metrics(cell);
 			else
 				onRun(cell);
-			isScheduled.set(false);
+			cell.isScheduled().set(false);
 	
-			dispatcher.dispatchFromThread(cell, ActorRunnable.this);
+			((ActorMessageDispatcherCallback)system.getMessageDispatcher()).dispatchFromThread(cell, ActorRunnable.this);
 		}
 		catch(Throwable t) {
 			t.printStackTrace();

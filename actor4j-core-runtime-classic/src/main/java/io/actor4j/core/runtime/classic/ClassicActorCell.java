@@ -18,6 +18,7 @@ package io.actor4j.core.runtime.classic;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
@@ -28,11 +29,15 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	protected final Queue<ActorMessage<?>> directiveQueue;
 	protected final Queue<ActorMessage<?>> outerQueue;
 	
+	protected AtomicBoolean isScheduled;
+	
 	public ClassicActorCell(InternalActorSystem system, Actor actor, UUID id) {
 		super(system, actor, id);
 		
 		directiveQueue = new ConcurrentLinkedQueue<>();
 		outerQueue = new ConcurrentLinkedQueue<>();
+		
+		isScheduled = new AtomicBoolean(false);
 	}
 
 	public ClassicActorCell(InternalActorSystem system, Actor actor) {
@@ -47,5 +52,15 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	@Override
 	public Queue<ActorMessage<?>> outerQueue() {
 		return outerQueue;
+	}
+	
+	@Override
+	public AtomicBoolean isScheduled() {
+		return isScheduled;
+	}
+	
+	@Override
+	public boolean aquireAsScheduled() {
+		return isScheduled.compareAndSet(false, true);
 	}
 }

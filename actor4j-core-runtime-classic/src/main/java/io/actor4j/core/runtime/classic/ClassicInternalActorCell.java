@@ -16,6 +16,7 @@
 package io.actor4j.core.runtime.classic;
 
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -29,4 +30,7 @@ public interface ClassicInternalActorCell extends InternalActorCell {
 			!directiveQueue().isEmpty() ||
 			!outerQueue().isEmpty();
 	}
+	
+	public AtomicBoolean isScheduled();
+	public boolean aquireAsScheduled();
 }
