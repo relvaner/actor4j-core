@@ -19,8 +19,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 
 public class DefaultActorRunnable extends ActorRunnable {
-	public DefaultActorRunnable(InternalActorSystem system, long id) {
-		super(system, id);
+	public DefaultActorRunnable(InternalActorSystem system) {
+		super(system);
 	}
 
 	@Override
@@ -39,6 +39,6 @@ public class DefaultActorRunnable extends ActorRunnable {
 			faultToleranceMethod(msg, cell);
 
 		if (system.getConfig().counterEnabled().get())
-			counter.addAndGet(hasDirective+hasNextOuter);
+			getMetrics().counter.addAndGet(hasDirective+hasNextOuter);
 	}
 }

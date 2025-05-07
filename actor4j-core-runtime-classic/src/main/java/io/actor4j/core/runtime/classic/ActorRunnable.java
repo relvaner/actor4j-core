@@ -17,50 +17,32 @@ package io.actor4j.core.runtime.classic;
 
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
 import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.ActorSystemError;
 
 public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
-	protected final long id;
-	
 	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	
-	protected final AtomicLong counter;
-	protected final AtomicBoolean load;
-	
-	protected final AtomicInteger processingTimeSampleCount;
-	protected final Queue<Long> processingTimeSamples;
-
-	protected final AtomicInteger cellsProcessingTimeSampleCount;
-	
-	public ActorRunnable(InternalActorSystem system, long id) {
+	public ActorRunnable(InternalActorSystem system) {
 		super();
 		
 		this.system = system;
-		this.id = id;
+		
 		faultToleranceId = UUID.randomUUID();
-
-		load = new AtomicBoolean(false);
-		counter = new AtomicLong(0);
-		
-		processingTimeSampleCount = new AtomicInteger(0);
-		processingTimeSamples = new ConcurrentLinkedQueue<>();
-		
-		cellsProcessingTimeSampleCount = new AtomicInteger(0);
 	}
 
+	@Deprecated
 	@Override
 	public Object executionUnitId() {
-		return id;
+		return null;
 	}
 	
 	protected void faultToleranceMethod(ActorMessage<?> message, InternalActorCell cell) {
@@ -75,10 +57,16 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	
 	public abstract void onRun(ClassicInternalActorCell cell);
 	
+	protected ActorRunnableMetrics getMetrics() {
+		return ClassicForkJoinWorkerThread.getMetrics();
+	}
+	
 	public void metrics(ClassicInternalActorCell cell) {
+		ActorRunnableMetrics metrics = getMetrics();
+		
 		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
-			boolean euPTEnabled = processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-			boolean cellsPTEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			boolean euPTEnabled = metrics.processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			boolean cellsPTEnabled = metrics.cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
 			
 			if (euPTEnabled || cellsPTEnabled) {
 				long startTime = System.nanoTime();
@@ -86,12 +74,12 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 				long stopTime = System.nanoTime();
 
 				if (euPTEnabled && system.getConfig().processingTimeEnabled().get()) {
-					processingTimeSamples.offer(stopTime-startTime);
-					processingTimeSampleCount.incrementAndGet();
+					metrics.processingTimeSamples.offer(stopTime-startTime);
+					metrics.processingTimeSampleCount.incrementAndGet();
 				}
 				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
 					cell.getProcessingTimeSamples().offer(stopTime-startTime);
-					cellsProcessingTimeSampleCount.incrementAndGet();
+					metrics.cellsProcessingTimeSampleCount.incrementAndGet();
 				}
 			}
 			else
@@ -113,7 +101,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 				onRun(cell);
 			cell.isScheduled().set(false);
 	
-			((ActorMessageDispatcherCallback)system.getMessageDispatcher()).dispatchFromThread(cell, ActorRunnable.this);
+			((ActorMessageDispatcherCallback)system.getMessageDispatcher()).dispatchFromThread(cell);
 		}
 		catch(Throwable t) {
 			t.printStackTrace();
@@ -129,38 +117,39 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(throwable, null, null, faultToleranceId);
 	}
 
+	@Deprecated
 	@Override
 	public void run() {
 		// not used
 	}
-	
-	public AtomicLong getCounter() {
-		return counter;
-	}
 
+	@Deprecated
 	@Override
 	public long getCount() {
-		return counter.longValue();
+		return 0;
 	}
 	
+	@Deprecated
 	@Override
 	public AtomicBoolean getLoad() {
-		// not used
-		return load;
+		return null;
 	}
 	
+	@Deprecated
 	@Override
 	public Queue<Long> getProcessingTimeSamples() {
-		return processingTimeSamples;
+		return null;
 	}
 	
+	@Deprecated
 	@Override
 	public AtomicInteger getProcessingTimeSampleCount() {
-		return processingTimeSampleCount;
+		return null;
 	}
 	
+	@Deprecated
 	@Override
 	public AtomicInteger getCellsProcessingTimeSampleCount() {
-		return cellsProcessingTimeSampleCount;
+		return null;
 	}
 }

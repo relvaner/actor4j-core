@@ -15,39 +15,46 @@
  */
 package io.actor4j.core.runtime.classic;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.actor4j.core.runtime.AbstractActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorSystemError;
-import io.actor4j.core.runtime.DefaultActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
+import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
+import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThreadFactory;
 
 public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunnable> {
 	protected final ExecutorService executorService;
 	
+	protected final ActorRunnable actorRunnable;
+	
 	public ActorRunnablePool(InternalActorRuntimeSystem system) {
-		super(system, new ActorRunnablePoolHandler(system));
+		super(system, null);
 		
 		int poolSize = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		executorService = new ForkJoinPool(poolSize);
+		executorService = new ForkJoinPool(poolSize, new ClassicForkJoinWorkerThreadFactory(), null, false);
 		
-		for (int i=0; i<poolSize; i++)
-			executionUnitList.add(new DefaultActorRunnable(system, i));
-		
-		((DefaultActorExecutionUnitPoolHandler<ActorRunnable>)executionUnitPoolHandler).beforeStart(executionUnitList);
+		actorRunnable = new DefaultActorRunnable(system);
 	}
 	
-	public void submit(Runnable runnable, UUID dest) {
+	public void submit(ClassicInternalActorCell cell) {
 		if (!executorService.isShutdown())
 			try {
-				executorService.submit(runnable);
+				if (Thread.currentThread() instanceof ClassicForkJoinWorkerThread) {
+					ForkJoinTask<?> task = ForkJoinTask.adapt(() -> actorRunnable.run(cell));
+					task.fork();
+				}
+				else
+					executorService.submit(() -> actorRunnable.run(cell));
 			}
 			catch (RejectedExecutionException e) {
-				system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.EXECUTER_ACTOR, dest);
+				system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.EXECUTER_ACTOR, cell.getId());
 			}
 	}
 
@@ -86,7 +93,20 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 		}
 	}
 	
-	public ActorRunnablePoolHandler getRunnablePoolHandler() {
-		return (ActorRunnablePoolHandler)executionUnitPoolHandler;
+	@Override
+	public long getCount() {
+		long sum = 0;
+		for (ActorRunnableMetrics metrics : ClassicForkJoinWorkerThread.getAllMetrics())
+			sum += metrics.counter.get();
+		
+		return sum;
+	}
+	
+	@Override
+	public List<Long> getCounts() {
+		List<Long> list = new ArrayList<>();
+		for (ActorRunnableMetrics metrics : ClassicForkJoinWorkerThread.getAllMetrics())
+			list.add(metrics.counter.get());
+		return list;
 	}
 }

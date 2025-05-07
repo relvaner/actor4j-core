@@ -166,43 +166,60 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		UUID destination = dest!=null ? dest : message.dest();
 		
 		ClassicInternalActorCell cell = (ClassicInternalActorCell)system.getCells().get(destination);
-		ActorRunnable actorRunnable = null;
-		
 		if (cell!=null) {
-			actorRunnable = ((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().getRunnablePoolHandler().getExecutionUnit(destination);
-			if (actorRunnable!=null) {
-				if (directive) {
-					if (dest!=null)
-						cell.directiveQueue().offer(message.copy(dest));
-					else
-						cell.directiveQueue().offer(message.copy());
-				}
-				else {
-					if (dest!=null)
-						cell.outerQueue().offer(message.copy(dest));
-					else
-						cell.outerQueue().offer(message.copy());
-				}
-				
-				dispatch(cell, actorRunnable);
+			if (directive) {
+				if (dest!=null)
+					cell.directiveQueue().offer(message.copy(dest));
+				else
+					cell.directiveQueue().offer(message.copy());
 			}
-			else if (debugUndelivered)
-				undelivered(message, message.source(), destination);
+			else {
+				if (dest!=null)
+					cell.outerQueue().offer(message.copy(dest));
+				else
+					cell.outerQueue().offer(message.copy());
+			}
+			
+			dispatch(cell);
 		}
+		else if (debugUndelivered)
+			undelivered(message, message.source(), destination);
 		
-		return actorRunnable!=null;
+		return cell!=null;
 	}
 	
-	protected void dispatch(ClassicInternalActorCell cell, ActorRunnable actorRunnable) {
-		if (actorRunnable!=null && cell.aquireAsScheduled()) {
-			((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().submit(
-					() -> actorRunnable.run(cell), cell.getId());
+	protected void dispatch(ClassicInternalActorCell cell) {
+		if (cell.aquireAsScheduled()) {
+			((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().submit(cell);
 		}
 	}
 	
 	@Override
-	public void dispatchFromThread(ClassicInternalActorCell cell, ActorRunnable actorRunnable) {
+	public void dispatchFromThread(ClassicInternalActorCell cell) {
 		if (cell!=null && cell.hasMessage())
-			dispatch(cell, actorRunnable);
+			dispatch(cell);
+	}
+	
+	@Override
+	public void postPersistence(ActorMessage<?> message) {
+		List<UUID> ids = system.getExecutorService().getPersistenceService().persistenceActorIds();
+		int index = ThreadLocalRandom.current().nextInt(ids.size());
+		system.getExecutorService().getPersistenceService().getService().send(message.copy(ids.get(index)));
+	}
+	
+	@Deprecated
+	@Override
+	public void registerCell(InternalActorCell cell) {
+	}
+	
+	@Deprecated
+	@Override
+	public void unregisterCell(InternalActorCell cell) {
+	}
+	
+	@Deprecated
+	@Override
+	public boolean isRegisteredCell(InternalActorCell cell) {
+		return false;
 	}
 }

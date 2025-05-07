@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.persistence;
+package io.actor4j.core.runtime.classic.utils;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
+import java.util.concurrent.ForkJoinWorkerThread;
 
-import io.actor4j.core.ActorService;
+public final class ClassicForkJoinWorkerThreadFactory implements ForkJoinWorkerThreadFactory {
+	@Override
+	public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+		return new ClassicForkJoinWorkerThread(pool);
+	}
 
-public interface ActorPersistenceService {
-	public ActorService getService();
-	public List<UUID> persistenceActorIds();
-
-	public void start();
-	public void shutdown();
 }

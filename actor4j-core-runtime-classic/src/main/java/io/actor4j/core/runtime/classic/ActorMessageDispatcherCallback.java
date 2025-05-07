@@ -16,5 +16,5 @@
 package io.actor4j.core.runtime.classic;
 
 public interface ActorMessageDispatcherCallback {
-	public void dispatchFromThread(ClassicInternalActorCell cell, ActorRunnable actorRunnable);
+	public void dispatchFromThread(ClassicInternalActorCell cell);
 }
