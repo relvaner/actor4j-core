@@ -30,7 +30,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
@@ -71,14 +70,8 @@ public class BaseActorCell implements InternalActorCell {
 	
 	protected final Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
-	protected final RestartProtocol restartProtocol;
-	protected final StopProtocol stopProtocol;
-	protected final RecoverProtocol recoverProtocol;
-	protected final StopUserSpaceProtocol stopUserSpaceProtocol;
-	
 	protected final Queue<UUID> deathWatcher;
-	
-	protected final Function<ActorMessage<?>, Boolean> processedDirective;
+
 	protected boolean activeDirectiveBehaviour;
 	
 	protected final Queue<PersistenceTuple> persistenceTuples;
@@ -107,68 +100,7 @@ public class BaseActorCell implements InternalActorCell {
 		
 		behaviourStack = new ArrayDeque<>();
 		
-		restartProtocol = new RestartProtocol(this);
-		stopProtocol = new StopProtocol(this);
-		recoverProtocol = new RecoverProtocol(this);
-		if (hasUserId())
-			stopUserSpaceProtocol = new StopUserSpaceProtocol(this);
-		else
-			stopUserSpaceProtocol = null;
-		
 		deathWatcher =  new ConcurrentLinkedQueue<>();
-		
-		processedDirective = new Function<ActorMessage<?>, Boolean>() {
-			@Override
-			public Boolean apply(ActorMessage<?> message) {
-				boolean result = false;
-				
-				if (isDirective(message) && !activeDirectiveBehaviour) {
-					result = true;
-					if (message.tag()==INTERNAL_RESTART || message.tag()==INTERNAL_STOP)
-						activeDirectiveBehaviour = true;
-						
-					if (message.tag()==INTERNAL_RESTART) {
-						if (message.value() instanceof Exception)
-							preRestart((Exception)message.value());
-						else
-							preRestart(null);
-					}
-					else if (message.tag()==INTERNAL_STOP)
-						stop();
-					else if (message.tag()==INTERNAL_KILL) 
-						throw new ActorKilledException();
-					else if (message.tag()==INTERNAL_HEALTH_CHECK)
-						send(ActorMessage.create(null, UP, id, message.source()));
-					else if (message.tag()==INTERNAL_ACTIVATE)
-						active.set(true);
-					else if (message.tag()==INTERNAL_DEACTIVATE)
-						active.set(false);
-					else if (message.tag()==INTERNAL_RECOVER)
-						recoverProtocol.apply();
-					else if (message.tag()==INTERNAL_PERSISTENCE_RECOVER)
-						recover(message);
-					else if (message.tag()==INTERNAL_PERSISTENCE_SUCCESS) {
-						PersistenceTuple tuple = persistenceTuples.poll();
-						if (tuple.onSuccess()!=null)
-							for (int i=0; i<tuple.objects().size(); i++)
-								tuple.onSuccess().accept(tuple.objects().get(i));
-					}
-					else if (message.tag()==INTERNAL_PERSISTENCE_FAILURE) {
-						PersistenceTuple tuple = persistenceTuples.poll();
-						if (tuple.onFailure()!=null)
-							tuple.onFailure().accept((Exception)message.value());
-					}
-					else if (message.tag()==INTERNAL_STOP_USER_SPACE && hasUserId()) {
-						if (stopUserSpaceProtocol!=null)
-							stopUserSpaceProtocol.apply();
-					}
-					else
-						result = false;
-				}
-				
-				return result;
-			}	
-		};
 		
 		persistenceTuples = new LinkedList<>();
 		
@@ -250,9 +182,58 @@ public class BaseActorCell implements InternalActorCell {
 		return parent!=null ? (parent.equals(system.SYSTEM_ID())) : false;
 	}
 	
+	protected boolean processedDirective(ActorMessage<?> message) {
+		boolean result = false;
+		
+		if (isDirective(message) && !activeDirectiveBehaviour) {
+			result = true;
+			if (message.tag()==INTERNAL_RESTART || message.tag()==INTERNAL_STOP)
+				activeDirectiveBehaviour = true;
+				
+			if (message.tag()==INTERNAL_RESTART) {
+				if (message.value() instanceof Exception)
+					preRestart((Exception)message.value());
+				else
+					preRestart(null);
+			}
+			else if (message.tag()==INTERNAL_STOP)
+				stop();
+			else if (message.tag()==INTERNAL_KILL) 
+				throw new ActorKilledException();
+			else if (message.tag()==INTERNAL_HEALTH_CHECK)
+				send(ActorMessage.create(null, UP, id, message.source()));
+			else if (message.tag()==INTERNAL_ACTIVATE)
+				active.set(true);
+			else if (message.tag()==INTERNAL_DEACTIVATE)
+				active.set(false);
+			else if (message.tag()==INTERNAL_RECOVER)
+				RecoverProtocol.apply(this);
+			else if (message.tag()==INTERNAL_PERSISTENCE_RECOVER)
+				recover(message);
+			else if (message.tag()==INTERNAL_PERSISTENCE_SUCCESS) {
+				PersistenceTuple tuple = persistenceTuples.poll();
+				if (tuple.onSuccess()!=null)
+					for (int i=0; i<tuple.objects().size(); i++)
+						tuple.onSuccess().accept(tuple.objects().get(i));
+			}
+			else if (message.tag()==INTERNAL_PERSISTENCE_FAILURE) {
+				PersistenceTuple tuple = persistenceTuples.poll();
+				if (tuple.onFailure()!=null)
+					tuple.onFailure().accept((Exception)message.value());
+			}
+			else if (message.tag()==INTERNAL_STOP_USER_SPACE && hasUserId()) {
+				StopUserSpaceProtocol.apply(this);
+			}
+			else
+				result = false;
+		}
+		
+		return result;
+	}
+	
 	@Override
 	public void internal_receive(ActorMessage<?> message) {
-		if (!processedDirective.apply(message) && active.get()) {
+		if (!processedDirective(message) && active.get()) {
 			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
 			if (behaviour==null)
 				actor.receive(message);
@@ -398,7 +379,7 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void preStart() {
-		recoverProtocol.apply();
+		RecoverProtocol.apply(this);
 		try {
 			actor.preStart();
 		}
@@ -440,12 +421,12 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void restart(Exception reason) {
-		restartProtocol.apply(reason);
+		RestartProtocol.apply(this, reason);
 	}
 	
 	@Override
 	public void stop() {
-		stopProtocol.apply();
+		StopProtocol.apply(this);
 	}
 	
 	@Override

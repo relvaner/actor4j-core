@@ -29,14 +29,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
-public class StopProtocol {
-	protected final InternalActorCell cell;
-
-	public StopProtocol(InternalActorCell cell) {
-		this.cell = cell;
-	}
-	
-	protected void postStop() {
+public final class StopProtocol {
+	protected static void postStop(final InternalActorCell cell) {
 		cell.postStop();
 		cell.internal_stop();
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
@@ -45,7 +39,7 @@ public class StopProtocol {
 			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
-	public void apply() {
+	public static void apply(final InternalActorCell cell) {
 		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
 		Iterator<UUID> iterator = cell.getChildren().iterator();
@@ -61,7 +55,7 @@ public class StopProtocol {
 		}
 		
 		if (waitForChildren.isEmpty()) 
-			postStop();
+			postStop(cell);
 		else
 			cell.become(new Consumer<ActorMessage<?>>() {
 				@Override
@@ -69,7 +63,7 @@ public class StopProtocol {
 					if (message.tag()==INTERNAL_STOP_SUCCESS) {
 						waitForChildren.remove(message.source());
 						if (waitForChildren.isEmpty())
-							postStop();
+							postStop(cell);
 					}
 				}
 			});

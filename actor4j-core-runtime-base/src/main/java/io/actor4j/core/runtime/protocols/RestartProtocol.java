@@ -32,14 +32,8 @@ import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 import io.actor4j.core.runtime.InternalActorSystem;
 
-public class RestartProtocol {
-	protected final InternalActorCell cell;
-
-	public RestartProtocol(InternalActorCell cell) {
-		this.cell = cell;
-	}
-	
-	protected void postStop() {
+public final class RestartProtocol {
+	protected static void postStop(final InternalActorCell cell) {
 		cell.postStop();
 		cell.internal_stop();
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
@@ -48,7 +42,7 @@ public class RestartProtocol {
 			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
-	protected void postRestart(Exception reason) {
+	protected static void postRestart(final InternalActorCell cell, final Exception reason) {
 		cell.postStop();
 		try {
 			Actor newActor = (Actor)((InternalActorRuntimeSystem)cell.getSystem()).getContainer().getInstance(cell.getId());
@@ -65,7 +59,7 @@ public class RestartProtocol {
 		}
 	}
 	
-	public void apply(final Exception reason) {
+	public static void apply(final InternalActorCell cell, final Exception reason) {
 		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
 		Iterator<UUID> iterator = cell.getChildren().iterator();
@@ -81,7 +75,7 @@ public class RestartProtocol {
 		}
 		
 		if (waitForChildren.isEmpty()) {
-			postRestart(reason);
+			postRestart(cell, reason);
 			cell.setActiveDirectiveBehaviour(false);
 		}
 		else
@@ -95,9 +89,9 @@ public class RestartProtocol {
 						waitForChildren.remove(message.source());
 						if (waitForChildren.isEmpty()) {
 							if (flag_stop)
-								postStop();
+								postStop(cell);
 							else {
-								postRestart(reason);
+								postRestart(cell, reason);
 								cell.unbecome();
 								cell.setActiveDirectiveBehaviour(false);
 							}

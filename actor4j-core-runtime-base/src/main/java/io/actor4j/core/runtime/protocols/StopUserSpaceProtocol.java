@@ -31,14 +31,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
-public class StopUserSpaceProtocol {
-	protected final InternalActorCell cell;
-
-	public StopUserSpaceProtocol(InternalActorCell cell) {
-		this.cell = cell;
-	}
-	
-	protected void postStop() {
+public final class StopUserSpaceProtocol {
+	protected static void postStop(final InternalActorCell cell) {
 		cell.postStop();
 		cell.internal_stop();
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
@@ -47,7 +41,7 @@ public class StopUserSpaceProtocol {
 			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
-	protected void postUserSpaceStop() {
+	protected static void postUserSpaceStop(final InternalActorCell cell) {
 		Iterator<UUID> iterator = cell.getDeathWatcher().iterator();
 		while (iterator.hasNext()) {
 			UUID dest = iterator.next();
@@ -59,7 +53,7 @@ public class StopUserSpaceProtocol {
 			systemLogger().log(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
-	public void apply() {
+	public static void apply(final InternalActorCell cell) {
 		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
 		Iterator<UUID> iterator = cell.getChildren().iterator();
@@ -75,7 +69,7 @@ public class StopUserSpaceProtocol {
 		}
 		
 		if (waitForChildren.isEmpty()) 
-			postUserSpaceStop();
+			postUserSpaceStop(cell);
 		else
 			cell.become(new Consumer<ActorMessage<?>>() {
 				protected boolean flag_stop;
@@ -87,9 +81,9 @@ public class StopUserSpaceProtocol {
 						waitForChildren.remove(message.source());
 						if (waitForChildren.isEmpty()) {
 							if (flag_stop)
-								postStop();
+								postStop(cell);
 							else
-								postUserSpaceStop();
+								postUserSpaceStop(cell);
 						}
 					}
 				}

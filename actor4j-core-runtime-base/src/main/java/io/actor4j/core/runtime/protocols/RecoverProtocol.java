@@ -21,14 +21,8 @@ import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 
-public class RecoverProtocol {
-	protected final InternalActorCell cell;
-
-	public RecoverProtocol(InternalActorCell cell) {
-		this.cell = cell;
-	}
-	
-	public void apply() {
+public final class RecoverProtocol {	
+	public static void apply(final InternalActorCell cell) {
 		if (cell.getSystem().getConfig().persistenceMode() && cell.getActor() instanceof PersistentActor) {
 			cell.setActive(false);
 			((InternalActorSystem)cell.getSystem()).getMessageDispatcher().postPersistence(
