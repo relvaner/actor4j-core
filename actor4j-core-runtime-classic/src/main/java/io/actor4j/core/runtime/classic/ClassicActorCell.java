@@ -29,7 +29,7 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	protected final Queue<ActorMessage<?>> directiveQueue;
 	protected final Queue<ActorMessage<?>> outerQueue;
 	
-	protected AtomicBoolean isScheduled;
+	protected final AtomicBoolean isScheduled;
 	
 	public ClassicActorCell(InternalActorSystem system, Actor actor, UUID id) {
 		super(system, actor, id);
