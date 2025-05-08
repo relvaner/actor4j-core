@@ -16,6 +16,7 @@
 package io.actor4j.core.runtime;
 
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
 import io.actor4j.core.messages.ActorMessage;
@@ -30,7 +31,7 @@ public abstract class DefaultActorThread extends ActorThread {
 	protected /*quasi final*/ Queue<ActorMessage<?>> serverQueueL1;
 	
 	protected final Object blocker = new Object();
-	protected volatile boolean parked;
+	protected final AtomicBoolean parked;
 	
 	final ActorThreadMode threadMode;
 	final boolean serverMode;
@@ -58,7 +59,7 @@ public abstract class DefaultActorThread extends ActorThread {
 		highLoad         = system.getConfig().highLoad();
 		maxSleepTime     = system.getConfig().sleepTime();
 		
-		parked = false;
+		parked = new AtomicBoolean(false);
 		
 		configQueues();
 	}
@@ -147,9 +148,16 @@ public abstract class DefaultActorThread extends ActorThread {
 				if (spins>maxSpins) {
 					spins = 0;
 					if (threadMode==ActorThreadMode.PARK) {
-						parked = true;
+						parked.set(true);
+						if (   !outerQueueL2.isEmpty() 
+							|| !directiveQueue.isEmpty() 
+							|| (serverMode && !serverQueueL2.isEmpty()) 
+							|| !priorityQueue.isEmpty()) {
+							parked.set(false);
+							continue;
+						}
 						LockSupport.park(blocker);
-						parked = false;
+						parked.set(false);
 						if (isInterrupted())
 							interrupt();
 					}
@@ -178,7 +186,8 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	@Override
 	protected void newMessage() {
-		if (threadMode==ActorThreadMode.PARK && parked)
+//		if (threadMode==ActorThreadMode.PARK && parked.compareAndSet(true, false)) // prevents multiple calls of unpark
+		if (threadMode==ActorThreadMode.PARK && parked.get())
 			LockSupport.unpark(this);			
 	}
 	
