@@ -15,33 +15,16 @@
  */
 package io.actor4j.core.runtime.classic.utils;
 
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
-import java.util.stream.Collectors;
 
 import io.actor4j.core.runtime.classic.ActorRunnableMetrics;
 
 public final class ClassicForkJoinWorkerThread extends ForkJoinWorkerThread {
-	private static final ConcurrentHashMap<Long, ActorRunnableMetrics> metricsMap = new ConcurrentHashMap<>();
-	
-	protected ClassicForkJoinWorkerThread(ForkJoinPool pool) {
+	public ClassicForkJoinWorkerThread(ForkJoinPool pool, Map<Long, ActorRunnableMetrics> metricsMap) {
 		super(pool);
 		
 		metricsMap.put(threadId(), new ActorRunnableMetrics(threadId()));
-	}
-	
-	public static ActorRunnableMetrics getMetrics() {
-		return metricsMap.get(Thread.currentThread().threadId());
-	}
-	
-	public static List<ActorRunnableMetrics> getAllMetrics() {
-		return metricsMap.entrySet()
-			.stream()
-			.sorted(Map.Entry.comparingByKey())
-			.map(Map.Entry::getValue)
-			.collect(Collectors.toList());
 	}
 }

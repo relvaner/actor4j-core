@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,55 @@ package io.actor4j.core.runtime.classic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory;
 import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import io.actor4j.core.runtime.AbstractActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
-import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThreadFactory;
 
 public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunnable> {
 	protected final ExecutorService executorService;
-	
+
 	protected final ActorRunnable actorRunnable;
+	protected final ConcurrentHashMap<Long, ActorRunnableMetrics> metricsMap; // threadId -> ActorRunnableMetrics
 	
 	public ActorRunnablePool(InternalActorRuntimeSystem system) {
 		super(system, null);
 		
+		metricsMap = new ConcurrentHashMap<>();
+		
 		int poolSize = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		executorService = new ForkJoinPool(poolSize, new ClassicForkJoinWorkerThreadFactory(), null, false);
+		executorService = new ForkJoinPool(poolSize,new ForkJoinWorkerThreadFactory() {
+			@Override
+			public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+				return new ClassicForkJoinWorkerThread(pool, metricsMap);
+			}
+			
+		}, null, false);
 		
 		actorRunnable = new DefaultActorRunnable(system);
+	}
+	
+	public ActorRunnableMetrics getMetrics() {
+		return metricsMap.get(Thread.currentThread().threadId());
+	}
+	
+	public List<ActorRunnableMetrics> getAllMetrics() {
+		return metricsMap.entrySet()
+			.stream()
+			.sorted(Map.Entry.comparingByKey())
+			.map(Map.Entry::getValue)
+			.collect(Collectors.toList());
 	}
 	
 	public void submit(ClassicInternalActorCell cell) {
@@ -96,7 +121,7 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	@Override
 	public long getCount() {
 		long sum = 0;
-		for (ActorRunnableMetrics metrics : ClassicForkJoinWorkerThread.getAllMetrics())
+		for (ActorRunnableMetrics metrics : getAllMetrics())
 			sum += metrics.counter.get();
 		
 		return sum;
@@ -105,7 +130,7 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	@Override
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
-		for (ActorRunnableMetrics metrics : ClassicForkJoinWorkerThread.getAllMetrics())
+		for (ActorRunnableMetrics metrics : getAllMetrics())
 			list.add(metrics.counter.get());
 		return list;
 	}

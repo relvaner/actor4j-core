@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
 import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.ActorSystemError;
 
@@ -58,7 +57,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	public abstract void onRun(ClassicInternalActorCell cell);
 	
 	protected ActorRunnableMetrics getMetrics() {
-		return ClassicForkJoinWorkerThread.getMetrics();
+		return ((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().getMetrics();
 	}
 	
 	public void metrics(ClassicInternalActorCell cell) {
