@@ -210,16 +210,19 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	@Deprecated
 	@Override
 	public void registerCell(InternalActorCell cell) {
+		// Not used!
 	}
 	
 	@Deprecated
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
+		// Not used!
 	}
 	
 	@Deprecated
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
+		// Not used!
 		return false;
 	}
 }

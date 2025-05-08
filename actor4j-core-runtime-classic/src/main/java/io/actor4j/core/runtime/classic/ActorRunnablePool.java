@@ -32,6 +32,7 @@ import io.actor4j.core.runtime.AbstractActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
+import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
 public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunnable> {
 	protected final ExecutorService executorService;
@@ -132,6 +133,45 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 		List<Long> list = new ArrayList<>();
 		for (ActorRunnableMetrics metrics : getAllMetrics())
 			list.add(metrics.counter.get());
+		return list;
+	}
+	
+	@Override
+	public List<ProcessingTimeStatistics> getProcessingTimeStatistics() {
+		return getProcessingTimeStatistics(-1);
+	}
+	
+	@Override
+	public List<ProcessingTimeStatistics> getProcessingTimeStatistics(double zScoreThreshold) {
+		List<ProcessingTimeStatistics> list = new ArrayList<>();
+		for (ActorRunnableMetrics metrics : getAllMetrics()) {
+			ProcessingTimeStatistics result = ProcessingTimeStatistics.of(metrics.processingTimeSamples, zScoreThreshold);
+			metrics.processingTimeSampleCount.set(0);
+			list.add(result);
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Double> getMeanProcessingTime() {
+		List<Double> list = new ArrayList<>();
+		for (ActorRunnableMetrics metrics : getAllMetrics()) {
+			double result = ProcessingTimeStatistics.calculateMean(metrics.processingTimeSamples);
+			metrics.processingTimeSampleCount.set(0);
+			list.add(result);
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Double> getMedianProcessingTime() {
+		List<Double> list = new ArrayList<>();
+		for (ActorRunnableMetrics metrics : getAllMetrics()) {
+			double result = ProcessingTimeStatistics.calculateMedian(metrics.processingTimeSamples);
+			metrics.processingTimeSamples.clear();
+			metrics.processingTimeSampleCount.set(0);
+			list.add(result);
+		}
 		return list;
 	}
 }

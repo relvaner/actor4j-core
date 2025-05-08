@@ -41,6 +41,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	@Deprecated
 	@Override
 	public Object executionUnitId() {
+		// Not used!
 		return null;
 	}
 	
@@ -125,30 +126,35 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 	@Deprecated
 	@Override
 	public long getCount() {
+		// Not used!
 		return 0;
 	}
 	
 	@Deprecated
 	@Override
 	public AtomicBoolean getLoad() {
+		// Not used!
 		return null;
 	}
 	
 	@Deprecated
 	@Override
 	public Queue<Long> getProcessingTimeSamples() {
+		// Not used!
 		return null;
 	}
 	
 	@Deprecated
 	@Override
 	public AtomicInteger getProcessingTimeSampleCount() {
+		// Not used!
 		return null;
 	}
 	
 	@Deprecated
 	@Override
 	public AtomicInteger getCellsProcessingTimeSampleCount() {
+		// Not used!
 		return null;
 	}
 }
