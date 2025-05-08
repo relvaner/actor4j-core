@@ -19,9 +19,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -31,17 +29,24 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	protected final Queue<ActorMessage<?>> directiveQueue;
 	protected final Queue<ActorMessage<?>> outerQueue;
 	
-	protected volatile boolean parked;
+//	protected final AtomicBoolean parked;
 	
-	public DefaultVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, BiConsumer<ActorMessage<?>, InternalActorCell> failsafeMethod, Runnable onTermination, AtomicLong counter) {
-		super(system, cell, failsafeMethod, onTermination, counter);
+	public DefaultVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
+		super(system, cell, onTermination);
 
 		directiveQueue = new ConcurrentLinkedQueue<>();
 		outerQueue = new ConcurrentLinkedQueue<>();
 		
-		parked = false;
+//		parked = new AtomicBoolean(false);
 	}
 	
+	protected void onPoll(ActorMessage<?> message) {
+		if (system.getConfig().metricsEnabled().get())
+			metrics(message);
+		else
+			faultToleranceMethod(message);
+	}
+
 	@Override
 	public void onRun() {
 		int hasNextDirective;
@@ -53,33 +58,35 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 			
 			ActorMessage<?> msg = null;
 			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
-				faultToleranceMethod.accept(msg, cell);
+				onPoll(msg);
 			
 			for (; hasNextOuter<system.getConfig().throughput() && (msg=outerQueue().poll())!=null; hasNextOuter++)
-				faultToleranceMethod.accept(msg, cell);
+				onPoll(msg);
 			
-			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
-				faultToleranceMethod.accept(msg, cell);
+//			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
+//				onPoll(msg);
 			
 			if (hasNextOuter==0 && hasNextDirective==0) {
-				parked = true;
+//				parked.set(true);
+				if (!outerQueue().isEmpty() || !directiveQueue().isEmpty()) {
+//					parked.set(false);
+					continue;
+				}
 				LockSupport.park(Thread.currentThread());
-				parked = false;
+//				parked.set(false);
 				if (Thread.interrupted())
-					Thread.currentThread().interrupt();
+					   Thread.currentThread().interrupt();
 			}
 			else {
-				if (system.getConfig().trackRequestRatePerActor().get())
-					cell.getRequestRate().addAndGet(hasNextDirective+hasNextOuter);
 				if (system.getConfig().counterEnabled().get())
-					counter.addAndGet(hasNextDirective+hasNextOuter);
+					getMetrics().counter.addAndGet(hasNextDirective+hasNextOuter);
 			}
 		}
 	}
 	
 	@Override
 	public void newMessage(Thread t) {
-		if (parked)
+//		if (parked.compareAndSet(true, false))
 			LockSupport.unpark(t);
 	}
 	
@@ -93,30 +100,35 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 		return outerQueue;
 	}
 
+	@Deprecated
 	@Override
 	public long getCount() {
 		// Not used!
 		return 0;
 	}
 
+	@Deprecated
 	@Override
 	public AtomicBoolean getLoad() {
 		// Not used!
 		return null;
 	}
 
+	@Deprecated
 	@Override
 	public Queue<Long> getProcessingTimeSamples() {
 		// Not used!
 		return null;
 	}
 	
+	@Deprecated
 	@Override
 	public AtomicInteger getProcessingTimeSampleCount() {
 		// Not used!
 		return null;
 	}
 	
+	@Deprecated
 	@Override
 	public AtomicInteger getCellsProcessingTimeSampleCount() {
 		// Not used!

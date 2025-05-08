@@ -18,8 +18,6 @@ package io.actor4j.core.runtime.loom;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
@@ -80,6 +78,7 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 		return virtualActorRunnable!=null;
 	}
 	
+	@Override
 	public void postPersistence(ActorMessage<?> message) {
 		int index = (int)message.source().getLeastSignificantBits() % (system.getConfig().parallelism()*system.getConfig().parallelismFactor()); // sharding
 		UUID dest = system.getExecutorService().getPersistenceService().getService().getActorFromAlias(ActorPersistenceServiceImpl.getAlias(index));
@@ -90,24 +89,27 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 		return virtualActorRunnables;
 	}
 	
-	public abstract VirtualActorRunnable createVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, BiConsumer<ActorMessage<?>, InternalActorCell> failsafeMethod, Runnable onTermination, AtomicLong counter);
+	public abstract VirtualActorRunnable createVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination);
 	
-	public VirtualActorRunnable registerCell(InternalActorCell cell, BiConsumer<ActorMessage<?>, InternalActorCell> failsafeMethod, Runnable onTermination, AtomicLong counter) {
-		VirtualActorRunnable result = createVirtualActorRunnable(system, cell, failsafeMethod, onTermination, counter);
+	public VirtualActorRunnable registerCell(InternalActorCell cell, Runnable onTermination) {
+		VirtualActorRunnable result = createVirtualActorRunnable(system, cell, onTermination);
 		virtualActorRunnables.put(cell.getId(), result);
 		
 		return result;
 	}
 	
+	@Deprecated
 	@Override
 	public void registerCell(InternalActorCell cell) {
 		// Not used!
 	}
 	
+	@Override
 	public void unregisterCell(InternalActorCell cell) {
 		virtualActorRunnables.remove(cell.getId());
 	}
 	
+	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
 		return virtualActorRunnables.containsKey(cell.getId());
 	}

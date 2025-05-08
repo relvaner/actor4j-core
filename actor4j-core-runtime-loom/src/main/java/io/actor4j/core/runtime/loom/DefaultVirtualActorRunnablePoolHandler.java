@@ -15,10 +15,6 @@
  */
 package io.actor4j.core.runtime.loom;
 
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
-
-import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
@@ -28,8 +24,7 @@ public class DefaultVirtualActorRunnablePoolHandler extends VirtualActorRunnable
 	}
 
 	@Override
-	public VirtualActorRunnable createVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell,
-			BiConsumer<ActorMessage<?>, InternalActorCell> failsafeMethod, Runnable onTermination, AtomicLong counter) {
-		return new DefaultVirtualActorRunnable(system, cell, failsafeMethod, onTermination, counter);
+	public VirtualActorRunnable createVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
+		return new DefaultVirtualActorRunnable(system, cell, onTermination);
 	}
 }

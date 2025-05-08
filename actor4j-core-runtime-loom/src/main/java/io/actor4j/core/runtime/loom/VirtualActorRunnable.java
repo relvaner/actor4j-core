@@ -18,11 +18,10 @@ package io.actor4j.core.runtime.loom;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorExecutionUnit;
+import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
@@ -33,20 +32,16 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 	
 	protected final InternalActorSystem system;
 	protected final InternalActorCell cell;
-	
-	protected final BiConsumer<ActorMessage<?>, InternalActorCell> faultToleranceMethod;
-	protected final AtomicLong counter;
+
 	protected final Runnable onTermination;
 	protected final AtomicBoolean terminated;
 	
-	public VirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, BiConsumer<ActorMessage<?>, InternalActorCell> faultToleranceMethod, Runnable onTermination, AtomicLong counter) {
+	public VirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
 		super();
 
 		this.system = system;
 		this.cell = cell;
 		this.onTermination = onTermination;
-		this.faultToleranceMethod = faultToleranceMethod;
-		this.counter = counter;
 
 		faultToleranceId = UUID.randomUUID();
 		terminated = new AtomicBoolean(false);
@@ -61,9 +56,52 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 		return cell.getId(); 
 	}
 	
+	protected void faultToleranceMethod(ActorMessage<?> message) {
+		try {
+			cell.internal_receive(message);
+		}
+		catch(Exception e) {
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
+			system.getStrategyOnFailure().handle(cell, e);
+		}	
+	}
+	
 	public abstract void onRun();
 	
 	public abstract void newMessage(Thread t);
+	
+	protected VirtualActorRunnableMetrics getMetrics() {
+		return ((InternalVirtualActorExecutorService)system.getExecutorService()).getVirtualActorRunnablePool().getMetrics();
+	}
+	
+	public void metrics(ActorMessage<?> message) {
+		VirtualActorRunnableMetrics metrics = getMetrics();
+		
+		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
+			boolean euPTEnabled = metrics.processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			boolean cellsPTEnabled = metrics.cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
+			
+			if (euPTEnabled || cellsPTEnabled) {
+				long startTime = System.nanoTime();
+				faultToleranceMethod(message);
+				long stopTime = System.nanoTime();
+
+				if (euPTEnabled && system.getConfig().processingTimeEnabled().get()) {
+					metrics.processingTimeSamples.offer(stopTime-startTime);
+					metrics.processingTimeSampleCount.incrementAndGet();
+				}
+				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+					cell.getProcessingTimeSamples().offer(stopTime-startTime);
+					metrics.cellsProcessingTimeSampleCount.incrementAndGet();
+				}
+			}
+			else
+				faultToleranceMethod(message);
+		}
+		
+		if (system.getConfig().trackRequestRatePerActor().get())
+			cell.getRequestRate().incrementAndGet();
+	}
 	
 	@Override
 	public void run() {
