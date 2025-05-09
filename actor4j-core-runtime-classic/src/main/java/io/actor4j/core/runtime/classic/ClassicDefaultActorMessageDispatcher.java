@@ -20,11 +20,11 @@ import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.BaseActorMessageDispatcher;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -54,14 +54,14 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	}
 	
 	@Override
-	public void post(ActorMessage<?> message, UUID source, String alias) {
+	public void post(ActorMessage<?> message, ActorId source, String alias) {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
+			List<ActorId> destinations = system.getActorsFromAlias(alias);
 
 			dest = null;
 			if (!destinations.isEmpty()) {
@@ -71,10 +71,10 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			if (dest==null)
-				dest = ALIAS_ID;
+				dest = system.ALIAS_ID();
 		}
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -97,9 +97,9 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -144,7 +144,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	}
 	
 	@Override
-	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
+	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
@@ -157,13 +157,13 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	}
 
 	@Override
-	public void unsafe_post(ActorMessage<?> message, UUID source, String alias) {
+	public void unsafe_post(ActorMessage<?> message, ActorId source, String alias) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	public boolean dispatch(ActorMessage<?> message, UUID dest, boolean directive, boolean debugUndelivered) {
-		UUID destination = dest!=null ? dest : message.dest();
+	public boolean dispatch(ActorMessage<?> message, ActorId dest, boolean directive, boolean debugUndelivered) {
+		ActorId destination = dest!=null ? dest : message.dest();
 		
 		ClassicInternalActorCell cell = (ClassicInternalActorCell)system.getCells().get(destination);
 		if (cell!=null) {
@@ -202,7 +202,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		List<UUID> ids = system.getExecutorService().getPersistenceService().persistenceActorIds();
+		List<ActorId> ids = system.getExecutorService().getPersistenceService().persistenceActorIds();
 		int index = ThreadLocalRandom.current().nextInt(ids.size());
 		system.getExecutorService().getPersistenceService().getService().send(message.copy(ids.get(index)));
 	}

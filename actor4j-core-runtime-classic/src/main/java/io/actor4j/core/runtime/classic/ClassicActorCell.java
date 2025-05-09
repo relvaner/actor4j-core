@@ -16,11 +16,11 @@
 package io.actor4j.core.runtime.classic;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.BaseActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -31,7 +31,7 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	
 	protected final AtomicBoolean isScheduled;
 	
-	public ClassicActorCell(InternalActorSystem system, Actor actor, UUID id) {
+	public ClassicActorCell(InternalActorSystem system, Actor actor, ActorId id) {
 		super(system, actor, id);
 		
 		directiveQueue = new ConcurrentLinkedQueue<>();
@@ -41,7 +41,7 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	}
 
 	public ClassicActorCell(InternalActorSystem system, Actor actor) {
-		this(system, actor, UUID.randomUUID());
+		this(system, actor, system.idFactory().create());
 	}
 
 	@Override
