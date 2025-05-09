@@ -83,7 +83,7 @@ public class BaseActorCell implements InternalActorCell {
 	protected SupervisorStrategy parentSupervisorStrategy;
 	
 	public BaseActorCell(InternalActorSystem system, Actor actor) {
-		this(system, actor, UUID.randomUUID());
+		this(system, actor, system.idFactory().create());
 	}
 			
 	public BaseActorCell(InternalActorSystem system, Actor actor, ActorId id) {
@@ -286,7 +286,7 @@ public class BaseActorCell implements InternalActorCell {
 					else
 						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 				}
-				dest = (dest!=null) ? dest : ActorMessageDispatcher.ALIAS_ID();
+				dest = (dest!=null) ? dest : system.ALIAS_ID();
 				system.getBufferQueue().offer(message.copy(dest));
 			}
 		}
@@ -315,7 +315,7 @@ public class BaseActorCell implements InternalActorCell {
 					else
 						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 				}
-				dest = (dest!=null) ? dest : ActorMessageDispatcher.ALIAS_ID();
+				dest = (dest!=null) ? dest : system.ALIAS_ID();
 				system.getBufferQueue().offer(message.copy(dest));
 			}
 		}

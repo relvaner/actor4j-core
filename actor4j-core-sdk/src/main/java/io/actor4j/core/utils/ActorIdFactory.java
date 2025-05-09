@@ -13,32 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.id;
+package io.actor4j.core.utils;
 
-import java.util.UUID;
+import io.actor4j.core.id.ActorId;
 
-public record IdAsUUID(UUID id) implements ActorId {
-	public static IdAsUUID of() {
-		return new IdAsUUID(UUID.randomUUID());
-	}
-	
-	public static IdAsUUID of(String id) {
-		UUID uuid = null;
-		try {
-			uuid = UUID.fromString(id);
-		}
-		catch(IllegalArgumentException e) {
-			e.printStackTrace();
-		}
-		
-		return new IdAsUUID(uuid);
-	}
-	
-	public IdAsUUID zero() {
-		return of("00000000-0000-0000-0000-000000000000");
-	}
-	
-	public static UUID randomId() {
-		return UUID.randomUUID();
-	}
+public interface ActorIdFactory {
+	public ActorId create();
 }

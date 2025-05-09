@@ -15,16 +15,11 @@
  */
 package io.actor4j.core.runtime;
 
-import static io.actor4j.core.utils.ActorUtils.*;
-
-import java.util.UUID;
-
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class ActorMessageDispatcher {
 	protected final InternalActorSystem system;
-	
-	protected static final UUID ALIAS_ID = UUID_ZERO;
 	
 	public ActorMessageDispatcher(InternalActorSystem system) {
 		super();
@@ -32,21 +27,21 @@ public abstract class ActorMessageDispatcher {
 		this.system = system;
 	}
 	
-	public static UUID ALIAS_ID() {
-		return ALIAS_ID;
+	public ActorId ALIAS_ID() {
+		return system.ALIAS_ID();
 	}
 	
-	public void unsafe_post(ActorMessage<?> message, UUID source) {
+	public void unsafe_post(ActorMessage<?> message, ActorId source) {
 		unsafe_post(message, source, null);
 	}
 	
-	public abstract void unsafe_post(ActorMessage<?> message, UUID source, String alias);
+	public abstract void unsafe_post(ActorMessage<?> message, ActorId source, String alias);
 
-	public void post(ActorMessage<?> message, UUID source) {
+	public void post(ActorMessage<?> message, ActorId source) {
 		post(message, source, null);
 	}
 	
-	public abstract void post(ActorMessage<?> message, UUID source, String alias);
+	public abstract void post(ActorMessage<?> message, ActorId source, String alias);
 	
 	public abstract void postOuter(ActorMessage<?> message);
 	
@@ -58,7 +53,7 @@ public abstract class ActorMessageDispatcher {
 	
 	public abstract void postPersistence(ActorMessage<?> message);
 	
-	public abstract void undelivered(ActorMessage<?> message, UUID source, UUID dest);
+	public abstract void undelivered(ActorMessage<?> message, ActorId source, ActorId dest);
 	
 	public abstract void registerCell(InternalActorCell cell);
 	

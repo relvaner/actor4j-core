@@ -15,13 +15,10 @@
  */
 package io.actor4j.core.runtime;
 
-import static io.actor4j.core.utils.ActorUtils.*;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -85,7 +82,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 					dest = destinations.get(random.nextInt(destinations.size()));
 				}
 			}
-			message = message.shallowCopy((dest!=null) ? dest : UUID_ZERO);
+			message = message.shallowCopy((dest!=null) ? dest : system.ZERO_ID());
 		}
 		
 		system.send(message);

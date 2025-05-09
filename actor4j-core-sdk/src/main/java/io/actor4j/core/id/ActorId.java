@@ -17,5 +17,4 @@ package io.actor4j.core.id;
 
 public interface ActorId {
 	Object id();
-	Object randomId();
 }

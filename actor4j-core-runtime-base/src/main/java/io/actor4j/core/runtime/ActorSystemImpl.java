@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.StringTokenizer;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -42,6 +41,7 @@ import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
+import io.actor4j.core.id.IdAsLong;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
@@ -54,6 +54,7 @@ import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
+import io.actor4j.core.utils.ActorIdFactory;
 import io.actor4j.core.utils.ActorTimer;
 import io.actor4j.core.utils.PodActorFactory;
 
@@ -87,6 +88,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected final AtomicReference<CountDownLatch> countDownLatch;
 	protected final AtomicInteger countDownLatchPark;
+	
+	protected final ActorIdFactory actorIdFactory;
+	
+	protected final ActorId ZERO_ID;
+	protected final ActorId ALIAS_ID;
 	
 	protected final ActorId USER_ID;
 	protected final ActorId SYSTEM_ID;
@@ -127,13 +133,33 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
+		
+		actorIdFactory = () -> IdAsLong.of();
 				
-		USER_ID    = UUID.randomUUID();
-		SYSTEM_ID  = UUID.randomUUID();
-		UNKNOWN_ID = UUID.randomUUID();
-		PSEUDO_ID  = UUID.randomUUID();
+		ZERO_ID    = IdAsLong.of( 0L);
+		ALIAS_ID   = ZERO_ID;
+		
+		USER_ID    = IdAsLong.of(-1L);
+		SYSTEM_ID  = IdAsLong.of(-2L);
+		UNKNOWN_ID = IdAsLong.of(-3L);
+		PSEUDO_ID  = IdAsLong.of(-4L);
 		
 		resetCells();
+	}
+	
+	@Override
+	public ActorIdFactory idFactory() {
+		return actorIdFactory;
+	}
+	
+	@Override
+	public ActorId ZERO_ID() {
+		return ZERO_ID;
+	}
+	
+	@Override
+	public ActorId ALIAS_ID() {
+		return ALIAS_ID;
 	}
 	
 	@Override
@@ -581,15 +607,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
-	public boolean hasActor(String uuid) {
-		ActorId key;
-		try {
-			key = UUID.fromString(uuid);
-		}
-		catch (IllegalArgumentException e) {
-			return false;
-		}
-		return cells.containsKey(key);
+	public boolean hasActor(ActorId id) {
+		return cells.containsKey(id);
 	}		
 	
 	@Override

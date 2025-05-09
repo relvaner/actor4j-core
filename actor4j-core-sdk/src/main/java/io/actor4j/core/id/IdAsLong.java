@@ -18,9 +18,17 @@ package io.actor4j.core.id;
 import java.util.concurrent.atomic.AtomicLong;
 
 public record IdAsLong(Long id) implements ActorId {
-	private static AtomicLong nextId = new AtomicLong(0);
+	private static AtomicLong nextId = new AtomicLong(1);
 	
-	public Object randomId() {
+	public static IdAsLong of() {
+		return new IdAsLong(nextId.incrementAndGet());
+	}
+	
+	public static IdAsLong of(Long id) {
+		return new IdAsLong(id);
+	}
+	
+	public static Long nextId() {
 		return nextId.incrementAndGet();
 	}
 }

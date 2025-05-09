@@ -31,6 +31,9 @@ import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorSystemFactory factory();
+
+	public ActorId ZERO_ID();
+	public ActorId ALIAS_ID();
 	
 	public ActorId UNKNOWN_ID();
 	public ActorId PSEUDO_ID();
