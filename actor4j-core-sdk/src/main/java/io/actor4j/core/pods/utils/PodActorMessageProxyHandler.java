@@ -22,6 +22,7 @@ import java.util.UUID;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ActorRef;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -69,7 +70,7 @@ public abstract class PodActorMessageProxyHandler {
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
 	public abstract void unhandled(ActorMessage<?> message);
-	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
+	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction);
 	
 	public boolean messagefromPod(ActorMessage<?> message) {
 		boolean result = false;

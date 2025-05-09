@@ -15,13 +15,13 @@
  */
 package io.actor4j.core.pods.actors;
 
-import java.util.UUID;
+import io.actor4j.core.id.ActorId;
 
 public abstract class DefaultShardPodActor extends PodActor {
 	protected final ShardProxyPodActorFactory shardProxyPodActorFactory;
 	protected final HandlerPodActorFactory handlerPodActorFactory;
-	protected UUID shardProxyPodActor;
-	protected UUID handlerPodActor;
+	protected ActorId shardProxyPodActor;
+	protected ActorId handlerPodActor;
 	
 	public DefaultShardPodActor(ShardProxyPodActorFactory shardProxyPodActorFactory, HandlerPodActorFactory handlerPodActorFactory) {
 		super();

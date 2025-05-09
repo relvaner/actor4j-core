@@ -17,6 +17,7 @@ package io.actor4j.core.pods.actors;
 
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.utils.PodActorMessageProxyHandler;
@@ -42,7 +43,7 @@ public abstract class HandlerPodActor extends PodChildActor {
 			}
 			
 			@Override
-			public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
+			public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction) {
 				HandlerPodActor.this.callback(message, originalMessage, dest, interaction);
 			}
 		};
@@ -62,5 +63,5 @@ public abstract class HandlerPodActor extends PodChildActor {
 	}
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
-	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
+	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction);
 }

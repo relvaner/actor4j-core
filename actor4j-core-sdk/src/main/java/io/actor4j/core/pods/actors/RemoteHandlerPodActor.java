@@ -23,13 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;
-	protected Map<UUID, UUID> requestMap;
+	protected Map<UUID, ActorId> requestMap;
 
 	public RemoteHandlerPodActor(String alias, UUID groupId, PodContext context) {
 		super(alias, groupId, context);
@@ -101,11 +102,11 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 		request(message, tag, null, interaction, null);
 	}
 	
-	public void request(Object message, UUID source, UUID interaction) {
+	public void request(Object message, ActorId source, UUID interaction) {
 		request(message, 0, source, interaction, null);
 	}
 	
-	public boolean request(Object message, int tag, UUID source, UUID interaction, Object params) {
+	public boolean request(Object message, int tag, ActorId source, UUID interaction, Object params) {
 		boolean result = false;
 		
 		if (internal_server_request!=null) {

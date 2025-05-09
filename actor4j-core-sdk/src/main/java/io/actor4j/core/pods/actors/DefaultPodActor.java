@@ -15,11 +15,11 @@
  */
 package io.actor4j.core.pods.actors;
 
-import java.util.UUID;
+import io.actor4j.core.id.ActorId;
 
 public abstract class DefaultPodActor extends PodActor {
 	protected final HandlerPodActorFactory handlerPodActorFactory;
-	protected UUID handlerPodActor;
+	protected ActorId handlerPodActor;
 	
 	public DefaultPodActor(HandlerPodActorFactory handlerPodActorFactory) {
 		super();

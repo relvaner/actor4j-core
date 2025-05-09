@@ -18,13 +18,13 @@ package io.actor4j.core.runtime;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
@@ -32,8 +32,8 @@ import io.actor4j.core.utils.ActorFactory;
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorSystemFactory factory();
 	
-	public UUID UNKNOWN_ID();
-	public UUID PSEUDO_ID();
+	public ActorId UNKNOWN_ID();
+	public ActorId PSEUDO_ID();
 
 	public PodReplicationController getPodReplicationController();
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();
@@ -41,14 +41,14 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public PseudoActorCellFactory getPseudoActorCellFactory();
 	
-	public Map<UUID, InternalActorCell> getCells();
-	public Map<UUID, InternalActorCell> getPseudoCells();
-	public Map<UUID, Boolean> getResourceCells();
-	public Map<UUID, Boolean> getPodCells();
+	public Map<ActorId, InternalActorCell> getCells();
+	public Map<ActorId, InternalActorCell> getPseudoCells();
+	public Map<ActorId, Boolean> getResourceCells();
+	public Map<ActorId, Boolean> getPodCells();
 	
-	public Map<String, Queue<UUID>> getPodDomains();
-	public Map<String, Queue<UUID>> getAliases();
-	public Map<UUID, UUID> getRedirector();
+	public Map<String, Queue<ActorId>> getPodDomains();
+	public Map<String, Queue<ActorId>> getAliases();
+	public Map<ActorId, ActorId> getRedirector();
 	
 	public AtomicBoolean getMessagingEnabled();
 	public ActorMessageDispatcher getMessageDispatcher();
@@ -59,13 +59,13 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public InternalActorCell generateCell(Actor actor);
 	public InternalActorCell generateCell(Class<? extends Actor> clazz);
-	public UUID internal_addCell(InternalActorCell cell);
-	public UUID pseudo_addCell(InternalActorCell cell);
+	public ActorId internal_addCell(InternalActorCell cell);
+	public ActorId pseudo_addCell(InternalActorCell cell);
 	
-	public UUID addSystemActor(ActorFactory factory);
-	public List<UUID> addSystemActor(ActorFactory factory, int instances);
+	public ActorId addSystemActor(ActorFactory factory);
+	public List<ActorId> addSystemActor(ActorFactory factory, int instances);
 	
-	public void removeActor(UUID id);
+	public void removeActor(ActorId id);
 	
 	public void sendAsDirective(ActorMessage<?> message);
 	
