@@ -16,13 +16,13 @@
 package io.actor4j.core.runtime.persistence;
 
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.ActorService;
+import io.actor4j.core.id.ActorId;
 
 public interface ActorPersistenceService {
 	public ActorService getService();
-	public List<UUID> persistenceActorIds();
+	public List<ActorId> persistenceActorIds();
 
 	public void start();
 	public void shutdown();

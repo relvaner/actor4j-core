@@ -21,11 +21,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import io.actor4j.core.function.Procedure;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
@@ -86,11 +86,11 @@ public class DefaultPodReplicationController implements PodReplicationController
 			if (podReplicationTuple.podConfiguration().shardCount()==1) {
 				systemLogger().log(INFO, String.format("[REPLICATION] Pod (%s) undeploying", domain));
 				
-				Queue<UUID> queue = system.getPodDomains().get(domain);
-				Iterator<UUID> iterator = queue.iterator();
+				Queue<ActorId> queue = system.getPodDomains().get(domain);
+				Iterator<ActorId> iterator = queue.iterator();
 				int count=0;
 				for (; iterator.hasNext() && count<instances;) {
-					UUID id = iterator.next();
+					ActorId id = iterator.next();
 					InternalPodActorCell cell = ((InternalPodActorCell)system.getCells().get(id));
 					if (!cell.getContext().primaryReplica()) { // does not remove primary replica
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
@@ -107,11 +107,11 @@ public class DefaultPodReplicationController implements PodReplicationController
 			else {
 				systemLogger().log(INFO, String.format("[REPLICATION] Pod-Shard (%s, SECONDARY, %s) undeploying", domain, shardId));
 				
-				Queue<UUID> queue = system.getPodDomains().get(domain);
-				Iterator<UUID> iterator = queue.iterator();
+				Queue<ActorId> queue = system.getPodDomains().get(domain);
+				Iterator<ActorId> iterator = queue.iterator();
 				int count=0;
 				for (; iterator.hasNext() && count<instances;) {
-					UUID id = iterator.next();
+					ActorId id = iterator.next();
 					InternalPodActorCell cell = ((InternalPodActorCell)system.getCells().get(id));
 					if (!cell.getContext().primaryReplica() && cell.getContext().shardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
@@ -137,10 +137,10 @@ public class DefaultPodReplicationController implements PodReplicationController
 	public void undeployPods(String domain) {
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' undeploying", domain));
 		
-		Queue<UUID> queue = system.getPodDomains().get(domain);
-		Iterator<UUID> iterator = queue.iterator();
+		Queue<ActorId> queue = system.getPodDomains().get(domain);
+		Iterator<ActorId> iterator = queue.iterator();
 		while (iterator.hasNext()) {
-			UUID id = iterator.next();
+			ActorId id = iterator.next();
 			systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 			system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));
 			iterator.remove();
@@ -163,10 +163,10 @@ public class DefaultPodReplicationController implements PodReplicationController
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' updating", domain));
 		
 		ActorGroup oldPods = new ActorGroupSet();
-		Queue<UUID> queue = system.getPodDomains().get(domain);
-		Iterator<UUID> iterator = queue.iterator();
+		Queue<ActorId> queue = system.getPodDomains().get(domain);
+		Iterator<ActorId> iterator = queue.iterator();
 		while (iterator.hasNext()) {
-			UUID id = iterator.next();
+			ActorId id = iterator.next();
 			oldPods.add(id);
 			iterator.remove();
 		}

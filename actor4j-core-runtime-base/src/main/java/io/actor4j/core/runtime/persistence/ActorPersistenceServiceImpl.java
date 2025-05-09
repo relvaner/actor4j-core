@@ -17,10 +17,10 @@ package io.actor4j.core.runtime.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.ActorService;
 import io.actor4j.core.config.ActorServiceConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.persistence.drivers.PersistenceDriver;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
@@ -29,7 +29,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 	protected final ActorService service;
 	protected final PersistenceDriver driver;
 	
-	protected final List<UUID> persistenceActorIds;
+	protected final List<ActorId> persistenceActorIds;
 	
 	public ActorPersistenceServiceImpl(InternalActorSystem parent, int parallelism, int parallelismFactor, PersistenceDriver driver) {
 		super();
@@ -48,7 +48,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 		persistenceActorIds = new ArrayList<>(parallelism*parallelismFactor);
 		for (int i=0; i<parallelism*parallelismFactor; i++) {
 			String alias = getAlias(i);
-			UUID id = service.addActor(() -> new PersistenceServiceActor(alias, driver.createPersistenceImpl(parent)));
+			ActorId id = service.addActor(() -> new PersistenceServiceActor(alias, driver.createPersistenceImpl(parent)));
 			service.setAlias(id, alias);
 			persistenceActorIds.add(id);
 		}
@@ -59,7 +59,7 @@ public class ActorPersistenceServiceImpl implements ActorPersistenceService {
 	}
 	
 	@Override
-	public List<UUID> persistenceActorIds() {
+	public List<ActorId> persistenceActorIds() {
 		return persistenceActorIds;
 	}
 	
