@@ -17,10 +17,10 @@ package io.actor4j.core.utils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorMessageMatcher {
@@ -43,7 +43,7 @@ public class ActorMessageMatcher {
 		matchesAny.clear();
 	}
 		
-	public ActorMessageMatcher match(final UUID source, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId source, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -59,7 +59,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(final UUID[] sources, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId[] sources, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -68,7 +68,7 @@ public class ActorMessageMatcher {
 				public boolean test(ActorMessage<?> message) {
 					boolean result = false;
 					if (message.source()!=null)
-						for (UUID source : sources)
+						for (ActorId source : sources)
 							if (message.source().equals(source)) {
 								result = true;
 								break;
@@ -120,7 +120,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(final UUID source, final int tag, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId source, final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -136,7 +136,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(final UUID[] sources, final int tag, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId[] sources, final int tag, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -145,7 +145,7 @@ public class ActorMessageMatcher {
 				public boolean test(ActorMessage<?> message) {
 					boolean result = false;
 					if (message.source()!=null && message.tag()==tag)
-						for (UUID source : sources)
+						for (ActorId source : sources)
 							if (message.source().equals(source)) {
 								result = true;
 								break;
@@ -159,7 +159,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(final UUID source, final int[] tags, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId source, final int[] tags, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -182,7 +182,7 @@ public class ActorMessageMatcher {
 		return this;
 	}
 	
-	public ActorMessageMatcher match(final UUID[] sources, final int[] tags, Consumer<ActorMessage<?>> action) {
+	public ActorMessageMatcher match(final ActorId[] sources, final int[] tags, Consumer<ActorMessage<?>> action) {
 		checkAction(action);
 		
 		MatchTuple tuple = new MatchTuple(
@@ -191,7 +191,7 @@ public class ActorMessageMatcher {
 				public boolean test(ActorMessage<?> message) {
 					boolean result = false;
 					if (message.source()!=null)
-						for (UUID source : sources)
+						for (ActorId source : sources)
 							if (message.source().equals(source)) {
 								result = true;
 								break;

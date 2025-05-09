@@ -17,12 +17,12 @@ package io.actor4j.core.id;
 
 import java.util.UUID;
 
-public record IdAsUUID(UUID id) implements ActorId {
-	public static IdAsUUID of() {
-		return new IdAsUUID(UUID.randomUUID());
+public record ActorIdAsUUID(UUID id) implements ActorId {
+	public static ActorIdAsUUID of() {
+		return new ActorIdAsUUID(UUID.randomUUID());
 	}
 	
-	public static IdAsUUID of(String id) {
+	public static ActorIdAsUUID of(String id) {
 		UUID uuid = null;
 		try {
 			uuid = UUID.fromString(id);
@@ -31,11 +31,11 @@ public record IdAsUUID(UUID id) implements ActorId {
 			e.printStackTrace();
 		}
 		
-		return new IdAsUUID(uuid);
+		return new ActorIdAsUUID(uuid);
 	}
 	
-	public IdAsUUID zero() {
-		return of("00000000-0000-0000-0000-000000000000");
+	public static UUID zero() {
+		return UUID.fromString("00000000-0000-0000-0000-000000000000");
 	}
 	
 	public static UUID randomId() {

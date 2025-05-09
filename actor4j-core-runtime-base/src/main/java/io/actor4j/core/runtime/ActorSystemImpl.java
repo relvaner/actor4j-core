@@ -41,7 +41,6 @@ import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
-import io.actor4j.core.id.IdAsLong;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
@@ -134,15 +133,15 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
 		
-		actorIdFactory = () -> IdAsLong.of();
+		actorIdFactory = () -> ActorId.ofLong();
 				
-		ZERO_ID    = IdAsLong.of( 0L);
+		ZERO_ID    = ActorId.ofLong( 0L);
 		ALIAS_ID   = ZERO_ID;
 		
-		USER_ID    = IdAsLong.of(-1L);
-		SYSTEM_ID  = IdAsLong.of(-2L);
-		UNKNOWN_ID = IdAsLong.of(-3L);
-		PSEUDO_ID  = IdAsLong.of(-4L);
+		USER_ID    = ActorId.ofLong(-1L);
+		SYSTEM_ID  = ActorId.ofLong(-2L);
+		UNKNOWN_ID = ActorId.ofLong(-3L);
+		PSEUDO_ID  = ActorId.ofLong(-4L);
 		
 		resetCells();
 	}
