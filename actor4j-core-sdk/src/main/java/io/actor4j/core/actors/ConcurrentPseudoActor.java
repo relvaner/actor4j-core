@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -59,12 +60,12 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	}
 	
 	@Override
-	public UUID getId() {
+	public ActorId getId() {
 		return actor.getId();
 	}
 	
 	@Override
-	public UUID self() {
+	public ActorId self() {
 		return actor.getId();
 	}
 	
@@ -153,12 +154,12 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	}
 	
 	@Override
-	public void send(ActorMessage<?> message, UUID dest) {
+	public void send(ActorMessage<?> message, ActorId dest) {
 		actor.send(message, dest);
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest) {
+	public <T> void tell(T value, int tag, ActorId dest) {
 		actor.tell(value, tag, dest);
 	}
 	
@@ -168,7 +169,7 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	}
 	
 	@Override
-	public void forward(ActorMessage<?> message, UUID dest) {
+	public void forward(ActorMessage<?> message, ActorId dest) {
 		actor.forward(message, dest);
 	}
 	

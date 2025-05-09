@@ -16,7 +16,6 @@
 package io.actor4j.core.actors;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -24,6 +23,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPseudoActorCell;
@@ -46,13 +46,13 @@ public abstract class PseudoActor extends Actor implements PseudoActorRef {
 	
 	@Deprecated
 	@Override
-	public UUID addChild(ActorFactory factory) {
+	public ActorId addChild(ActorFactory factory) {
 		return null;
 	}
 	
 	@Deprecated
 	@Override
-	public List<UUID> addChild(ActorFactory factory, int instances) {
+	public List<ActorId> addChild(ActorFactory factory, int instances) {
 		return null;
 	}
 
