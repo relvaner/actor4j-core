@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -61,7 +62,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 	}
 	
 	@Override
-	public UUID pseudo_addCell(InternalPseudoActorCell cell) {
+	public ActorId pseudo_addCell(InternalPseudoActorCell cell) {
 		return system.pseudo_addCell(cell);
 	}
 	
@@ -73,9 +74,9 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
 		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
+			List<ActorId> destinations = system.getActorsFromAlias(alias);
 
-			UUID dest = null;
+			ActorId dest = null;
 			if (!destinations.isEmpty()) {
 				if (destinations.size()==1)
 					dest = destinations.get(0);
@@ -104,19 +105,19 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 	
 	@Deprecated
 	@Override
-	public UUID internal_addChild(InternalActorCell cell) {
+	public ActorId internal_addChild(InternalActorCell cell) {
 		return null;
 	}
 	
 	@Deprecated
 	@Override
-	public UUID addChild(ActorFactory factory) {
+	public ActorId addChild(ActorFactory factory) {
 		return null;
 	}
 	
 	@Deprecated
 	@Override
-	public List<UUID> addChild(ActorFactory factory, int instances) {
+	public List<ActorId> addChild(ActorFactory factory, int instances) {
 		return null;
 	}
 	

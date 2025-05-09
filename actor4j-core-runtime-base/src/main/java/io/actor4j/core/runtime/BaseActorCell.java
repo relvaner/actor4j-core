@@ -37,6 +37,7 @@ import io.actor4j.core.actors.PersistenceId;
 import io.actor4j.core.actors.PersistentActor;
 import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.exceptions.ActorKilledException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
@@ -61,16 +62,16 @@ public class BaseActorCell implements InternalActorCell {
 	protected final InternalActorSystem system;
 	protected /*quasi final*/ Actor actor;
 	
-	protected final UUID id;
+	protected final ActorId id;
 	
-	protected UUID parent;
-	protected final Queue<UUID> children;
+	protected ActorId parent;
+	protected final Queue<ActorId> children;
 	
 	protected final AtomicBoolean active;
 	
 	protected final Deque<Consumer<ActorMessage<?>>> behaviourStack;
 	
-	protected final Queue<UUID> deathWatcher;
+	protected final Queue<ActorId> deathWatcher;
 
 	protected boolean activeDirectiveBehaviour;
 	
@@ -85,14 +86,12 @@ public class BaseActorCell implements InternalActorCell {
 		this(system, actor, UUID.randomUUID());
 	}
 			
-	public BaseActorCell(InternalActorSystem system, Actor actor, UUID id) {
+	public BaseActorCell(InternalActorSystem system, Actor actor, ActorId id) {
 		super();
 		
 		this.system = system;
 		this.actor  = actor;
-		
-		UUID persistenceId = persistenceId();
-		this.id = (persistenceId!=null)? persistenceId : id;
+		this.id = id;
 		
 		children = new ConcurrentLinkedQueue<>();
 		
@@ -124,22 +123,22 @@ public class BaseActorCell implements InternalActorCell {
 	}
 
 	@Override
-	public UUID getId() {
+	public ActorId getId() {
 		return id;
 	}
 	
 	@Override
-	public UUID getParent() {
+	public ActorId getParent() {
 		return parent;
 	}
 	
 	@Override
-	public void setParent(UUID parent) {
+	public void setParent(ActorId parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public Queue<UUID> getChildren() {
+	public Queue<ActorId> getChildren() {
 		return children;
 	}
 	
@@ -154,7 +153,7 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	@Override
-	public Queue<UUID> getDeathWatcher() {
+	public Queue<ActorId> getDeathWatcher() {
 		return deathWatcher;
 	}
 
@@ -278,9 +277,9 @@ public class BaseActorCell implements InternalActorCell {
 			system.getMessageDispatcher().post(message, id, alias);
 		else {
 			if (alias!=null) {
-				List<UUID> destinations = system.getActorsFromAlias(alias);
+				List<ActorId> destinations = system.getActorsFromAlias(alias);
 
-				UUID dest = null;
+				ActorId dest = null;
 				if (!destinations.isEmpty()) {
 					if (destinations.size()==1)
 						dest = destinations.get(0);
@@ -307,9 +306,9 @@ public class BaseActorCell implements InternalActorCell {
 			system.getMessageDispatcher().unsafe_post(message, id, alias);
 		else {
 			if (alias!=null) {
-				List<UUID> destinations = system.getActorsFromAlias(alias);
+				List<ActorId> destinations = system.getActorsFromAlias(alias);
 
-				UUID dest = null;
+				ActorId dest = null;
 				if (!destinations.isEmpty()) {
 					if (destinations.size()==1)
 						dest = destinations.get(0);
@@ -346,7 +345,7 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	@Override
-	public UUID internal_addChild(InternalActorCell cell) {
+	public ActorId internal_addChild(InternalActorCell cell) {
 		cell.setParent(id);
 		children.add(cell.getId());
 		system.internal_addCell(cell);
@@ -355,7 +354,7 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	@Override
-	public UUID addChild(ActorFactory factory) {
+	public ActorId addChild(ActorFactory factory) {
 		InternalActorCell cell = system.generateCell(factory.create());
 		((InternalActorRuntimeSystem)system).getContainer().register(cell.getId(), factory);
 		
@@ -363,8 +362,8 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	@Override
-	public List<UUID> addChild(ActorFactory factory, int instances) {
-		List<UUID> result = new ArrayList<>(instances);
+	public List<ActorId> addChild(ActorFactory factory, int instances) {
+		List<ActorId> result = new ArrayList<>(instances);
 		
 		for (int i=0; i<instances; i++)
 			result.add(addChild(factory));
@@ -437,23 +436,23 @@ public class BaseActorCell implements InternalActorCell {
 			system.getMessageDispatcher().unregisterCell(this);
 		system.removeActor(id);
 		
-		Iterator<UUID> iterator = deathWatcher.iterator();
+		Iterator<ActorId> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, id, dest));
 			iterator.remove();
 		}
 	}
 	
 	@Override
-	public void watch(UUID dest) {
+	public void watch(ActorId dest) {
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null)
 			cell.getDeathWatcher().add(id);
 	}
 	
 	@Override
-	public void unwatch(UUID dest) {
+	public void unwatch(ActorId dest) {
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null)
 			cell.getDeathWatcher().remove(id);
