@@ -21,7 +21,7 @@ import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
 public abstract class PodReplicationControllerRunnable implements Runnable {
-	protected final UUID uuid; // for failsafe
+	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	
@@ -31,7 +31,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 		super();
 		
 		this.system = system;
-		uuid = UUID.randomUUID();
+		faultToleranceId = UUID.randomUUID();
 	}
 	
 	public abstract void onRun();
@@ -40,7 +40,7 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 	public void run() {
 		FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), ActorSystemError.REPLICATION, new FaultToleranceMethod() {
 			@Override
-			public void run(UUID uuid) {
+			public void run(Object faultToleranceId) {
 				onRun();
 				
 //				if (onTermination!=null)
@@ -55,10 +55,10 @@ public abstract class PodReplicationControllerRunnable implements Runnable {
 			@Override
 			public void postRun() {
 			}
-		}, uuid);
+		}, faultToleranceId);
 	}
 	
-	public UUID getUUID() {
-		return uuid;
+	public UUID getFaultToleranceId() {
+		return faultToleranceId;
 	}
 }

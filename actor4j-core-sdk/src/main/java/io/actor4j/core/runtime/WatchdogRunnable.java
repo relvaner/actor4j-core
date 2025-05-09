@@ -23,7 +23,7 @@ import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
 public abstract class WatchdogRunnable implements Runnable {
-	protected final UUID uuid; // for failsafe
+	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
 	protected final List<UUID> watchdogActors;
@@ -33,7 +33,7 @@ public abstract class WatchdogRunnable implements Runnable {
 		
 		this.system = system;
 		this.watchdogActors = watchdogActors;
-		uuid = UUID.randomUUID();
+		faultToleranceId = UUID.randomUUID();
 	}
 	
 	public abstract void onRun();
@@ -42,7 +42,7 @@ public abstract class WatchdogRunnable implements Runnable {
 	public void run() {
 		FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), ActorSystemError.WATCHDOG, new FaultToleranceMethod() {
 			@Override
-			public void run(UUID uuid) {
+			public void run(Object faultToleranceId) {
 				onRun();
 			}
 			
@@ -54,11 +54,11 @@ public abstract class WatchdogRunnable implements Runnable {
 			@Override
 			public void postRun() {
 			}
-		}, uuid);
+		}, faultToleranceId);
 	}
 	
-	public UUID getUUID() {
-		return uuid;
+	public UUID getFaultToleranceId() {
+		return faultToleranceId;
 	}
 	
 	public abstract boolean isResponsiveThread(int index);
