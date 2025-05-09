@@ -15,17 +15,15 @@
  */
 package io.actor4j.core.runtime.extended;
 
-import static io.actor4j.core.utils.ActorUtils.UUID_ZERO;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.XActorService;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.DefaultActorMessageDispatcher;
 import io.actor4j.core.runtime.DefaultActorSystemImpl;
@@ -72,8 +70,8 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 	}
 	
 	@Override
-	public List<UUID> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		List<UUID> result = new ArrayList<>(instances);
+	public List<ActorId> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		List<ActorId> result = new ArrayList<>(instances);
 		
 		for (int i=0; i<instances; i++)
 			result.add(addActor(clazz, args));
@@ -82,9 +80,9 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 	}
 	
 	@Override
-	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+	public ActorId addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InternalActorCell cell = generateCell(clazz);
-		((DefaultDIContainer<UUID>)container).registerConstructorInjector(cell.getId(), clazz, args);
+		((DefaultDIContainer<ActorId>)container).registerConstructorInjector(cell.getId(), clazz, args);
 		Actor actor = null;
 		try {
 			actor = (Actor)container.getInstance(cell.getId());
@@ -94,6 +92,6 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 			executorService.getFaultToleranceManager().notifyErrorHandler(new ActorInitializationException(), ActorSystemError.ACTOR_INITIALIZATION, null);
 		}
 		
-		return (actor!=null) ? user_addCell(cell) : UUID_ZERO;
+		return (actor!=null) ? user_addCell(cell) : ZERO_ID;
 	}
 }

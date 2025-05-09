@@ -16,12 +16,12 @@
 package io.actor4j.core;
 
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorSystemConfig;
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
 public interface XActorSystem extends ActorSystem {
@@ -45,6 +45,6 @@ public interface XActorSystem extends ActorSystem {
 	
 	public boolean setConfig(XActorSystemConfig config);
 	
-	public List<UUID> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException;
-	public UUID addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException;
+	public List<ActorId> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException;
+	public ActorId addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException;
 }

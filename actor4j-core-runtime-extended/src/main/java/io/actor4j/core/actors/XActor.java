@@ -17,9 +17,9 @@ package io.actor4j.core.actors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 import io.actor4j.core.runtime.extended.di.DefaultDIContainer;
@@ -33,10 +33,10 @@ public abstract class XActor extends Actor {
 		super(name);
 	}
 	
-	public UUID addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+	public ActorId addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
 		InternalActorCell cell = ((InternalActorRuntimeSystem)getSystem()).generateCell(clazz);
 		if (((InternalActorRuntimeSystem)getSystem()).getContainer() instanceof DefaultDIContainer)
-			((DefaultDIContainer<UUID>)((InternalActorRuntimeSystem)getSystem()).getContainer()).registerConstructorInjector(cell.getId(), clazz, args);
+			((DefaultDIContainer<ActorId>)((InternalActorRuntimeSystem)getSystem()).getContainer()).registerConstructorInjector(cell.getId(), clazz, args);
 		else
 			throw new ActorInitializationException();
 		try {
@@ -49,8 +49,8 @@ public abstract class XActor extends Actor {
 		return ((InternalActorCell)getCell()).internal_addChild(cell);
 	}
 	
-	public List<UUID> addChild(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		List<UUID> result = new ArrayList<>(instances);
+	public List<ActorId> addChild(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+		List<ActorId> result = new ArrayList<>(instances);
 		
 		for (int i=0; i<instances; i++)
 			result.add(addChild(clazz, args));
