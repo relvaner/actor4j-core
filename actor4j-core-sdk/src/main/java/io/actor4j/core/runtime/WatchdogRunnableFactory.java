@@ -16,8 +16,9 @@
 package io.actor4j.core.runtime;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.function.BiFunction;
 
-public interface WatchdogRunnableFactory extends BiFunction<InternalActorSystem, List<UUID>, WatchdogRunnable>{
+import io.actor4j.core.id.ActorId;
+
+public interface WatchdogRunnableFactory extends BiFunction<InternalActorSystem, List<ActorId>, WatchdogRunnable>{
 }

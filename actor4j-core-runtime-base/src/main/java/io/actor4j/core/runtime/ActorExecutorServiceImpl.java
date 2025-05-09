@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -36,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorWithDistributedGroup;
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.fault.tolerance.ErrorHandler;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceManager;
 import io.actor4j.core.runtime.persistence.ActorPersistenceService;
@@ -77,14 +77,14 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 
 		faultToleranceManager = new FaultToleranceManager(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
+			public void handle(Throwable t, ActorSystemError systemError, String message, Object faultToleranceId) {
 				if (t instanceof ActorInitializationException) {
 					systemLogger().log(ERROR,
 						String.format("[FT] Exception in initialization of an actor"));
 				}
 				else if (systemError!=null) {
 					if (systemError==ActorSystemError.ACTOR || systemError==ActorSystemError.RESOURCE_ACTOR) {
-						InternalActorCell cell = system.getCells().get(uuid);
+						InternalActorCell cell = system.getCells().get(faultToleranceId);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -92,10 +92,10 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FT] Exception in actor: %s", uuid.toString()));
+								String.format("[FT] Exception in actor: %s", faultToleranceId.toString()));
 					}
 					else if (systemError==ActorSystemError.EMBEDDED_ACTOR) {
-						InternalActorCell cell = system.getCells().get(uuid);
+						InternalActorCell cell = system.getCells().get(faultToleranceId);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -103,11 +103,11 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FT] Exception in embedded actor: %s (host: %s)", message, uuid.toString()));
+								String.format("[FT] Exception in embedded actor: %s (host: %s)", message, faultToleranceId.toString()));
 						
 					}
 					else if (systemError==ActorSystemError.PSEUDO_ACTOR) {
-						InternalActorCell cell = system.getPseudoCells().get(uuid);
+						InternalActorCell cell = system.getPseudoCells().get(faultToleranceId);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -115,7 +115,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FT] Exception in actor: %s", uuid.toString()));
+								String.format("[FT] Exception in actor: %s", faultToleranceId.toString()));
 					}
 					else if (systemError==ActorSystemError.REPLICATION) {
 						systemLogger().log(ERROR,
@@ -126,7 +126,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 								String.format("[FT] Exception in WatchdogThread"));
 					}
 					else if (systemError==ActorSystemError.EXECUTER_RESOURCE) {
-						InternalActorCell cell = system.getCells().get(uuid);
+						InternalActorCell cell = system.getCells().get(faultToleranceId);
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -134,7 +134,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 						}
 						else
 							systemLogger().log(ERROR,
-								String.format("[FT][EXECUTOR][REJECTION] Exception in resource actor: %s", uuid.toString()));
+								String.format("[FT][EXECUTOR][REJECTION] Exception in resource actor: %s", faultToleranceId.toString()));
 					}
 					else if (systemError==ActorSystemError.EXECUTER_CLIENT) {
 						systemLogger().log(ERROR,
@@ -193,7 +193,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 			/* necessary before actorThreadPool instantiation */
 			ActorGroup watchdogActorGroup = new ActorGroupList();
 			final AtomicInteger watchdogIndex = new AtomicInteger(0);
-			List<UUID> watchdogActors = system.addSystemActor(() -> new ActorWithDistributedGroup("watchdog-"+watchdogIndex.getAndIncrement(), watchdogActorGroup) {
+			List<ActorId> watchdogActors = system.addSystemActor(() -> new ActorWithDistributedGroup("watchdog-"+watchdogIndex.getAndIncrement(), watchdogActorGroup) {
 				@Override
 				public void receive(ActorMessage<?> message) {
 					// empty

@@ -16,17 +16,17 @@
 package io.actor4j.core.runtime;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface InternalPseudoActorCell extends InternalActorCell {
-	public UUID pseudo_addCell(InternalPseudoActorCell cell);
+	public ActorId pseudo_addCell(InternalPseudoActorCell cell);
 	
 	public boolean run();
 	public boolean runAll();
