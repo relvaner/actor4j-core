@@ -17,9 +17,9 @@ package io.actor4j.core.actors;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
@@ -28,16 +28,16 @@ import io.actor4j.core.utils.HubPattern;
 
 public abstract class PrimaryActor extends ActorWithDistributedGroup {
 	protected String alias;
-	protected Function<UUID, ActorFactory> secondary;
+	protected Function<ActorId, ActorFactory> secondary;
 	protected int instances;
 	
 	protected HubPattern hub;
 	
-	public PrimaryActor(ActorGroup group, String alias, Function<UUID, ActorFactory> secondary, int instances) {
+	public PrimaryActor(ActorGroup group, String alias, Function<ActorId, ActorFactory> secondary, int instances) {
 		this(null, group, alias, secondary, instances);
 	}
 
-	public PrimaryActor(String name, ActorGroup group, String alias, Function<UUID, ActorFactory> secondary, int instances) {
+	public PrimaryActor(String name, ActorGroup group, String alias, Function<ActorId, ActorFactory> secondary, int instances) {
 		super(name, group);
 		this.alias = alias;
 		this.secondary = secondary;
@@ -46,7 +46,7 @@ public abstract class PrimaryActor extends ActorWithDistributedGroup {
 	
 	@Override
 	public void preStart() {
-		List<UUID> ids = null;
+		List<ActorId> ids = null;
 
 		if (secondary!=null && instances>0)
 			// creating secondary actors

@@ -17,19 +17,18 @@ package io.actor4j.core.actors;
 
 import static io.actor4j.core.actors.ActorWithCache.SUBSCRIBE_SECONDARY;
 
-import java.util.UUID;
-
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 
 public abstract class SecondaryActor extends ActorWithDistributedGroup {
-	protected /*final*/ UUID primary;
+	protected /*final*/ ActorId primary;
 	
-	public SecondaryActor(ActorGroup group, UUID primary) {
+	public SecondaryActor(ActorGroup group, ActorId primary) {
 		this(null, group, primary);
 	}
 
-	public SecondaryActor(String name, ActorGroup group, UUID primary) {
+	public SecondaryActor(String name, ActorGroup group, ActorId primary) {
 		super(name, group);
 		this.primary = primary;
 	}

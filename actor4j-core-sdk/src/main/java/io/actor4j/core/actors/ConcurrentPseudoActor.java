@@ -16,7 +16,6 @@
 package io.actor4j.core.actors;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
