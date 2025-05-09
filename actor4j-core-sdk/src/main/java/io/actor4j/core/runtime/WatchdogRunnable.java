@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
 import io.actor4j.core.runtime.fault.tolerance.FaultToleranceMethod;
 
@@ -26,9 +27,9 @@ public abstract class WatchdogRunnable implements Runnable {
 	protected final UUID faultToleranceId;
 	
 	protected final InternalActorSystem system;
-	protected final List<UUID> watchdogActors;
+	protected final List<ActorId> watchdogActors;
 
-	public WatchdogRunnable(InternalActorSystem system, List<UUID> watchdogActors) {
+	public WatchdogRunnable(InternalActorSystem system, List<ActorId> watchdogActors) {
 		super();
 		
 		this.system = system;

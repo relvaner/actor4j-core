@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.annotations.concurrent.Readonly;
 import io.actor4j.core.runtime.balancing.ActorLoadBalancingAfterStart;
@@ -31,7 +32,7 @@ import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit> implements DefaultActorExecutionUnitPoolHandler<U> {
 	protected final InternalActorSystem system;
 	
-	protected final Map<UUID, Long> cellsMap;  // ActorCellID -> ProcessID
+	protected final Map<ActorId, Long> cellsMap;  // ActorCellID -> ProcessID
 	@Readonly
 	protected final Map<Long, U> executionUnitMap;
 	@Readonly
@@ -63,7 +64,7 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 	}
 
 	@Override
-	public Map<UUID, Long> getCellsMap() {
+	public Map<ActorId, Long> getCellsMap() {
 		return cellsMap;
 	}
 
@@ -93,7 +94,7 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
 		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
-		UUID dest = system.getExecutorService().getPersistenceService().getService().getActorFromAlias(persistenceMap.get(id_source));
+		ActorId dest = system.getExecutorService().getPersistenceService().getService().getActorFromAlias(persistenceMap.get(id_source));
 		system.getExecutorService().getPersistenceService().getService().send(message.copy(dest));
 	}
 	

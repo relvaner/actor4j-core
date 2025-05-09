@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.UUID;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
@@ -99,7 +99,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 	}
 	
 	@Override
-	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final UUID dest, long delay, TimeUnit unit) {
+	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorId dest, long delay, TimeUnit unit) {
 		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(new Runnable() {
 			@Override
 			public void run() {
@@ -110,7 +110,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 	}
 	
 	@Override
-	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final UUID dest, long delay, TimeUnit unit) {
+	public ScheduledFuture<?> scheduleOnce(final ActorMessage<?> message, final ActorId dest, long delay, TimeUnit unit) {
 		return scheduleOnce(new Supplier<ActorMessage<?>>() {
 			@Override
 			public ActorMessage<?> get() {
@@ -145,7 +145,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
-				for (UUID id : group)
+				for (ActorId id : group)
 					system.send(message.shallowCopy(id));
 			}
 		}, delay, unit) : CanceledScheduledFuture.create(); 
@@ -162,7 +162,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 	}
 	
 	@Override
-	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final UUID dest, long initalDelay, long period, TimeUnit unit) {
+	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final ActorId dest, long initalDelay, long period, TimeUnit unit) {
 		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(new Runnable() {
 			@Override
 			public void run() {
@@ -173,7 +173,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 	}
 	
 	@Override
-	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final UUID dest, long initalDelay, long period, TimeUnit unit) {
+	public ScheduledFuture<?> schedule(final ActorMessage<?> message, final ActorId dest, long initalDelay, long period, TimeUnit unit) {
 		return schedule(new Supplier<ActorMessage<?>>() {
 			@Override
 			public ActorMessage<?> get() {
@@ -208,7 +208,7 @@ public class ActorTimerExecutorService implements ActorTimer {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
-				for (UUID id : group)
+				for (ActorId id : group)
 					system.send(message.shallowCopy(id));
 			}
 		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,15 +30,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultWatchdogRunnable extends WatchdogRunnable {
-	protected final UUID mediator;
+	protected final ActorId mediator;
 	protected final AtomicReferenceArray<Boolean> upArray;
 	protected final AtomicInteger downCount;
 	
-	public DefaultWatchdogRunnable(InternalActorSystem system, List<UUID> watchdogActors) {
+	public DefaultWatchdogRunnable(InternalActorSystem system, List<ActorId> watchdogActors) {
 		super(system, watchdogActors);
 		
 		upArray = new AtomicReferenceArray<>(watchdogActors.size());
@@ -56,7 +56,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 			public void receive(ActorMessage<?> message) {
 				if (message.value()!=null && message.value() instanceof ImmutableList) {
 					futures = ((ImmutableList<CompletableFuture<Void>>)message.value()).get();
-					for (UUID dest : watchdogActors)
+					for (ActorId dest : watchdogActors)
 						tell(null, INTERNAL_HEALTH_CHECK, dest);
 				}
 				else if (message.tag()==UP && watchdogActors.contains(message.source())) {

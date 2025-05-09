@@ -27,11 +27,12 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingBeforeStart {
-	public void registerCells(Map<UUID, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<UUID, InternalActorCell> cells) {
-		List<UUID> buffer = new LinkedList<>();
+	public void registerCells(Map<ActorId, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<ActorId, InternalActorCell> cells) {
+		List<ActorId> buffer = new LinkedList<>();
 		for (InternalActorCell cell : cells.values()) 
 			if (!(cell.getActor() instanceof ResourceActor))
 				buffer.add(cell.getId());
@@ -85,7 +86,7 @@ public class ActorLoadBalancingBeforeStart {
 		}	
 						
 		i=0;
-		for (UUID id : buffer) {
+		for (ActorId id : buffer) {
 			cellsMap.put(id, executionUnitList.get(i));
 			i++;
 			if (i==executionUnitList.size())
@@ -94,7 +95,7 @@ public class ActorLoadBalancingBeforeStart {
 			
 		/*
 		int i=0;
-		for (UUID id : system.cells.keySet()) {
+		for (ActorId id : system.cells.keySet()) {
 			cellsMap.put(id, threadsList.get(i).getId());
 			i++;
 			if (i==threadsList.size())

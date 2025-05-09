@@ -21,8 +21,8 @@ import static io.actor4j.core.supervisor.SupervisorStrategyDirective.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.util.Iterator;
-import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import io.actor4j.core.supervisor.OneForOneSupervisorStrategy;
@@ -56,9 +56,9 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 		if (!cell.isRoot()) {
 			InternalActorCell parent = system.getCells().get(cell.getParent());
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.getChildren().iterator();
+				Iterator<ActorId> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
-					UUID dest = iterator.next();
+					ActorId dest = iterator.next();
 					if (!dest.equals(cell.getId()))
 						system.sendAsDirective(ActorMessage.create(reason, INTERNAL_RESTART, parent.getId(), dest));
 				}
@@ -73,9 +73,9 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 		if (!cell.isRoot()) {
 			InternalActorCell parent = system.getCells().get(cell.getParent());
 			if (parent!=null) {
-				Iterator<UUID> iterator = parent.getChildren().iterator();
+				Iterator<ActorId> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
-					UUID dest = iterator.next();
+					ActorId dest = iterator.next();
 					if (!dest.equals(cell.getId()))
 						system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, parent.getId(), dest));
 				}
