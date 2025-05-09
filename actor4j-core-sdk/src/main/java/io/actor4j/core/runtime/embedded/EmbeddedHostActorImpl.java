@@ -25,6 +25,7 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.actors.EmbeddedActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -35,7 +36,7 @@ import io.actor4j.core.utils.EmbeddedActorFactory;
 public class EmbeddedHostActorImpl {
 	protected final ActorRef host;
 	
-	protected final DIContainer<UUID> container;
+	protected final DIContainer<ActorId> container;
 	protected final EmbeddedActorStrategyOnFailure actorStrategyOnFailure;
 	
 	protected final ActorEmbeddedRouter router;
@@ -72,7 +73,7 @@ public class EmbeddedHostActorImpl {
 		fallbackHost = (embeddedActorCell, e) -> actorStrategyOnFailure.handle(embeddedActorCell, e);
 	}
 	
-	public UUID self() {
+	public ActorId self() {
 		return host.getId();
 	}
 	
@@ -80,7 +81,7 @@ public class EmbeddedHostActorImpl {
 		return host;
 	}
 
-	public DIContainer<UUID> getContainer() {
+	public DIContainer<ActorId> getContainer() {
 		return container;
 	}
 
@@ -104,19 +105,19 @@ public class EmbeddedHostActorImpl {
 		this.fallbackHost = fallbackHost;
 	}
 
-	public boolean isEmbedded(UUID id) {
+	public boolean isEmbedded(ActorId id) {
 		return router.get(id)!=null;
 	}
 
-	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor, UUID id) {
+	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor, ActorId id) {
 		return new BaseEmbeddedActorCell(host, embeddedActor, id);
 	}
 	
-	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory) {
 		return addEmbeddedChild(factory, UUID.randomUUID());
 	}
 	
-	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, ActorId id) {
 		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), id);
 		container.register(embeddedActorCell.getId(), factory);
 		
@@ -138,7 +139,7 @@ public class EmbeddedHostActorImpl {
 		return embeddedActorCell.getId();
 	}
 	
-	public void removeEmbeddedChild(UUID id) {
+	public void removeEmbeddedChild(ActorId id) {
 		InternalEmbeddedActorCell embeddedActorCell = router.get(id);
 		
 		if (embeddedActorCell!=null) {
@@ -184,7 +185,7 @@ public class EmbeddedHostActorImpl {
 		return result;
 	}
 	
-	public boolean embedded(ActorMessage<?> message, UUID dest) {
+	public boolean embedded(ActorMessage<?> message, ActorId dest) {
 		boolean result = false;
 		
 		if (message==null)

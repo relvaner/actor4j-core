@@ -15,8 +15,7 @@
  */
 package io.actor4j.core.actors;
 
-import java.util.UUID;
-
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.embedded.ActorEmbeddedRouter;
 import io.actor4j.core.runtime.embedded.EmbeddedHostActorImpl;
@@ -55,19 +54,19 @@ public abstract class EmbeddedHostActor extends Actor {
 		return impl.getRouter();
 	}
 	
-	public boolean isEmbedded(UUID id) {
+	public boolean isEmbedded(ActorId id) {
 		return impl.getRouter().get(id)!=null;
 	}
 	
-	public UUID addEmbeddedChild(EmbeddedActorFactory factory) {
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory) {
 		return impl.addEmbeddedChild(factory);
 	}
 
-	public UUID addEmbeddedChild(EmbeddedActorFactory factory, UUID id) {
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, ActorId id) {
 		return impl.addEmbeddedChild(factory, id);
 	}
 	
-	public void removeEmbeddedChild(UUID id) {
+	public void removeEmbeddedChild(ActorId id) {
 		impl.removeEmbeddedChild(id);
 	}
 	
@@ -75,11 +74,11 @@ public abstract class EmbeddedHostActor extends Actor {
 		return impl.embedded(message);
 	}
 	
-	public boolean embedded(ActorMessage<?> message, UUID dest) {
+	public boolean embedded(ActorMessage<?> message, ActorId dest) {
 		return impl.embedded(message, dest);
 	}
 	
-	public <T> boolean embedded(T value, int tag, UUID dest) {
+	public <T> boolean embedded(T value, int tag, ActorId dest) {
 		return embedded(ActorMessage.create(value, tag, self(), dest));
 	}
 	

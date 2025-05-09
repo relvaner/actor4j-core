@@ -17,9 +17,10 @@ package io.actor4j.core.runtime.embedded;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
-public class ActorEmbeddedRouter extends HashMap<UUID, InternalEmbeddedActorCell> {
+import io.actor4j.core.id.ActorId;
+
+public class ActorEmbeddedRouter extends HashMap<ActorId, InternalEmbeddedActorCell> {
 	protected static final long serialVersionUID = 1L;
 
 	public ActorEmbeddedRouter() {
@@ -34,7 +35,7 @@ public class ActorEmbeddedRouter extends HashMap<UUID, InternalEmbeddedActorCell
 		super(initialCapacity);
 	}
 
-	public ActorEmbeddedRouter(Map<? extends UUID, ? extends InternalEmbeddedActorCell> m) {
+	public ActorEmbeddedRouter(Map<? extends ActorId, ? extends InternalEmbeddedActorCell> m) {
 		super(m);
 	}
 }

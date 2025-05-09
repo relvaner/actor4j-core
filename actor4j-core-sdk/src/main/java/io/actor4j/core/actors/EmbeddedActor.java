@@ -20,6 +20,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 import io.actor4j.core.EmbeddedActorCell;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class EmbeddedActor implements EmbeddedActorRef {
@@ -57,17 +58,17 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 	}
 	
 	@Override
-	public UUID getId() {
+	public ActorId getId() {
 		return cell.getId();
 	}
 	
 	@Override
-	public UUID self() {
+	public ActorId self() {
 		return cell.getId();
 	}
 	
 	@Override
-	public UUID getParent() {
+	public ActorId getParent() {
 		return cell.getParent();
 	}
 	
@@ -159,17 +160,17 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 	}
 	
 	@Override
-	public void send(ActorMessage<?> message, UUID dest) {
+	public void send(ActorMessage<?> message, ActorId dest) {
 		send(message.shallowCopy(self(), dest));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest) {
+	public <T> void tell(T value, int tag, ActorId dest) {
 		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	@Override
-	public void forward(ActorMessage<?> message, UUID dest) {
+	public void forward(ActorMessage<?> message, ActorId dest) {
 		send(message.shallowCopy(dest));
 	}
 	

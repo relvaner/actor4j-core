@@ -15,20 +15,19 @@
  */
 package io.actor4j.core.actors;
 
-import java.util.UUID;
-
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface EmbeddedActorRef {
 	public ActorRef host();
 
 	public String getName();
-	public UUID getId();
-	public UUID self();
-	public UUID getParent();
+	public ActorId getId();
+	public ActorId self();
+	public ActorId getParent();
 	
 	public void send(ActorMessage<?> message);
-	public void send(ActorMessage<?> message, UUID dest);
-	public <T> void tell(T value, int tag, UUID dest);
-	public void forward(ActorMessage<?> message, UUID dest);
+	public void send(ActorMessage<?> message, ActorId dest);
+	public <T> void tell(T value, int tag, ActorId dest);
+	public void forward(ActorMessage<?> message, ActorId dest);
 }

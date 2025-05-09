@@ -24,6 +24,7 @@ import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.embedded.protocol.RestartProtocol;
 import io.actor4j.core.runtime.embedded.protocol.StopProtocol;
@@ -33,7 +34,7 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	protected final ActorRef host;
 	protected /*quasi final*/ EmbeddedActor actor;
 	
-	protected final UUID id;
+	protected final ActorId id;
 	
 	protected boolean active;
 	
@@ -48,7 +49,7 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 		this(host, actor, UUID.randomUUID());
 	}
 	
-	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor, UUID id) {
+	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor, ActorId id) {
 		super();
 		this.host = host;
 		this.actor = actor;
@@ -75,12 +76,12 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	}
 	
 	@Override
-	public UUID getId() {
+	public ActorId getId() {
 		return id;
 	}
 
 	@Override
-	public UUID getParent() {
+	public ActorId getParent() {
 		return host.getId();
 	}
 	
