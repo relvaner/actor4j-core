@@ -15,10 +15,9 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.UUID;
-
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.di.DIContainer;
 
 public interface InternalActorRuntimeSystem extends InternalActorSystem {
-	public DIContainer<UUID> getContainer();
+	public DIContainer<ActorId> getContainer();
 }

@@ -22,11 +22,11 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.exceptions.ActorInitializationException;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
@@ -60,16 +60,16 @@ public final class RestartProtocol {
 	}
 	
 	public static void apply(final InternalActorCell cell, final Exception reason) {
-		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
+		final List<ActorId> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
-		Iterator<UUID> iterator = cell.getChildren().iterator();
+		Iterator<ActorId> iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			cell.watch(dest);
 		}
 		iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			waitForChildren.add(dest);
 			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
 		}

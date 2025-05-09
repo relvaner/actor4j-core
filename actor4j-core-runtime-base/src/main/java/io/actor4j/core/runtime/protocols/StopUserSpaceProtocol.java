@@ -24,9 +24,9 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -42,9 +42,9 @@ public final class StopUserSpaceProtocol {
 	}
 	
 	protected static void postUserSpaceStop(final InternalActorCell cell) {
-		Iterator<UUID> iterator = cell.getDeathWatcher().iterator();
+		Iterator<ActorId> iterator = cell.getDeathWatcher().iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_USER_SPACE_SUCCESS, cell.getId(), dest));
 		}
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
@@ -54,16 +54,16 @@ public final class StopUserSpaceProtocol {
 	}
 	
 	public static void apply(final InternalActorCell cell) {
-		final List<UUID> waitForChildren =new ArrayList<>(cell.getChildren().size());
+		final List<ActorId> waitForChildren =new ArrayList<>(cell.getChildren().size());
 		
-		Iterator<UUID> iterator = cell.getChildren().iterator();
+		Iterator<ActorId> iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			cell.watch(dest);
 		}
 		iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
-			UUID dest = iterator.next();
+			ActorId dest = iterator.next();
 			waitForChildren.add(dest);
 			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, cell.getId(), dest));
 		}
