@@ -15,9 +15,9 @@
  */
 package io.actor4j.core.runtime;
 
-import java.util.UUID;
 import java.util.function.BiConsumer;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandler<ActorThread> {
@@ -25,7 +25,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		super(system);
 	}
 	
-	public void unsafe_call(ActorMessage<?> message, UUID dest, ActorThread t) {
+	public void unsafe_call(ActorMessage<?> message, ActorId dest, ActorThread t) {
 		InternalActorCell cell = system.getCells().get(dest);
 		if (cell!=null) {
 			cell.getRequestRate().getAndIncrement();
@@ -35,7 +35,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			t.counter.getAndIncrement();
 	}
 	
-	public boolean unsafe_postInnerOuter(ActorMessage<?> message, UUID source) {
+	public boolean unsafe_postInnerOuter(ActorMessage<?> message, ActorId source) {
 		boolean result = false; 
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
@@ -68,7 +68,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return result;
 	}
 	
-	public boolean unsafe_postInnerOuter(ActorMessage<?> message, UUID source, UUID dest) {
+	public boolean unsafe_postInnerOuter(ActorMessage<?> message, ActorId source, ActorId dest) {
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
@@ -100,7 +100,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return result;
 	}
 	
-	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
+	public boolean postInnerOuter(ActorMessage<?> message, ActorId source) {
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
@@ -132,7 +132,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return result;
 	}
 	
-	public boolean postInnerOuter(ActorMessage<?> message, UUID source, UUID dest) {
+	public boolean postInnerOuter(ActorMessage<?> message, ActorId source, ActorId dest) {
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
@@ -175,7 +175,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return id_dest!=null;
 	}
 	
-	public boolean postOuter(ActorMessage<?> message, UUID dest) {
+	public boolean postOuter(ActorMessage<?> message, ActorId dest) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
 			ActorThread t = executionUnitMap.get(id_dest);
@@ -197,7 +197,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return id_dest!=null;
 	}
 	
-	public boolean postServer(ActorMessage<?> message, UUID dest) {
+	public boolean postServer(ActorMessage<?> message, ActorId dest) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
 			ActorThread t = executionUnitMap.get(id_dest);
@@ -219,7 +219,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		return id_dest!=null;
 	}
 	
-	public boolean postQueue(ActorMessage<?> message, UUID dest, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
+	public boolean postQueue(ActorMessage<?> message, ActorId dest, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
 		Long id_dest = cellsMap.get(dest);
 		if (id_dest!=null) {
 			ActorThread t = executionUnitMap.get(id_dest);

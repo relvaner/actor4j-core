@@ -17,10 +17,10 @@ package io.actor4j.core.runtime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread> {
@@ -93,7 +93,7 @@ public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread>
 		return (ActorThreadPoolHandler)executionUnitPoolHandler;
 	}
 	
-	public boolean postInnerOuter(ActorMessage<?> message, UUID source) {
+	public boolean postInnerOuter(ActorMessage<?> message, ActorId source) {
 		return getThreadPoolHandler().postInnerOuter(message, source);
 	}
 	

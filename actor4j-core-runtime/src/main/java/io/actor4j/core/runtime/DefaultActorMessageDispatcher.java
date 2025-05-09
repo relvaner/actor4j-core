@@ -20,12 +20,12 @@ import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
@@ -77,14 +77,14 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	}
 	
 	@Override
-	public void unsafe_post(ActorMessage<?> message, UUID source, String alias) {
+	public void unsafe_post(ActorMessage<?> message, ActorId source, String alias) {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
+			List<ActorId> destinations = system.getActorsFromAlias(alias);
 
 			dest = null;
 			if (!destinations.isEmpty()) {
@@ -94,10 +94,10 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			if (dest==null)
-				dest = ALIAS_ID;
+				dest = system.ALIAS_ID();
 		}
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -109,14 +109,14 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	}
 	
 	@Override
-	public void post(ActorMessage<?> message, UUID source, String alias) {
+	public void post(ActorMessage<?> message, ActorId source, String alias) {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
+			List<ActorId> destinations = system.getActorsFromAlias(alias);
 
 			dest = null;
 			if (!destinations.isEmpty()) {
@@ -126,10 +126,10 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			if (dest==null)
-				dest = ALIAS_ID;
+				dest = system.ALIAS_ID();
 		}
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -152,9 +152,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -185,9 +185,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -218,9 +218,9 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -264,7 +264,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	}
 	
 	@Override
-	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
+	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		

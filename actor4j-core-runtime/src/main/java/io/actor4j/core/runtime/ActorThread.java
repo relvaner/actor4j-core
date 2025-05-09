@@ -145,7 +145,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 			final int retries_ = retries;
 			FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new FaultToleranceMethod() {
 				@Override
-				public void run(UUID uuid) {
+				public void run(Object faultToleranceId) {
 					onRun();
 					
 					if (onTermination!=null)
