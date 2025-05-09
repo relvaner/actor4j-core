@@ -16,6 +16,7 @@
 package io.actor4j.core.runtime.classic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +62,11 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 		return metricsMap.get(Thread.currentThread().threadId());
 	}
 	
-	public List<ActorRunnableMetrics> getAllMetrics() {
+	public Collection<ActorRunnableMetrics> getAllMetrics() {
+		return metricsMap.values();
+	}
+	
+	public List<ActorRunnableMetrics> getAllMetricsSorted() {
 		return metricsMap.entrySet()
 			.stream()
 			.sorted(Map.Entry.comparingByKey())
@@ -131,7 +136,7 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	@Override
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
-		for (ActorRunnableMetrics metrics : getAllMetrics())
+		for (ActorRunnableMetrics metrics : getAllMetricsSorted())
 			list.add(metrics.counter.get());
 		return list;
 	}
