@@ -17,43 +17,44 @@ package io.actor4j.core.messages;
 
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
-public record DefaultPodActorMessage<T, U, P>(T value, int tag, UUID source, UUID dest, UUID interaction, U user, P params, String protocol, String domain)  implements PodActorMessage<T, U, P> {
+public record DefaultPodActorMessage<T, U, P>(T value, int tag, ActorId source, ActorId dest, UUID interaction, U user, P params, String protocol, String domain)  implements PodActorMessage<T, U, P> {
 	public DefaultPodActorMessage {
 		// empty
 	}
 
-	public DefaultPodActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+	public DefaultPodActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, String domain) {
 		this(value, tag.ordinal(), source, dest, domain);
 	}
 
-	public DefaultPodActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+	public DefaultPodActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction) {
 		this(value, tag.ordinal(), source, dest, interaction);
 	}
 
-	public DefaultPodActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
+	public DefaultPodActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest) {
 		this(value, tag.ordinal(), source, dest);
 	}
 
-	public DefaultPodActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
+	public DefaultPodActorMessage(T value, int tag, ActorId source, ActorId dest, String domain) {
 		this(value, tag, source, dest, null, null, null, null, domain);
 	}
 	
-	public DefaultPodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user) {
+	public DefaultPodActorMessage(T value, int tag, ActorId source, ActorId dest, UUID interaction, U user) {
 		this(value, tag, source, dest, interaction, user, null, null, null);
 	}
 
-	public DefaultPodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, U user, P params) {
+	public DefaultPodActorMessage(T value, int tag, ActorId source, ActorId dest, UUID interaction, U user, P params) {
 		this(value, tag, source, dest, interaction, user, params, null, null);
 	}
 
-	public DefaultPodActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
+	public DefaultPodActorMessage(T value, int tag, ActorId source, ActorId dest, UUID interaction) {
 		this(value, tag, source, dest, interaction, null, null, null, null);
 	}
 
-	public DefaultPodActorMessage(T value, int tag, UUID source, UUID dest) {
+	public DefaultPodActorMessage(T value, int tag, ActorId source, ActorId dest) {
 		this(value, tag, source, dest, null, null, null, null, null);
 	}
 	
@@ -87,19 +88,19 @@ public record DefaultPodActorMessage<T, U, P>(T value, int tag, UUID source, UUI
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(UUID source, UUID dest) {
+	public ActorMessage<T> shallowCopy(ActorId source, ActorId dest) {
 		return !ActorMessageUtils.equals(this.source, source) || !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(UUID dest) {
+	public ActorMessage<T> shallowCopy(ActorId dest) {
 		return !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(int tag, UUID dest) {
+	public ActorMessage<T> shallowCopy(int tag, ActorId dest) {
 		return this.tag!=tag || !ActorMessageUtils.equals(this.dest, dest) ? 
 				new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
 	}
@@ -123,7 +124,7 @@ public record DefaultPodActorMessage<T, U, P>(T value, int tag, UUID source, UUI
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ActorMessage<T> copy(UUID dest) {
+	public ActorMessage<T> copy(ActorId dest) {
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
 				return !ActorMessageUtils.equals(this.dest, dest) ? new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;

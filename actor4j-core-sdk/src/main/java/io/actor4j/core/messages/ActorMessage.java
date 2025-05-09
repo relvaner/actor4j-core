@@ -19,6 +19,7 @@ import static io.actor4j.core.messages.ActorReservedTag.*;
 
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.json.JsonArray;
 import io.actor4j.core.json.JsonObject;
 
@@ -29,8 +30,8 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 
 	public T value();
 	public int tag();
-	public UUID source();
-	public UUID dest();
+	public ActorId source();
+	public ActorId dest();
 	public UUID interaction();
 	public String protocol();
 	public String domain();
@@ -55,6 +56,10 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 		return (String)value();
 	}
 	
+	public default ActorId valueAsId() {
+		return (ActorId)value();
+	}
+	
 	public default UUID valueAsUUID() {
 		return (UUID)value();
 	}
@@ -71,7 +76,7 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 		return source()!=null ? source().equals(dest()) : false;
 	}
 	
-	public default boolean isSelfReferencing(UUID self) {
+	public default boolean isSelfReferencing(ActorId self) {
 		return source()!=null && dest()!=null ? source().equals(self) && dest().equals(self) : false;
 	}
 	
@@ -82,54 +87,54 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	public ActorMessage<T> shallowCopy(T value, int tag);
 	public ActorMessage<T> shallowCopy(int tag, String protocol);
 	
-	public ActorMessage<T> shallowCopy(UUID source, UUID dest);
-	public ActorMessage<T> shallowCopy(UUID dest);
-	public ActorMessage<T> shallowCopy(int tag, UUID dest);
+	public ActorMessage<T> shallowCopy(ActorId source, ActorId dest);
+	public ActorMessage<T> shallowCopy(ActorId dest);
+	public ActorMessage<T> shallowCopy(int tag, ActorId dest);
 	
 	public ActorMessage<T> copy();
-	public ActorMessage<T> copy(UUID dest);
+	public ActorMessage<T> copy(ActorId dest);
 	
 	public default int compareTo(ActorMessage<T> message) {
 		return Integer.compare(tag(), message.tag()); // tag - message.tag
 	}
 	
-	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) {
 		return new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest) {
+	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest) {
 		return create(value, tag, source, dest, null, null, null);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, String domain) {
+	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest, String domain) {
 		return create(value, tag, source, dest, null, null, domain);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction) {
+	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest, UUID interaction) {
 		return create(value, tag, source, dest, interaction, null, null);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
+	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol) {
 		return create(value, tag, source, dest, interaction, protocol, null);
 	}
 
-	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest) {
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, ActorId source, ActorId dest) {
 		return create(value, tag.ordinal(), source, dest);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, ActorId source, ActorId dest, String domain) {
 		return create(value, tag.ordinal(), source, dest, domain);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction) {
 		return create(value, tag.ordinal(), source, dest, interaction);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction, String protocol) {
 		return create(value, tag.ordinal(), source, dest, interaction, protocol);
 	}
 	
-	public static <T> ActorMessage<T> create(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+	public static <T> ActorMessage<T> create(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) {
 		return create(value, tag.ordinal(), source, dest, interaction, protocol, domain);
 	}
 }

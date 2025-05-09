@@ -19,39 +19,40 @@ import java.util.Queue;
 import java.util.UUID;
 
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface ActorRef {
 	public ActorSystem getSystem();
 	
 	public String getName();
-	public UUID getId();
-	public UUID self();
+	public ActorId getId();
+	public ActorId self();
 	public String getPath();
-	public UUID getParent();
-	public Queue<UUID> getChildren();
+	public ActorId getParent();
+	public Queue<ActorId> getChildren();
 	public boolean isRoot();
 	public boolean isRootInUser();
 	
 	public void send(ActorMessage<?> message);
 	public void sendViaPath(ActorMessage<?> message, String path);
 	public void sendViaAlias(ActorMessage<?> message, String alias);
-	public void send(ActorMessage<?> message, UUID dest);
-	public <T> void tell(T value, int tag, UUID dest);
-	public <T> void tell(T value, int tag, UUID dest, String domain);
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction);
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol);
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain);
+	public void send(ActorMessage<?> message, ActorId dest);
+	public <T> void tell(T value, int tag, ActorId dest);
+	public <T> void tell(T value, int tag, ActorId dest, String domain);
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction);
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction, String protocol);
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction, String protocol, String domain);
 	public <T> void tell(T value, int tag, String alias);
 	public <T> void tell(T value, int tag, String alias, UUID interaction);
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol);
 	public <T> void tell(T value, int tag, String alias, UUID interaction, String protocol, String domain);
-	public void forward(ActorMessage<?> message, UUID dest);
+	public void forward(ActorMessage<?> message, ActorId dest);
 	public void forward(ActorMessage<?> message, String alias);
 	public void priority(ActorMessage<?> message);
-	public void priority(ActorMessage<?> message, UUID dest);
-	public <T> void priority(T value, int tag, UUID dest);
+	public void priority(ActorMessage<?> message, ActorId dest);
+	public <T> void priority(T value, int tag, ActorId dest);
 	
-	public void watch(UUID dest);
-	public void unwatch(UUID dest);
+	public void watch(ActorId dest);
+	public void unwatch(ActorId dest);
 }

@@ -16,23 +16,23 @@
 package io.actor4j.core.runtime;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import io.actor4j.core.ActorCell;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 
 public interface InternalActorCell extends ActorCell {
 	public Actor getActor();
 	public void setActor(Actor actor);
-	public void setParent(UUID parent);
+	public void setParent(ActorId parent);
 	
 	public boolean isActive();
 	public void setActive(boolean active);
-	public Queue<UUID> getDeathWatcher();
+	public Queue<ActorId> getDeathWatcher();
 	public void setActiveDirectiveBehaviour(boolean activeDirectiveBehaviour);
 	public boolean isRootInSystem();
 	
@@ -49,7 +49,7 @@ public interface InternalActorCell extends ActorCell {
 	public void preRestart(Exception reason);
 	public void postRestart(Exception reason);
 	public void postStop();
-	public UUID internal_addChild(InternalActorCell cell);
+	public ActorId internal_addChild(InternalActorCell cell);
 	public void internal_stop();
 	
 	public AtomicLong getRequestRate();

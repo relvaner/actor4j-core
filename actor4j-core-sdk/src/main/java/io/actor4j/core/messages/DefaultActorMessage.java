@@ -17,47 +17,48 @@ package io.actor4j.core.messages;
 
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.utils.DeepCopyable;
 import io.actor4j.core.utils.Shareable;
 
-public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) implements ActorMessage<T> {
+public record DefaultActorMessage<T>(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) implements ActorMessage<T> {
 	public DefaultActorMessage {
 		// empty
 	}
 	
-	public DefaultActorMessage(T value, int tag, UUID source, UUID dest) {
+	public DefaultActorMessage(T value, int tag, ActorId source, ActorId dest) {
 		this(value, tag, source, dest, null, null, null);
 	}
 	
-	public DefaultActorMessage(T value, int tag, UUID source, UUID dest, String domain) {
+	public DefaultActorMessage(T value, int tag, ActorId source, ActorId dest, String domain) {
 		this(value, tag, source, dest, null, null, domain);
 	}
 	
-	public DefaultActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction) {
+	public DefaultActorMessage(T value, int tag, ActorId source, ActorId dest, UUID interaction) {
 		this(value, tag, source, dest, interaction, null, null);
 	}
 	
-	public DefaultActorMessage(T value, int tag, UUID source, UUID dest, UUID interaction, String protocol) {
+	public DefaultActorMessage(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol) {
 		this(value, tag, source, dest, interaction, protocol, null);
 	}
 
-	public DefaultActorMessage(T value, Enum<?> tag, UUID source, UUID dest) {
+	public DefaultActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest) {
 		this(value, tag.ordinal(), source, dest);
 	}
 	
-	public DefaultActorMessage(T value, Enum<?> tag, UUID source, UUID dest, String domain) {
+	public DefaultActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, String domain) {
 		this(value, tag.ordinal(), source, dest, domain);
 	}
 	
-	public DefaultActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction) {
+	public DefaultActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction) {
 		this(value, tag.ordinal(), source, dest, interaction);
 	}
 	
-	public DefaultActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol) {
+	public DefaultActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction, String protocol) {
 		this(value, tag.ordinal(), source, dest, interaction, protocol);
 	}
 	
-	public DefaultActorMessage(T value, Enum<?> tag, UUID source, UUID dest, UUID interaction, String protocol, String domain) {
+	public DefaultActorMessage(T value, Enum<?> tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) {
 		this(value, tag.ordinal(), source, dest, interaction, protocol, domain);
 	}
 	
@@ -91,19 +92,19 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(UUID source, UUID dest) {
+	public ActorMessage<T> shallowCopy(ActorId source, ActorId dest) {
 		return !ActorMessageUtils.equals(this.source, source) || !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(UUID dest) {
+	public ActorMessage<T> shallowCopy(ActorId dest) {
 		return !ActorMessageUtils.equals(this.dest, dest) ? 
 			new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
 	
 	@Override
-	public ActorMessage<T> shallowCopy(int tag, UUID dest) {
+	public ActorMessage<T> shallowCopy(int tag, ActorId dest) {
 		return this.tag!=tag || !ActorMessageUtils.equals(this.dest, dest) ? 
 				new DefaultActorMessage<T>(value, tag, source, dest, interaction, protocol, domain) : this;
 	}
@@ -127,7 +128,7 @@ public record DefaultActorMessage<T>(T value, int tag, UUID source, UUID dest, U
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public ActorMessage<T> copy(UUID dest) {
+	public ActorMessage<T> copy(ActorId dest) {
 		if (value!=null) { 
 			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
 				return !ActorMessageUtils.equals(this.dest, dest) ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
