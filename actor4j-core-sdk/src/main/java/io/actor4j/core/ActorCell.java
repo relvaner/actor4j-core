@@ -17,7 +17,6 @@ package io.actor4j.core;
 
 import java.util.List;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.actor4j.core.id.ActorId;
@@ -29,7 +28,7 @@ public interface ActorCell {
 	
 	public ActorId getId();
 	public ActorId getParent();
-	public Queue<UUID> getChildren();
+	public Queue<ActorId> getChildren();
 	
 	public boolean isRoot();
 	public boolean isRootInUser();

@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 
 import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.DefaultSupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
@@ -94,12 +95,12 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public UUID getId() {
+	public ActorId getId() {
 		return cell.getId();
 	}
 	
 	@Override
-	public UUID self() {
+	public ActorId self() {
 		return cell.getId();
 	}
 	
@@ -109,12 +110,12 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public UUID getParent() {
+	public ActorId getParent() {
 		return cell.getParent();
 	}
 	
 	@Override
-	public Queue<UUID> getChildren() {
+	public Queue<ActorId> getChildren() {
 		return cell.getChildren();
 	}
 	
@@ -236,7 +237,7 @@ public abstract class Actor implements ActorRef {
 	
 	@Override
 	public void sendViaPath(ActorMessage<?> message, String path) {
-		UUID dest = cell.getSystem().getActorFromPath(path);
+		ActorId dest = cell.getSystem().getActorFromPath(path);
 		if (dest!=null)
 			send(message, dest);
 	}
@@ -247,32 +248,32 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public void send(ActorMessage<?> message, UUID dest) {
+	public void send(ActorMessage<?> message, ActorId dest) {
 		send(message.shallowCopy(self(), dest));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest) {
+	public <T> void tell(T value, int tag, ActorId dest) {
 		send(ActorMessage.create(value, tag, self(), dest));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest, String domain) {
+	public <T> void tell(T value, int tag, ActorId dest, String domain) {
 		send(ActorMessage.create(value, tag, self(), dest, domain));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction) {
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol) {
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction, String protocol) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol));
 	}
 	
 	@Override
-	public <T> void tell(T value, int tag, UUID dest, UUID interaction, String protocol, String domain) {
+	public <T> void tell(T value, int tag, ActorId dest, UUID interaction, String protocol, String domain) {
 		send(ActorMessage.create(value, tag, self(), dest, interaction, protocol, domain));
 	}
 	
@@ -297,7 +298,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public void forward(ActorMessage<?> message, UUID dest) {
+	public void forward(ActorMessage<?> message, ActorId dest) {
 		send(message.shallowCopy(dest));
 	}
 	
@@ -312,12 +313,12 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public void priority(ActorMessage<?> message, UUID dest) {
+	public void priority(ActorMessage<?> message, ActorId dest) {
 		priority(message.shallowCopy(self(), dest));
 	}
 	
 	@Override
-	public <T> void priority(T value, int tag, UUID dest) {
+	public <T> void priority(T value, int tag, ActorId dest) {
 		priority(ActorMessage.create(value, tag, self(), dest));
 	}
 	
@@ -330,11 +331,11 @@ public abstract class Actor implements ActorRef {
 			cell.getSystem().setAlias(self(), alias);
 	}
 	
-	public UUID addChild(ActorFactory factory) {
+	public ActorId addChild(ActorFactory factory) {
 		return cell.addChild(factory);
 	}
 	
-	public List<UUID> addChild(ActorFactory factory, int instances) {
+	public List<ActorId> addChild(ActorFactory factory, int instances) {
 		return cell.addChild(factory, instances);
 	}
 	
@@ -367,12 +368,12 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
-	public void watch(UUID dest) {
+	public void watch(ActorId dest) {
 		cell.watch(dest);
 	}
 	
 	@Override
-	public void unwatch(UUID dest) {
+	public void unwatch(ActorId dest) {
 		cell.unwatch(dest);
 	}
 }
