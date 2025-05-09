@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class ConcurrentActorGroupQueue extends ConcurrentLinkedQueue<UUID> implements ActorGroup {
+import io.actor4j.core.id.ActorId;
+
+public class ConcurrentActorGroupQueue extends ConcurrentLinkedQueue<ActorId> implements ActorGroup {
 	protected static final long serialVersionUID = 1L;
 	
 	protected final UUID id;
@@ -30,7 +32,7 @@ public class ConcurrentActorGroupQueue extends ConcurrentLinkedQueue<UUID> imple
 		id = UUID.randomUUID();
 	}
 
-	public ConcurrentActorGroupQueue(Collection<? extends UUID> c) {
+	public ConcurrentActorGroupQueue(Collection<? extends ActorId> c) {
 		super(c);
 
 		id = UUID.randomUUID();

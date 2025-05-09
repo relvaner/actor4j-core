@@ -15,9 +15,8 @@
  */
 package io.actor4j.core.utils;
 
-import java.util.UUID;
-
 import io.actor4j.core.actors.ActorRef;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class HubPattern {
@@ -43,7 +42,7 @@ public class HubPattern {
 		return ports;
 	}
 
-	public void add(UUID id) {
+	public void add(ActorId id) {
 		ports.add(id);
 	}
 	
@@ -51,11 +50,11 @@ public class HubPattern {
 		ports.addAll(group);
 	}
 	
-	public void remove(UUID id) {
+	public void remove(ActorId id) {
 		ports.remove(id);
 	}
 	
-	public boolean contains(UUID id) {
+	public boolean contains(ActorId id) {
 		return ports.contains(id);
 	}
 	
@@ -64,12 +63,12 @@ public class HubPattern {
 	}
 	
 	public void broadcast(ActorMessage<?> message) {
-		for (UUID dest : ports)
+		for (ActorId dest : ports)
 			actorRef.send(message, dest);
 	}
 	
 	public <T> void broadcast(T value, int tag) {
-		for (UUID dest : ports)
+		for (ActorId dest : ports)
 			actorRef.tell(value, tag, dest);
 	}
 }

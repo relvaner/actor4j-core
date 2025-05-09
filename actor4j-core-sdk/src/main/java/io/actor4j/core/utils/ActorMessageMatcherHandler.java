@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ActorMessageMatcherHandler {
@@ -64,13 +65,13 @@ public class ActorMessageMatcherHandler {
 		return message!=null ? Optional.of(message.tag()) : Optional.empty();
 	}
 	
-	public Optional<UUID> source(UUID interaction) {
+	public Optional<ActorId> source(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
 		return message!=null ? Optional.of(message.source()) : Optional.empty();
 	}
 	
-	public Optional<UUID> dest(UUID interaction) {
+	public Optional<ActorId> dest(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
 		return message!=null ? Optional.of(message.dest()) : Optional.empty();

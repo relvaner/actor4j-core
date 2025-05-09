@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.UUID;
 
-public class ActorGroupList extends LinkedList<UUID> implements ActorGroup {
+import io.actor4j.core.id.ActorId;
+
+public class ActorGroupList extends LinkedList<ActorId> implements ActorGroup {
 	protected static final long serialVersionUID = 8641920411195875484L;
 	
 	protected final UUID id;
@@ -30,7 +32,7 @@ public class ActorGroupList extends LinkedList<UUID> implements ActorGroup {
 		id = UUID.randomUUID();
 	}
 
-	public ActorGroupList(Collection<UUID> c) {
+	public ActorGroupList(Collection<ActorId> c) {
 		super(c);
 		
 		id = UUID.randomUUID();

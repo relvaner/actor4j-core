@@ -23,10 +23,12 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import io.actor4j.core.id.ActorId;
+
 public class ConcurrentActorGroupSet implements ActorGroup {
 	protected static final long serialVersionUID = 1L;
 
-	protected final Set<UUID> set;
+	protected final Set<ActorId> set;
 	protected final UUID id;
 
 	public ConcurrentActorGroupSet() {
@@ -36,10 +38,10 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 		id = UUID.randomUUID();
 	}
 
-	public ConcurrentActorGroupSet(Collection<UUID> c) {
+	public ConcurrentActorGroupSet(Collection<ActorId> c) {
 		super();
 
-		Map<UUID, Boolean> map = new ConcurrentHashMap<>((Map<UUID, Boolean>)c.stream().collect(Collectors.toMap(v -> v, v -> false)));
+		Map<ActorId, Boolean> map = new ConcurrentHashMap<>((Map<ActorId, Boolean>)c.stream().collect(Collectors.toMap(v -> v, v -> false)));
 		set = map.keySet();
 		id = UUID.randomUUID();
 	}
@@ -47,7 +49,7 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	public ConcurrentActorGroupSet(int initialCapacity, float loadFactor) {
 		super();
 
-		Map<UUID, Boolean> map = new ConcurrentHashMap<>(initialCapacity, loadFactor);
+		Map<ActorId, Boolean> map = new ConcurrentHashMap<>(initialCapacity, loadFactor);
 		set = map.keySet();
 		id = UUID.randomUUID();
 	}
@@ -55,7 +57,7 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	public ConcurrentActorGroupSet(int initialCapacity) {
 		super();
 
-		Map<UUID, Boolean> map = new ConcurrentHashMap<>(initialCapacity);
+		Map<ActorId, Boolean> map = new ConcurrentHashMap<>(initialCapacity);
 		set = map.keySet();
 		id = UUID.randomUUID();
 	}
@@ -81,7 +83,7 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	}
 
 	@Override
-	public Iterator<UUID> iterator() {
+	public Iterator<ActorId> iterator() {
 		return set.iterator();
 	}
 
@@ -96,7 +98,7 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	}
 
 	@Override
-	public boolean add(UUID e) {
+	public boolean add(ActorId e) {
 		return set.add(e);
 	}
 
@@ -111,7 +113,7 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends UUID> c) {
+	public boolean addAll(Collection<? extends ActorId> c) {
 		return set.addAll(c);
 	}
 

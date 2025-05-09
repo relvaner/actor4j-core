@@ -16,7 +16,6 @@
 package io.actor4j.core.utils;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 
@@ -53,7 +53,7 @@ public final class AskPattern {
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 
-		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
+		ActorId source = system.addActor(() -> new AskPatternRessourceActor(future));
 		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
@@ -75,7 +75,7 @@ public final class AskPattern {
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 		
-		UUID source = system.addActor(() -> new AskPatternRessourceActor(future));
+		ActorId source = system.addActor(() -> new AskPatternRessourceActor(future));
 		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;

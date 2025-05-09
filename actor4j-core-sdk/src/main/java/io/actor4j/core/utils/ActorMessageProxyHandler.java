@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class ActorMessageProxyHandler {
@@ -51,5 +52,5 @@ public abstract class ActorMessageProxyHandler {
 	}
 	
 	public abstract void handle(ActorMessage<?> message, UUID interaction);
-	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction);
+	public abstract void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction);
 }

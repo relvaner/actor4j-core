@@ -16,9 +16,9 @@
 package io.actor4j.core.utils;
 
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.actors.ActorRef;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -43,13 +43,13 @@ public final class CommPattern {
 	}
 	
 	public static void broadcast(ActorMessage<?> message, ActorRef actorRef, ActorGroup group) {
-		for (UUID dest : group)
+		for (ActorId dest : group)
 			actorRef.send(message, dest);
 	}
 	
 	public static <T> void scatter(List<T> list, int tag, ActorRef actorRef, ActorGroup group) {
 		int i=0;
-		for (UUID dest : group) {
+		for (ActorId dest : group) {
 			Range range = loadBalancing(i, group.size(), list.size());
 			actorRef.send(ActorMessage.create(new ImmutableList<T>(list.subList(range.low(), range.high()+1)), tag, actorRef.self(), dest));	
 			i++;

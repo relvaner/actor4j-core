@@ -18,6 +18,8 @@ package io.actor4j.core.utils;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface ActorGroup extends Collection<UUID> {
+import io.actor4j.core.id.ActorId;
+
+public interface ActorGroup extends Collection<ActorId> {
 	public UUID getId();		
 }

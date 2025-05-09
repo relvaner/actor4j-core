@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class ActorGroupSet extends HashSet<UUID> implements ActorGroup {
+import io.actor4j.core.id.ActorId;
+
+public class ActorGroupSet extends HashSet<ActorId> implements ActorGroup {
 	protected static final long serialVersionUID = 1L;
 	
 	protected final UUID id;
@@ -30,7 +32,7 @@ public class ActorGroupSet extends HashSet<UUID> implements ActorGroup {
 		id = UUID.randomUUID();
 	}
 
-	public ActorGroupSet(Collection<UUID> c) {
+	public ActorGroupSet(Collection<ActorId> c) {
 		super(c);
 		
 		id = UUID.randomUUID();
