@@ -15,10 +15,8 @@
  */
 package io.actor4j.core.runtime.fault.tolerance;
 
-import java.util.UUID;
-
 import io.actor4j.core.runtime.ActorSystemError;
 
 public interface ErrorHandler {
-	public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid);
+	public void handle(Throwable t, ActorSystemError systemError, String message, Object faultToleranceId);
 }

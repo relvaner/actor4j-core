@@ -20,16 +20,16 @@ import java.util.UUID;
 import io.actor4j.core.runtime.ActorSystemError;
 
 public final class FaultTolerance {
-	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final FaultToleranceMethod method, UUID uuid) {
+	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final FaultToleranceMethod method, Object faultToleranceId) {
 		boolean error = false;
 		Exception exception = null;
 		
 		try {
-			method.run(uuid);
+			method.run(faultToleranceId);
 		}
 		catch(Exception e) {
 			if (message!=null)
-				System.out.printf("Method failed: %s (UUID: %s)%n", message, uuid.toString());
+				System.out.printf("Method failed: %s (UUID: %s)%n", message, faultToleranceId.toString());
 			
 			method.error(e);
 			error = true;
@@ -40,19 +40,19 @@ public final class FaultTolerance {
 		}
 		
 		if (error)
-			faultToleranceManager.notifyErrorHandler(exception, systemError, message, uuid);
+			faultToleranceManager.notifyErrorHandler(exception, systemError, message, faultToleranceId);
 	}
 	
-	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final FaultToleranceMethod method, UUID uuid) {
+	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final String message, final FaultToleranceMethod method, Object faultToleranceId) {
 		boolean error = false;
 		Throwable throwable = null;
 		
 		try {
-			method.run(uuid);
+			method.run(faultToleranceId);
 		}
 		catch(Throwable t) {
 			if (message!=null)
-				System.out.printf("Method failed: %s (UUID: %s)%n", message, uuid.toString());
+				System.out.printf("Method failed: %s (UUID: %s)%n", message, faultToleranceId.toString());
 			
 			method.error(t);
 			error = true;
@@ -63,15 +63,15 @@ public final class FaultTolerance {
 		}
 		
 		if (error)
-			faultToleranceManager.notifyErrorHandler(throwable, systemError, message, uuid);
+			faultToleranceManager.notifyErrorHandler(throwable, systemError, message, faultToleranceId);
 	}
 	
-	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final FaultToleranceMethod method, UUID uuid) {
-		run(faultToleranceManager, systemError, "", method, uuid);
+	public static void run(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final FaultToleranceMethod method, Object faultToleranceId) {
+		run(faultToleranceManager, systemError, "", method, faultToleranceId);
 	}
 	
-	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final FaultToleranceMethod method, UUID uuid) {
-		runAndCatchThrowable(faultToleranceManager, systemError, "", method, uuid);
+	public static void runAndCatchThrowable(final FaultToleranceManager faultToleranceManager, final ActorSystemError systemError, final FaultToleranceMethod method, Object faultToleranceId) {
+		runAndCatchThrowable(faultToleranceManager, systemError, "", method, faultToleranceId);
 	}
 	
 	public static void run(final FaultToleranceManager faultToleranceManager, final FaultToleranceMethod method, UUID uuid) {

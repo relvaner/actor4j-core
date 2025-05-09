@@ -15,8 +15,6 @@
  */
 package io.actor4j.core.runtime.fault.tolerance;
 
-import java.util.UUID;
-
 import io.actor4j.core.runtime.ActorSystemError;
 
 //Adapted for actor4j
@@ -36,12 +34,12 @@ public final class FaultToleranceManager {
 		this.errorHandler = errorHandler;
 	}
 	
-	public void notifyErrorHandler(Throwable t, ActorSystemError systemError, UUID uuid) {
-		notifyErrorHandler(t, systemError, "", uuid);
+	public void notifyErrorHandler(Throwable t, ActorSystemError systemError, Object faultToleranceId) {
+		notifyErrorHandler(t, systemError, "", faultToleranceId);
 	}
 
-	public synchronized void notifyErrorHandler(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
+	public synchronized void notifyErrorHandler(Throwable t, ActorSystemError systemError, String message, Object faultToleranceId) {
 		if (errorHandler!=null)
-			errorHandler.handle(t, systemError, message, uuid);
+			errorHandler.handle(t, systemError, message, faultToleranceId);
 	}
 }
