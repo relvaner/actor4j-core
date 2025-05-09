@@ -15,14 +15,13 @@
  */
 package io.actor4j.core.persistence.drivers;
 
-import java.util.UUID;
-
 import io.actor4j.core.ActorSystem;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public abstract class PersistenceImpl {
 	protected ActorSystem parent;
-	protected UUID id;
+	protected ActorId id;
 	
 	protected PersistenceDriver driver;
 	
@@ -31,11 +30,11 @@ public abstract class PersistenceImpl {
 		this.driver = driver;
 	}
 
-	public UUID self() {
+	public ActorId self() {
 		return id;
 	}
 	
-	public void preStart(UUID id) {
+	public void preStart(ActorId id) {
 		this.id = id;
 	}
 	
