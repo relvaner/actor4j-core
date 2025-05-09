@@ -20,14 +20,15 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface ActorCell {
 	public ActorSystem getSystem();
 	
-	public UUID getId();
-	public UUID getParent();
+	public ActorId getId();
+	public ActorId getParent();
 	public Queue<UUID> getChildren();
 	
 	public boolean isRoot();
@@ -42,14 +43,14 @@ public interface ActorCell {
 	public void priority(ActorMessage<?> message);
 	public void unhandled(ActorMessage<?> message);
 	
-	public UUID addChild(ActorFactory factory);
-	public List<UUID> addChild(ActorFactory factory, int instances);
+	public ActorId addChild(ActorFactory factory);
+	public List<ActorId> addChild(ActorFactory factory, int instances);
 	
 	public void preStart();
 	public void restart(Exception reason);
 	public void stop();
-	public void watch(UUID dest);
-	public void unwatch(UUID dest);
+	public void watch(ActorId dest);
+	public void unwatch(ActorId dest);
 	
 	public <E> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, @SuppressWarnings("unchecked") E... events);
 	public <S> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state);

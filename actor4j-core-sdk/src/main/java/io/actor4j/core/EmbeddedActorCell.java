@@ -15,17 +15,17 @@
  */
 package io.actor4j.core;
 
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import io.actor4j.core.actors.ActorRef;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface EmbeddedActorCell {
 	public ActorRef host();
 	
-	public UUID getId();
-	public UUID getParent();
+	public ActorId getId();
+	public ActorId getParent();
 	
 	public void become(Predicate<ActorMessage<?>> behaviour, boolean replace);
 	public void unbecome();

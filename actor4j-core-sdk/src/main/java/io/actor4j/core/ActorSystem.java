@@ -17,9 +17,9 @@ package io.actor4j.core;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
@@ -40,30 +40,30 @@ public interface ActorSystem {
 		return factory.apply(config);
 	}
 	
-	public UUID USER_ID();
-	public UUID SYSTEM_ID();
+	public ActorId USER_ID();
+	public ActorId SYSTEM_ID();
 	
 	public ActorSystemConfig getConfig();
 	public boolean setConfig(ActorSystemConfig config);
 	
-	public UUID addActor(ActorFactory factory);
-	public List<UUID> addActor(ActorFactory factory, int instances);
+	public ActorId addActor(ActorFactory factory);
+	public List<ActorId> addActor(ActorFactory factory, int instances);
 	
-	public UUID deployActor(ActorFactory factory);
-	public void undeployActor(UUID id);
+	public ActorId deployActor(ActorFactory factory);
+	public void undeployActor(ActorId id);
 	public void undeployActors(String alias);
 	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration);
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
 	public void undeployPods(String domain);
 	
-	public ActorSystem setAlias(UUID id, String alias);
-	public ActorSystem setAlias(List<UUID> ids, String alias);
-	public UUID getActorFromAlias(String alias);
-	public List<UUID> getActorsFromAlias(String alias);
-	public String getAliasFromActor(UUID id);
-	public String getActorPath(UUID uuid);
-	public UUID getActorFromPath(String path);
+	public ActorSystem setAlias(ActorId id, String alias);
+	public ActorSystem setAlias(List<ActorId> ids, String alias);
+	public ActorId getActorFromAlias(String alias);
+	public List<ActorId> getActorsFromAlias(String alias);
+	public String getAliasFromActor(ActorId id);
+	public String getActorPath(ActorId id);
+	public ActorId getActorFromPath(String path);
 	
 	public ActorSystem send(ActorMessage<?> message);
 	public ActorSystem sendViaPath(ActorMessage<?> message, String path);
@@ -71,9 +71,9 @@ public interface ActorSystem {
 	public ActorSystem sendWhenActive(ActorMessage<?> message);
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group);
 	
-	public UUID getRedirectionDestination(UUID source);
-	public ActorSystem addRedirection(UUID source, UUID dest);
-	public ActorSystem removeRedirection(UUID source);
+	public ActorId getRedirectionDestination(ActorId source);
+	public ActorSystem addRedirection(ActorId source, ActorId dest);
+	public ActorSystem removeRedirection(ActorId source);
 	public ActorSystem clearRedirections();
 	
 	public ActorTimer timer();

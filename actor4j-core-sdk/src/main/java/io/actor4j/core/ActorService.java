@@ -40,7 +40,7 @@ public interface ActorService extends ActorSystem {
 	
 	public boolean setConfig(ActorServiceConfig config);
 
-	public boolean hasActor(String uuid);
+	public boolean hasActor(String id);
 	
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
 	public void sendAsServer(ActorMessage<?> message);

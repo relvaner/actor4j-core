@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.actor4j.core.id;
 
-package io.actor4j.core;
-
-import io.actor4j.core.id.ActorId;
-import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.utils.PodActorFactory;
-
-public interface ActorPodService {
-	public ActorId addPodActor(PodActorFactory factory, PodContext context);
+public interface ActorId {
+	Object id();
+	Object randomId();
 }
