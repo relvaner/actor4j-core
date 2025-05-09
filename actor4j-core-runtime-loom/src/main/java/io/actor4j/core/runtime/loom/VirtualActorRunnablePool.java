@@ -20,7 +20,6 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.ActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -39,7 +39,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	
 	protected final List<VirtualActorRunnableMetrics> metricsList = new ArrayList<>();
 	
-	protected final Map<UUID, Thread> virtualThreads;
+	protected final Map<ActorId, Thread> virtualThreads;
 	protected final VirtualActorRunnablePoolHandler virtualActorRunnablePoolHandler;
 	
 	protected final AtomicBoolean started;
@@ -158,7 +158,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	public void registerCell(InternalActorCell cell) {
 		VirtualActorRunnable virtualActorRunnable = virtualActorRunnablePoolHandler.registerCell(cell, this::onTermination);
 		Thread t = Thread.ofVirtual().name(actorLabel(cell.getActor())).unstarted(virtualActorRunnable);
-		virtualThreads.put(virtualActorRunnable.idAsUUID(), t);
+		virtualThreads.put(virtualActorRunnable.id(), t);
 		if (started.get())
 			t.start();
 	}

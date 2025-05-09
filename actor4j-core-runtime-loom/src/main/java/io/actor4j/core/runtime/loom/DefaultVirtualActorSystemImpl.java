@@ -15,11 +15,10 @@
  */
 package io.actor4j.core.runtime.loom;
 
-import java.util.UUID;
-
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.ActorExecutorService;
 import io.actor4j.core.runtime.ActorSystemImpl;
 import io.actor4j.core.runtime.BaseActorCell;
@@ -53,7 +52,7 @@ public class DefaultVirtualActorSystemImpl extends ActorSystemImpl {
 	}
 	
 	@Override
-	protected InternalActorCell createActorCell(Actor actor, UUID id) {
+	protected InternalActorCell createActorCell(Actor actor, ActorId id) {
 		return new BaseActorCell(this, actor, id);
 	}
 	

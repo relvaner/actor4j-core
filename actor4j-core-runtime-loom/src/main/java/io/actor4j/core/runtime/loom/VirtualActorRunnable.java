@@ -19,6 +19,7 @@ import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorExecutionUnit;
 import io.actor4j.core.runtime.ActorSystemError;
@@ -52,7 +53,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 		return cell.getId(); 
 	}
 	
-	public UUID idAsUUID() {
+	public ActorId id() {
 		return cell.getId(); 
 	}
 	
@@ -107,7 +108,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 	public void run() {
 		FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new FaultToleranceMethod() {
 			@Override
-			public void run(UUID uuid) {
+			public void run(Object faultToleranceId) {
 				onRun();
 				
 				onTermination.run();

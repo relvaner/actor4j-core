@@ -15,21 +15,22 @@
  */
 package io.actor4j.core.runtime.loom;
 
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorExecutionUnitPoolHandler;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
 public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionUnitPoolHandler<VirtualActorRunnable> {
 	protected final InternalActorSystem system;
 	protected final VirtualActorRunnablePool virtualActorRunnablePool;
 
-	protected final Map<UUID, VirtualActorRunnable> virtualActorRunnables;
+	protected final Map<ActorId, VirtualActorRunnable> virtualActorRunnables;
 	
 	public VirtualActorRunnablePoolHandler(InternalActorSystem system, VirtualActorRunnablePool virtualActorRunnablePool) {
 		super();
@@ -59,7 +60,7 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 		return virtualActorRunnable!=null;
 	}
 	
-	public boolean post(ActorMessage<?> message, UUID dest, boolean directive, boolean debugUndelivered) {
+	public boolean post(ActorMessage<?> message, ActorId dest, boolean directive, boolean debugUndelivered) {
 		VirtualActorRunnable virtualActorRunnable = null;
 		if (dest!=null) {
 			virtualActorRunnable = virtualActorRunnables.get(dest);
@@ -80,12 +81,12 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 	
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		int index = (int)message.source().getLeastSignificantBits() % (system.getConfig().parallelism()*system.getConfig().parallelismFactor()); // sharding
-		UUID dest = system.getExecutorService().getPersistenceService().getService().getActorFromAlias(ActorPersistenceServiceImpl.getAlias(index));
-		system.getExecutorService().getPersistenceService().getService().send(message.copy(dest));
+		List<ActorId> ids = system.getExecutorService().getPersistenceService().persistenceActorIds();
+		int index = ThreadLocalRandom.current().nextInt(ids.size());
+		system.getExecutorService().getPersistenceService().getService().send(message.copy(ids.get(index)));
 	}
 	
-	public Map<UUID, VirtualActorRunnable> getVirtualActorRunnables() {
+	public Map<ActorId, VirtualActorRunnable> getVirtualActorRunnables() {
 		return virtualActorRunnables;
 	}
 	

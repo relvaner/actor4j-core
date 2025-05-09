@@ -20,13 +20,13 @@ import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
 import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorMessageDispatcher;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -56,14 +56,14 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 	}
 	
 	@Override
-	public void post(ActorMessage<?> message, UUID source, String alias) {
+	public void post(ActorMessage<?> message, ActorId source, String alias) {
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<UUID> destinations = system.getActorsFromAlias(alias);
+			List<ActorId> destinations = system.getActorsFromAlias(alias);
 
 			dest = null;
 			if (!destinations.isEmpty()) {
@@ -73,10 +73,10 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
 			}
 			if (dest==null)
-				dest = ALIAS_ID;
+				dest = system.ALIAS_ID();
 		}
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -99,9 +99,9 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 		if (message==null)
 			throw new NullPointerException();
 		
-		UUID dest = message.dest();
+		ActorId dest = message.dest();
 		
-		UUID redirect = system.getRedirector().get(dest);
+		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -127,7 +127,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 		}
 	}
 	
-	public boolean dispatch(ActorMessage<?> message, UUID dest, boolean directive, boolean debugUndelivered) {
+	public boolean dispatch(ActorMessage<?> message, ActorId dest, boolean directive, boolean debugUndelivered) {
 		boolean result = false;
 		
 		VirtualActorRunnablePoolHandler handler = ((InternalVirtualActorExecutorService)system.getExecutorService()).getVirtualActorRunnablePool().getVirtualActorRunnablePoolHandler();
@@ -165,7 +165,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 	}
 	
 	@Override
-	public void undelivered(ActorMessage<?> message, UUID source, UUID dest) {
+	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = system.getCells().get(source);
 		
@@ -201,7 +201,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 	}
 
 	@Override
-	public void unsafe_post(ActorMessage<?> message, UUID source, String alias) {
+	public void unsafe_post(ActorMessage<?> message, ActorId source, String alias) {
 		// TODO Auto-generated method stub
 		
 	}
