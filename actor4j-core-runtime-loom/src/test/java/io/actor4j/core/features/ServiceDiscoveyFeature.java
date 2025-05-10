@@ -21,13 +21,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.immutable.ImmutableObject;
 import io.actor4j.core.messages.ActorMessage;
@@ -40,11 +40,11 @@ public class ServiceDiscoveyFeature {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
-		
+
 		system.addActor(() -> new Actor("parent") {
 			protected ServiceDiscoveryManager serviceDiscoveryManager;
-			protected UUID child1;
-			protected UUID child2;
+			protected ActorId child1;
+			protected ActorId child2;
 			
 			@Override
 			public void preStart() {

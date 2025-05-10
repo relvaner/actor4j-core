@@ -17,6 +17,7 @@ package io.actor4j.core.features.pod;
 
 import java.util.UUID;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.actors.DefaultShardPodActor;
@@ -42,7 +43,7 @@ public class ExampleShardingWithActorPod extends ActorPod {
 				}
 
 				@Override
-				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, UUID dest, UUID interaction) {
+				public void callback(ActorMessage<?> message, ActorMessage<?> originalMessage, ActorId dest, UUID interaction) {
 					tell(message.value(), message.tag(), dest, interaction);
 				}
 			}) {

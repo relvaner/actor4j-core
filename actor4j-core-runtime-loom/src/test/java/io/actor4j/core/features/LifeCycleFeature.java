@@ -17,7 +17,6 @@ package io.actor4j.core.features;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,6 +24,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
 import io.actor4j.core.supervisor.SupervisorStrategy;
@@ -79,7 +79,7 @@ public class LifeCycleFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
+		ActorId parent = system.addActor(() -> new Actor("parent") {
 			@Override
 			public void preStart() {	
 				addChild(() -> new Actor("child") {
@@ -139,12 +139,12 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(4);
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child1;
-			protected UUID child2;
-			protected UUID child3;
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child1;
+			protected ActorId child2;
+			protected ActorId child3;
 			
-			protected Set<UUID> waitForChildren;
+			protected Set<ActorId> waitForChildren;
 			
 			public SupervisorStrategy supervisorStrategy() {
 				return new OneForAllSupervisorStrategy(-1, Integer.MAX_VALUE) {
@@ -231,7 +231,7 @@ public class LifeCycleFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
+		ActorId parent = system.addActor(() -> new Actor("parent") {
 			@Override
 			public void preStart() {	
 				addChild(() -> new Actor("child") {
@@ -291,7 +291,7 @@ public class LifeCycleFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
+		ActorId parent = system.addActor(() -> new Actor("parent") {
 			@Override
 			public void preStart() {	
 				addChild(() -> new Actor("child") {
@@ -364,7 +364,7 @@ public class LifeCycleFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
+		ActorId parent = system.addActor(() -> new Actor("parent") {
 			@Override
 			public void preStart() {	
 				addChild(() -> new Actor("child") {
@@ -436,8 +436,8 @@ public class LifeCycleFeature {
 		CountDownLatch testDone = new CountDownLatch(9);
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child2;
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child2;
 			
 			public SupervisorStrategy supervisorStrategy() {
 				return new OneForAllSupervisorStrategy(-1, Integer.MAX_VALUE) {
