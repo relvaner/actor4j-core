@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.BaseActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -31,17 +30,13 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	
 	protected final AtomicBoolean isScheduled;
 	
-	public ClassicActorCell(InternalActorSystem system, Actor actor, ActorId id) {
-		super(system, actor, id);
+	public ClassicActorCell(InternalActorSystem system, Actor actor) {
+		super(system, actor);
 		
 		directiveQueue = new ConcurrentLinkedQueue<>();
 		outerQueue = new ConcurrentLinkedQueue<>();
 		
 		isScheduled = new AtomicBoolean(false);
-	}
-
-	public ClassicActorCell(InternalActorSystem system, Actor actor) {
-		this(system, actor, system.idFactory().create());
 	}
 
 	@Override

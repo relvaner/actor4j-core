@@ -104,21 +104,29 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 			dest = redirect;
 		
 		if (redirect==null) {
-			if (system.getResourceCells().containsKey(dest)) {
+			if (system.getPseudoCells().containsKey(dest)) {
+				consumerPseudo.apply(message.copy());
+				return;
+			}
+			else if (system.getResourceCells().containsKey(dest)) {
 				system.getExecutorService().resource(message.copy());
 				return;
 			}
 			
-			if (!dispatch(message, null, directive, true) && !consumerPseudo.apply(message.copy()))
+			if (!dispatch(message, null, directive, true))
 				undelivered(message, message.source(), message.dest());
 		}
 		else {
-			if (system.getResourceCells().containsKey(dest)) {
+			if (system.getPseudoCells().containsKey(dest)) {
+				consumerPseudo.apply(message.copy(dest));
+				return;
+			}
+			else if (system.getResourceCells().containsKey(dest)) {
 				system.getExecutorService().resource(message.copy(dest));
 				return;
 			}
 			
-			if (!dispatch(message, dest, directive, true) && !consumerPseudo.apply(message.copy(dest)))
+			if (!dispatch(message, dest, directive, true))
 				undelivered(message, message.source(), dest);
 		}
 	}
@@ -146,7 +154,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	@Override
 	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
-			InternalActorCell cell = system.getCells().get(source);
+			InternalActorCell cell = (InternalActorCell)source;
 		
 			dispatch(message.shallowCopy(dest), system.UNKNOWN_ID(), false, false);
 			systemLogger().log(WARN,
@@ -165,7 +173,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	public boolean dispatch(ActorMessage<?> message, ActorId dest, boolean directive, boolean debugUndelivered) {
 		ActorId destination = dest!=null ? dest : message.dest();
 		
-		ClassicInternalActorCell cell = (ClassicInternalActorCell)system.getCells().get(destination);
+		ClassicInternalActorCell cell = (ClassicInternalActorCell)destination;
 		if (cell!=null) {
 			if (directive) {
 				if (dest!=null)

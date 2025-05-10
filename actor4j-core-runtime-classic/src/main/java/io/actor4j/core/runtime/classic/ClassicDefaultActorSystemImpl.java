@@ -18,7 +18,6 @@ package io.actor4j.core.runtime.classic;
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.ActorExecutorService;
 import io.actor4j.core.runtime.ActorSystemImpl;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -47,11 +46,6 @@ public class ClassicDefaultActorSystemImpl extends ActorSystemImpl {
 	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
 		return new ClassicActorCell(this, actor);
-	}
-	
-	@Override
-	protected InternalActorCell createActorCell(Actor actor, ActorId id) {
-		return new ClassicActorCell(this, actor, id);
 	}
 	
 	@Override

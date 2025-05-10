@@ -45,7 +45,7 @@ public class ClassicPodActorCell extends ClassicActorCell implements InternalPod
 	
 	@Override
 	public void preStart() {
-		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().domain(), id));
+		systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) starting", getContext().domain(), getId()));
 		super.preStart();
 	}
 }
