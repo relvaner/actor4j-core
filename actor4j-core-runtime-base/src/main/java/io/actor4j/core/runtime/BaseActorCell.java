@@ -83,7 +83,7 @@ public class BaseActorCell implements InternalActorCell {
 	protected SupervisorStrategy parentSupervisorStrategy;
 	
 	public BaseActorCell(InternalActorSystem system, Actor actor) {
-		this(system, actor, system.idFactory().create());
+		this(system, actor, system.createId());
 	}
 			
 	public BaseActorCell(InternalActorSystem system, Actor actor, ActorId id) {
