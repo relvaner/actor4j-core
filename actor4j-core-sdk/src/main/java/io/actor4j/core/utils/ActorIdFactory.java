@@ -19,4 +19,5 @@ import io.actor4j.core.id.ActorId;
 
 public interface ActorIdFactory {
 	public ActorId create();
+	public ActorId create(String id);
 }

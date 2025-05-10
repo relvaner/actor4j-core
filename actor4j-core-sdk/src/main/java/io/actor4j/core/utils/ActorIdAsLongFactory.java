@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.id;
+package io.actor4j.core.utils;
 
-import java.util.concurrent.atomic.AtomicLong;
+import io.actor4j.core.id.ActorId;
 
-public record ActorIdAsLong(Long id) implements ActorId {
-	private static AtomicLong nextId = new AtomicLong(1);
-	
-	public static ActorIdAsLong of() {
-		return new ActorIdAsLong(nextId.incrementAndGet());
+public class ActorIdAsLongFactory implements ActorIdFactory {
+	public static ActorIdAsLongFactory of() {
+		return new ActorIdAsLongFactory();
 	}
 	
-	public static ActorIdAsLong of(Long id) {
-		return new ActorIdAsLong(id);
+	public ActorId create() {
+		return ActorId.ofLong();
 	}
 	
-	public static Long nextId() {
-		return nextId.incrementAndGet();
-	}
-	
-	@Override
-	public String toString() {
-		return id.toString();
+	public ActorId create(String id) {
+		return ActorId.ofLong(id);
 	}
 }

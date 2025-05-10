@@ -26,6 +26,10 @@ public interface ActorId {
 		return ActorIdAsLong.of(id);
 	}
 	
+	public static ActorIdAsLong ofLong(String id) {
+		return ActorIdAsLong.of(Long.valueOf(id));
+	}
+	
 	public static ActorIdAsUUID ofUUID() {
 		return ActorIdAsUUID.of();
 	}

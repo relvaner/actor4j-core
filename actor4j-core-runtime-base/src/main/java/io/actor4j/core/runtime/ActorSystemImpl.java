@@ -53,6 +53,7 @@ import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
+import io.actor4j.core.utils.ActorIdAsLongFactory;
 import io.actor4j.core.utils.ActorIdFactory;
 import io.actor4j.core.utils.ActorTimer;
 import io.actor4j.core.utils.PodActorFactory;
@@ -133,7 +134,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
 		
-		actorIdFactory = () -> ActorId.ofLong();
+		actorIdFactory = ActorIdAsLongFactory.of();
 				
 		ZERO_ID    = ActorId.ofLong( 0L);
 		ALIAS_ID   = ZERO_ID;

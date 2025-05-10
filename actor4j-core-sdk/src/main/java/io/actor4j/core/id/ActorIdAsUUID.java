@@ -41,4 +41,9 @@ public record ActorIdAsUUID(UUID id) implements ActorId {
 	public static UUID randomId() {
 		return UUID.randomUUID();
 	}
+	
+	@Override
+	public String toString() {
+		return id.toString();
+	}
 }
