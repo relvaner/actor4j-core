@@ -17,7 +17,6 @@ package io.actor4j.core.features;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,6 +29,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -52,7 +52,7 @@ public class AwaitFeature {
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorFactory() { 
+		ActorId dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {
@@ -104,7 +104,7 @@ public class AwaitFeature {
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorFactory() { 
+		ActorId dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {
@@ -158,7 +158,7 @@ public class AwaitFeature {
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 		
-		UUID dest = system.addActor(new ActorFactory() { 
+		ActorId dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor() {

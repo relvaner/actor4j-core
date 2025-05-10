@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
@@ -30,7 +31,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 public class CommPatternFeature {
@@ -94,8 +94,8 @@ public class CommPatternFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child;
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child;
 			@Override
 			public void preStart() {
 				child = addChild(() -> new Actor("child") {

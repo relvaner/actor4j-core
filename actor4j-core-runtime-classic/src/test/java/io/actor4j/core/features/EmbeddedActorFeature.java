@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,6 +23,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.logging.ActorLogger;
 import io.actor4j.core.messages.ActorMessage;
 
@@ -40,8 +40,8 @@ public class EmbeddedActorFeature {
 		
 		ActorSystem system = ActorSystem.create(AllFeaturesTest.factory());
 		
-		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
-			protected UUID client;
+		ActorId host = system.addActor(() -> new EmbeddedHostActor("host") {
+			protected ActorId client;
 			@Override
 			public void preStart() {
 				client = addEmbeddedChild(() -> new EmbeddedActor("host:client") {

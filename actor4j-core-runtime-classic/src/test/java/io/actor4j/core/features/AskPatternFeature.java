@@ -18,7 +18,6 @@ package io.actor4j.core.features;
 import static org.junit.Assert.*;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -28,6 +27,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.AskPattern;
 import io.actor4j.core.utils.AskPattern.AskPatternException;
@@ -45,7 +45,7 @@ public class AskPatternFeature {
 
 	@Test(timeout=5000)
 	public void test() {
-		UUID dest = system.addActor(() -> new Actor() {
+		ActorId dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				tell("done", 200, message.source());
@@ -64,12 +64,12 @@ public class AskPatternFeature {
 	
 	@Test(expected=AskPatternException.class)
 	public void test_exception() {
-		AskPattern.ask(ActorMessage.create(null, 0, null, UUID.randomUUID()), system);
+		AskPattern.ask(ActorMessage.create(null, 0, null, system.createId()), system);
 	}
 	
 	@Test(timeout=5000)
 	public void test_timeout() throws TimeoutException {
-		UUID dest = system.addActor(() -> new Actor() {
+		ActorId dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty

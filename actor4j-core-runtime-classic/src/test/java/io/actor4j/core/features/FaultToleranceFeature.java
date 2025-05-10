@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,6 +26,7 @@ import static org.junit.Assert.*;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -48,7 +48,7 @@ public class FaultToleranceFeature {
 	public void test() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
-		UUID dest = system.addActor(new ActorFactory() { 
+		ActorId dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor("FaultToleranceFeatureActor") {
@@ -75,11 +75,11 @@ public class FaultToleranceFeature {
 		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().getErrorHandler();
 		((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
-				errorHandler.handle(t, systemError, message, uuid);
+			public void handle(Throwable t, ActorSystemError systemError, String message, Object faultToleranceId) {
+				errorHandler.handle(t, systemError, message, faultToleranceId);
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
 				assertEquals(ActorSystemError.ACTOR, systemError);
-				assertEquals(dest, uuid);
+				assertEquals(dest, faultToleranceId);
 				testDone.countDown();
 			}
 		});
@@ -104,7 +104,7 @@ public class FaultToleranceFeature {
 		
 		CountDownLatch testDone = new CountDownLatch(maxRetries+1+1);
 		
-		UUID dest = system.addActor(new ActorFactory() { 
+		ActorId dest = system.addActor(new ActorFactory() { 
 			@Override
 			public Actor create() {
 				return new Actor("FaultToleranceFeatureActor") {
@@ -140,11 +140,11 @@ public class FaultToleranceFeature {
 		ErrorHandler errorHandler = ((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().getErrorHandler();
 		((InternalActorSystem)system).getExecutorService().getFaultToleranceManager().setErrorHandler(new ErrorHandler() {
 			@Override
-			public void handle(Throwable t, ActorSystemError systemError, String message, UUID uuid) {
-				errorHandler.handle(t, systemError, message, uuid);
+			public void handle(Throwable t, ActorSystemError systemError, String message, Object faultToleranceId) {
+				errorHandler.handle(t, systemError, message, faultToleranceId);
 				assertEquals(new NullPointerException().getMessage(), t.getMessage());
 				assertEquals(ActorSystemError.ACTOR, systemError);
-				assertEquals(dest, uuid);
+				assertEquals(dest, faultToleranceId);
 				testDone.countDown(); // maxRetries+1
 			}
 		});

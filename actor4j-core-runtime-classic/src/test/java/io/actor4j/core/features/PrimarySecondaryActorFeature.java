@@ -17,7 +17,6 @@ package io.actor4j.core.features;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +27,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.PrimaryActor;
 import io.actor4j.core.actors.SecondaryActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ConcurrentActorGroupSet;
 
@@ -50,7 +50,7 @@ public class PrimarySecondaryActorFeature {
 		AtomicBoolean primaryReceived = new AtomicBoolean(false);
 		
 		ConcurrentActorGroupSet group = new ConcurrentActorGroupSet();
-		UUID primary = system.addActor(() -> new PrimaryActor("primary", group, "instances", 
+		ActorId primary = system.addActor(() -> new PrimaryActor("primary", group, "instances", 
 				(id) -> () -> new SecondaryActor(group, id) {
 					@Override
 					public void receive(ActorMessage<?> message) {

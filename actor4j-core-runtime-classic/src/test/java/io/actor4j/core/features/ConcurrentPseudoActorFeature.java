@@ -17,7 +17,6 @@ package io.actor4j.core.features;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +27,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ConcurrentPseudoActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -49,7 +49,7 @@ public class ConcurrentPseudoActorFeature {
 		
 		final int[] postconditions_numbers = new int[] { 341, 351, 451, 318, 292, 481, 240, 478, 382, 502, 158, 401, 438, 353, 165, 344, 6, 9, 18, 31, 77, 90, 45, 63, 190, 1 };
 		
-		UUID numberGenerator = system.addActor(new ActorFactory() {
+		ActorId numberGenerator = system.addActor(new ActorFactory() {
 			@Override
 			public Actor create() {
 				return new Actor("numberGenerator") {
