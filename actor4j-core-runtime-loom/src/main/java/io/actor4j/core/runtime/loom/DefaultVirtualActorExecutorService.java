@@ -40,7 +40,7 @@ public class DefaultVirtualActorExecutorService extends ActorExecutorServiceImpl
 	
 	@Override
 	public void resource(final ActorMessage<?> message) {
-		final InternalActorCell cell = system.getCells().get(message.dest());
+		final InternalActorCell cell = (InternalActorCell)message.dest();
 		if (cell!=null) {
 			if (virtualActorResourceRunnablePool.isStarted()) {
 				if (message.tag()<0)

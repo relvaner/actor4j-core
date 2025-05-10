@@ -167,7 +167,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 	@Override
 	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
-			InternalActorCell cell = system.getCells().get(source);
+			InternalActorCell cell = (InternalActorCell)source;
 		
 			dispatch(message.shallowCopy(dest), system.UNKNOWN_ID(), false, false);
 			systemLogger().log(WARN,

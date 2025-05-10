@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.actor4j.core.actors.ResourceActor;
@@ -61,7 +62,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 		for (int i=0; i<parallelism; i++)
 			metricsList.add(new VirtualActorRunnableMetrics());
 		
-		for (InternalActorCell cell : system.getCells().values())
+		Function<InternalActorCell, Boolean> registerCells = (cell) -> {
 			if (onlyResourceActors) {
 				if (cell.getActor() instanceof ResourceActor)
 					registerCell(cell);
@@ -70,6 +71,11 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 				if (!(cell.getActor() instanceof ResourceActor))
 					registerCell(cell);
 			}
+			
+			return false;
+		};
+		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells);
+		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells);
 		started.set(true);
 		for (Thread t : virtualThreads.values())
 			t.start();
