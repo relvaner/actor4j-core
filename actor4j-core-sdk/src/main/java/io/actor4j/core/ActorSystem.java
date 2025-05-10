@@ -39,9 +39,6 @@ public interface ActorSystem {
 	public static ActorSystem create(ActorSystemFactory factory, ActorSystemConfig config) {
 		return factory.apply(config);
 	}
-
-	public ActorId createId();
-	public ActorId createId(String id);
 	
 	public ActorId USER_ID();
 	public ActorId SYSTEM_ID();

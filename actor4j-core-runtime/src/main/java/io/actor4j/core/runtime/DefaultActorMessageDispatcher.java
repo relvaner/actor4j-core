@@ -266,7 +266,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 	@Override
 	public void undelivered(ActorMessage<?> message, ActorId source, ActorId dest) {
 		if (system.getConfig().debugUndelivered()) {
-			InternalActorCell cell = system.getCells().get(source);
+			InternalActorCell cell = (InternalActorCell)source;
 		
 			getThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 			systemLogger().log(WARN,

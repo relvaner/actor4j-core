@@ -18,10 +18,7 @@ package io.actor4j.core.runtime;
 import java.util.List;
 import java.util.Map;
 
-import io.actor4j.core.id.ActorId;
-
 public interface DefaultActorExecutionUnitPoolHandler<U extends ActorExecutionUnit> extends ActorExecutionUnitPoolHandler<U> {
-	public Map<ActorId, Long> getCellsMap();
 	public Map<Long, U> getExecutionUnitMap();
 	public List<Long> getExecutionUnitList();
 	

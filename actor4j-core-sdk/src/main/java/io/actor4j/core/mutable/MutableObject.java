@@ -17,11 +17,11 @@ package io.actor4j.core.mutable;
 
 public final class MutableObject<T> {
 	private T value;
-	
+
 	public MutableObject() {
 		this(null);
 	}
-	
+
 	public MutableObject(T value) {
 		super();
 		this.value = value;
@@ -33,6 +33,39 @@ public final class MutableObject<T> {
 
 	public void setValue(T value) {
 		this.value = value;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public T add(T delta) {
+		return value = (T) switch (value) {
+			case Integer i -> Integer.valueOf(i+(int)delta);
+			case Double  d -> Double.valueOf(d+(double)delta);
+			case Float   f -> Float.valueOf(f+(float)delta);
+			case Long    l -> Long.valueOf(l+(long)delta);
+			case null, default -> value;
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	public T increment() {
+		return value = (T) switch (value) {
+			case Integer i -> Integer.valueOf(i+1);
+			case Double  d -> Double.valueOf(d+1);
+			case Float   f -> Float.valueOf(f+1);
+			case Long    l -> Long.valueOf(l+1);
+			case null, default -> value;
+		};
+	}
+	
+	@SuppressWarnings("unchecked")
+	public T decrement() {
+		return value = (T) switch (value) {
+			case Integer i -> Integer.valueOf(i-1);
+			case Double  d -> Double.valueOf(d-1);
+			case Float   f -> Float.valueOf(f-1);
+			case Long    l -> Long.valueOf(l-1);
+			case null, default -> value;
+		};
 	}
 
 	@Override

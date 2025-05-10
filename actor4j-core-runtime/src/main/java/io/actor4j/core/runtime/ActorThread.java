@@ -43,7 +43,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 	protected final Queue<Long> threadProcessingTimeSamples;
 	
 	protected final AtomicInteger cellsProcessingTimeSampleCount;
-	
+
 	public ActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name);
 		
@@ -106,7 +106,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 		
 		ActorMessage<?> message = queue.poll();
 		if (message!=null) {
-			InternalActorCell cell = system.getCells().get(message.dest());
+			InternalActorCell cell = (InternalActorCell)message.dest();
 			if (cell!=null) {
 				if (system.getConfig().metricsEnabled().get())
 					metrics(message, cell);

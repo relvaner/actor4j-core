@@ -23,7 +23,7 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorFactory;
 
-public interface ActorCell {
+public interface ActorCell extends ActorId {
 	public ActorSystem getSystem();
 	
 	public ActorId getId();

@@ -20,7 +20,6 @@ import java.util.List;
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.id.ActorId;
 
 public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultInternalActorRuntimeSystem {
 	protected /*quasi final*/ ActorThreadFactory actorThreadFactory;
@@ -49,11 +48,6 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
 		return new BaseActorCell(this, actor);
-	}
-	
-	@Override
-	protected InternalActorCell createActorCell(Actor actor, ActorId id) {
-		return new BaseActorCell(this, actor, id);
 	}
 	
 	@Override

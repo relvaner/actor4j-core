@@ -25,7 +25,6 @@ import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.InternalActorSystem;
 
 public abstract class PodActorMessageProxyHandler {
 	protected final ActorRef host;
@@ -75,7 +74,7 @@ public abstract class PodActorMessageProxyHandler {
 	public boolean messagefromPod(ActorMessage<?> message) {
 		boolean result = false;
 		
-		InternalActorCell cell = ((InternalActorSystem)host.getSystem()).getCells().get(message.source());
+		InternalActorCell cell = (InternalActorCell)message.source();
 		if (cell!=null) {
 			Actor actor = cell.getActor();
 			if (actor!=null && actor instanceof ActorGroupMember)

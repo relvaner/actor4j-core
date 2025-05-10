@@ -15,26 +15,8 @@
  */
 package io.actor4j.core.id;
 
-public interface ActorId {
-	Object id();
-	
-	public static ActorIdAsLong ofLong() {
-		return ActorIdAsLong.of();
-	}
-	
-	public static ActorIdAsLong ofLong(Long id) {
-		return ActorIdAsLong.of(id);
-	}
-	
-	public static ActorIdAsLong ofLong(String id) {
-		return ActorIdAsLong.of(Long.valueOf(id));
-	}
-	
-	public static ActorIdAsUUID ofUUID() {
-		return ActorIdAsUUID.of();
-	}
-	
-	public static ActorIdAsUUID ofUUID(String id) {
-		return ActorIdAsUUID.of(id);
-	}
+import io.actor4j.core.utils.Shareable;
+
+public interface ActorId extends Shareable {
+
 }

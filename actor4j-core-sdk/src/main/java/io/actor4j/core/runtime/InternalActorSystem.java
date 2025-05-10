@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import io.actor4j.core.ActorPodService;
 import io.actor4j.core.ActorService;
@@ -28,12 +29,11 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
-import io.actor4j.core.utils.ActorIdFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorSystemFactory factory();
-	
-	public ActorIdFactory idFactory();
+
+	public boolean isEmpty();
 
 	public ActorId ZERO_ID();
 	public ActorId ALIAS_ID();
@@ -46,8 +46,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public WatchdogRunnableFactory getWatchdogRunnableFactory();
 	
 	public PseudoActorCellFactory getPseudoActorCellFactory();
-	
-	public Map<ActorId, InternalActorCell> getCells();
+
 	public Map<ActorId, InternalActorCell> getPseudoCells();
 	public Map<ActorId, Boolean> getResourceCells();
 	public Map<ActorId, Boolean> getPodCells();
@@ -67,6 +66,8 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public InternalActorCell generateCell(Class<? extends Actor> clazz);
 	public ActorId internal_addCell(InternalActorCell cell);
 	public ActorId pseudo_addCell(InternalActorCell cell);
+	
+	public boolean internal_iterateCell(InternalActorCell root, Function<InternalActorCell, Boolean> action);
 	
 	public ActorId addSystemActor(ActorFactory factory);
 	public List<ActorId> addSystemActor(ActorFactory factory, int instances);

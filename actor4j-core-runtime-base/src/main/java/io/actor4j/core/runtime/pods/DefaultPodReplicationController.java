@@ -91,7 +91,7 @@ public class DefaultPodReplicationController implements PodReplicationController
 				int count=0;
 				for (; iterator.hasNext() && count<instances;) {
 					ActorId id = iterator.next();
-					InternalPodActorCell cell = ((InternalPodActorCell)system.getCells().get(id));
+					InternalPodActorCell cell = (InternalPodActorCell)id;
 					if (!cell.getContext().primaryReplica()) { // does not remove primary replica
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));
@@ -112,7 +112,7 @@ public class DefaultPodReplicationController implements PodReplicationController
 				int count=0;
 				for (; iterator.hasNext() && count<instances;) {
 					ActorId id = iterator.next();
-					InternalPodActorCell cell = ((InternalPodActorCell)system.getCells().get(id));
+					InternalPodActorCell cell = (InternalPodActorCell)id;
 					if (!cell.getContext().primaryReplica() && cell.getContext().shardId().equalsIgnoreCase(shardId)) { // does not remove primary replica && same shardId
 						systemLogger().log(INFO, String.format("[REPLICATION] PodActor (%s, %s) stopping", domain, id));
 						system.send(ActorMessage.create(null, STOP, system.SYSTEM_ID(), id));

@@ -22,34 +22,43 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.id.ActorId;
+import io.actor4j.core.mutable.MutableObject;
 import io.actor4j.core.runtime.InternalActorCell;
+import io.actor4j.core.runtime.InternalActorSystem;
 
 public class ActorLoadBalancingBeforeStart {
-	public void registerCells(Map<ActorId, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, Map<ActorId, InternalActorCell> cells) {
+	public void registerCells(List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorSystem system) {
 		List<ActorId> buffer = new LinkedList<>();
-		for (InternalActorCell cell : cells.values()) 
+		Function<InternalActorCell, Boolean> registerCells = cell -> {
 			if (!(cell.getActor() instanceof ResourceActor))
 				buffer.add(cell.getId());
+			
+			return false;
+		};
+		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells);
+		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells);
 		
-		int i=0, j=0;
-		for (InternalActorCell cell : cells.values()) {
+		final MutableObject<Integer> i = new MutableObject<>(0);
+		final MutableObject<Integer> j = new MutableObject<>(0);
+		Function<InternalActorCell, Boolean> registerCells_groups = cell -> {
 			Actor actor = cell.getActor();
 			
 			if (actor instanceof ResourceActor)
-				continue;
+				return false;
 			
 			if (actor instanceof ActorDistributedGroupMember) {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = executionUnitList.get(j);
-					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j);
+					threadId = executionUnitList.get(j.getValue());
+					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j.getValue());
 				}
 				else {
 					threadIndex++;
@@ -59,10 +68,10 @@ public class ActorLoadBalancingBeforeStart {
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
 				}
 				if (buffer.remove(cell.getId()))
-					cellsMap.put(cell.getId(), threadId);
-				j++;
-				if (j==executionUnitList.size())
-					j = 0;
+					cell.setThreadId(threadId);
+				j.increment();
+				if (j.getValue()==executionUnitList.size())
+					j.setValue(0);
 				
 				if (actor instanceof ActorGroupMember) {
 					if (groupsMap.get(((ActorGroupMember)actor).getGroupId())==null)
@@ -74,29 +83,33 @@ public class ActorLoadBalancingBeforeStart {
 			else if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 				if (threadId==null) {
-					threadId = executionUnitList.get(i);
+					threadId = executionUnitList.get(i.getValue());
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
-					i++;
-					if (i==executionUnitList.size())
-						i = 0;
+					i.increment();
+					if (i.getValue()==executionUnitList.size())
+						i.setValue(0);
 				}
 				if (buffer.remove(cell.getId()))
-					cellsMap.put(cell.getId(), threadId);
+					cell.setThreadId(threadId);
 			}
-		}	
-						
-		i=0;
+			
+			return false;
+		};
+		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells_groups);
+		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells_groups);
+					
+		i.setValue(0);
 		for (ActorId id : buffer) {
-			cellsMap.put(id, executionUnitList.get(i));
-			i++;
-			if (i==executionUnitList.size())
-				i = 0;
+			((InternalActorCell)id).setThreadId(executionUnitList.get(i.getValue()));
+			i.increment();
+			if (i.getValue()==executionUnitList.size())
+				i.setValue(0);
 		}
 			
 		/*
 		int i=0;
 		for (ActorId id : system.cells.keySet()) {
-			cellsMap.put(id, threadsList.get(i).getId());
+			((InternalActorCell)id).setThreadId(executionUnitList.get(i));
 			i++;
 			if (i==threadsList.size())
 				i = 0;

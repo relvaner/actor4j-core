@@ -94,7 +94,7 @@ public class ResourceActorCell extends BaseActorCell {
 						bulkList.add(message);
 						while ((message=queue.poll())!=null)
 							bulkList.add(message);
-						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID(), id));
+						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID(), getId()));
 					}
 					
 					// Spinlock
@@ -114,7 +114,7 @@ public class ResourceActorCell extends BaseActorCell {
 			after();
 		}
 		catch(Exception e) {
-			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.RESOURCE_ACTOR, id);
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.RESOURCE_ACTOR, getId());
 			system.getStrategyOnFailure().handle(this, e);
 		}	
 	}

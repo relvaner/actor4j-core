@@ -29,7 +29,6 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
-import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingAfterStart {
@@ -55,7 +54,7 @@ public class ActorLoadBalancingAfterStart {
 		k.set(0);
 	}
 	
-	public void registerCell(Map<ActorId, Long> cellsMap, List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
+	public void registerCell(List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		lock.lock();
 		try {
 			Actor actor = cell.getActor();
@@ -73,7 +72,7 @@ public class ActorLoadBalancingAfterStart {
 					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
 					threadId = executionUnitList.get(threadIndex);
 				}
-				cellsMap.put(cell.getId(), threadId);
+				cell.setThreadId(threadId);
 				
 				j.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1);
 				
@@ -91,11 +90,11 @@ public class ActorLoadBalancingAfterStart {
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
 				}
 				
-				cellsMap.put(cell.getId(), threadId);
+				cell.setThreadId(threadId);
 			}
 			else {
 				Long threadId = executionUnitList.get(k.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
-				cellsMap.put(cell.getId(), threadId);
+				cell.setThreadId(threadId);
 			}
 		}
 		finally {
@@ -103,11 +102,10 @@ public class ActorLoadBalancingAfterStart {
 		}
 	}
 	
-	public void unregisterCell(Map<ActorId, Long> cellsMap, List<Long> processList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
+	public void unregisterCell(List<Long> processList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		/*
 		 * eventually remove the group (when no more group members are available), for ActorGroupMember, ActorDistributedGroupMember
 		 */
-		
-		cellsMap.remove(cell.getId());
+		cell.setThreadId(-1);
 	}
 }

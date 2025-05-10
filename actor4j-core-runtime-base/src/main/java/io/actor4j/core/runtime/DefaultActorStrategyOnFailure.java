@@ -54,7 +54,7 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 	
 	protected void oneForAll_directive_restart(InternalActorCell cell, Exception reason) {
 		if (!cell.isRoot()) {
-			InternalActorCell parent = system.getCells().get(cell.getParent());
+			InternalActorCell parent = (InternalActorCell)cell.getParent();
 			if (parent!=null) {
 				Iterator<ActorId> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
@@ -71,7 +71,7 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 	
 	protected void oneForAll_directive_stop(InternalActorCell cell) {
 		if (!cell.isRoot()) {
-			InternalActorCell parent = system.getCells().get(cell.getParent());
+			InternalActorCell parent = (InternalActorCell)cell.getParent();
 			if (parent!=null) {
 				Iterator<ActorId> iterator = parent.getChildren().iterator();
 				while (iterator.hasNext()) {
@@ -88,7 +88,7 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 	
 	@Override
 	public void handle(InternalActorCell cell, Exception e) {
-		InternalActorCell parent = system.getCells().get(cell.getParent());
+		InternalActorCell parent = (InternalActorCell)cell.getParent();
 		if (cell.getParentSupervisorStrategy()==null)	
 			cell.setParentSupervisorStrategy(parent.supervisorStrategy());
 		
@@ -96,7 +96,7 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 		SupervisorStrategyDirective directive = supervisorStrategy.handle(e);
 		
 		while (directive==ESCALATE && !parent.isRoot()) {
-			parent = system.getCells().get(parent.getParent());
+			parent = (InternalActorCell)parent.getParent();
 			supervisorStrategy = parent.supervisorStrategy();
 			cell.setParentSupervisorStrategy(supervisorStrategy);
 			directive = supervisorStrategy.handle(e);

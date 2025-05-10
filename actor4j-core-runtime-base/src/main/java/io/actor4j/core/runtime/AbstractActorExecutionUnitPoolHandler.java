@@ -31,8 +31,7 @@ import io.actor4j.core.runtime.persistence.ActorPersistenceServiceImpl;
 
 public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit> implements DefaultActorExecutionUnitPoolHandler<U> {
 	protected final InternalActorSystem system;
-	
-	protected final Map<ActorId, Long> cellsMap;  // ActorCellID -> ProcessID
+
 	@Readonly
 	protected final Map<Long, U> executionUnitMap;
 	@Readonly
@@ -50,8 +49,7 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 		super();
 		
 		this.system = system;
-		
-		cellsMap = new ConcurrentHashMap<>();
+
 		executionUnitMap = new HashMap<>();
 		executionUnitList = new ArrayList<>();
 		persistenceMap = new HashMap<>();
@@ -61,11 +59,6 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 		
 		loadBalancingBeforeStart = new ActorLoadBalancingBeforeStart();
 		loadBalancingAfterStart = new ActorLoadBalancingAfterStart();
-	}
-
-	@Override
-	public Map<ActorId, Long> getCellsMap() {
-		return cellsMap;
 	}
 
 	@Override
@@ -88,28 +81,28 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 			i++;
 		}
 		
-		loadBalancingBeforeStart.registerCells(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, system.getCells());
+		loadBalancingBeforeStart.registerCells(executionUnitList, groupsMap, groupsDistributedMap, system);
 	}
 	
 	@Override
 	public void postPersistence(ActorMessage<?> message) {
-		Long id_source = cellsMap.get(message.source()); // message.source matches original actor
+		Long id_source = ((InternalActorCell)message.source()).getThreadId(); // message.source matches original actor
 		ActorId dest = system.getExecutorService().getPersistenceService().getService().getActorFromAlias(persistenceMap.get(id_source));
 		system.getExecutorService().getPersistenceService().getService().send(message.copy(dest));
 	}
 	
 	@Override
 	public void registerCell(InternalActorCell cell) {
-		loadBalancingAfterStart.registerCell(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, cell);
+		loadBalancingAfterStart.registerCell(executionUnitList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
-		loadBalancingAfterStart.unregisterCell(cellsMap, executionUnitList, groupsMap, groupsDistributedMap, cell);
+		loadBalancingAfterStart.unregisterCell(executionUnitList, groupsMap, groupsDistributedMap, cell);
 	}
 	
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return cellsMap.containsKey(cell.getId());
+		return cell.getThreadId()>0;
 	}
 }

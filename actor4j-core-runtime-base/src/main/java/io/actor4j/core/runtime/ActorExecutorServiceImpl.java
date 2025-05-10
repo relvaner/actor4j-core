@@ -84,7 +84,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 				}
 				else if (systemError!=null) {
 					if (systemError==ActorSystemError.ACTOR || systemError==ActorSystemError.RESOURCE_ACTOR) {
-						InternalActorCell cell = system.getCells().get(faultToleranceId);
+						InternalActorCell cell = (InternalActorCell)faultToleranceId;
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -95,7 +95,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 								String.format("[FT] Exception in actor: %s", faultToleranceId.toString()));
 					}
 					else if (systemError==ActorSystemError.EMBEDDED_ACTOR) {
-						InternalActorCell cell = system.getCells().get(faultToleranceId);
+						InternalActorCell cell = (InternalActorCell)faultToleranceId;
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -126,7 +126,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 								String.format("[FT] Exception in WatchdogThread"));
 					}
 					else if (systemError==ActorSystemError.EXECUTER_RESOURCE) {
-						InternalActorCell cell = system.getCells().get(faultToleranceId);
+						InternalActorCell cell = (InternalActorCell)faultToleranceId;
 						if (cell!=null) {
 							Actor actor = cell.getActor();
 							systemLogger().log(ERROR,
@@ -172,8 +172,8 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	
 	@Override
 	public void start(Runnable onStartup, Runnable onTermination) {
-		if (system.getCells().size()==0)
-			return;
+//		if (system.isEmpty())
+//			return;
 		
 		int poolSize = Runtime.getRuntime().availableProcessors();
 		
@@ -270,7 +270,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	
 	@Override
 	public void resource(final ActorMessage<?> message) {
-		final ResourceActorCell cell = (ResourceActorCell)system.getCells().get(message.dest());
+		final ResourceActorCell cell = (ResourceActorCell)message.dest();
 		if (cell!=null && cell.beforeRun(message)) {
 			if (!resourceExecutorService.isShutdown())
 				try {

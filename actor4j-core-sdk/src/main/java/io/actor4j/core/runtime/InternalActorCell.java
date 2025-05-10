@@ -30,6 +30,9 @@ public interface InternalActorCell extends ActorCell {
 	public void setActor(Actor actor);
 	public void setParent(ActorId parent);
 	
+	public long getThreadId();
+	public void setThreadId(long threadId);
+	
 	public boolean isActive();
 	public void setActive(boolean active);
 	public Queue<ActorId> getDeathWatcher();

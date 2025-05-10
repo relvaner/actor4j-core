@@ -60,11 +60,11 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	protected final InternalActorSystem system;
-	protected /*quasi final*/ Actor actor;
+	protected volatile Actor actor;
 	
-	protected final ActorId id;
-	
-	protected ActorId parent;
+	protected volatile long threadId;
+
+	protected /*quasi final*/ ActorId parent;
 	protected final Queue<ActorId> children;
 	
 	protected final AtomicBoolean active;
@@ -80,18 +80,15 @@ public class BaseActorCell implements InternalActorCell {
 	protected final AtomicLong requestRate;
 	protected final Queue<Long> processingTimeSamples;
 	
-	protected SupervisorStrategy parentSupervisorStrategy;
-	
-	public BaseActorCell(InternalActorSystem system, Actor actor) {
-		this(system, actor, system.createId());
-	}
+	protected volatile SupervisorStrategy parentSupervisorStrategy;
 			
-	public BaseActorCell(InternalActorSystem system, Actor actor, ActorId id) {
+	public BaseActorCell(InternalActorSystem system, Actor actor) {
 		super();
 		
 		this.system = system;
 		this.actor  = actor;
-		this.id = id;
+		
+		threadId = -1;
 		
 		children = new ConcurrentLinkedQueue<>();
 		
@@ -124,7 +121,7 @@ public class BaseActorCell implements InternalActorCell {
 
 	@Override
 	public ActorId getId() {
-		return id;
+		return this;
 	}
 	
 	@Override
@@ -142,6 +139,16 @@ public class BaseActorCell implements InternalActorCell {
 		return children;
 	}
 	
+	@Override
+	public long getThreadId() {
+		return threadId;
+	}
+
+	@Override
+	public void setThreadId(long threadId) {
+		this.threadId = threadId;
+	}
+
 	@Override
 	public boolean isActive() {
 		return active.get();
@@ -168,17 +175,17 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	public boolean hasUserId() {
-		return id.equals(system.USER_ID());
+		return getId()==system.USER_ID();
 	}
 	
 	@Override
 	public boolean isRootInUser() {
-		return parent!=null ? (parent.equals(system.USER_ID())) : false;
+		return parent!=null ? (parent==system.USER_ID()) : false;
 	}
 	
 	@Override
 	public boolean isRootInSystem() {
-		return parent!=null ? (parent.equals(system.SYSTEM_ID())) : false;
+		return parent!=null ? (parent==system.SYSTEM_ID()) : false;
 	}
 	
 	protected boolean processedDirective(ActorMessage<?> message) {
@@ -200,7 +207,7 @@ public class BaseActorCell implements InternalActorCell {
 			else if (message.tag()==INTERNAL_KILL) 
 				throw new ActorKilledException();
 			else if (message.tag()==INTERNAL_HEALTH_CHECK)
-				send(ActorMessage.create(null, UP, id, message.source()));
+				send(ActorMessage.create(null, UP, getId(), message.source()));
 			else if (message.tag()==INTERNAL_ACTIVATE)
 				active.set(true);
 			else if (message.tag()==INTERNAL_DEACTIVATE)
@@ -266,7 +273,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void send(ActorMessage<?> message) {
 		if (system.getMessagingEnabled().get())
-			system.getMessageDispatcher().post(message, id);
+			system.getMessageDispatcher().post(message, getId());
 		else
 			system.getBufferQueue().offer(message.copy());
 	}
@@ -274,7 +281,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
 		if (system.getMessagingEnabled().get())
-			system.getMessageDispatcher().post(message, id, alias);
+			system.getMessageDispatcher().post(message, getId(), alias);
 		else {
 			if (alias!=null) {
 				List<ActorId> destinations = system.getActorsFromAlias(alias);
@@ -295,7 +302,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void unsafe_send(ActorMessage<?> message) {
 		if (system.getMessagingEnabled().get())
-			system.getMessageDispatcher().unsafe_post(message, id);
+			system.getMessageDispatcher().unsafe_post(message, getId());
 		else
 			system.getBufferQueue().offer(message.copy());
 	}
@@ -303,7 +310,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void unsafe_send(ActorMessage<?> message, String alias) {
 		if (system.getMessagingEnabled().get())
-			system.getMessageDispatcher().unsafe_post(message, id, alias);
+			system.getMessageDispatcher().unsafe_post(message, getId(), alias);
 		else {
 			if (alias!=null) {
 				List<ActorId> destinations = system.getActorsFromAlias(alias);
@@ -330,7 +337,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void unhandled(ActorMessage<?> message) {
 		if (system.getConfig().debugUnhandled()) {
-			Actor sourceActor = system.getCells().get(message.source()).getActor();
+			Actor sourceActor = ((InternalActorCell)message.source()).getActor();
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
 					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from source (%s)",
@@ -346,7 +353,7 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public ActorId internal_addChild(InternalActorCell cell) {
-		cell.setParent(id);
+		cell.setParent(getId());
 		children.add(cell.getId());
 		system.internal_addCell(cell);
 		
@@ -431,31 +438,31 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void internal_stop() {
 		if (parent!=null)
-			system.getCells().get(parent).getChildren().remove(id);
+			((InternalActorCell)parent).getChildren().remove(getId());
 		/*if (!(actor instanceof ResourceActor) && !(actor instanceof PseudoActor)) @See: ActorMessageDispatcher */
 			system.getMessageDispatcher().unregisterCell(this);
-		system.removeActor(id);
+		system.removeActor(getId());
 		
 		Iterator<ActorId> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			ActorId dest = iterator.next();
-			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, id, dest));
+			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), dest));
 			iterator.remove();
 		}
 	}
 	
 	@Override
 	public void watch(ActorId dest) {
-		InternalActorCell cell = system.getCells().get(dest);
+		InternalActorCell cell = ((InternalActorCell)dest);
 		if (cell!=null)
-			cell.getDeathWatcher().add(id);
+			cell.getDeathWatcher().add(getId());
 	}
 	
 	@Override
 	public void unwatch(ActorId dest) {
-		InternalActorCell cell = system.getCells().get(dest);
+		InternalActorCell cell = ((InternalActorCell)dest);
 		if (cell!=null)
-			cell.getDeathWatcher().remove(id);
+			cell.getDeathWatcher().remove(getId());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -466,7 +473,7 @@ public class BaseActorCell implements InternalActorCell {
 			for (int i=0; i<events.length; i++)
 				list.add(new ActorPersistenceDTO<>(events[i], persistenceId(), System.currentTimeMillis(), 0));
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, Arrays.asList(events));
-			system.getMessageDispatcher().postPersistence(ActorMessage.create(new ImmutableList<>(list), PersistenceServiceActor.PERSIST_EVENTS, id, null));
+			system.getMessageDispatcher().postPersistence(ActorMessage.create(new ImmutableList<>(list), PersistenceServiceActor.PERSIST_EVENTS, getId(), null));
 			persistenceTuples.offer(tuple);
 			
 		}
@@ -479,7 +486,7 @@ public class BaseActorCell implements InternalActorCell {
 			List<ActorPersistenceDTO<Object>> list = new ArrayList<>();
 			list.add(new ActorPersistenceDTO<>(state, persistenceId(), System.currentTimeMillis(), 0));
 			PersistenceTuple tuple = new PersistenceTuple((Consumer<Object>)onSuccess, onFailure, Arrays.asList(state));
-			system.getMessageDispatcher().postPersistence(ActorMessage.create(list.get(0), PersistenceServiceActor.PERSIST_STATE, id, null));
+			system.getMessageDispatcher().postPersistence(ActorMessage.create(list.get(0), PersistenceServiceActor.PERSIST_STATE, getId(), null));
 			persistenceTuples.offer(tuple);
 		}
 	}
