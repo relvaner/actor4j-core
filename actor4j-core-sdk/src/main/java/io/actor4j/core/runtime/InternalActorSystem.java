@@ -28,9 +28,12 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
+import io.actor4j.core.utils.ActorIdFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
 	public ActorSystemFactory factory();
+	
+	public ActorIdFactory idFactory();
 
 	public ActorId ZERO_ID();
 	public ActorId ALIAS_ID();

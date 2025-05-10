@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class ResourceActorFeature {
@@ -59,9 +59,9 @@ public class ResourceActorFeature {
 	public void test_stateless() {
 		CountDownLatch testDone = new CountDownLatch(5);
 		
-		UUID resource = system.addActor(() -> new StatelessResourceActor("resource"));
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child;
+		ActorId resource = system.addActor(() -> new StatelessResourceActor("resource"));
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child;
 			
 			@Override
 			public void preStart() {	
@@ -99,7 +99,7 @@ public class ResourceActorFeature {
 	public void test_stateful() {
 		CountDownLatch testDone = new CountDownLatch(5);
 		
-		UUID resource = system.addActor(() -> new ResourceActor("resource", true) {
+		ActorId resource = system.addActor(() -> new ResourceActor("resource", true) {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				try {
@@ -112,8 +112,8 @@ public class ResourceActorFeature {
 			}
 		});
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child;
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child;
 			
 			@Override
 			public void preStart() {	

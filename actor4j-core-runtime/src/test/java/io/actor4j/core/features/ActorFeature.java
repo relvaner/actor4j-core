@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -24,6 +23,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 import static org.junit.Assert.*;
@@ -40,8 +40,8 @@ public class ActorFeature {
 	public void test_preStart_addChild() {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
-		UUID parent = system.addActor(() -> new Actor("parent") {
-			protected UUID child;
+		ActorId parent = system.addActor(() -> new Actor("parent") {
+			protected ActorId child;
 			
 			@Override
 			public void preStart() {	
@@ -73,12 +73,12 @@ public class ActorFeature {
 	
 	@Test(timeout=5000)
 	public void test_getActorFromPath_getActorPath() {
-		AtomicReference<UUID> childA = new AtomicReference<>(null);
-		AtomicReference<UUID> childB = new AtomicReference<>(null);
-		AtomicReference<UUID> childBA = new AtomicReference<>(null);
-		AtomicReference<UUID> childBB = new AtomicReference<>(null);
-		AtomicReference<UUID> childC = new AtomicReference<>(null);
-		UUID parentA = system.addActor(() -> new Actor("parentA") {
+		AtomicReference<ActorId> childA = new AtomicReference<>(null);
+		AtomicReference<ActorId> childB = new AtomicReference<>(null);
+		AtomicReference<ActorId> childBA = new AtomicReference<>(null);
+		AtomicReference<ActorId> childBB = new AtomicReference<>(null);
+		AtomicReference<ActorId> childC = new AtomicReference<>(null);
+		ActorId parentA = system.addActor(() -> new Actor("parentA") {
 			@Override
 			public void preStart() {	
 				childA.set(addChild(() -> new Actor("childA") {
@@ -116,9 +116,9 @@ public class ActorFeature {
 			}
 		});
 		
-		AtomicReference<UUID> child = new AtomicReference<>(null);
-		AtomicReference<UUID> childWithoutName = new AtomicReference<>(null);
-		UUID parentB = system.addActor(() -> new Actor("parentB") {
+		AtomicReference<ActorId> child = new AtomicReference<>(null);
+		AtomicReference<ActorId> childWithoutName = new AtomicReference<>(null);
+		ActorId parentB = system.addActor(() -> new Actor("parentB") {
 			@Override
 			public void preStart() {	
 				child.set(addChild(() -> new Actor("child") {

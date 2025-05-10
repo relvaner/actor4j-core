@@ -25,7 +25,6 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
-import io.actor4j.core.utils.ActorIdFactory;
 import io.actor4j.core.utils.ActorTimer;
 
 public interface ActorSystem {
@@ -40,8 +39,9 @@ public interface ActorSystem {
 	public static ActorSystem create(ActorSystemFactory factory, ActorSystemConfig config) {
 		return factory.apply(config);
 	}
-	
-	public ActorIdFactory idFactory();
+
+	public ActorId createId();
+	public ActorId createId(String id);
 	
 	public ActorId USER_ID();
 	public ActorId SYSTEM_ID();

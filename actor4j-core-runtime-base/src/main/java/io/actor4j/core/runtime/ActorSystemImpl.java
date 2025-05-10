@@ -153,6 +153,16 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
+	public ActorId createId() {
+		return actorIdFactory.create();
+	}
+	
+	@Override
+	public ActorId createId(String id) {
+		return actorIdFactory.create(id);
+	}
+	
+	@Override
 	public ActorId ZERO_ID() {
 		return ZERO_ID;
 	}

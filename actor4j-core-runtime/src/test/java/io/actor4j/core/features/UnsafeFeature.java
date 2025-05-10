@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
@@ -23,6 +22,7 @@ import org.junit.Test;
 
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.ActorWithGroup;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.utils.ActorGroup;
@@ -41,9 +41,9 @@ public class UnsafeFeature {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
 		ActorGroup group = new ActorGroupSet(); 
-		UUID parent = system.addActor(() -> new ActorWithGroup("parent", group) {
-			protected UUID child1;
-			protected UUID child2;
+		ActorId parent = system.addActor(() -> new ActorWithGroup("parent", group) {
+			protected ActorId child1;
+			protected ActorId child2;
 			
 			@Override
 			public void preStart() {	
@@ -84,10 +84,10 @@ public class UnsafeFeature {
 		CountDownLatch testDone = new CountDownLatch(1);
 		
 		ActorGroup group = new ActorGroupSet(); 
-		UUID parent = system.addActor(() -> new ActorWithGroup("parent", group) {
-			protected UUID child1;
-			protected UUID child2;
-			protected UUID child3;
+		ActorId parent = system.addActor(() -> new ActorWithGroup("parent", group) {
+			protected ActorId child1;
+			protected ActorId child2;
+			protected ActorId child3;
 			
 			@Override
 			public void preStart() {	

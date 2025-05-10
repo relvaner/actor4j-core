@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.features;
 
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,6 +27,7 @@ import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.EmbeddedActor;
 import io.actor4j.core.actors.EmbeddedHostActor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -50,8 +50,8 @@ public class EmbeddedActorFeature {
 		CountDownLatch testDone = new CountDownLatch(2);
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		UUID host = system.addActor(() -> new EmbeddedHostActor("host") {
-			protected UUID client;
+		ActorId host = system.addActor(() -> new EmbeddedHostActor("host") {
+			protected ActorId client;
 			@Override
 			public void preStart() {
 				client = addEmbeddedChild(() -> new EmbeddedActor("host:client") {
@@ -108,8 +108,8 @@ public class EmbeddedActorFeature {
 		for (int i=0; i<postconditions.length; i++)
 			postconditions[i] = new AtomicBoolean(false);
 
-		UUID dest = system.addActor(() -> new EmbeddedHostActor("host") {
-			protected UUID client;
+		ActorId dest = system.addActor(() -> new EmbeddedHostActor("host") {
+			protected ActorId client;
 			@Override
 			public void preStart() {
 				client = addEmbeddedChild(() -> new EmbeddedActor("host:client") {

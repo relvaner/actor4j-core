@@ -18,7 +18,6 @@ package io.actor4j.core.features;
 import static org.junit.Assert.*;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,6 +27,7 @@ import org.junit.Test;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.utils.AskPattern;
@@ -49,7 +49,7 @@ public class WatchdogFeature {
 	
 	@Test(timeout=5000)
 	public void test_health_check() {
-		UUID dest = system.addActor(() -> new Actor() {
+		ActorId dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				// empty
@@ -81,7 +81,7 @@ public class WatchdogFeature {
 		CountDownLatch testDone = new CountDownLatch(1);
 		AtomicLong threadId = new AtomicLong();
 		
-		UUID dest = system.addActor(() -> new Actor() {
+		ActorId dest = system.addActor(() -> new Actor() {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				threadId.getAndSet(Thread.currentThread().threadId());
