@@ -17,7 +17,6 @@ package io.actor4j.core;
 
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public interface ActorService extends ActorSystem {
@@ -41,7 +40,7 @@ public interface ActorService extends ActorSystem {
 	
 	public boolean setConfig(ActorServiceConfig config);
 
-	public boolean hasActor(ActorId id);
+	public boolean hasActor(String globalId);
 	
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
 	public void sendAsServer(ActorMessage<?> message);

@@ -151,7 +151,7 @@ public abstract class Actor implements ActorRef {
 		cell.unbecomeAll();
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final ActorId source, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -162,7 +162,7 @@ public abstract class Actor implements ActorRef {
 		}, replace);
 	}
 	
-	public void await(final UUID source, final Consumer<ActorMessage<?>> action) {
+	public void await(final ActorId source, final Consumer<ActorMessage<?>> action) {
 		await(source, action, true);
 	}
 	
@@ -181,7 +181,7 @@ public abstract class Actor implements ActorRef {
 		await(tag, action, true);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
+	public void await(final ActorId source, final int tag, final Consumer<ActorMessage<?>> action, boolean replace) {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
@@ -192,7 +192,7 @@ public abstract class Actor implements ActorRef {
 		}, replace);
 	}
 	
-	public void await(final UUID source, final int tag, final Consumer<ActorMessage<?>> action) {
+	public void await(final ActorId source, final int tag, final Consumer<ActorMessage<?>> action) {
 		await(source, tag, action, true);
 	}
 	

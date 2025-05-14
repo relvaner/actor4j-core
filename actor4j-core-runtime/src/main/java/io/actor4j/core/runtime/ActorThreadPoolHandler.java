@@ -28,8 +28,10 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 	public void unsafe_call(ActorMessage<?> message, ActorId dest, ActorThread t) {
 		InternalActorCell cell = (InternalActorCell)dest;
 		if (cell!=null) {
-			cell.getRequestRate().getAndIncrement();
-			t.faultToleranceMethod(message, cell);
+			if (system.getConfig().metricsEnabled().get())
+				t.metrics(message, cell);
+			else
+				t.faultToleranceMethod(message, cell);
 		}
 		if (system.getConfig().counterEnabled().get())
 			t.counter.getAndIncrement();
@@ -38,8 +40,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 	public boolean unsafe_postInnerOuter(ActorMessage<?> message, ActorId source) {
 		boolean result = false; 
 		
-		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
-			ActorThread t = ((ActorThread)Thread.currentThread());
+		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread t) {
 			unsafe_call(message.copy(), message.dest(), t);
 			result = true;
 		}
@@ -48,13 +49,14 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			long id_dest   = ((InternalActorCell)message.dest()).getThreadId();
 		
 			if (id_dest>0) {
-				ActorThread t = executionUnitMap.get(id_dest);
 				
+				Thread currentThread = null;
 				if (id_source>0 && id_source==id_dest
-						&& Thread.currentThread().threadId()==id_source) {
-					unsafe_call(message.copy(), message.dest(), t);	
+						&& (currentThread=Thread.currentThread()).threadId()==id_source) {
+					unsafe_call(message.copy(), message.dest(), (ActorThread)currentThread);	
 				}
 				else {
+					ActorThread t = executionUnitMap.get(id_dest);
 					t.outerQueue(message.copy());
 					t.newMessage();
 				}
@@ -81,12 +83,12 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			long id_dest   = ((InternalActorCell)dest).getThreadId();
 		
 			if (id_dest>0) {
-				ActorThread t = executionUnitMap.get(id_dest);
-				
+				Thread currentThread = null;
 				if (id_source>0 && id_source==id_dest
-						&& Thread.currentThread().threadId()==id_source)
-					unsafe_call(message.copy(dest), dest, t);
+						&& (currentThread=Thread.currentThread()).threadId()==id_source)
+					unsafe_call(message.copy(dest), dest, (ActorThread)currentThread);
 				else {
+					ActorThread t = executionUnitMap.get(id_dest);
 					t.outerQueue(message.copy(dest));
 					t.newMessage();
 				}
@@ -114,13 +116,17 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			long id_dest   = ((InternalActorCell)message.dest()).getThreadId();
 		
 			if (id_dest>0) {
-				ActorThread t = executionUnitMap.get(id_dest);
-				
+				ActorThread t = null;
+				Thread currentThread = null;
 				if (id_source>0 && id_source==id_dest
-						&& Thread.currentThread().threadId()==id_source)
+						&& (currentThread=Thread.currentThread()).threadId()==id_source) {
+					t = (ActorThread)currentThread;
 					t.innerQueue(message.copy());
-				else
+				}
+				else {
+					t = executionUnitMap.get(id_dest);
 					t.outerQueue(message.copy());
+				}
 				
 				t.newMessage();
 				result = true;
@@ -146,14 +152,17 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			long id_dest   = ((InternalActorCell)dest).getThreadId();
 		
 			if (id_dest>0) {
-				ActorThread t = executionUnitMap.get(id_dest);
-				
+				ActorThread t = null;
+				Thread currentThread = null;
 				if (id_source>0 && id_source==id_dest
-						&& Thread.currentThread().threadId()==id_source)
+						&& (currentThread=Thread.currentThread()).threadId()==id_source) {
+					t = (ActorThread)currentThread;
 					t.innerQueue(message.copy(dest));
-				else
+				}
+				else {
+					t = executionUnitMap.get(id_dest);
 					t.outerQueue(message.copy(dest));
-				
+				}
 				t.newMessage();
 				result = true;
 			}	
