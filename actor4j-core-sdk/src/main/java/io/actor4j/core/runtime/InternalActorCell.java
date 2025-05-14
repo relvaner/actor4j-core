@@ -23,11 +23,14 @@ import io.actor4j.core.ActorCell;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.di.FactoryInjector;
 import io.actor4j.core.supervisor.SupervisorStrategy;
 
 public interface InternalActorCell extends ActorCell {
 	public Actor getActor();
 	public void setActor(Actor actor);
+	public FactoryInjector<?> getFactory();
+	public void setFactory(FactoryInjector<?> factory);
 	public void setParent(ActorId parent);
 	
 	public long getThreadId();

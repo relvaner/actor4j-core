@@ -18,6 +18,7 @@ package io.actor4j.core.runtime;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -47,6 +48,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public PseudoActorCellFactory getPseudoActorCellFactory();
 
+	public Map<UUID, ActorId> getExposedCells();
 	public Map<ActorId, InternalActorCell> getPseudoCells();
 	public Map<ActorId, Boolean> getResourceCells();
 	public Map<ActorId, Boolean> getPodCells();

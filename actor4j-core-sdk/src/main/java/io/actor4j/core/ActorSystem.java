@@ -17,6 +17,7 @@ package io.actor4j.core;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
@@ -57,6 +58,8 @@ public interface ActorSystem {
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
 	public void undeployPods(String domain);
 	
+	public ActorSystem expose(ActorId id);
+	public ActorId getActor(UUID globalId);
 	public ActorSystem setAlias(ActorId id, String alias);
 	public ActorSystem setAlias(List<ActorId> ids, String alias);
 	public ActorId getActorFromAlias(String alias);

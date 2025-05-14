@@ -17,6 +17,7 @@ package io.actor4j.core;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.actor4j.core.id.ActorId;
@@ -26,6 +27,11 @@ import io.actor4j.core.utils.ActorFactory;
 public interface ActorCell extends ActorId {
 	public ActorSystem getSystem();
 	
+	public ActorId localId();
+	public UUID globalId();
+	
+	public int getType();
+	public boolean isPod();
 	public ActorId getId();
 	public ActorId getParent();
 	public Queue<ActorId> getChildren();
@@ -53,4 +59,8 @@ public interface ActorCell extends ActorId {
 	
 	public <E> void persist(Consumer<E> onSuccess, Consumer<Exception> onFailure, @SuppressWarnings("unchecked") E... events);
 	public <S> void saveSnapshot(Consumer<S> onSuccess, Consumer<Exception> onFailure, S state);
+	
+	public static int DEFAULT_ACTOR_CELL  = 0;
+	public static int RESOURCE_ACTOR_CELL = 1;
+	public static int PSEUDO_ACTOR_CELL   = 2;
 }

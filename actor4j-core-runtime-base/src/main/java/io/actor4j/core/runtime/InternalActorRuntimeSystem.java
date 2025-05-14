@@ -19,5 +19,5 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.runtime.di.DIContainer;
 
 public interface InternalActorRuntimeSystem extends InternalActorSystem {
-	public DIContainer<ActorId> getContainer();
+
 }
