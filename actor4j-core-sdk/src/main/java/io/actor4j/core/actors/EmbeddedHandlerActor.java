@@ -19,6 +19,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.embedded.InternalEmbeddedActorCell;
 import io.actor4j.core.utils.ActorMessageMatcher;
@@ -56,21 +57,21 @@ public class EmbeddedHandlerActor extends EmbeddedHostActor {
 	}
 	
 	public void handle(ActorMessage<?> message, Runnable onCreate, BiConsumer<ActorMessage<?>, EmbeddedActorRef> handler, Predicate<ActorMessage<?>> done) {
-		UUID id = message.interaction();
-		InternalEmbeddedActorCell embeddedActorCell = getRouter().get(id);
+		UUID globalId = message.interaction();
+		InternalEmbeddedActorCell embeddedActorCell = getHandlerRouter().get(globalId);
 		if (embeddedActorCell!=null)
 			embeddedActorCell.embedded(message);
 		else {
 			if (onCreate!=null)
 				onCreate.run();
-			UUID embeddedActorCellId = addEmbeddedChild(() -> new EmbeddedActor() {
+			ActorId embeddedActorCellId = addEmbeddedChild(() -> new EmbeddedActor() {
 				@Override
 				public boolean receive(ActorMessage<?> message) {
 					handler.accept(message, this);
 					
 					return true;
 				}
-			}, id);
+			}, globalId);
 			embeddedActorCell = getRouter().get(embeddedActorCellId);
 			embeddedActorCell.embedded(message);
 		}
@@ -80,12 +81,12 @@ public class EmbeddedHandlerActor extends EmbeddedHostActor {
 	
 	public void handle(ActorMessage<?> message, EmbeddedActorFactory factory) {
 		boolean done = false;
-		UUID id = message.interaction();
-		InternalEmbeddedActorCell embeddedActorCell = getRouter().get(id);
+		UUID globalId = message.interaction();
+		InternalEmbeddedActorCell embeddedActorCell = getHandlerRouter().get(globalId);
 		if (embeddedActorCell!=null)
 			done = embeddedActorCell.embedded(message);
 		else {
-			UUID embeddedActorCellId = addEmbeddedChild(factory, id);
+			ActorId embeddedActorCellId = addEmbeddedChild(factory, globalId);
 			embeddedActorCell = getRouter().get(embeddedActorCellId);
 			done = embeddedActorCell.embedded(message);
 		}

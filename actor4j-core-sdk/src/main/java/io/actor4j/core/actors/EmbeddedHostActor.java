@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.actors;
 
+import java.util.UUID;
+
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.embedded.ActorEmbeddedRouter;
@@ -50,8 +52,12 @@ public abstract class EmbeddedHostActor extends Actor {
 		return impl;
 	}
 
-	public ActorEmbeddedRouter getRouter() {
+	public ActorEmbeddedRouter<ActorId> getRouter() {
 		return impl.getRouter();
+	}
+	
+	public ActorEmbeddedRouter<UUID> getHandlerRouter() {
+		return impl.getHandlerRouter();
 	}
 	
 	public boolean isEmbedded(ActorId id) {
@@ -62,8 +68,8 @@ public abstract class EmbeddedHostActor extends Actor {
 		return impl.addEmbeddedChild(factory);
 	}
 
-	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, ActorId id) {
-		return impl.addEmbeddedChild(factory, id);
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, UUID globalId) {
+		return impl.addEmbeddedChild(factory, globalId);
 	}
 	
 	public void removeEmbeddedChild(ActorId id) {

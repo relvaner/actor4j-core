@@ -34,8 +34,8 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	protected final ActorRef host;
 	protected /*quasi final*/ EmbeddedActor actor;
 	
-	protected final ActorId id;
-	
+	protected UUID globalId;
+
 	protected boolean active;
 	
 	protected final Deque<Predicate<ActorMessage<?>>> behaviourStack;
@@ -49,11 +49,11 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 		this(host, actor, UUID.randomUUID());
 	}
 	
-	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor, ActorId id) {
+	public BaseEmbeddedActorCell(ActorRef host, EmbeddedActor actor, UUID globalId) {
 		super();
 		this.host = host;
 		this.actor = actor;
-		this.id = id;
+		this.globalId = globalId;
 		active = true;
 		behaviourStack = new ArrayDeque<>();
 		restartProtocol = new RestartProtocol(this);
@@ -76,8 +76,18 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	}
 	
 	@Override
+	public ActorId localId() {
+		return this;
+	}
+	
+	@Override
+	public UUID globalId() {
+		return globalId;
+	}
+	
+	@Override
 	public ActorId getId() {
-		return id;
+		return  this;
 	}
 
 	@Override
@@ -110,7 +120,7 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 		return result;
 	}
 	
-	public <T> boolean embedded(T value, int tag, UUID dest) {
+	public <T> boolean embedded(T value, int tag, ActorId dest) {
 		return embedded(ActorMessage.create(value, tag, getParent(), dest));
 	}
 	

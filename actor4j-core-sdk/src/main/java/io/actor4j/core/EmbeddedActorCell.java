@@ -15,14 +15,18 @@
  */
 package io.actor4j.core;
 
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
-public interface EmbeddedActorCell {
+public interface EmbeddedActorCell extends ActorId {
 	public ActorRef host();
+	
+	public ActorId localId();
+	public UUID globalId();
 	
 	public ActorId getId();
 	public ActorId getParent();

@@ -39,7 +39,8 @@ public class EmbeddedHostActorImpl {
 	protected final DIContainer<ActorId> container;
 	protected final EmbeddedActorStrategyOnFailure actorStrategyOnFailure;
 	
-	protected final ActorEmbeddedRouter router;
+	protected final ActorEmbeddedRouter<ActorId> router;     // ActorId  -> InternalEmbeddedActorCell
+	protected final ActorEmbeddedRouter<UUID> handlerRouter; // GlobalId -> InternalEmbeddedActorCell
 	protected final boolean redirectEnabled;
 
 	protected final Queue<ActorMessage<?>> messageQueue;
@@ -65,7 +66,8 @@ public class EmbeddedHostActorImpl {
 		actorStrategyOnFailure = new DefaultEmbeddedActorStrategyOnFailure(this);
 		
 		this.redirectEnabled = redirectEnabled;
-		this.router = new ActorEmbeddedRouter();
+		this.router = new ActorEmbeddedRouter<>();
+		this.handlerRouter = new ActorEmbeddedRouter<>();
 		
 		messageQueue = new LinkedList<>(); /* unbounded */
 		this.messageQueueEnabled = messageQueueEnabled;
@@ -85,8 +87,12 @@ public class EmbeddedHostActorImpl {
 		return container;
 	}
 
-	public ActorEmbeddedRouter getRouter() {
+	public ActorEmbeddedRouter<ActorId> getRouter() {
 		return router;
+	}
+	
+	public ActorEmbeddedRouter<UUID> getHandlerRouter() {
+		return handlerRouter;
 	}
 
 	public Consumer<ActorMessage<?>> getCallbackHost() {
@@ -109,19 +115,20 @@ public class EmbeddedHostActorImpl {
 		return router.get(id)!=null;
 	}
 
-	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor, ActorId id) {
-		return new BaseEmbeddedActorCell(host, embeddedActor, id);
+	protected InternalEmbeddedActorCell createEmbeddedActorCell(EmbeddedActor embeddedActor, UUID globalId) {
+		return new BaseEmbeddedActorCell(host, embeddedActor, globalId);
 	}
 	
 	public ActorId addEmbeddedChild(EmbeddedActorFactory factory) {
 		return addEmbeddedChild(factory, UUID.randomUUID());
 	}
 	
-	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, ActorId id) {
-		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), id);
+	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, UUID globalId) {
+		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), globalId);
 		container.register(embeddedActorCell.getId(), factory);
 		
 		router.put(embeddedActorCell.getId(), embeddedActorCell);
+		handlerRouter.put(globalId, embeddedActorCell);
 		if (redirectEnabled)
 			host.getSystem().addRedirection(embeddedActorCell.getId(), self());
 		
@@ -146,9 +153,10 @@ public class EmbeddedHostActorImpl {
 			embeddedActorCell.postStop();
 			
 			router.remove(id);
+			handlerRouter.remove(id.globalId());
 			if (redirectEnabled)
 				host.getSystem().removeRedirection(id);
-			
+
 			container.unregister(id);
 			embeddedActorCell.getActor().setCell(null);
 		}

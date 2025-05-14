@@ -16,7 +16,6 @@
 package io.actor4j.core.actors;
 
 import java.util.Queue;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 import io.actor4j.core.EmbeddedActorCell;
@@ -90,7 +89,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 		cell.unbecomeAll();
 	}
 	
-	public void await(final UUID source, final Predicate<ActorMessage<?>> action, boolean replace) {
+	public void await(final ActorId source, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -102,7 +101,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 		}, replace);
 	}
 	
-	public void await(final UUID source, final Predicate<ActorMessage<?>> action) {
+	public void await(final ActorId source, final Predicate<ActorMessage<?>> action) {
 		await(source, action, true);
 	}
 	
@@ -122,7 +121,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 		await(tag, action, true);
 	}
 	
-	public void await(final UUID source, final int tag, final Predicate<ActorMessage<?>> action, boolean replace) {
+	public void await(final ActorId source, final int tag, final Predicate<ActorMessage<?>> action, boolean replace) {
 		become(new Predicate<ActorMessage<?>>() {
 			@Override
 			public boolean test(ActorMessage<?> message) {
@@ -134,7 +133,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 		}, replace);
 	}
 	
-	public void await(final UUID source, final int tag, final Predicate<ActorMessage<?>> action) {
+	public void await(final ActorId source, final int tag, final Predicate<ActorMessage<?>> action) {
 		await(source, tag, action, true);
 	}
 	
