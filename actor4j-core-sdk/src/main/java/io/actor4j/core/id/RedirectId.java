@@ -17,32 +17,13 @@ package io.actor4j.core.id;
 
 import java.util.UUID;
 
-import io.actor4j.core.utils.Shareable;
-
-public interface ActorId extends Shareable {
-	public ActorId localId();
-	public UUID globalId();
-	
-	public static ActorId none() {
-		return new ActorId() {
-			@Override
-			public ActorId localId() {
-				return null;
-			}
-
-			@Override
-			public UUID globalId() {
-				return null;
-			}
-			
-		};
+public record RedirectId(ActorId localId, UUID globalId) implements ActorId {
+	public RedirectId() {
+		this(null, null);
 	}
+
 	
-	public static ActorId of(UUID globalId) {
-		return GlobalId.of(globalId);
-	}
-	
-	public static ActorId ofRedirect() {
-		return RedirectId.of();
+	public static ActorId of() {
+		return new RedirectId();
 	}
 }

@@ -331,6 +331,10 @@ public abstract class Actor implements ActorRef {
 			cell.getSystem().setAlias(self(), alias);
 	}
 	
+	public void expose() {
+		cell.getSystem().expose(self());
+	}
+	
 	public ActorId addChild(ActorFactory factory) {
 		return cell.addChild(factory);
 	}

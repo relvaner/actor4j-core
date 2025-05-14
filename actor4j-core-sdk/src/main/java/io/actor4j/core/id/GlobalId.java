@@ -24,6 +24,18 @@ public record GlobalId(ActorId localId, UUID globalId) implements ActorId {
 		this(null, globalId);
 	}
 	
+	public static ActorId of(String globalId) {
+		UUID uuid = UUID_ZERO;
+		try {
+			uuid = UUID.fromString(globalId);
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		
+		return new GlobalId(uuid);
+	}
+	
 	public static ActorId of(UUID globalId) {
 		return new GlobalId(globalId);
 	}
