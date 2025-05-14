@@ -17,13 +17,22 @@ package io.actor4j.core.id;
 
 import java.util.UUID;
 
-import io.actor4j.core.utils.Shareable;
-
-public interface ActorId extends Shareable {
-	public ActorId localId();
-	public UUID globalId();
+public record GlobalId(ActorId localId, UUID globalId) implements ActorId {
+	public static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
+	
+	public GlobalId(UUID globalId) {
+		this(null, globalId);
+	}
 	
 	public static ActorId of(UUID globalId) {
-		return GlobalId.of(globalId);
+		return new GlobalId(globalId);
+	}
+	
+	public static ActorId random() {
+		return new GlobalId(UUID.randomUUID());
+	}
+	
+	public static ActorId zero() {
+		return new GlobalId(UUID_ZERO);
 	}
 }
