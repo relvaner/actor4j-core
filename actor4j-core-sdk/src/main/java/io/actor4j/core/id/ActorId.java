@@ -15,8 +15,11 @@
  */
 package io.actor4j.core.id;
 
+import java.util.UUID;
+
 import io.actor4j.core.utils.Shareable;
 
 public interface ActorId extends Shareable {
-
+	public ActorId localId();
+	public UUID globalId();
 }
