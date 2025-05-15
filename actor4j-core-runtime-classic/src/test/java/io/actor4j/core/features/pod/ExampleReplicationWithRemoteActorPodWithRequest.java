@@ -18,6 +18,7 @@ package io.actor4j.core.features.pod;
 import java.util.UUID;
 
 import io.actor4j.core.id.ActorId;
+import io.actor4j.core.id.GlobalId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.RemotePodMessage;
@@ -45,8 +46,10 @@ public class ExampleReplicationWithRemoteActorPodWithRequest extends ActorPod {
 
 				@Override
 				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
-					if (remoteMessage.remotePodMessageDTO().tag()==PodRequestMethod.ACTION_1)
-						tell(remoteMessage.remotePodMessageDTO().payload(), 42, getSystem().createId(remoteMessage.replyAddress()), interaction, "", "");
+					if (remoteMessage.remotePodMessageDTO().tag()==PodRequestMethod.ACTION_1) {
+						ActorId dest =getSystem().getActor(GlobalId.of(remoteMessage.replyAddress()).globalId());
+						tell(remoteMessage.remotePodMessageDTO().payload(), 42, dest, interaction, "", "");
+					}
 				}
 
 				@Override
