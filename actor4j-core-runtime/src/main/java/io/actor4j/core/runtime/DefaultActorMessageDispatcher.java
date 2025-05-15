@@ -133,19 +133,21 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (redirect!=null) 
 			dest = redirect;
 		
-		if (system.getPseudoCells().containsKey(dest)) {
-			consumerPseudo.apply(message.copy(dest));
-			return;
+		InternalActorCell cell = (InternalActorCell)dest;
+		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+			if (alias==null && redirect==null)
+				getThreadPoolHandler().postInnerOuter(message, source);
+			else
+				getThreadPoolHandler().postInnerOuter(message, source, dest);
 		}
-		else if (system.getResourceCells().containsKey(dest)) {
+		else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
 			system.getExecutorService().resource(message.copy(dest));
-			return;
 		}
-		
-		if (alias==null && redirect==null)
-			getThreadPoolHandler().postInnerOuter(message, source);
+		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+			consumerPseudo.apply(message.copy(dest));
+		}
 		else
-			getThreadPoolHandler().postInnerOuter(message, source, dest);
+			undelivered(message, message.source(), dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {
@@ -157,26 +159,33 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		ActorId redirect = system.getRedirector().get(dest);
 		if (redirect!=null) 
 			dest = redirect;
-		
+
+		InternalActorCell cell = (InternalActorCell)message.dest();
 		if (redirect==null) {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy());
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postQueue(message, biconsumer);
 			}
-			
-			if (!getThreadPoolHandler().postQueue(message, biconsumer)) 
-				if (!consumerPseudo.apply(message.copy()))
-					undelivered(message, message.source(), message.dest());
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy());
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy());
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 		else {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy(dest));
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postQueue(message, dest, biconsumer);
 			}
-			
-			if (!getThreadPoolHandler().postQueue(message, dest, biconsumer)) 
-				if (!consumerPseudo.apply(message.copy(dest)))
-					undelivered(message, message.source(), dest);
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy(dest));
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy(dest));
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 	}
 	
@@ -191,25 +200,32 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (redirect!=null) 
 			dest = redirect;
 		
+		InternalActorCell cell = (InternalActorCell)message.dest();
 		if (redirect==null) {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy());
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postOuter(message);
 			}
-			
-			if (!getThreadPoolHandler().postOuter(message))
-				if (!consumerPseudo.apply(message.copy()))
-					undelivered(message, message.source(), message.dest());
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy());
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy());
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 		else {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy(dest));
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postOuter(message, dest);
 			}
-			
-			if (!getThreadPoolHandler().postOuter(message, dest))
-				if (!consumerPseudo.apply(message.copy(dest)))
-					undelivered(message, message.source(), dest);
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy(dest));
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy(dest));
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 	}
 	
@@ -224,25 +240,32 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (redirect!=null) 
 			dest = redirect;
 		
+		InternalActorCell cell = (InternalActorCell)message.dest();
 		if (redirect==null) {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy());
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postServer(message);
 			}
-			
-			if (!getThreadPoolHandler().postServer(message))
-				if (!consumerPseudo.apply(message.copy()))
-					undelivered(message, message.source(), message.dest());
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy());
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy());
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 		else {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy(dest));
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				getThreadPoolHandler().postServer(message, dest);
 			}
-			
-			if (!getThreadPoolHandler().postServer(message, dest))
-				if (!consumerPseudo.apply(message.copy(dest)))
-					undelivered(message, message.source(), dest);
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy(dest));
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy(dest));
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 	}
 	

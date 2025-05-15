@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -38,8 +39,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
+import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.actors.PseudoActor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
@@ -49,8 +50,6 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.runtime.di.DIContainer;
-import io.actor4j.core.runtime.di.DefaultDIContainer;
 import io.actor4j.core.runtime.pods.DefaultPodReplicationController;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
@@ -62,18 +61,19 @@ import io.actor4j.core.utils.PodActorFactory;
 public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	
-	protected /*quasi final*/ DIContainer<ActorId> container;
+//	protected /*quasi final*/ DIContainer<ActorId> container; // Currently not used! @See ActorCell
 	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	protected /*quasi final*/ WatchdogRunnableFactory watchdogRunnableFactory;
 	
 	protected final PseudoActorCellFactory pseudoActorCellFactory;
 
-	protected final Map<String, Queue<ActorId>> aliases;  // ActorCellAlias -> ActorCellID
+	protected final Map<UUID, ActorId> exposedCells; // globalId -> ActorId
+	protected final Map<String, Queue<ActorId>> aliases;  // ActorCellAlias -> ActorCellId
 	protected final Map<ActorId, String> hasAliases;
 	protected final Map<ActorId, Boolean> resourceCells;
 	protected final Map<ActorId, Boolean> podCells;
-	protected final Map<String, Queue<ActorId>> podDomains; // PodActorCellDomain -> ActorCellID
+	protected final Map<String, Queue<ActorId>> podDomains; // PodActorCellDomain -> ActorCellId
 	protected final Map<ActorId, InternalActorCell> pseudoCells;
 	protected final Map<ActorId, ActorId> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
@@ -105,13 +105,14 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		else
 			this.config = ActorSystemConfig.create();
 		
-		container = DefaultDIContainer.create();
+//		container = DefaultDIContainer.create();
 		podReplicationController = new DefaultPodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
 		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);
 		
 		pseudoActorCellFactory = (system, actor, blocking) -> new PseudoActorCell(system, actor, blocking);
 
+		exposedCells   = new ConcurrentHashMap<>();
 		aliases        = new ConcurrentHashMap<>();
 		hasAliases     = new ConcurrentHashMap<>();
 		resourceCells  = new ConcurrentHashMap<>();
@@ -186,6 +187,13 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected void resetCells() {
 		resetCountdownLatch();
+		
+		ZERO_ID = internal_addCell(createActorCell(new Actor("zero") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// empty
+			}
+		}));
 		
 		USER_ID = internal_addCell(createActorCell(new Actor("user") {
 			@Override
@@ -267,6 +275,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected abstract InternalActorCell createResourceActorCell(Actor actor);
 	protected abstract InternalActorCell createActorCell(Actor actor);
+//	protected abstract InternalActorCell createActorCell(Actor actor, UUID globalId);
 	protected abstract InternalActorCell createPodActorCell(Actor actor);
 
 	@Override
@@ -302,10 +311,10 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected abstract ActorExecutorService createActorExecutorService();
 
-	@Override
-	public DIContainer<ActorId> getContainer() {
-		return container;
-	}
+//	@Override
+//	public DIContainer<ActorId> getContainer() {
+//		return container;
+//	}
 	
 	@Override
 	public PodReplicationController getPodReplicationController() {
@@ -325,6 +334,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public PseudoActorCellFactory getPseudoActorCellFactory() {
 		return pseudoActorCellFactory;
+	}
+	
+	@Override
+	public Map<UUID, ActorId> getExposedCells() {
+		return exposedCells;
 	}
 	
 	@Override
@@ -385,21 +399,27 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public ActorId internal_addCell(InternalActorCell cell) {
 		Actor actor = cell.getActor();
-		if (actor instanceof PseudoActor)
-			pseudoCells.put(cell.getId(), cell);
-		else {
-			actor.setCell(cell);
-			if (actor instanceof ResourceActor)
+		switch (cell.getType()) {
+			case ActorCell.RESOURCE_ACTOR_CELL:
 				resourceCells.put(cell.getId(), false);
-			else if (actor instanceof PodActor)
-				podCells.put(cell.getId(), false);
-			if (executorService.isStarted()) {
-				/* if (!(actor instanceof ResourceActor)) @See: ActorMessageDispatcher */
-					messageDispatcher.registerCell(cell);
-				/* preStart */
-				internal_preStart(cell);
-			}
+			case ActorCell.DEFAULT_ACTOR_CELL:
+				actor.setCell(cell);
+				if (cell.isPod())
+					podCells.put(cell.getId(), false);
+				if (executorService.isStarted()) {
+					/* if (!(actor instanceof ResourceActor)) @See: ActorMessageDispatcher */
+						messageDispatcher.registerCell(cell);
+					/* preStart */
+					internal_preStart(cell);
+				};
+				break;
+			case ActorCell.PSEUDO_ACTOR_CELL:
+				pseudoCells.put(cell.getId(), cell);
+				break;
+			default:
+				break;
 		}
+
 		return cell.getId();
 	}
 	
@@ -435,7 +455,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public ActorId addActor(ActorFactory factory) {
 		InternalActorCell cell = generateCell(factory.create());
-		container.register(cell.getId(), factory);
+		cell.setFactory(factory);
 		
 		return user_addCell(cell);
 	}
@@ -453,7 +473,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public ActorId addSystemActor(ActorFactory factory) {
 		InternalActorCell cell = generateCell(factory.create());
-		container.register(cell.getId(), factory);
+		cell.setFactory(factory);
 		
 		return system_addCell(cell);
 	}
@@ -504,7 +524,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		InternalPodActorCell cell = (InternalPodActorCell)generateCell(factory.create());
 		cell.setContext(context);
 		setPodDomain(cell.getId(), context.domain());
-		container.register(cell.getId(), factory);
+		cell.setFactory(factory);
 		
 		return user_addCell(cell);
 	}
@@ -573,8 +593,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		podCells.remove(id);
 		pseudoCells.remove(id);
 		
-		container.unregister(id);
-		
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
 			hasAliases.remove(id);
@@ -586,15 +604,36 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 
 	@Override
-	public boolean hasActor(ActorId id) {
-		Function<InternalActorCell, Boolean> search = cell -> {
-			if (cell.isRootInUser() && id==cell.getId())
-				return true;
-			else
-				return false;
-		};
-		return internal_iterateCell((InternalActorCell)USER_ID, search);
+	public boolean hasActor(String globalId) {
+		boolean result = false;
+		try {
+			UUID uuid = UUID.fromString(globalId);
+			Function<InternalActorCell, Boolean> search = cell -> {
+				if (cell.isRootInUser() && uuid==cell.globalId())
+					return true;
+				else
+					return false;
+			};
+			result = internal_iterateCell((InternalActorCell)USER_ID, search);
+		}
+		catch (IllegalArgumentException e) {
+			return false;
+		}
+		
+		return result;
 	}		
+	
+	@Override
+	public ActorSystem expose(ActorId id) {
+		exposedCells.put(id.globalId(), id);
+		
+		return this;
+	}
+	
+	@Override
+	public ActorId getActor(UUID globalId) {
+		return exposedCells.get(globalId);
+	}
 	
 	@Override
 	public ActorSystemImpl setAlias(ActorId id, String alias) {
@@ -800,10 +839,21 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public void sendAsServer(ActorMessage<?> message) {
-		if (!messagingEnabled.get()) 
-			bufferQueue.offer(message.copy());
-		else
-			messageDispatcher.postServer(message);
+		if (message.dest().localId()==null && message.dest().globalId()!=null) {
+			ActorId dest = exposedCells.get(message.dest().globalId());
+			if (dest!=null) {
+				if (!messagingEnabled.get()) 
+					bufferQueue.offer(message.copy(dest));
+				else
+					messageDispatcher.postServer(message.shallowCopy(dest));
+			}
+		}
+		else {
+			if (!messagingEnabled.get()) 
+				bufferQueue.offer(message.copy());
+			else
+				messageDispatcher.postServer(message);
+		}
 	}
 	
 	@Override
@@ -903,8 +953,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 						
 						return false;
 					};
-					internal_iterateCell((InternalActorCell)SYSTEM_ID, preStart);
 					internal_iterateCell((InternalActorCell)USER_ID, preStart);
+					internal_iterateCell((InternalActorCell)SYSTEM_ID, preStart);
 					
 					messagingEnabled.set(true);
 					
