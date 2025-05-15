@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import io.actor4j.core.id.ActorId;
+import io.actor4j.core.id.GlobalId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorMessageMatcher;
 
@@ -37,13 +38,13 @@ public class MatcherFeature {
 		matcher = new ActorMessageMatcher();
 		
 		matcher
-			.match(ActorId.ofUUID("5ae55fff-d420-4c31-bbe7-0b18812766c2"), new Consumer<ActorMessage<?>>() {
+			.match(GlobalId.of("5ae55fff-d420-4c31-bbe7-0b18812766c2"), new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 2134;
 				}
 			})
-			.match(new ActorId[] {ActorId.ofUUID("acefb4a4-b2a0-4641-8553-9a0ac12e282a"), ActorId.ofUUID("218e064b-0b92-4f80-95b3-49002d1e9b46")}, new Consumer<ActorMessage<?>>() {
+			.match(new ActorId[] {GlobalId.of("acefb4a4-b2a0-4641-8553-9a0ac12e282a"), GlobalId.of("218e064b-0b92-4f80-95b3-49002d1e9b46")}, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 2199;
@@ -55,25 +56,25 @@ public class MatcherFeature {
 					postconditions[0] = message.tag();
 				}
 			})		
-			.match(ActorId.ofUUID("4cd883bb-b2b0-4e98-bf53-416e38334a12"), 22, new Consumer<ActorMessage<?>>() {
+			.match(GlobalId.of("4cd883bb-b2b0-4e98-bf53-416e38334a12"), 22, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 187;
 				}
 			})	
-			.match(new ActorId[] {ActorId.ofUUID("26899da9-a339-41be-9969-e730fd880cae"), ActorId.ofUUID("18a06a5f-b227-452e-a948-908f4e619074")}, 25, new Consumer<ActorMessage<?>>() {
+			.match(new ActorId[] {GlobalId.of("26899da9-a339-41be-9969-e730fd880cae"), GlobalId.of("18a06a5f-b227-452e-a948-908f4e619074")}, 25, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 195;
 				}
 			})	
-			.match(ActorId.ofUUID("7ed0c429-5536-4ee8-9c84-52384cb24047"), new int[] {127, 129}, new Consumer<ActorMessage<?>>() {
+			.match(GlobalId.of("7ed0c429-5536-4ee8-9c84-52384cb24047"), new int[] {127, 129}, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 1872;
 				}
 			})	
-			.match(new ActorId[] {ActorId.ofUUID("e6ce694f-653e-4965-b1ba-c0a0166eff92"), ActorId.ofUUID("720776f3-93d0-45b7-b0af-58465c2a4ac0")}, new int[] {327, 329}, new Consumer<ActorMessage<?>>() {
+			.match(new ActorId[] {GlobalId.of("e6ce694f-653e-4965-b1ba-c0a0166eff92"), GlobalId.of("720776f3-93d0-45b7-b0af-58465c2a4ac0")}, new int[] {327, 329}, new Consumer<ActorMessage<?>>() {
 				@Override
 				public void accept(ActorMessage<?> message) {
 					postconditions[2] = 18725;
@@ -133,15 +134,15 @@ public class MatcherFeature {
 	
 	@Test
 	public void test() {
-		matcher.apply(ActorMessage.create(null, -5, ActorId.ofUUID("5ae55fff-d420-4c31-bbe7-0b18812766c2"), null));
+		matcher.apply(ActorMessage.create(null, -5, GlobalId.of("5ae55fff-d420-4c31-bbe7-0b18812766c2"), null));
 		assertEquals(2134, postconditions[2]);
 		assertEquals(-5, postconditions[0]);
 		assertEquals(-5, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, -5, ActorId.ofUUID("acefb4a4-b2a0-4641-8553-9a0ac12e282a"), null));
+		matcher.apply(ActorMessage.create(null, -5, GlobalId.of("acefb4a4-b2a0-4641-8553-9a0ac12e282a"), null));
 		assertEquals(2199, postconditions[2]);
 		assertEquals(-5, postconditions[0]);
 		assertEquals(-5, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, -5, ActorId.ofUUID("218e064b-0b92-4f80-95b3-49002d1e9b46"), null));
+		matcher.apply(ActorMessage.create(null, -5, GlobalId.of("218e064b-0b92-4f80-95b3-49002d1e9b46"), null));
 		assertEquals(2199, postconditions[2]);
 		assertEquals(-5, postconditions[0]);
 		assertEquals(-5, postconditions[1]);
@@ -151,40 +152,40 @@ public class MatcherFeature {
 		matcher.apply(ActorMessage.create(null, 10, null, null));
 		assertEquals(10, postconditions[0]);
 		assertEquals(10, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 22, ActorId.ofUUID("4cd883bb-b2b0-4e98-bf53-416e38334a12"), null));
+		matcher.apply(ActorMessage.create(null, 22, GlobalId.of("4cd883bb-b2b0-4e98-bf53-416e38334a12"), null));
 		assertEquals(187, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(22, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 25, ActorId.ofUUID("26899da9-a339-41be-9969-e730fd880cae"), null));
+		matcher.apply(ActorMessage.create(null, 25, GlobalId.of("26899da9-a339-41be-9969-e730fd880cae"), null));
 		assertEquals(195, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(25, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 25, ActorId.ofUUID("18a06a5f-b227-452e-a948-908f4e619074"), null));
+		matcher.apply(ActorMessage.create(null, 25, GlobalId.of("18a06a5f-b227-452e-a948-908f4e619074"), null));
 		assertEquals(195, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(25, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 127, ActorId.ofUUID("7ed0c429-5536-4ee8-9c84-52384cb24047"), null));
+		matcher.apply(ActorMessage.create(null, 127, GlobalId.of("7ed0c429-5536-4ee8-9c84-52384cb24047"), null));
 		assertEquals(1872, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(127, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 129, ActorId.ofUUID("7ed0c429-5536-4ee8-9c84-52384cb24047"), null));
+		matcher.apply(ActorMessage.create(null, 129, GlobalId.of("7ed0c429-5536-4ee8-9c84-52384cb24047"), null));
 		assertEquals(1872, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(129, postconditions[1]);
 		
-		matcher.apply(ActorMessage.create(null, 327, ActorId.ofUUID("e6ce694f-653e-4965-b1ba-c0a0166eff92"), null));
+		matcher.apply(ActorMessage.create(null, 327, GlobalId.of("e6ce694f-653e-4965-b1ba-c0a0166eff92"), null));
 		assertEquals(18725, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(327, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 329, ActorId.ofUUID("e6ce694f-653e-4965-b1ba-c0a0166eff92"), null));
+		matcher.apply(ActorMessage.create(null, 329, GlobalId.of("e6ce694f-653e-4965-b1ba-c0a0166eff92"), null));
 		assertEquals(18725, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(329, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 327, ActorId.ofUUID("720776f3-93d0-45b7-b0af-58465c2a4ac0"), null));
+		matcher.apply(ActorMessage.create(null, 327, GlobalId.of("720776f3-93d0-45b7-b0af-58465c2a4ac0"), null));
 		assertEquals(18725, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(327, postconditions[1]);
-		matcher.apply(ActorMessage.create(null, 329, ActorId.ofUUID("720776f3-93d0-45b7-b0af-58465c2a4ac0"), null));
+		matcher.apply(ActorMessage.create(null, 329, GlobalId.of("720776f3-93d0-45b7-b0af-58465c2a4ac0"), null));
 		assertEquals(18725, postconditions[2]);
 		assertEquals(10, postconditions[0]);
 		assertEquals(329, postconditions[1]);

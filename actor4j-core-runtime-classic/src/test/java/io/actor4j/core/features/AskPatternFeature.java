@@ -64,7 +64,7 @@ public class AskPatternFeature {
 	
 	@Test(expected=AskPatternException.class)
 	public void test_exception() {
-		AskPattern.ask(ActorMessage.create(null, 0, null, system.createId()), system);
+		AskPattern.ask(ActorMessage.create(null, 0, null, ActorId.none()), system);
 	}
 	
 	@Test(timeout=5000)
