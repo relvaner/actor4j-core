@@ -34,6 +34,7 @@ import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequ
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteFunctionPod;
 import io.actor4j.core.features.pod.ExampleShardingWithActorPod;
 import io.actor4j.core.id.ActorId;
+import io.actor4j.core.id.GlobalId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.RemotePodMessage;
@@ -249,7 +250,7 @@ public class PodFeature {
 		
 		ActorGlobalSettings.internal_server_request = (msg, tag, source, interaction, params, domain) -> {
 			if (interaction!=null) {
-				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client.toString(), null);
+				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client.globalId().toString(), null);
 				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
 			}
 			else {
@@ -373,9 +374,10 @@ public class PodFeature {
 		});
 		system.start();
 		
-		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) -> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), system.createId(replyAddress)));
+		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) 
+			-> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of(replyAddress)));
 		
-		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.toString(), null);
+		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.globalId().toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");
 		
 		try {

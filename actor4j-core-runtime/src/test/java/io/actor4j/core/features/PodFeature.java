@@ -386,9 +386,8 @@ public class PodFeature {
 		});
 		system.start();
 		
-		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) -> {
+		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) ->
 			((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of(replyAddress)));
-		};
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.globalId().toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");
