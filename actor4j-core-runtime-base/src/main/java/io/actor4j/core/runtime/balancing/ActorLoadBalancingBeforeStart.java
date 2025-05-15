@@ -44,6 +44,7 @@ public class ActorLoadBalancingBeforeStart {
 		};
 		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells);
 		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells);
+		system.internal_iterateCell((InternalActorCell)system.UNKNOWN_ID(), registerCells);
 		
 		final MutableObject<Integer> i = new MutableObject<>(0);
 		final MutableObject<Integer> j = new MutableObject<>(0);

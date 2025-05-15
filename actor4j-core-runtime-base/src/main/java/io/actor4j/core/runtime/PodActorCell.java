@@ -32,6 +32,11 @@ public class PodActorCell extends BaseActorCell implements InternalPodActorCell 
 	}
 	
 	@Override
+	public boolean isPod() {
+		return true;
+	}
+	
+	@Override
 	public PodContext getContext() {
 		return contextReference.get();
 	}

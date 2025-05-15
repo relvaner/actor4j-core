@@ -29,6 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import io.actor4j.core.ActorCell;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
@@ -47,6 +48,11 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 			outerQueueL2 = new ConcurrentLinkedQueue<>();
 		
 		outerQueueL1 = new LinkedList<>();
+	}
+	
+	@Override
+	public int getType() {
+		return ActorCell.PSEUDO_ACTOR_CELL;
 	}
 	
 	@Override

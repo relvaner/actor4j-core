@@ -21,6 +21,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.actor4j.core.ActorCell;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.immutable.ImmutableList;
@@ -48,6 +49,11 @@ public class ResourceActorCell extends BaseActorCell {
 			queue = null;
 			bulk = false;
 		}
+	}
+	
+	@Override
+	public int getType() {
+		return ActorCell.RESOURCE_ACTOR_CELL;
 	}
 	
 	@Override

@@ -29,7 +29,6 @@ import io.actor4j.core.exceptions.ActorInitializationException;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 import io.actor4j.core.runtime.InternalActorSystem;
 
 public final class RestartProtocol {
@@ -45,7 +44,7 @@ public final class RestartProtocol {
 	protected static void postRestart(final InternalActorCell cell, final Exception reason) {
 		cell.postStop();
 		try {
-			Actor newActor = (Actor)((InternalActorRuntimeSystem)cell.getSystem()).getContainer().getInstance(cell.getId());
+			Actor newActor = (Actor)cell.getFactory().create();
 			newActor.setCell(cell);
 			cell.setActor(newActor);
 			cell.postRestart(reason);

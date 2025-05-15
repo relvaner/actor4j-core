@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
+import io.actor4j.core.ActorCell;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.PersistenceId;
@@ -42,6 +43,7 @@ import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
+import io.actor4j.core.runtime.di.FactoryInjector;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
 import io.actor4j.core.runtime.protocols.RestartProtocol;
@@ -60,9 +62,11 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	protected final InternalActorSystem system;
-	protected volatile Actor actor;
+	protected Actor actor;
+	protected final UUID globalId;
+	protected /*quasi final*/ FactoryInjector<?> factory;
 	
-	protected volatile long threadId;
+	protected long threadId;
 
 	protected /*quasi final*/ ActorId parent;
 	protected final Queue<ActorId> children;
@@ -80,13 +84,20 @@ public class BaseActorCell implements InternalActorCell {
 	protected final AtomicLong requestRate;
 	protected final Queue<Long> processingTimeSamples;
 	
-	protected volatile SupervisorStrategy parentSupervisorStrategy;
-			
+	protected SupervisorStrategy parentSupervisorStrategy;
+	
 	public BaseActorCell(InternalActorSystem system, Actor actor) {
+		this(system, actor, null);
+	}
+			
+	public BaseActorCell(InternalActorSystem system, Actor actor, UUID globalID) {
 		super();
 		
 		this.system = system;
 		this.actor  = actor;
+		
+		UUID persistenceId = persistenceId();
+		this.globalId = (persistenceId!=null)? persistenceId : (globalID!=null ? globalID : UUID.randomUUID());
 		
 		threadId = -1;
 		
@@ -117,6 +128,36 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void setActor(Actor actor) {
 		this.actor = actor;
+	}
+
+	@Override
+	public FactoryInjector<?> getFactory() {
+		return factory;
+	}
+
+	@Override
+	public void setFactory(FactoryInjector<?> factory) {
+		this.factory = factory;
+	}
+
+	@Override
+	public int getType() {
+		return ActorCell.DEFAULT_ACTOR_CELL;
+	}
+	
+	@Override
+	public boolean isPod() {
+		return false;
+	}
+	
+	@Override
+	public ActorId localId() {
+		return this;
+	}
+	
+	@Override
+	public UUID globalId() {
+		return globalId;
 	}
 
 	@Override
@@ -363,7 +404,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public ActorId addChild(ActorFactory factory) {
 		InternalActorCell cell = system.generateCell(factory.create());
-		((InternalActorRuntimeSystem)system).getContainer().register(cell.getId(), factory);
+		cell.setFactory(factory);
 		
 		return internal_addChild(cell);
 	}

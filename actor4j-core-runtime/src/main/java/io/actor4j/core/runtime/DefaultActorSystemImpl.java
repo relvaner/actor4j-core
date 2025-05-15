@@ -16,6 +16,7 @@
 package io.actor4j.core.runtime;
 
 import java.util.List;
+import java.util.UUID;
 
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
@@ -48,6 +49,11 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
 		return new BaseActorCell(this, actor);
+	}
+	
+	@Override
+	protected InternalActorCell createActorCell(Actor actor, UUID globalId) {
+		return new BaseActorCell(this, actor, globalId);
 	}
 	
 	@Override
