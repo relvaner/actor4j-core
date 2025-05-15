@@ -74,6 +74,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 			
 			return false;
 		};
+		system.internal_iterateCell((InternalActorCell)system.UNKNOWN_ID(), registerCells);
 		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells);
 		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells);
 		started.set(true);
