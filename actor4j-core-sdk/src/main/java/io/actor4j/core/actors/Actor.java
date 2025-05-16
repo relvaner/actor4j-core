@@ -332,7 +332,7 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void expose() {
-		cell.getSystem().expose(self());
+		cell.expose();
 	}
 	
 	public ActorId addChild(ActorFactory factory) {

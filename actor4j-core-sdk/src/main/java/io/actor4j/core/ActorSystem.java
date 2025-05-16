@@ -57,8 +57,7 @@ public interface ActorSystem {
 	public void deployPods(File jarFile, PodConfiguration podConfiguration);
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
 	public void undeployPods(String domain);
-	
-	public ActorSystem expose(ActorId id);
+
 	public ActorId getActor(UUID globalId);
 	public ActorSystem setAlias(ActorId id, String alias);
 	public ActorSystem setAlias(List<ActorId> ids, String alias);

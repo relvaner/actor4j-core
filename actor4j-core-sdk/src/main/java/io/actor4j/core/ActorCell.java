@@ -29,6 +29,7 @@ public interface ActorCell extends ActorId {
 	
 	public ActorId localId();
 	public UUID globalId();
+	public void expose();
 	
 	public int getType();
 	public boolean isPod();
