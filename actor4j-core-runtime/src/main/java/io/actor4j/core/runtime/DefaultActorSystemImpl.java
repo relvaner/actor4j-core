@@ -50,11 +50,6 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 		return new BaseActorCell(this, actor);
 	}
 	
-//	@Override
-//	protected InternalActorCell createActorCell(Actor actor, UUID globalId) {
-//		return new BaseActorCell(this, actor, globalId);
-//	}
-	
 	@Override
 	protected InternalActorCell createPodActorCell(Actor actor) {
 		return new PodActorCell(this, actor);

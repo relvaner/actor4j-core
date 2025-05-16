@@ -39,7 +39,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
-import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorServiceConfig;
@@ -275,7 +274,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected abstract InternalActorCell createResourceActorCell(Actor actor);
 	protected abstract InternalActorCell createActorCell(Actor actor);
-//	protected abstract InternalActorCell createActorCell(Actor actor, UUID globalId);
 	protected abstract InternalActorCell createPodActorCell(Actor actor);
 
 	@Override
@@ -608,13 +606,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		boolean result = false;
 		try {
 			UUID uuid = UUID.fromString(globalId);
-			Function<InternalActorCell, Boolean> search = cell -> {
-				if (cell.isRootInUser() && uuid==cell.globalId())
-					return true;
-				else
-					return false;
-			};
-			result = internal_iterateCell((InternalActorCell)USER_ID, search);
+			result = exposedCells.get(uuid)!=null;
 		}
 		catch (IllegalArgumentException e) {
 			return false;
@@ -622,13 +614,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		return result;
 	}		
-	
-	@Override
-	public ActorSystem expose(ActorId id) {
-		exposedCells.put(id.globalId(), id);
-		
-		return this;
-	}
 	
 	@Override
 	public ActorId getActor(UUID globalId) {
