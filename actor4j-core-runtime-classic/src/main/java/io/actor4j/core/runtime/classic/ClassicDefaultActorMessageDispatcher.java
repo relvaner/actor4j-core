@@ -93,7 +93,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 			consumerPseudo.apply(message.copy(dest));
 		}
 		else
-			undelivered(message, message.source(), dest);
+			undelivered(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, boolean directive) {

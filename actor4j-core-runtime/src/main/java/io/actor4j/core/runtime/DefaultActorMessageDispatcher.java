@@ -148,7 +148,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 			consumerPseudo.apply(message.copy(dest));
 		}
 		else
-			undelivered(message, message.source(), dest);
+			undelivered(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, BiConsumer<ActorThread, ActorMessage<?>> biconsumer) {

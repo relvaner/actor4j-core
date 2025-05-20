@@ -76,23 +76,25 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 				dest = system.ALIAS_ID();
 		}
 		
-		ActorId redirect = system.getRedirector().get(dest);
+		InternalActorCell cell = (InternalActorCell)dest;
+		ActorId redirect = cell.getRedirect();
 		if (redirect!=null) 
 			dest = redirect;
 		
-		if (system.getPseudoCells().containsKey(dest)) {
-			consumerPseudo.apply(message.copy(dest));
-			return;
+		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+			if (alias==null && redirect==null)
+				dispatch(message, null, false, true);
+			else
+				dispatch(message, dest, false, true);
 		}
-		else if (system.getResourceCells().containsKey(dest)) {
+		else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
 			system.getExecutorService().resource(message.copy(dest));
-			return;
 		}
-		
-		if (alias==null && redirect==null)
-			dispatch(message, null, false, true);
+		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+			consumerPseudo.apply(message.copy(dest));
+		}
 		else
-			dispatch(message, dest, false, true);
+			undelivered(message, source, dest);
 	}
 	
 	protected void postQueue(ActorMessage<?> message, boolean directive) {
@@ -101,29 +103,36 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 		
 		ActorId dest = message.dest();
 		
-		ActorId redirect = system.getRedirector().get(dest);
+		InternalActorCell cell = (InternalActorCell)dest;
+		ActorId redirect = cell.getRedirect();
 		if (redirect!=null) 
 			dest = redirect;
 		
 		if (redirect==null) {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy());
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				dispatch(message, null, directive, true);
 			}
-			
-			if (!dispatch(message, null, directive, true)) 
-				if (!consumerPseudo.apply(message.copy()))
-					undelivered(message, message.source(), message.dest());
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy());
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy());
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 		else {
-			if (system.getResourceCells().containsKey(dest)) {
-				system.getExecutorService().resource(message.copy(dest));
-				return;
+			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+				dispatch(message, dest, directive, true);
 			}
-			
-			if (!dispatch(message, dest, directive, true))  
-				if (!consumerPseudo.apply(message.copy(dest)))
-					undelivered(message, message.source(), dest);
+			else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL) {
+				system.getExecutorService().resource(message.copy(dest));
+			}
+			else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL) {
+				consumerPseudo.apply(message.copy(dest));
+			}
+			else
+				undelivered(message, message.source(), dest);
 		}
 	}
 	
