@@ -20,9 +20,7 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.runtime.ActorExecutorService;
 import io.actor4j.core.runtime.ActorSystemImpl;
-import io.actor4j.core.runtime.BaseActorCell;
 import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.PodActorCell;
 
 public class DefaultVirtualActorSystemImpl extends ActorSystemImpl {
 	public DefaultVirtualActorSystemImpl() {
@@ -42,17 +40,17 @@ public class DefaultVirtualActorSystemImpl extends ActorSystemImpl {
 	
 	@Override
 	protected InternalActorCell createResourceActorCell(Actor actor) {
-		return new BaseActorCell(this, actor);
+		return new VirtualBaseActorCell(this, actor);
 	}
 	
 	@Override
 	protected InternalActorCell createActorCell(Actor actor) {
-		return new BaseActorCell(this, actor);
+		return new VirtualBaseActorCell(this, actor);
 	}
 	
 	@Override
 	protected InternalActorCell createPodActorCell(Actor actor) {
-		return new PodActorCell(this, actor);
+		return new VirtualPodActorCell(this, actor);
 	}
 	
 	@Override

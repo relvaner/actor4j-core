@@ -16,7 +16,7 @@
 package io.actor4j.core.runtime.loom;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,22 +29,23 @@ import io.actor4j.core.runtime.InternalActorSystem;
 public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionUnitPoolHandler<VirtualActorRunnable> {
 	protected final InternalActorSystem system;
 	protected final VirtualActorRunnablePool virtualActorRunnablePool;
-
-	protected final Map<ActorId, VirtualActorRunnable> virtualActorRunnables;
+	
+	protected final Set<VirtualActorRunnable> virtualActorRunnables;
 	
 	public VirtualActorRunnablePoolHandler(InternalActorSystem system, VirtualActorRunnablePool virtualActorRunnablePool) {
 		super();
 		
 		this.system = system;
 		this.virtualActorRunnablePool = virtualActorRunnablePool;
-
-		virtualActorRunnables = new ConcurrentHashMap<>();
+		
+		virtualActorRunnables = ConcurrentHashMap.newKeySet();
 	}
 	
 	public boolean post(ActorMessage<?> message, boolean directive, boolean debugUndelivered) {
 		VirtualActorRunnable virtualActorRunnable = null;
 		if (message.dest()!=null) {
-			virtualActorRunnable = virtualActorRunnables.get(message.dest());
+			VirtualInternalActorCell cell = (VirtualInternalActorCell)message.dest();
+			virtualActorRunnable = cell.getVirtualRunnable();
 			if (virtualActorRunnable!=null) {
 				if (directive)
 					virtualActorRunnable.directiveQueue().offer(message.copy());
@@ -63,7 +64,8 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 	public boolean post(ActorMessage<?> message, ActorId dest, boolean directive, boolean debugUndelivered) {
 		VirtualActorRunnable virtualActorRunnable = null;
 		if (dest!=null) {
-			virtualActorRunnable = virtualActorRunnables.get(dest);
+			VirtualInternalActorCell cell = (VirtualInternalActorCell)dest;
+			virtualActorRunnable = cell.getVirtualRunnable();
 			if (virtualActorRunnable!=null) {
 				if (directive)
 					virtualActorRunnable.directiveQueue().offer(message.copy(dest));
@@ -86,7 +88,7 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 		system.getExecutorService().getPersistenceService().getService().send(message.copy(ids.get(index)));
 	}
 	
-	public Map<ActorId, VirtualActorRunnable> getVirtualActorRunnables() {
+	public Set<VirtualActorRunnable> getVirtualActorRunnables() {
 		return virtualActorRunnables;
 	}
 	
@@ -94,7 +96,8 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 	
 	public VirtualActorRunnable registerCell(InternalActorCell cell, Runnable onTermination) {
 		VirtualActorRunnable result = createVirtualActorRunnable(system, cell, onTermination);
-		virtualActorRunnables.put(cell.getId(), result);
+		virtualActorRunnables.add(result);
+		((VirtualInternalActorCell)cell).setVirtualRunnable(result);
 		
 		return result;
 	}
@@ -105,13 +108,15 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 		// Not used!
 	}
 	
+	@Deprecated
 	@Override
 	public void unregisterCell(InternalActorCell cell) {
-		virtualActorRunnables.remove(cell.getId());
+		// Not used!
 	}
 	
+	@Deprecated
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return virtualActorRunnables.containsKey(cell.getId());
+		return true;
 	}
 }

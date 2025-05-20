@@ -91,7 +91,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	
 	@Override
 	public List<VirtualActorRunnable> getExecutionUnitList() {
-		return virtualActorRunnablePoolHandler.getVirtualActorRunnables().values().stream().collect(Collectors.toList());
+		return virtualActorRunnablePoolHandler.getVirtualActorRunnables().stream().collect(Collectors.toList());
 	}
 	
 	@Override
@@ -171,15 +171,10 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	}
 	
 	public void unregisterCell(InternalActorCell cell) {
-		VirtualActorRunnable virtualActorRunnable = virtualActorRunnablePoolHandler.getVirtualActorRunnables().get(cell.getId());
+		VirtualActorRunnable virtualActorRunnable = ((VirtualInternalActorCell)cell.getId()).getVirtualRunnable();
 		assert virtualActorRunnable!=null : "The runnable should be terminated only one times!";
 		virtualActorRunnable.terminate();	
-		virtualActorRunnablePoolHandler.unregisterCell(cell);
 		virtualThreads.remove(cell.getId());	
-	}
-	
-	public boolean isRegisteredCell(InternalActorCell cell) {
-		return virtualActorRunnablePoolHandler.isRegisteredCell(cell);
 	}
 	
 	@Override

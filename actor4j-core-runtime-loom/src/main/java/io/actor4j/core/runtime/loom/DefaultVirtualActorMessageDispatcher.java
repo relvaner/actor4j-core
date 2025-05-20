@@ -204,14 +204,14 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 		}
 	}
 	
+	@Deprecated
 	@Override
 	public boolean isRegisteredCell(InternalActorCell cell) {
-		return ((InternalVirtualActorExecutorService)system.getExecutorService()).getVirtualActorRunnablePool().isRegisteredCell(cell);
+		return false;
 	}
 
 	@Override
 	public void unsafe_post(ActorMessage<?> message, ActorId source, String alias) {
 		// TODO Auto-generated method stub
-		
 	}
 }
