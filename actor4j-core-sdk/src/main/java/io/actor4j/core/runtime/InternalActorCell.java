@@ -32,6 +32,8 @@ public interface InternalActorCell extends ActorCell {
 	public FactoryInjector<?> getFactory();
 	public void setFactory(FactoryInjector<?> factory);
 	public void setParent(ActorId parent);
+	public ActorId getRedirect();
+	public void setRedirect(ActorId redirect);
 	
 	public long getThreadId();
 	public void setThreadId(long threadId);

@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -71,6 +70,7 @@ public class BaseActorCell implements InternalActorCell {
 
 	protected /*quasi final*/ ActorId parent;
 	protected final Queue<ActorId> children;
+	protected volatile ActorId redirect;
 	
 	protected final AtomicBoolean active;
 	
@@ -97,20 +97,45 @@ public class BaseActorCell implements InternalActorCell {
 		
 		threadId = -1;
 		
-		children = new ConcurrentLinkedQueue<>();
+		children = system.createLockFreeLinkedQueue();
 		
 		active = new AtomicBoolean(true);
 		
 		behaviourStack = new ArrayDeque<>();
 		
-		deathWatcher =  new ConcurrentLinkedQueue<>();
+		deathWatcher =  system.createLockFreeLinkedQueue();
 		
 		persistenceTuples = new LinkedList<>();
 		
 		requestRate = new AtomicLong(0);
-		processingTimeSamples = new ConcurrentLinkedQueue<>();
+		processingTimeSamples = system.createLockFreeLinkedQueue();
 	}
 	
+	public void cleanUp() {
+		actor = null;
+		globalId.set(null);
+		factory = null;
+
+		threadId = -1;
+
+		parent = null;
+		redirect = null;
+		children.clear();
+
+		active.set(true);
+
+		behaviourStack.clear();
+
+		deathWatcher.clear();
+
+		persistenceTuples.clear();
+
+		requestRate.set(0);
+		processingTimeSamples.clear();
+
+		parentSupervisorStrategy = null;
+	}
+
 	@Override
 	public ActorSystem getSystem() {
 		return system;
@@ -184,6 +209,16 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public Queue<ActorId> getChildren() {
 		return children;
+	}
+	
+	@Override
+	public ActorId getRedirect() {
+		return redirect;
+	}
+
+	@Override
+	public void setRedirect(ActorId redirect) {
+		this.redirect = redirect;
 	}
 	
 	@Override
@@ -287,11 +322,12 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void internal_receive(ActorMessage<?> message) {
 		if (!processedDirective(message) && active.get()) {
-			Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
-			if (behaviour==null)
+			if (behaviourStack.isEmpty())
 				actor.receive(message);
-			else
-				behaviour.accept(message);	
+			else {
+				Consumer<ActorMessage<?>> behaviour = behaviourStack.peek();
+				behaviour.accept(message);
+			}
 		}
 	}
 	
@@ -484,18 +520,22 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void internal_stop() {
-		if (parent!=null)
+		if (parent!=null) {
 			((InternalActorCell)parent).getChildren().remove(getId());
+			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), parent));
+		}
 		/*if (!(actor instanceof ResourceActor) && !(actor instanceof PseudoActor)) @See: ActorMessageDispatcher */
 			system.getMessageDispatcher().unregisterCell(this);
 		system.removeActor(getId());
-		
+
 		Iterator<ActorId> iterator = deathWatcher.iterator();
 		while (iterator.hasNext()) {
 			ActorId dest = iterator.next();
 			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), dest));
 			iterator.remove();
 		}
+		
+		cleanUp();
 	}
 	
 	@Override

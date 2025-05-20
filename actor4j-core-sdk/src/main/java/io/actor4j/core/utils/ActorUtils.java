@@ -21,7 +21,10 @@ import io.actor4j.core.messages.ActorMessage;
 
 public final class ActorUtils {
 	public static String actorLabel(ActorRef actorRef) {
-		return actorRef.getName()!=null ? actorRef.getName() : actorRef.getId().toString();
+		if (actorRef!=null)
+			return actorRef.getName()!=null ? actorRef.getName() : actorRef.getId().toString();
+		else
+			return null;
 	}
 	
 	public static String actorLabel(EmbeddedActorRef actorRef) {

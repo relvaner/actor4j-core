@@ -76,7 +76,6 @@ public interface ActorSystem {
 	public ActorId getRedirectionDestination(ActorId source);
 	public ActorSystem addRedirection(ActorId source, ActorId dest);
 	public ActorSystem removeRedirection(ActorId source);
-	public ActorSystem clearRedirections();
 	
 	public ActorTimer timer();
 	public ActorTimer globalTimer();

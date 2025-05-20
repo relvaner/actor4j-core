@@ -32,6 +32,7 @@ import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
+	public <T> Queue<T> createLockFreeLinkedQueue();
 	public ActorSystemFactory factory();
 
 	public boolean isEmpty();
@@ -55,7 +56,6 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public Map<String, Queue<ActorId>> getPodDomains();
 	public Map<String, Queue<ActorId>> getAliases();
-	public Map<ActorId, ActorId> getRedirector();
 	
 	public AtomicBoolean getMessagingEnabled();
 	public ActorMessageDispatcher getMessageDispatcher();

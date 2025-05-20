@@ -55,13 +55,8 @@ public final class StopUserSpaceProtocol {
 	
 	public static void apply(final InternalActorCell cell) {
 		final List<ActorId> waitForChildren =new ArrayList<>(cell.getChildren().size());
-		
+
 		Iterator<ActorId> iterator = cell.getChildren().iterator();
-		while (iterator.hasNext()) {
-			ActorId dest = iterator.next();
-			cell.watch(dest);
-		}
-		iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
 			ActorId dest = iterator.next();
 			waitForChildren.add(dest);

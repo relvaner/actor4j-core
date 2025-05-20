@@ -74,7 +74,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected final Map<ActorId, Boolean> podCells;
 	protected final Map<String, Queue<ActorId>> podDomains; // PodActorCellDomain -> ActorCellId
 	protected final Map<ActorId, InternalActorCell> pseudoCells;
-	protected final Map<ActorId, ActorId> redirector;
 	protected /*quasi final*/ ActorMessageDispatcher messageDispatcher;
 	
 	protected final AtomicBoolean messagingEnabled;
@@ -118,12 +117,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		podCells       = new ConcurrentHashMap<>();
 		podDomains     = new ConcurrentHashMap<>();
 		pseudoCells    = new ConcurrentHashMap<>();
-		redirector     = new ConcurrentHashMap<>();
 		
 		messagingEnabled = new AtomicBoolean();
 		shutdownHookTriggered = new AtomicBoolean();
 		
-		bufferQueue = new ConcurrentLinkedQueue<>();
+		bufferQueue = createLockFreeLinkedQueue();
 		executorService = createActorExecutorService();
 		
 		strategyOnFailure = new DefaultActorStrategyOnFailure(this);
@@ -132,6 +130,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		countDownLatchPark = new AtomicInteger();
 		
 		resetCells();
+	}
+	
+	@Override
+	public <T> Queue<T> createLockFreeLinkedQueue() {
+		return new ConcurrentLinkedQueue<>();
 	}
 	
 	@Override
@@ -171,7 +174,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		hasAliases.clear();
 		resourceCells.clear();
 		pseudoCells.clear();
-		redirector.clear();
 		
 		bufferQueue.clear();
 	
@@ -308,11 +310,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	protected abstract ActorExecutorService createActorExecutorService();
-
-//	@Override
-//	public DIContainer<ActorId> getContainer() {
-//		return container;
-//	}
 	
 	@Override
 	public PodReplicationController getPodReplicationController() {
@@ -362,11 +359,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public Map<String, Queue<ActorId>> getAliases() {
 		return aliases;
-	}
-	
-	@Override
-	public Map<ActorId, ActorId> getRedirector() {
-		return redirector;
 	}
 
 	@Override
@@ -586,10 +578,16 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
-	public void removeActor(ActorId id) {	
-		resourceCells.remove(id);
-		podCells.remove(id);
-		pseudoCells.remove(id);
+	public void removeActor(ActorId id) {
+		InternalActorCell cell = (InternalActorCell)id;
+		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
+			if (cell.isPod())
+				podCells.remove(id);
+		}
+		else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL)
+			resourceCells.remove(id);
+		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL)
+			pseudoCells.remove(id);
 		
 		String alias = null;
 		if ((alias=hasAliases.get(id))!=null) {
@@ -861,29 +859,23 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorId getRedirectionDestination(ActorId source) {
-		return redirector.get(source);
+		return ((InternalActorCell)source).getRedirect();
 	}
 	
 	@Override
 	public ActorSystemImpl addRedirection(ActorId source, ActorId dest) {
-		redirector.put(source, dest);
+		((InternalActorCell)source).setRedirect(dest);
 		
 		return this;
 	}
 	
 	@Override
 	public ActorSystemImpl removeRedirection(ActorId source) {
-		redirector.remove(source);
+		((InternalActorCell)source).setRedirect(null);
 		
 		return this;
 	}
 	
-	@Override
-	public ActorSystemImpl clearRedirections() {
-		redirector.clear();
-		
-		return this;
-	}
 	
 	@Override
 	public ActorTimer timer() {
