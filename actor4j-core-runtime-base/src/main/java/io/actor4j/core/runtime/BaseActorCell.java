@@ -112,13 +112,13 @@ public class BaseActorCell implements InternalActorCell {
 	}
 	
 	public void cleanUp() {
-		actor = null;
+//		actor = null;
 		globalId.set(null);
 		factory = null;
 
 		threadId = -1;
 
-		parent = null;
+//		parent = null;
 		redirect = null;
 		children.clear();
 
@@ -520,10 +520,8 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void internal_stop() {
-		if (parent!=null) {
+		if (parent!=null)
 			((InternalActorCell)parent).getChildren().remove(getId());
-			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), parent));
-		}
 		/*if (!(actor instanceof ResourceActor) && !(actor instanceof PseudoActor)) @See: ActorMessageDispatcher */
 			system.getMessageDispatcher().unregisterCell(this);
 		system.removeActor(getId());
@@ -534,6 +532,9 @@ public class BaseActorCell implements InternalActorCell {
 			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), dest));
 			iterator.remove();
 		}
+		
+		if (parent!=null)
+			system.sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_SUCCESS, getId(), parent));
 		
 		cleanUp();
 	}
