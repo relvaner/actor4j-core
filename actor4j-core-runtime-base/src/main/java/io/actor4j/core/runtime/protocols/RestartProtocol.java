@@ -60,13 +60,8 @@ public final class RestartProtocol {
 	
 	public static void apply(final InternalActorCell cell, final Exception reason) {
 		final List<ActorId> waitForChildren =new ArrayList<>(cell.getChildren().size());
-		
+
 		Iterator<ActorId> iterator = cell.getChildren().iterator();
-		while (iterator.hasNext()) {
-			ActorId dest = iterator.next();
-			cell.watch(dest);
-		}
-		iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
 			ActorId dest = iterator.next();
 			waitForChildren.add(dest);

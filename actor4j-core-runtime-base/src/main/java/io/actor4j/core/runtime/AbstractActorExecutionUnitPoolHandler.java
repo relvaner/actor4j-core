@@ -51,7 +51,7 @@ public class AbstractActorExecutionUnitPoolHandler<U extends ActorExecutionUnit>
 		this.system = system;
 
 		executionUnitMap = new HashMap<>();
-		executionUnitList = new ArrayList<>();
+		executionUnitList = new ArrayList<>(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
 		persistenceMap = new HashMap<>();
 		
 		groupsMap = new ConcurrentHashMap<>();
