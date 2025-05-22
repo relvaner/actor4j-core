@@ -32,11 +32,12 @@ import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingAfterStart {
-	protected AtomicInteger i;
-	protected AtomicInteger j;
-	protected AtomicInteger k;
+	protected final AtomicInteger i;
+	protected final AtomicInteger j;
+	protected final AtomicInteger k;
 	
-	protected Lock lock;
+	protected final Lock lock_groupsMap;
+	protected final Lock lock_groupsDistributedMap;
 	
 	public ActorLoadBalancingAfterStart() {
 		super();
@@ -45,7 +46,8 @@ public class ActorLoadBalancingAfterStart {
 		j = new AtomicInteger(0);
 		k = new AtomicInteger(0);
 		
-		lock = new ReentrantLock();
+		lock_groupsMap = new ReentrantLock();
+		lock_groupsDistributedMap = new ReentrantLock();
 	}
 	
 	public void reset() {
@@ -55,21 +57,23 @@ public class ActorLoadBalancingAfterStart {
 	}
 	
 	public void registerCell(List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
-		lock.lock();
-		try {
-			Actor actor = cell.getActor();
-			if (actor instanceof ActorDistributedGroupMember && !(actor instanceof ActorIgnoreDistributedGroupMember)) {
-				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
+		final Actor actor = cell.getActor();
+		if (actor instanceof ActorDistributedGroupMember && !(actor instanceof ActorIgnoreDistributedGroupMember)) {
+			UUID distributedGroupId = ((ActorDistributedGroupMember)actor).getDistributedGroupId();
+			lock_groupsDistributedMap.lock();
+			try {
+				Integer threadIndex = groupsDistributedMap.get(distributedGroupId);
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = executionUnitList.get(j.get());
-					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j.get());
+					final int j_ = j.get();
+					threadId = executionUnitList.get(j_);
+					groupsDistributedMap.put(distributedGroupId, j_);
 				}
 				else {
 					threadIndex++;
 					if (threadIndex==executionUnitList.size())
 						threadIndex = 0;
-					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), threadIndex);
+					groupsDistributedMap.put(distributedGroupId, threadIndex);
 					threadId = executionUnitList.get(threadIndex);
 				}
 				cell.setThreadId(threadId);
@@ -77,28 +81,43 @@ public class ActorLoadBalancingAfterStart {
 				j.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1);
 				
 				if (actor instanceof ActorGroupMember) {
-					if (groupsMap.get(((ActorGroupMember)actor).getGroupId())==null)
-						groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
-					else
-						systemLogger().log(ERROR, String.format("[LOAD BALANCING] actor (%s) must be first initial group member", actorLabel(cell.getActor())));
+					UUID groupId = ((ActorGroupMember)actor).getGroupId();
+					lock_groupsMap.lock();
+					try {
+						if (groupsMap.get(groupId)==null)
+							groupsMap.put(groupId, threadId);
+						else
+							systemLogger().log(ERROR, String.format("[LOAD BALANCING] actor (%s) must be first initial group member", actorLabel(cell.getActor())));
+					}
+					finally {
+						lock_groupsMap.unlock();
+					}
 				}
 			}
-			else if (actor instanceof ActorGroupMember) {
-				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
-				if (threadId==null) {
-					threadId = executionUnitList.get(i.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
-					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
-				}
-				
-				cell.setThreadId(threadId);
-			}
-			else {
-				Long threadId = executionUnitList.get(k.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
-				cell.setThreadId(threadId);
+			finally {
+				lock_groupsDistributedMap.unlock();
 			}
 		}
-		finally {
-			lock.unlock();
+		else if (actor instanceof ActorGroupMember) {
+			UUID groupId = ((ActorGroupMember)actor).getGroupId();
+			Long threadId = null;
+			lock_groupsMap.lock();
+			try {
+				threadId = groupsMap.get(groupId);
+				if (threadId==null) {
+					threadId = executionUnitList.get(i.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
+					groupsMap.put(groupId, threadId);
+				}
+			}
+			finally {
+				lock_groupsMap.unlock();
+			}
+			
+			cell.setThreadId(threadId);
+		}
+		else {
+			Long threadId = executionUnitList.get(k.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
+			cell.setThreadId(threadId);
 		}
 	}
 	
