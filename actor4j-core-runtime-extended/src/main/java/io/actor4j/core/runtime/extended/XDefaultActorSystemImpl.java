@@ -15,20 +15,15 @@
  */
 package io.actor4j.core.runtime.extended;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
+
+import org.jctools.queues.MpscArrayQueue;
 
 import io.actor4j.core.XActorService;
-import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
-import io.actor4j.core.exceptions.ActorInitializationException;
-import io.actor4j.core.id.ActorId;
-import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.DefaultActorMessageDispatcher;
 import io.actor4j.core.runtime.DefaultActorSystemImpl;
-import io.actor4j.core.runtime.InternalActorCell;
-import io.actor4j.core.runtime.extended.di.DefaultDIContainer;
 
 public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements XActorService {
 	public XDefaultActorSystemImpl() {
@@ -38,12 +33,17 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 	public XDefaultActorSystemImpl(XActorSystemConfig config) {
 		super(config!=null ? config : (config=XActorSystemConfig.create()));
 		
-		container = DefaultDIContainer.create(); // override
+//		container = DefaultDIContainer.create(); // override
 //		podReplicationController = new XPodReplicationController(this); // override
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		
 		setActorThread(config.unbounded());
+	}
+	
+	@Override
+	public <T> Queue<T> createLockFreeLinkedQueue() {
+		return new MpscArrayQueue<>(64);
 	}
 	
 	@Override
@@ -69,29 +69,29 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 			actorThreadFactory = (group, n, system) -> new BoundedActorThread(group, n, system);
 	}
 	
-	@Override
-	public List<ActorId> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		List<ActorId> result = new ArrayList<>(instances);
-		
-		for (int i=0; i<instances; i++)
-			result.add(addActor(clazz, args));
-		
-		return result;	
-	}
-	
-	@Override
-	public ActorId addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-		InternalActorCell cell = generateCell(clazz);
-		((DefaultDIContainer<ActorId>)container).registerConstructorInjector(cell.getId(), clazz, args);
-		Actor actor = null;
-		try {
-			actor = (Actor)container.getInstance(cell.getId());
-			cell.setActor(actor);
-		} catch (Exception e) {
-			e.printStackTrace();
-			executorService.getFaultToleranceManager().notifyErrorHandler(new ActorInitializationException(), ActorSystemError.ACTOR_INITIALIZATION, null);
-		}
-		
-		return (actor!=null) ? user_addCell(cell) : ZERO_ID;
-	}
+//	@Override
+//	public List<ActorId> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+//		List<ActorId> result = new ArrayList<>(instances);
+//		
+//		for (int i=0; i<instances; i++)
+//			result.add(addActor(clazz, args));
+//		
+//		return result;	
+//	}
+//	
+//	@Override
+//	public ActorId addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
+//		InternalActorCell cell = generateCell(clazz);
+//		((DefaultDIContainer<ActorId>)container).registerConstructorInjector(cell.getId(), clazz, args);
+//		Actor actor = null;
+//		try {
+//			actor = (Actor)container.getInstance(cell.getId());
+//			cell.setActor(actor);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			executorService.getFaultToleranceManager().notifyErrorHandler(new ActorInitializationException(), ActorSystemError.ACTOR_INITIALIZATION, null);
+//		}
+//		
+//		return (actor!=null) ? user_addCell(cell) : ZERO_ID;
+//	}
 }

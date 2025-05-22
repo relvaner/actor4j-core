@@ -18,7 +18,6 @@ package io.actor4j.core;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
-import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
@@ -49,7 +48,7 @@ public interface XActorService extends XActorSystem {
 	
 	public boolean setConfig(XActorServiceConfig config);
 	
-	public boolean hasActor(ActorId id);
+	public boolean hasActor(String globalId);
 	
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias);	
 	public void sendAsServer(ActorMessage<?> message);
