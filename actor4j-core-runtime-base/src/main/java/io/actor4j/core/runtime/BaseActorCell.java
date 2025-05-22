@@ -43,6 +43,8 @@ import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.json.JsonObject;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
+import io.actor4j.core.runtime.annotations.concurrent.ThreadLocalAccess;
+import io.actor4j.core.runtime.annotations.concurrent.ThreadSafeAccess;
 import io.actor4j.core.runtime.di.FactoryInjector;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
@@ -60,31 +62,39 @@ import static io.actor4j.core.utils.ActorUtils.*;
 public class BaseActorCell implements InternalActorCell {
 	static record PersistenceTuple(Consumer<Object> onSuccess, Consumer<Exception> onFailure, List<Object> objects) {
 	}
-	
+
 	protected final InternalActorSystem system;
+	@ThreadSafeAccess(reason = "Injected along with the creation of the actor cell or overwritten at restart")
 	protected Actor actor;
+	@ThreadSafeAccess
 	protected final AtomicReference<UUID> globalId; // Optionally generated when exposed!
+	@ThreadSafeAccess(reason = "Injected along with the creation of the actor cell") @ThreadLocalAccess
 	protected /*quasi final*/ FactoryInjector<?> factory;
-	
+	@ThreadSafeAccess(reason = "Initialized at the registration of the actor cell")
 	protected long threadId;
-
+	@ThreadSafeAccess(reason = "Initialized along with the creation o the actor cell")
 	protected /*quasi final*/ ActorId parent;
+	@ThreadSafeAccess
 	protected final Queue<ActorId> children;
+	@ThreadSafeAccess(reason = "Can be overwritten at runtime")
 	protected volatile ActorId redirect;
-	
+	@ThreadSafeAccess(reason = "...")
 	protected final AtomicBoolean active;
-	
+	@ThreadLocalAccess
 	protected final Deque<Consumer<ActorMessage<?>>> behaviourStack;
-	
+	@ThreadSafeAccess
 	protected final Queue<ActorId> deathWatcher;
-
+	@ThreadLocalAccess
 	protected boolean activeDirectiveBehaviour;
-	
+	@ThreadLocalAccess
 	protected final Queue<PersistenceTuple> persistenceTuples;
 	
+	@ThreadSafeAccess
 	protected final AtomicLong requestRate;
+	@ThreadSafeAccess
 	protected final Queue<Long> processingTimeSamples;
 	
+	@ThreadLocalAccess(reason = "Can be overwritten at runtime")
 	protected SupervisorStrategy parentSupervisorStrategy;
 			
 	public BaseActorCell(InternalActorSystem system, Actor actor) {
