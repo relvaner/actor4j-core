@@ -21,7 +21,7 @@ import static io.actor4j.core.utils.ActorUtils.actorLabel;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -32,9 +32,7 @@ import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingAfterStart {
-	protected final AtomicInteger i;
-	protected final AtomicInteger j;
-	protected final AtomicInteger k;
+	protected int groupsDistributedMapIndex;
 	
 	protected final Lock lock_groupsMap;
 	protected final Lock lock_groupsDistributedMap;
@@ -42,19 +40,15 @@ public class ActorLoadBalancingAfterStart {
 	public ActorLoadBalancingAfterStart() {
 		super();
 		
-		i = new AtomicInteger(0);
-		j = new AtomicInteger(0);
-		k = new AtomicInteger(0);
+		groupsDistributedMapIndex = 0;
 		
 		lock_groupsMap = new ReentrantLock();
 		lock_groupsDistributedMap = new ReentrantLock();
 	}
 	
-	public void reset() {
-		i.set(0);
-		j.set(0);
-		k.set(0);
-	}
+//	public void reset() {
+//		groupsDistributedMapIndex = 0;
+//	}
 	
 	public void registerCell(List<Long> executionUnitList, Map<UUID, Long> groupsMap, Map<UUID, Integer> groupsDistributedMap, InternalActorCell cell) {
 		final Actor actor = cell.getActor();
@@ -65,9 +59,8 @@ public class ActorLoadBalancingAfterStart {
 				Integer threadIndex = groupsDistributedMap.get(distributedGroupId);
 				Long threadId = null;
 				if (threadIndex==null) {
-					final int j_ = j.get();
-					threadId = executionUnitList.get(j_);
-					groupsDistributedMap.put(distributedGroupId, j_);
+					threadId = executionUnitList.get(groupsDistributedMapIndex);
+					groupsDistributedMap.put(distributedGroupId,groupsDistributedMapIndex);
 				}
 				else {
 					threadIndex++;
@@ -78,7 +71,7 @@ public class ActorLoadBalancingAfterStart {
 				}
 				cell.setThreadId(threadId);
 				
-				j.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1);
+				groupsDistributedMapIndex = groupsDistributedMapIndex==executionUnitList.size()-1 ? 0 : groupsDistributedMapIndex+1;
 				
 				if (actor instanceof ActorGroupMember) {
 					UUID groupId = ((ActorGroupMember)actor).getGroupId();
@@ -105,7 +98,7 @@ public class ActorLoadBalancingAfterStart {
 			try {
 				threadId = groupsMap.get(groupId);
 				if (threadId==null) {
-					threadId = executionUnitList.get(i.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
+					threadId = executionUnitList.get(ThreadLocalRandom.current().nextInt(executionUnitList.size()));
 					groupsMap.put(groupId, threadId);
 				}
 			}
@@ -116,7 +109,7 @@ public class ActorLoadBalancingAfterStart {
 			cell.setThreadId(threadId);
 		}
 		else {
-			Long threadId = executionUnitList.get(k.updateAndGet((index) -> index==executionUnitList.size()-1 ? 0 : index+1));
+			Long threadId = executionUnitList.get(ThreadLocalRandom.current().nextInt(executionUnitList.size()));
 			cell.setThreadId(threadId);
 		}
 	}
