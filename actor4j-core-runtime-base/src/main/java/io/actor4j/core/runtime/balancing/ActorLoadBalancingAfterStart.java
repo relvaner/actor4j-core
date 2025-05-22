@@ -32,6 +32,7 @@ import io.actor4j.core.actors.ActorIgnoreDistributedGroupMember;
 import io.actor4j.core.runtime.InternalActorCell;
 
 public class ActorLoadBalancingAfterStart {
+	protected int groupsMapIndex;
 	protected int groupsDistributedMapIndex;
 	
 	protected final Lock lock_groupsMap;
@@ -40,6 +41,7 @@ public class ActorLoadBalancingAfterStart {
 	public ActorLoadBalancingAfterStart() {
 		super();
 		
+		groupsMapIndex = 0;
 		groupsDistributedMapIndex = 0;
 		
 		lock_groupsMap = new ReentrantLock();
@@ -47,6 +49,7 @@ public class ActorLoadBalancingAfterStart {
 	}
 	
 //	public void reset() {
+//		groupsMapIndex = 0;
 //		groupsDistributedMapIndex = 0;
 //	}
 	
@@ -98,7 +101,8 @@ public class ActorLoadBalancingAfterStart {
 			try {
 				threadId = groupsMap.get(groupId);
 				if (threadId==null) {
-					threadId = executionUnitList.get(ThreadLocalRandom.current().nextInt(executionUnitList.size()));
+					groupsMapIndex = groupsMapIndex==executionUnitList.size()-1 ? 0 : groupsMapIndex+1;
+					threadId = executionUnitList.get(groupsMapIndex);
 					groupsMap.put(groupId, threadId);
 				}
 			}
