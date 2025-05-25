@@ -7,7 +7,7 @@ For more information on `Actor4j`, see the following more complete [documentatio
 
 ## Status of Development ##
 
-Most of the `Actor4j - Core` library (`v2.1.x`) has no external dependencies (except runtime-extended) and is also compilable as a native image with GraalVM. The minimum requirement is currently Java 17. In the long term, the library is targeting Java 21 (September 2023). Within the branch `java-8`, you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to provide more runtimes in the future. A [specification](https://github.com/relvaner/actor4j-spec) exists for the core part of Actor4j.
+Most of the `Actor4j - Core` library (`v2.1.x`) has no external dependencies (except runtime-extended) and is also compilable as a native image with GraalVM. The minimum requirement is currently Java 21. Within the branch `java-8`, you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to provide more runtimes. A [specification](https://github.com/relvaner/actor4j-spec) exists for the core part of Actor4j (default runtime).
 
 ## Installation ##
 
