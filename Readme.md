@@ -11,7 +11,7 @@ Most of the `Actor4j - Core` library (`v2.x`) has no external dependencies (exce
 
 ## Installation ##
 
-I am working on a new version, `2.x` for `Actor4j`. In the future, new versions and other libraries will be available as a Maven dependency. The entire documentation is more related to the version `2.1.x`.
+The current version is 2.4, and it is still under further development. In the future, new versions and other libraries will be available as a Maven dependency. The entire documentation is more related to version `2.1.x`.
 
 Currently, you can add the following Maven dependency to your `pom.xml` file with JitPack.io:
 
