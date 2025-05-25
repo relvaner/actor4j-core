@@ -105,3 +105,5 @@ nb-configuration.xml
 
 ### PMD ###
 *.pmd
+
+*.flattened-pom.xml
