@@ -26,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.features.pod.ExampleReplicationWithActorPod;
@@ -236,6 +237,11 @@ public class PodFeature {
 				new PodConfiguration("ExampleReplicationWithRemoteActorPodWithRequest", ExampleReplicationWithRemoteActorPodWithRequest.class.getName(), 1, 1));
 		ActorId client = system.addActor(() -> new Actor(){
 			@Override
+			public void preStart() {
+				expose();
+			}
+			
+			@Override
 			public void receive(ActorMessage<?> message) {
 				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value()));
 				
@@ -362,6 +368,11 @@ public class PodFeature {
 		
 		ActorId client = system.addActor(() -> new Actor(){
 			@Override
+			public void preStart() {
+				expose();
+			}
+			
+			@Override
 			public void receive(ActorMessage<?> message) {
 				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithRemoteFunctionPod", message.value()));
 				
@@ -375,7 +386,7 @@ public class PodFeature {
 		system.start();
 		
 		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) 
-			-> system.send(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of(replyAddress)));
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of(replyAddress)));
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.globalId().toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");
