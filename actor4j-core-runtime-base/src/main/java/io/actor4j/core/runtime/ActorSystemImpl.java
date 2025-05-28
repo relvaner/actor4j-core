@@ -923,6 +923,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			executorService.start(new Runnable() {
 				@Override
 				public void run() {
+					messageDispatcher.registerCell((InternalActorCell)PSEUDO_ID);
 					/* preStart */
 					Function<InternalActorCell, Boolean> preStart = cell -> {
 						if (cell.isRootInUser() || cell.isRootInSystem() )
