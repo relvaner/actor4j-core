@@ -42,9 +42,9 @@
 	</developers>
 	
 	<scm>
-		<connection>scm:git:git://github.com/relvaner/actor4j-core.git</connection>
-		<developerConnection>scm:git:ssh://github.com:relvaner/actor4j-core.git</developerConnection>
-		<url>https://github.com/relvaner/actor4j-core/tree/master</url>
+		<connection>scm:git:https://github.com/relvaner/actor4j-core.git</connection>
+		<developerConnection>scm:git:git@github.com:relvaner/actor4j-core.git</developerConnection>
+		<url>https://github.com/relvaner/actor4j-core/</url>
 	</scm>
 	
 	<properties>
