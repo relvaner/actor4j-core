@@ -47,17 +47,6 @@
 		<url>https://github.com/relvaner/actor4j-core/tree/master</url>
 	</scm>
 	
-	<distributionManagement>
-		<snapshotRepository>
-    		<id>ossrh</id>
-    		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  		</snapshotRepository>
-  		<repository>
-    		<id>ossrh</id>
-    		<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-  		</repository>
-	</distributionManagement>
-	
 	<properties>
 		<revison>2.4.0</revison>
 		<junit.version>5.11.3</junit.version>
