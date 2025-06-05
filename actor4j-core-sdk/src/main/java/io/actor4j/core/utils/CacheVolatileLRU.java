@@ -172,6 +172,6 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 
 	@Override
 	public String toString() {
-		return "CacheLRUWithGC [map=" + map + ", lru=" + lru + ", size=" + size + "]";
+		return "CacheVolatileLRU [map=" + map + ", lru=" + lru + ", size=" + size + "]";
 	}
 }
