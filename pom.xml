@@ -48,7 +48,7 @@
 	</scm>
 	
 	<properties>
-		<revison>2.4.0</revison>
+		<revision>2.4.0</revision>
 		<junit.version>5.11.3</junit.version>
 		<maven.compiler.source>21</maven.compiler.source>
   		<maven.compiler.target>21</maven.compiler.target>
