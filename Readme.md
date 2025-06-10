@@ -13,7 +13,24 @@ Most of the `Actor4j - Core` library (`v2.x`) has no external dependencies (exce
 
 The current version is `2.4`, and it is still under further development. In the future, new versions and other libraries will be available as a Maven dependency. The entire documentation is now related to version `2.4.x`. Please note that the documentation is currently incomplete and does not yet fully reflect all the features implemented.
 
-Currently, you can add the following Maven dependency to your `pom.xml` file with JitPack.io:
+Currently, you can add the following Maven dependencies to your pom.xml file (using Default Runtime):
+
+```xml
+<dependency>
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core-sdk</artifactId>
+	<version><!-- REPLACE WITH LATEST RELEASE --></version>
+</dependency>
+
+<!-- DEFAULT RUNTIME -->
+<dependency>
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core-runtime</artifactId>
+	<version><!-- REPLACE WITH LATEST RELEASE --></version>
+</dependency>
+```
+
+or a SNAPSHOT with JitPack.io:
 
 ```xml
 <repositories>
@@ -32,4 +49,4 @@ Currently, you can add the following Maven dependency to your `pom.xml` file wit
 </dependencies>
 ```
 
-Last updated: May 25, 2025
+Last updated: June 10, 2025
