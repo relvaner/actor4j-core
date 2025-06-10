@@ -995,6 +995,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					removeActor(PSEUDO_ID);
 					
 					executorService.shutdown(await);
+					reset();
 				}
 			});
 			
@@ -1005,8 +1006,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				}
-			
-			reset();
 		}
 	}
 	
