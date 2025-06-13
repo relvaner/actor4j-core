@@ -97,8 +97,7 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				dest = system.ALIAS_ID();
 		}
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 		
@@ -130,11 +129,11 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 				dest = system.ALIAS_ID();
 		}
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 		
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 			if (alias==null && redirect==null)
 				getThreadPoolHandler().postInnerOuter(message, source);
@@ -157,11 +156,11 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		ActorId dest = message.dest();
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (redirect==null) {
 			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 				getThreadPoolHandler().postQueue(message, biconsumer);
@@ -197,11 +196,11 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		ActorId dest = message.dest();
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (redirect==null) {
 			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 				getThreadPoolHandler().postOuter(message);
@@ -237,11 +236,11 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		
 		ActorId dest = message.dest();
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (redirect==null) {
 			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 				getThreadPoolHandler().postServer(message);

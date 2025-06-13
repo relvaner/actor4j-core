@@ -73,13 +73,12 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 			if (dest==null)
 				dest = system.ALIAS_ID();
 		}
-		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 		
-		
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 			if (alias==null && redirect==null)
 				dispatch(message, null, false, true);
@@ -102,11 +101,11 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		
 		ActorId dest = message.dest();
 		
-		InternalActorCell cell = (InternalActorCell)dest;
-		ActorId redirect = cell.getRedirect();
+		ActorId redirect = dest.redirectId();
 		if (redirect!=null) 
 			dest = redirect;
 		
+		InternalActorCell cell = (InternalActorCell)dest;
 		if (redirect==null) {
 			if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
 				dispatch(message, null, directive, true);

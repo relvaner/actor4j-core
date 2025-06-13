@@ -24,6 +24,11 @@ public record GlobalId(ActorId localId, UUID globalId) implements ActorId {
 		this(null, globalId);
 	}
 	
+	@Override
+	public ActorId redirectId() {
+		return null;
+	}
+	
 	public static ActorId of(String globalId) {
 		UUID uuid = UUID_ZERO;
 		try {

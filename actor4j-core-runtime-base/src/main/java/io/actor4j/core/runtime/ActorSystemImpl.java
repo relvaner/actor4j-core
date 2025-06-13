@@ -859,12 +859,13 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorId getRedirectionDestination(ActorId source) {
-		return ((InternalActorCell)source).getRedirect();
+		return source.redirectId();
 	}
 	
 	@Override
 	public ActorSystemImpl addRedirection(ActorId source, ActorId dest) {
-		((InternalActorCell)source).setRedirect(dest);
+		if (source instanceof InternalActorCell cell)
+			cell.setRedirect(dest);
 		
 		return this;
 	}

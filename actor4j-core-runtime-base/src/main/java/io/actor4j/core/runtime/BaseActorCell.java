@@ -200,6 +200,11 @@ public class BaseActorCell implements InternalActorCell {
 		}
 		system.getExposedCells().put(uuid, this);
 	}
+	
+	@Override
+	public ActorId redirectId() {
+		return redirect;
+	}
 
 	@Override
 	public ActorId getId() {

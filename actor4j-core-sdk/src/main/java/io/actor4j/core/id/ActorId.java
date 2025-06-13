@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import io.actor4j.core.utils.Shareable;
 
-public interface ActorId extends Shareable {
+public interface ActorId extends Redirect, Shareable {
 	public ActorId localId();
 	public UUID globalId();
 	
@@ -35,6 +35,10 @@ public interface ActorId extends Shareable {
 				return null;
 			}
 			
+			@Override
+			public ActorId redirectId() {
+				return null;
+			}
 		};
 	}
 	
@@ -42,7 +46,7 @@ public interface ActorId extends Shareable {
 		return GlobalId.of(globalId);
 	}
 	
-	public static ActorId ofRedirect() {
-		return RedirectId.of();
+	public static ActorId ofRedirect(ActorId dest) {
+		return Redirect.of(dest);
 	}
 }

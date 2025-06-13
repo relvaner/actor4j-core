@@ -86,6 +86,11 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	}
 	
 	@Override
+	public ActorId redirectId() {
+		return null;
+	}
+	
+	@Override
 	public ActorId getId() {
 		return  this;
 	}

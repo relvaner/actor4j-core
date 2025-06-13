@@ -17,13 +17,25 @@ package io.actor4j.core.id;
 
 import java.util.UUID;
 
-public record RedirectId(ActorId localId, UUID globalId) implements ActorId {
-	public RedirectId() {
-		this(null, null);
-	}
-
+public interface Redirect {
+	public ActorId redirectId();
 	
-	public static ActorId of() {
-		return new RedirectId();
+	public static ActorId of(ActorId redirect) {
+		return new ActorId() {
+			@Override
+			public ActorId localId() {
+				return null;
+			}
+
+			@Override
+			public UUID globalId() {
+				return null;
+			}
+
+			@Override
+			public ActorId redirectId() {
+				return redirect;
+			}
+		};
 	}
 }
