@@ -23,7 +23,7 @@ import io.actor4j.core.id.ActorId;
 
 public class ActorGlobalSettings {
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
-	public static TriConsumer<String, Object, Integer> internal_server_callback;
+	public static TriConsumer<Object, Object, Integer> internal_server_callback;
 	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 	public static SextConsumer<Object, Integer, ActorId, UUID, Object, ActorId> internal_server_request;
 }

@@ -16,8 +16,8 @@
 
 package io.actor4j.core.pods;
 
-public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user, boolean isRequest) {
-	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, String replyAddress, Object user) {
+public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyAddress, Object user, boolean isRequest) {
+	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyAddress, Object user) {
 		this(remotePodMessageDTO, replyAddress, user, false);
 	}
 }

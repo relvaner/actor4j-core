@@ -238,11 +238,6 @@ public class PodFeature {
 				new PodConfiguration("ExampleReplicationWithRemoteActorPodWithRequest", ExampleReplicationWithRemoteActorPodWithRequest.class.getName(), 1, 1));
 		ActorId client = system.addActor(() -> new Actor(){
 			@Override
-			public void preStart() {
-				expose();
-			}
-			
-			@Override
 			public void receive(ActorMessage<?> message) {
 				logger().log(DEBUG, String.format("client received a message ('%s') from ExampleReplicationWithActorPod", message.value()));
 				
@@ -257,7 +252,7 @@ public class PodFeature {
 		
 		ActorGlobalSettings.internal_server_request = (msg, tag, source, interaction, params, pod) -> {
 			if (interaction!=null) {
-				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", 0, "ExampleReplicationWithRemoteActorPodWithRequest", false), source.globalId().toString(), null, true);
+				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", 0, "ExampleReplicationWithRemoteActorPodWithRequest", false), source, null, true);
 				system.send(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), pod, interaction));
 			}
 			else {
@@ -387,7 +382,7 @@ public class PodFeature {
 		system.start();
 		
 		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) ->
-			((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of(replyAddress)));
+			((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.globalId().toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");
