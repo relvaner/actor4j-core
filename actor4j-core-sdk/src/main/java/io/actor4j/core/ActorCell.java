@@ -45,7 +45,9 @@ public interface ActorCell extends ActorId {
 	public void unbecomeAll();
 	
 	public void send(ActorMessage<?> message);
+	public void send(ActorMessage<?> message, ActorId dest);
 	public void send(ActorMessage<?> message, String alias);
+	public void send(ActorMessage<?> message, UUID globalId);
 	public void priority(ActorMessage<?> message);
 	public void unhandled(ActorMessage<?> message);
 	

@@ -375,6 +375,14 @@ public class BaseActorCell implements InternalActorCell {
 		else
 			system.getBufferQueue().offer(message.copy());
 	}
+
+	@Override
+	public void send(ActorMessage<?> message, ActorId dest) {
+		if (system.getMessagingEnabled().get())
+			system.getMessageDispatcher().post(message.shallowCopy(dest), getId());
+		else
+			system.getBufferQueue().offer(message.copy(dest));
+	}
 	
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
@@ -395,6 +403,13 @@ public class BaseActorCell implements InternalActorCell {
 				system.getBufferQueue().offer(message.copy(dest));
 			}
 		}
+	}
+	
+	@Override
+	public void send(ActorMessage<?> message, UUID globalId) {
+		ActorId dest = system.getExposedCells().get(globalId);
+		if (dest!=null)
+			send(message, dest);
 	}
 	
 	@Override

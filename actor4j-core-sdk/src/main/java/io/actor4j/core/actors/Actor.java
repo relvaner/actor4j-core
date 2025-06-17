@@ -239,7 +239,7 @@ public abstract class Actor implements ActorRef {
 	public void sendViaPath(ActorMessage<?> message, String path) {
 		ActorId dest = cell.getSystem().getActorFromPath(path);
 		if (dest!=null)
-			send(message, dest);
+			cell.send(message, dest);
 	}
 	
 	@Override
@@ -248,8 +248,13 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	@Override
+	public void sendViaGlobalId(ActorMessage<?> message, UUID globalId) {
+		cell.send(message, globalId);
+	}
+	
+	@Override
 	public void send(ActorMessage<?> message, ActorId dest) {
-		send(message.shallowCopy(self(), dest));
+		send(message.shallowCopy(self()/*ATTENTION*/, dest));
 	}
 	
 	@Override

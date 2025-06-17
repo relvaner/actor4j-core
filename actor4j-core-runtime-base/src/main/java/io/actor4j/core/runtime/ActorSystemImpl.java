@@ -752,10 +752,20 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
+	public ActorSystemImpl send(ActorMessage<?> message, ActorId dest) {
+		if (!messagingEnabled.get()) 
+			bufferQueue.offer(message.copy(dest));
+		else
+			messageDispatcher.postOuter(message.shallowCopy(dest));
+		
+		return this;
+	}
+	
+	@Override
 	public ActorSystemImpl sendViaPath(ActorMessage<?> message, String path) {
 		ActorId dest = getActorFromPath(path);
 		if (dest!=null)
-			send(message.shallowCopy(dest));
+			send(message, dest);
 		
 		return this;
 	}
@@ -797,6 +807,15 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public ActorSystemImpl sendViaGlobalId(ActorMessage<?> message, UUID globalId) {
+		ActorId dest = exposedCells.get(globalId);
+		if (dest!=null)
+			send(message, dest);
+		
+		return this;
 	}
 	
 	@Override

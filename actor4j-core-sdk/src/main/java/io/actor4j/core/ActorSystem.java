@@ -68,9 +68,11 @@ public interface ActorSystem {
 	public ActorId getActorFromPath(String path);
 	
 	public ActorSystem send(ActorMessage<?> message);
+	public ActorSystem send(ActorMessage<?> message, ActorId dest);
 	public ActorSystem sendViaPath(ActorMessage<?> message, String path);
 	public ActorSystem sendViaAlias(ActorMessage<?> message, String alias);
 	public ActorSystem sendWhenActive(ActorMessage<?> message);
+	public ActorSystem sendViaGlobalId(ActorMessage<?> message, UUID globalId);
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group);
 	
 	public ActorId getRedirectionDestination(ActorId source);

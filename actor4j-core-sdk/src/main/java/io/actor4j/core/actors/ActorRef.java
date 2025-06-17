@@ -37,6 +37,7 @@ public interface ActorRef {
 	public void send(ActorMessage<?> message);
 	public void sendViaPath(ActorMessage<?> message, String path);
 	public void sendViaAlias(ActorMessage<?> message, String alias);
+	public void sendViaGlobalId(ActorMessage<?> message, UUID globalId);
 	public void send(ActorMessage<?> message, ActorId dest);
 	public <T> void tell(T value, int tag, ActorId dest);
 	public <T> void tell(T value, int tag, ActorId dest, String domain);
