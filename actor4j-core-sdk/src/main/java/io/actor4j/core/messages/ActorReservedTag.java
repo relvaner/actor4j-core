@@ -100,6 +100,12 @@ public final class ActorReservedTag {
 	public static final int RESERVED_STREAMS_REDUCE   = reservedTag(RESERVED_OFFSET_MAX-602);
 	public static final int RESERVED_STREAMS_RESULT   = reservedTag(RESERVED_OFFSET_MAX-603);
 	public static final int RESERVED_STREAMS_SHUTDOWN = reservedTag(RESERVED_OFFSET_MAX-604);
+	
+	public static final int RESERVED_LANG_APC_CALL           = reservedTag(RESERVED_OFFSET_MAX-700);
+	public static final int RESERVED_LANG_AMPI_START         = reservedTag(RESERVED_OFFSET_MAX-701);;
+	public static final int RESERVED_LANG_AMPI_SEND          = reservedTag(RESERVED_OFFSET_MAX-702);;
+	public static final int RESERVED_LANG_AMPI_ASEND         = reservedTag(RESERVED_OFFSET_MAX-703);;
+	public static final int RESERVED_LANG_AMPI_ASEND_CONFIRM = reservedTag(RESERVED_OFFSET_MAX-704);;
 
 	static {
 		// PodStatus
