@@ -28,7 +28,7 @@ public abstract class AbstractEmbeddedModule implements EmbeddedModule {
 	protected final ActorRef host;
 	protected final PodContext context;
 	
-	protected FaultToleranceManager hostFaultToleranceManager;
+	protected final FaultToleranceManager hostFaultToleranceManager;
 	
 	public AbstractEmbeddedModule(String name, ActorRef host, PodContext context) {
 		super();
