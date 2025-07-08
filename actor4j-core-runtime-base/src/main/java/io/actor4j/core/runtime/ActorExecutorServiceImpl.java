@@ -106,6 +106,17 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 								String.format("[FT] Exception in embedded actor: %s (host: %s)", message, faultToleranceId.toString()));
 						
 					}
+					else if (systemError==ActorSystemError.EMBEDDED_MODULE) {
+						InternalActorCell cell = (InternalActorCell)faultToleranceId;
+						if (cell!=null) {
+							Actor actor = cell.getActor();
+							systemLogger().log(ERROR,
+								String.format("[FT] Exception in embedded module: %s (host: %s)", message, actorLabel(actor)));
+						}
+						else
+							systemLogger().log(ERROR,
+								String.format("[FT] Exception in embedded module: %s (host: %s)", message, faultToleranceId.toString()));
+					}
 					else if (systemError==ActorSystemError.PSEUDO_ACTOR) {
 						InternalActorCell cell = system.getPseudoCells().get(faultToleranceId);
 						if (cell!=null) {

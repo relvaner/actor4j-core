@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime;
+package io.actor4j.core.modules;
 
-public enum ActorSystemError {
-	ACTOR_INITIALIZATION, ACTOR, PSEUDO_ACTOR, RESOURCE_ACTOR, EMBEDDED_ACTOR, EMBEDDED_MODULE, REPLICATION, WATCHDOG, EXECUTER_ACTOR, EXECUTER_RESOURCE, EXECUTER_CLIENT
+import io.actor4j.core.messages.ActorMessage;
+
+public interface EmbeddedModule {
+	public boolean match(ActorMessage<?> message);
+	public void fallback(ActorMessage<?> message, Exception e);
+	
+	public void preStart();
+	public void postStop();
 }

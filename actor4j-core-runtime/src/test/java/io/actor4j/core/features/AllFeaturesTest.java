@@ -41,6 +41,7 @@ import org.junit.runner.RunWith;
 	
 	EmbeddedActorFeature.class,
 	EmbeddedActorLifeCycleFeature.class,
+	EmbeddedModuleFeature.class,
 	PseudoActorFeature.class,
 	ConcurrentPseudoActorFeature.class,
 	StatelessActorFeature.class,
