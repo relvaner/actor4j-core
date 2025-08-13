@@ -13,7 +13,7 @@ Most of the `Actor4j - Core` library (`v2.x`) has no external dependencies (exce
 
 The current version is `2.4`, and it is still under further development. In the future, new versions and other libraries will be available as a Maven dependency. The entire documentation is now related to version `2.4.x`. Please note that the documentation is currently incomplete and does not yet fully reflect all the features implemented.
 
-Currently, you can add the following Maven dependencies to your pom.xml file (using the default runtime):
+Currently, you can add the following Maven dependencies to your pom.xml file (using your preffered runtime):
 
 ```xml
 <!-- SDK -->
