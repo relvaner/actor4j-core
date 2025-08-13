@@ -16,19 +16,33 @@ The current version is `2.4`, and it is still under further development. In the 
 Currently, you can add the following Maven dependencies to your pom.xml file (using the default runtime):
 
 ```xml
+<!-- SDK -->
 <dependency>
 	<groupId>io.actor4j</groupId>
 	<artifactId>actor4j-core-sdk</artifactId>
 	<version><!-- REPLACE WITH LATEST RELEASE --></version>
 </dependency>
 
-<!-- DEFAULT RUNTIME -->
+<!-- DEFAULT RUNTIME (thread-bounded message queue) -->
 <dependency>
 	<groupId>io.actor4j</groupId>
 	<artifactId>actor4j-core-runtime</artifactId>
 	<version><!-- REPLACE WITH LATEST RELEASE --></version>
 </dependency>
-```
+
+<!-- CLASSIC RUNTIME (actor-bounded message queue) -->
+<dependency>
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core-runtime-classic</artifactId>
+	<version><!-- REPLACE WITH LATEST RELEASE --></version>
+</dependency>
+
+<!-- LOOM RUNTIME (actor-bounded message queue, using virtual threads) -->
+<dependency>
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core-runtime-loom</artifactId>
+	<version><!-- REPLACE WITH LATEST RELEASE --></version>
+</dependency>
 
 or a SNAPSHOT with JitPack.io:
 
@@ -49,4 +63,4 @@ or a SNAPSHOT with JitPack.io:
 </dependencies>
 ```
 
-Last updated: June 10, 2025
+Last updated: August 13, 2025
