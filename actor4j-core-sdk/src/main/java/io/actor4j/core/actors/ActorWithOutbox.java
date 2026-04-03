@@ -41,11 +41,11 @@ public abstract class ActorWithOutbox extends Actor {
 		OutboxMessage outboxMessage = null;
 		while ((outboxMessage=outbox.poll())!=null) {
 			if (outboxMessage.dest()!=null)
-				send(outboxMessage.message(), outboxMessage.dest());
+				super.send(outboxMessage.message(), outboxMessage.dest());
 			else if (outboxMessage.alias()!=null)
-				sendViaAlias(outboxMessage.message(),  outboxMessage.alias());
+				super.sendViaAlias(outboxMessage.message(),  outboxMessage.alias());
 			else
-				send(outboxMessage.message());
+				super.send(outboxMessage.message());
 		}
 	}
 
