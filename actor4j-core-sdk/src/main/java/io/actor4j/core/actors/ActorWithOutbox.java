@@ -52,7 +52,7 @@ public abstract class ActorWithOutbox extends Actor {
 	@Override
 	public void send(ActorMessage<?> message) {
 		if (outboxEnabled)
-			outbox.add(new OutboxMessage(message, null, null));
+			outbox.offer(new OutboxMessage(message, null, null));
 		else
 			super.send(message);
 	}
@@ -60,7 +60,7 @@ public abstract class ActorWithOutbox extends Actor {
 	@Override
 	public void send(ActorMessage<?> message, ActorId dest) {
 		if (outboxEnabled)
-			outbox.add(new OutboxMessage(message, dest, null));
+			outbox.offer(new OutboxMessage(message, dest, null));
 		else 
 			super.send(message, dest);
 	}
@@ -68,7 +68,7 @@ public abstract class ActorWithOutbox extends Actor {
 	@Override
 	public void sendViaAlias(ActorMessage<?> message, String alias) {
 		if (outboxEnabled)
-			outbox.add(new OutboxMessage(message, null, alias));
+			outbox.offer(new OutboxMessage(message, null, alias));
 		else
 			super.sendViaAlias(message, alias);
 	}
