@@ -200,7 +200,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 	}
 	
 	protected void dispatch(ClassicInternalActorCell cell) {
-		if (cell.aquireAsScheduled()) {
+		if (cell.acquireAsScheduled()) {
 			((ClassicInternalActorExecutorService)system.getExecutorService()).getRunnablePool().submit(cell);
 		}
 	}

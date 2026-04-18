@@ -55,7 +55,7 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	}
 	
 	@Override
-	public boolean aquireAsScheduled() {
+	public boolean acquireAsScheduled() {
 		return isScheduled.compareAndSet(false, true);
 	}
 }
