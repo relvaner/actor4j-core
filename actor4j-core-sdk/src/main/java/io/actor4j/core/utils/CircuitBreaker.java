@@ -49,8 +49,20 @@ public class CircuitBreaker {
 	public CircuitBreakerState getState() {
 		return state;
 	}
-
-	public boolean isCallable() {
+	
+	public boolean isClosed() {
+		return state==CLOSED;
+	}
+	
+	public boolean isOpen() {
+		return state==OPEN;
+	}
+	
+	public boolean isHalfOpen() {
+		return state==HALF_OPEN;
+	}
+	
+	public CircuitBreakerState updateAndGetState() {
 		if (failureCount >= maxFailures) {
 			long currentTime = System.currentTimeMillis();
 			if (currentTime - lastFailureTime >= resetTimeout)
@@ -60,6 +72,12 @@ public class CircuitBreaker {
 		}
 		else
 			state = CLOSED;
+		
+		return state;
+	}
+
+	public boolean isCallable() {
+		state = updateAndGetState();
 
 		return (state==CLOSED || state==HALF_OPEN);
 	}
