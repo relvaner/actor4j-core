@@ -29,7 +29,7 @@ import io.actor4j.core.actors.ActorDistributedGroupMember;
 import io.actor4j.core.actors.ActorGroupMember;
 import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.id.ActorId;
-import io.actor4j.core.mutable.MutableObject;
+import io.actor4j.core.mutable.MutableInt;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
@@ -46,8 +46,8 @@ public class ActorLoadBalancingBeforeStart {
 		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells);
 		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells);
 		
-		final MutableObject<Integer> i = new MutableObject<>(0);
-		final MutableObject<Integer> j = new MutableObject<>(0);
+		final MutableInt i = new MutableInt(0);
+		final MutableInt j = new MutableInt(0);
 		Function<InternalActorCell, Boolean> registerCells_groups = cell -> {
 			Actor actor = cell.getActor();
 			
@@ -58,8 +58,8 @@ public class ActorLoadBalancingBeforeStart {
 				Integer threadIndex = groupsDistributedMap.get(((ActorDistributedGroupMember)actor).getDistributedGroupId());
 				Long threadId = null;
 				if (threadIndex==null) {
-					threadId = executionUnitList.get(j.getValue());
-					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j.getValue());
+					threadId = executionUnitList.get(j.get());
+					groupsDistributedMap.put(((ActorDistributedGroupMember)actor).getDistributedGroupId(), j.get());
 				}
 				else {
 					threadIndex++;
@@ -70,9 +70,9 @@ public class ActorLoadBalancingBeforeStart {
 				}
 				if (buffer.remove(cell.getId()))
 					cell.setThreadId(threadId);
-				j.increment();
-				if (j.getValue()==executionUnitList.size())
-					j.setValue(0);
+				j.inc();
+				if (j.get()==executionUnitList.size())
+					j.set(0);
 				
 				if (actor instanceof ActorGroupMember) {
 					if (groupsMap.get(((ActorGroupMember)actor).getGroupId())==null)
@@ -84,11 +84,11 @@ public class ActorLoadBalancingBeforeStart {
 			else if (actor instanceof ActorGroupMember) {
 				Long threadId = groupsMap.get(((ActorGroupMember)actor).getGroupId());
 				if (threadId==null) {
-					threadId = executionUnitList.get(i.getValue());
+					threadId = executionUnitList.get(i.get());
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
-					i.increment();
-					if (i.getValue()==executionUnitList.size())
-						i.setValue(0);
+					i.inc();
+					if (i.get()==executionUnitList.size())
+						i.set(0);
 				}
 				if (buffer.remove(cell.getId()))
 					cell.setThreadId(threadId);
@@ -99,12 +99,12 @@ public class ActorLoadBalancingBeforeStart {
 		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), registerCells_groups);
 		system.internal_iterateCell((InternalActorCell)system.USER_ID(), registerCells_groups);
 					
-		i.setValue(0);
+		i.set(0);
 		for (ActorId id : buffer) {
-			((InternalActorCell)id).setThreadId(executionUnitList.get(i.getValue()));
-			i.increment();
-			if (i.getValue()==executionUnitList.size())
-				i.setValue(0);
+			((InternalActorCell)id).setThreadId(executionUnitList.get(i.get()));
+			i.inc();
+			if (i.get()==executionUnitList.size())
+				i.set(0);
 		}
 			
 		/*
