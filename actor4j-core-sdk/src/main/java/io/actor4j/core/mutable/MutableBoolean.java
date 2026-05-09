@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2022, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,34 +15,41 @@
  */
 package io.actor4j.core.mutable;
 
-public final class MutableObject<T> implements Mutable<T> {
-	private T value;
+import java.util.Objects;
 
-	public MutableObject() {
-		this(null);
-	}
-
-	public MutableObject(T value) {
+public class MutableBoolean implements Mutable<Boolean>, Comparable<MutableBoolean> {
+	private boolean value;
+	
+	public MutableBoolean(boolean value) {
 		super();
 		this.value = value;
 	}
 
 	@Override
-	public T get() {
+	public Boolean get() {
 		return value;
 	}
 
 	@Override
-	public void set(T value) {
+	public void set(Boolean value) {
 		this.value = value;
+	}
+	
+	public void set(boolean value) {
+		this.value = value;
+	}
+	
+	public boolean isTrue() {
+		return value;
+	}
+	
+	public boolean isFalse() {
+		return !value;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+		return Objects.hash(value);
 	}
 
 	@Override
@@ -53,17 +60,17 @@ public final class MutableObject<T> implements Mutable<T> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MutableObject<?> other = (MutableObject<?>) obj;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
+		MutableBoolean other = (MutableBoolean) obj;
+		return Objects.equals(value, other.value);
+	}
+	
+	@Override
+	public int compareTo(MutableBoolean o) {
+		return Boolean.compare(value, o.get());
 	}
 
 	@Override
 	public String toString() {
-		return "MutableObject [value=" + value + "]";
+		return "MutableBoolean [value=" + value + "]";
 	}
 }
