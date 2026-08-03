@@ -20,9 +20,9 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 
 public class HubPattern {
-	protected ActorRef actorRef;
+	protected final ActorRef actorRef;
 	
-	protected ActorGroupSet ports;
+	protected final ActorGroupSet ports;
 
 	public HubPattern(ActorRef actorRef) {
 		super();
