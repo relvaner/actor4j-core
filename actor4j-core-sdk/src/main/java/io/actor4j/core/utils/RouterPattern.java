@@ -74,13 +74,11 @@ public class RouterPattern<T> {
 	}
 	
 	public boolean route(ActorMessage<?> message, T routeId) {
-		boolean result = false;
-		
 		ActorId dest = routes.get(routeId);
-		if (dest!=null) {
+		boolean result = (dest!=null);
+		
+		if (result)
 			actorRef.send(message, dest);
-			result = true;
-		}
 		
 		return result;
 	}
