@@ -38,7 +38,7 @@ public class RouterPattern<T> {
 	public RouterPattern(ActorRef actorRef, Map<T, ActorId> routes) {
 		this(actorRef);
 		
-		routes.putAll(routes);
+		this.routes.putAll(routes);
 	}
 	
 	public Map<T, ActorId> getRoutes() {
@@ -49,8 +49,12 @@ public class RouterPattern<T> {
 		routes.put(routeId, id);
 	}
 	
+	public void putIfAbsent(T routeId, ActorId id) {
+		routes.putIfAbsent(routeId, id);
+	}
+	
 	public void putAll(Map<T, ActorId> routes) {
-		routes.putAll(routes);
+		this.routes.putAll(routes);
 	}
 	
 	public void remove(T routeId) {
