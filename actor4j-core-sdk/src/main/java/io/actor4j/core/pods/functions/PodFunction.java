@@ -21,8 +21,8 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.utils.Pair;
 
 public abstract class PodFunction {
-	protected ActorRef host;
-	protected PodContext context;
+	protected final ActorRef host;
+	protected final PodContext context;
 	
 	public PodFunction(ActorRef host, PodContext context) {
 		super();
