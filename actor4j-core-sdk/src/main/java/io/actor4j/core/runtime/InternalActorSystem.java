@@ -28,6 +28,7 @@ import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.runtime.config.ActorRuntimeConfig;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 
@@ -42,6 +43,9 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public ActorId UNKNOWN_ID();
 	public ActorId PSEUDO_ID();
+	
+	public ActorRuntimeConfig getRuntimeConfig();
+	public boolean setRuntimeConfig(ActorRuntimeConfig runtimeConfig);
 
 	public PodReplicationController getPodReplicationController();
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();

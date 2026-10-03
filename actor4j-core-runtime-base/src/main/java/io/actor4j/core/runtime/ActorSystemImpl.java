@@ -49,6 +49,7 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
+import io.actor4j.core.runtime.config.ActorRuntimeConfig;
 import io.actor4j.core.runtime.pods.DefaultPodReplicationController;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
@@ -59,6 +60,7 @@ import io.actor4j.core.utils.PodActorFactory;
 
 public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
+	protected /*Changeable only before starting*/ ActorRuntimeConfig runtimeConfig;
 	
 //	protected /*quasi final*/ DIContainer<ActorId> container; // Currently not used! @See ActorCell
 	protected /*quasi final*/ PodReplicationController podReplicationController;
@@ -303,6 +305,23 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		if (!executorService.isStarted() && config!=null) {
 			this.config = config;
 			resetCountdownLatch();
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public ActorRuntimeConfig getRuntimeConfig() {
+		return runtimeConfig;
+	}
+	
+	@Override
+	public boolean setRuntimeConfig(ActorRuntimeConfig runtimeConfig) {
+		boolean result = false;
+		
+		if (!executorService.isStarted() && runtimeConfig!=null) {
+			this.runtimeConfig = runtimeConfig;
 			result = true;
 		}
 		
