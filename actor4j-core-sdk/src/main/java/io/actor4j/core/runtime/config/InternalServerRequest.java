@@ -22,5 +22,5 @@ import io.actor4j.core.id.ActorId;
 
 @FunctionalInterface
 public interface InternalServerRequest extends SextConsumer<Object, Integer, ActorId, UUID, Object, ActorId> {
-
+	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 }

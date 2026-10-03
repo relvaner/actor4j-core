@@ -15,9 +15,6 @@
  */
 package io.actor4j.core.pods.functions;
 
-import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_callback;
-import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_request;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +25,9 @@ import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.config.InternalServerCallback;
+import io.actor4j.core.runtime.config.InternalServerRequest;
 import io.actor4j.core.utils.Pair;
 
 public abstract class RemoteFunctionPod extends ActorPod {
@@ -62,14 +62,14 @@ public abstract class RemoteFunctionPod extends ActorPod {
 						result = podRemoteFunction.handle(message);
 						if (result!=null) {
 							remoteMap.remove(message.interaction());
-							internal_callback(remoteMessage, result);
+							internal_callback(this, remoteMessage, result);
 						}	
 					}
 					else {
 						UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
 						result = podRemoteFunction.handle((RemotePodMessage)message.value(), interaction);
 						if (result!=null)
-							internal_callback((RemotePodMessage)message.value(), result);
+							internal_callback(this, (RemotePodMessage)message.value(), result);
 						else
 							remoteMap.put(interaction, (RemotePodMessage)message.value());
 					}	
@@ -92,9 +92,11 @@ public abstract class RemoteFunctionPod extends ActorPod {
 		host.tell(result.a(), result.b(), message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 	
-	protected void internal_callback(RemotePodMessage remoteMessage, Pair<Object, Integer> result) {
-		if (remoteMessage.remotePodMessageDTO().reply() && internal_server_callback!=null)
-			internal_server_callback.accept(remoteMessage.replyAddress(), result.a(), result.b());
+	protected void internal_callback(ActorRef host, RemotePodMessage remoteMessage, Pair<Object, Integer> result) {
+		InternalServerCallback internalServerCallback = ((InternalActorSystem)host.getSystem()).getRuntimeConfig().internalServerCallback();
+		
+		if (remoteMessage.remotePodMessageDTO().reply() && internalServerCallback!=null)
+			internalServerCallback.accept(remoteMessage.replyAddress(), result.a(), result.b());
 	}
 	
 	public abstract PodRemoteFunction createFunction(ActorRef host, PodContext context);

@@ -41,8 +41,10 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.utils.PodRequestMethod;
-import io.actor4j.core.runtime.ActorGlobalSettings;
 import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.config.ActorRuntimeConfig;
+import io.actor4j.core.runtime.config.InternalServerCallback;
+import io.actor4j.core.runtime.config.InternalServerRequest;
 import io.actor4j.core.utils.ActorGroupSet;
 
 import static io.actor4j.core.logging.ActorLogger.*;
@@ -247,9 +249,8 @@ public class PodFeature {
 				testDone.countDown();
 			}
 		});
-		system.start();
 		
-		ActorGlobalSettings.internal_server_request = (msg, tag, source, interaction, params, domain) -> {
+		InternalServerRequest internalServerRequest = (msg, tag, source, interaction, params, domain) -> {
 			if (interaction!=null) {
 				RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Hello "+msg.toString()+"!", PodRequestMethod.ACTION_1, "ExampleReplicationWithRemoteActorPodWithRequest", false), client, null);
 				system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null, interaction), "ExampleReplicationWithRemoteActorPodWithRequest");
@@ -259,6 +260,13 @@ public class PodFeature {
 				testDone.countDown();
 			}
 		};
+		ActorRuntimeConfig runtimeConfig = ActorRuntimeConfig.builder()
+			.internalServerRequest(internalServerRequest)
+			.build();
+		
+		((InternalActorSystem)system).setRuntimeConfig(runtimeConfig);
+		system.start();
+		
 		system.sendViaAlias(ActorMessage.create("Test Moin!", PodRequestMethod.ACTION_1, client, null), "ExampleReplicationWithRemoteActorPodWithRequest");
 		system.sendViaAlias(ActorMessage.create("Test", PodRequestMethod.ACTION_2, client, null, UUID.randomUUID()), "ExampleReplicationWithRemoteActorPodWithRequest");
 		
@@ -378,10 +386,15 @@ public class PodFeature {
 				testDone.countDown();
 			}
 		});
-		system.start();
 		
-		ActorGlobalSettings.internal_server_callback = (replyAddress, result, tag) 
+		InternalServerCallback internalServerCallback = (replyAddress, result, tag) 
 			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
+		ActorRuntimeConfig runtimeConfig = ActorRuntimeConfig.builder()
+			.internalServerCallback(internalServerCallback)
+			.build();
+			
+		((InternalActorSystem)system).setRuntimeConfig(runtimeConfig);
+		system.start();
 		
 		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO("Test", 0, "ExampleReplicationWithRemoteFunctionPod", true), client.globalId().toString(), null);
 		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleReplicationWithRemoteFunctionPod");

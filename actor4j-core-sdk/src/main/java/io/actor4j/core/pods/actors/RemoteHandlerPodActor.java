@@ -16,9 +16,6 @@
 
 package io.actor4j.core.pods.actors;
 
-import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_callback;
-import static io.actor4j.core.runtime.ActorGlobalSettings.internal_server_request;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +24,9 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
+import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.config.InternalServerCallback;
+import io.actor4j.core.runtime.config.InternalServerRequest;
 
 public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	protected Map<UUID, RemotePodMessage> remoteMap;
@@ -74,9 +74,11 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	}
 	
 	protected void internal_callback(ActorMessage<?> message, RemotePodMessage remoteMessage) {
+		InternalServerCallback internalServerCallback = ((InternalActorSystem)getSystem()).getRuntimeConfig().internalServerCallback();
+		
 		Object result = callback(message, remoteMessage);
-		if (remoteMessage.remotePodMessageDTO().reply() && internal_server_callback!=null)
-			internal_server_callback.accept(remoteMessage.replyAddress(), result, message.tag());
+		if (remoteMessage.remotePodMessageDTO().reply() && internalServerCallback!=null)
+			internalServerCallback.accept(remoteMessage.replyAddress(), result, message.tag());
 	}
 
 	public abstract void handle(RemotePodMessage remoteMessage, UUID interaction);
@@ -109,16 +111,17 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 	public boolean request(Object message, int tag, ActorId source, UUID interaction, Object params) {
 		boolean result = false;
 		
-		if (internal_server_request!=null) {
+		InternalServerRequest internalServerRequest = ((InternalActorSystem)getSystem()).getRuntimeConfig().internalServerRequest();
+		if (internalServerRequest!=null) {
 			if (interaction!=null) { // with reply
 				if (remoteMap.get(interaction)==null && !requestMap.keySet().contains(interaction)) {
 					requestMap.put(interaction, source); 
-					internal_server_request.accept(message, tag, source, interaction, params, self());
+					internalServerRequest.accept(message, tag, source, interaction, params, self());
 					result = true;
 				}
 			}
 			else {
-				internal_server_request.accept(message, tag, null, null, params, null);
+				internalServerRequest.accept(message, tag, null, null, params, null);
 				result = true;
 			}
 		}

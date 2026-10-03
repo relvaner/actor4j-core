@@ -959,6 +959,9 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		boolean result = false;
 		
 		if (!executorService.isStarted()) {
+			if (runtimeConfig==null)
+				runtimeConfig = ActorRuntimeConfig.create();
+			
 			executorService.start(new Runnable() {
 				@Override
 				public void run() {

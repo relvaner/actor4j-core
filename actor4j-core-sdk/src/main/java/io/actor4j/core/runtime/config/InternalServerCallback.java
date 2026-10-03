@@ -19,5 +19,5 @@ import io.actor4j.core.function.TriConsumer;
 
 @FunctionalInterface
 public interface InternalServerCallback extends TriConsumer<Object, Object, Integer> {
-
+	// @See: RemoteHandlerPodActor, RemoteFunctionPod
 }
