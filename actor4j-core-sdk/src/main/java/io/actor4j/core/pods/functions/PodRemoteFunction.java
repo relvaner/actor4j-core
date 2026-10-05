@@ -20,12 +20,11 @@ import java.util.UUID;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
-import io.actor4j.core.utils.Pair;
 
 public abstract class PodRemoteFunction extends PodFunction{
 	public PodRemoteFunction(ActorRef host, PodContext context) {
 		super(host, context);
 	}
 	
-	public abstract Pair<Object, Integer> handle(RemotePodMessage remoteMessage, UUID interaction);
+	public abstract Reply handle(RemotePodMessage remoteMessage, UUID interaction);
 }

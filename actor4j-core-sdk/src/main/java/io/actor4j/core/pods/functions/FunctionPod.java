@@ -20,7 +20,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.utils.Pair;
+import io.actor4j.core.pods.functions.PodFunction.Reply;
 
 public abstract class FunctionPod extends ActorPod {
 	@Override
@@ -40,8 +40,8 @@ public abstract class FunctionPod extends ActorPod {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				Pair<Object, Integer> result = podFunction.handle(message);
-				if (result!=null)
+				Reply result = podFunction.handle(message);
+				if (result!=null && result.tag()>=0)
 					internal_callback(this, message, result);
 			}
 
@@ -52,8 +52,8 @@ public abstract class FunctionPod extends ActorPod {
 		};
 	}
 	
-	protected void internal_callback(ActorRef host, ActorMessage<?> message, Pair<Object, Integer> result) {
-		host.tell(result.a(), result.b(), message.source(), message.interaction(), message.protocol(), message.domain());
+	protected void internal_callback(ActorRef host, ActorMessage<?> message, Reply result) {
+		host.tell(result.value(), result.tag(), message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 
 	public abstract PodFunction createFunction(ActorRef host, PodContext context);
