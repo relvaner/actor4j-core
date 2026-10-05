@@ -28,7 +28,6 @@ import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.pods.functions.PodFunction.Reply;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.InternalServerCallback;
-import io.actor4j.core.runtime.config.InternalServerRequest;
 
 public abstract class RemoteFunctionPod extends ActorPod {
 	@Override
@@ -68,10 +67,12 @@ public abstract class RemoteFunctionPod extends ActorPod {
 					else {
 						UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
 						result = podRemoteFunction.handle((RemotePodMessage)message.value(), interaction);
-						if (result!=null)
-							internal_callback(this, (RemotePodMessage)message.value(), result);
-						else
-							remoteMap.put(interaction, (RemotePodMessage)message.value());
+						if (((RemotePodMessage)message.value()).remotePodMessageDTO().reply()) {
+							if (result!=null)
+								internal_callback(this, (RemotePodMessage)message.value(), result);
+							else
+								remoteMap.put(interaction, (RemotePodMessage)message.value());
+						}
 					}	
 				}
 				else {
