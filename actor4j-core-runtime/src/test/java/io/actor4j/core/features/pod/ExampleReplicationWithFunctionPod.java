@@ -22,14 +22,13 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.functions.FunctionPod;
 import io.actor4j.core.pods.functions.PodFunction;
-import io.actor4j.core.utils.Pair;
 
 public class ExampleReplicationWithFunctionPod extends FunctionPod {
 	@Override
 	public PodFunction createFunction(ActorRef host, PodContext context) {
 			return new PodFunction(host, context) {
 				@Override
-				public Pair<Object, Integer> handle(ActorMessage<?> message) {
+				public Reply handle(ActorMessage<?> message) {
 					logger().log(DEBUG, message.value().toString());
 					
 					/*
@@ -41,7 +40,7 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 					return null;
 					*/
 					
-					return Pair.of(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
+					return Reply.of(String.format("Hello %s! [domain:%s, primaryReplica:%s]", 
 							message.value(), 
 							context.domain(),
 							context.primaryReplica()), 42);

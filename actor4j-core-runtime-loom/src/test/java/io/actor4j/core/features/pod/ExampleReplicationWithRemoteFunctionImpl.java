@@ -23,13 +23,13 @@ import java.util.function.BiFunction;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.utils.Pair;
+import io.actor4j.core.pods.functions.PodFunction.Reply;
 
 public class ExampleReplicationWithRemoteFunctionImpl {
 	protected ActorRef host;
 	protected PodContext context;
 	
-	protected Map<UUID, BiFunction<Object, Integer, Pair<Object, Integer>>> handlerMap;
+	protected Map<UUID, BiFunction<Object, Integer, Reply>> handlerMap;
 	
 	public ExampleReplicationWithRemoteFunctionImpl(ActorRef host, PodContext context) {
 		super();
@@ -39,17 +39,17 @@ public class ExampleReplicationWithRemoteFunctionImpl {
 		handlerMap = new HashMap<>();
 	}
 
-	public Pair<Object, Integer> handle(ActorMessage<?> message) {
-		Pair<Object, Integer> result = null;
+	public Reply handle(ActorMessage<?> message) {
+		Reply result = null;
 		
-		BiFunction<Object, Integer, Pair<Object, Integer>> handler = handlerMap.get(message.interaction());
+		BiFunction<Object, Integer, Reply> handler = handlerMap.get(message.interaction());
 		if (handler!=null && message.value()!=null && message.value() instanceof String) {
 			result = handler.apply(message.value(), message.tag());
 			handlerMap.remove(message.interaction());
 		}
 		else {
 			handlerMap.put(message.interaction(), (value, tag) -> {
-				return Pair.of(value, tag);
+				return Reply.of(value, tag);
 			});
 			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", message.interaction(), null, context.domain());
 		}

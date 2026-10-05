@@ -23,7 +23,6 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.functions.PodRemoteFunction;
 import io.actor4j.core.pods.functions.RemoteFunctionPod;
-import io.actor4j.core.utils.Pair;
 
 public class ExampleReplicationWithRemoteFunctionPod extends RemoteFunctionPod {
 	@Override
@@ -32,12 +31,12 @@ public class ExampleReplicationWithRemoteFunctionPod extends RemoteFunctionPod {
 		
 			return new PodRemoteFunction(host, context) {
 				@Override
-				public Pair<Object, Integer> handle(ActorMessage<?> message) {
+				public Reply handle(ActorMessage<?> message) {
 					return functionImpl.handle(message);
 				}
 
 				@Override
-				public Pair<Object, Integer> handle(RemotePodMessage remoteMessage, UUID interaction) {
+				public Reply handle(RemotePodMessage remoteMessage, UUID interaction) {
 					return functionImpl.handle(ActorMessage.create(remoteMessage.remotePodMessageDTO().payload(), remoteMessage.remotePodMessageDTO().tag(), host.self(), null, interaction, "", ""));
 				}
 			};
