@@ -19,7 +19,6 @@ import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 
-@Deprecated
 public abstract class PodFunction {
 	protected final ActorRef host;
 	protected final PodContext context;
