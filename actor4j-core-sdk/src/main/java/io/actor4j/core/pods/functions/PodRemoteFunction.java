@@ -21,6 +21,7 @@ import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 
+@Deprecated
 public abstract class PodRemoteFunction extends PodFunction{
 	public PodRemoteFunction(ActorRef host, PodContext context) {
 		super(host, context);

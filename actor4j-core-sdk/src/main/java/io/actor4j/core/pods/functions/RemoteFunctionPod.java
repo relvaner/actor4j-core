@@ -29,6 +29,7 @@ import io.actor4j.core.pods.functions.PodFunction.Reply;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.InternalServerCallback;
 
+@Deprecated
 public abstract class RemoteFunctionPod extends ActorPod {
 	@Override
 	public PodActor create() {
@@ -59,7 +60,7 @@ public abstract class RemoteFunctionPod extends ActorPod {
 					Reply result = null;
 					if (remoteMessage!=null) {
 						result = podRemoteFunction.handle(message);
-						if (result!=null) {
+						if (result!=null && result.tag()>=0) {
 							remoteMap.remove(message.interaction());
 							internal_callback(this, remoteMessage, result);
 						}	
@@ -68,7 +69,7 @@ public abstract class RemoteFunctionPod extends ActorPod {
 						UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
 						result = podRemoteFunction.handle((RemotePodMessage)message.value(), interaction);
 						if (((RemotePodMessage)message.value()).remotePodMessageDTO().reply()) {
-							if (result!=null)
+							if (result!=null && result.tag()>=0)
 								internal_callback(this, (RemotePodMessage)message.value(), result);
 							else
 								remoteMap.put(interaction, (RemotePodMessage)message.value());

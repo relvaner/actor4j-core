@@ -22,6 +22,7 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.pods.functions.PodFunction.Reply;
 
+@Deprecated
 public abstract class FunctionPod extends ActorPod {
 	@Override
 	public PodActor create() {
