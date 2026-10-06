@@ -18,13 +18,13 @@ package io.actor4j.core.service.discovery;
 import java.util.List;
 import java.util.UUID;
 
-public record Service(UUID id, String name, UUID adddress, String alias, String path, List<String> topics, String version, String description) {
-	public Service(String name, UUID adddress, String alias, String path, List<String> topics, String version, String description) {
-		this(UUID.randomUUID(), name, adddress, alias, path, topics, version, description);
+public record Service(UUID id, String name, UUID address, String alias, String path, List<String> topics, String version, String description) {
+	public Service(String name, UUID address, String alias, String path, List<String> topics, String version, String description) {
+		this(UUID.randomUUID(), name, address, alias, path, topics, version, description);
 	}
 	
-	public Service(String name, UUID adddress, String alias, List<String> topics, String version, String description) {
-		this(UUID.randomUUID(), name, adddress, alias, null, topics, version, description);
+	public Service(String name, UUID address, String alias, List<String> topics, String version, String description) {
+		this(UUID.randomUUID(), name, address, alias, null, topics, version, description);
 	}
 	
 	public Service(String name, String alias, String path, List<String> topics, String version, String description) {

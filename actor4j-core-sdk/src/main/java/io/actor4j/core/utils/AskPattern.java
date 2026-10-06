@@ -29,10 +29,10 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 
 public final class AskPattern {
-	private static final class AskPatternRessourceActor extends ResourceActor {
+	private static final class AskPatternResourceActor extends ResourceActor {
 		private CompletableFuture<ActorMessage<?>> future;
 		
-		public AskPatternRessourceActor(CompletableFuture<ActorMessage<?>> future) {
+		public AskPatternResourceActor(CompletableFuture<ActorMessage<?>> future) {
 			super(null, false, false);
 			this.future = future;
 		}
@@ -53,7 +53,7 @@ public final class AskPattern {
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 
-		ActorId source = system.addActor(() -> new AskPatternRessourceActor(future));
+		ActorId source = system.addActor(() -> new AskPatternResourceActor(future));
 		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
@@ -75,7 +75,7 @@ public final class AskPattern {
 		
 		CompletableFuture<ActorMessage<?>> future = new CompletableFuture<>();
 		
-		ActorId source = system.addActor(() -> new AskPatternRessourceActor(future));
+		ActorId source = system.addActor(() -> new AskPatternResourceActor(future));
 		system.send(message.shallowCopy(source, message.dest()));
 
 		ActorMessage<?> result = null;
