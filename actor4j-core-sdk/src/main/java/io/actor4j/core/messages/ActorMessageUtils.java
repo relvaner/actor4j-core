@@ -37,6 +37,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -58,11 +59,8 @@ public final class ActorMessageUtils {
 			|| ZoneId.class.isAssignableFrom(type);
 	}
 	
-	public static <T> boolean equals(T o1, T o2) {	
-		if (o1!=null/* && (o1 instanceof Comparable)*/) 
-			return o1.equals(o2);
-		else
-			return o2==null;
+	public static <T> boolean equals(T a, T b) {	
+		return Objects.equals(a, b);
 	}
 
 	static {
