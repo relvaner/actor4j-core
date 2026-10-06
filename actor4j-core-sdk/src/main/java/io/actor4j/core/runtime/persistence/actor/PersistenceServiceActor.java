@@ -19,12 +19,14 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.drivers.PersistenceImpl;
 
+import static io.actor4j.core.messages.ActorReservedTag.*;
+
 public class PersistenceServiceActor extends Actor {
 	protected final PersistenceImpl impl;
 	
-	public static final int PERSIST_EVENTS = 100;
-	public static final int PERSIST_STATE  = 101;
-	public static final int RECOVER  	   = 102;
+	public static final int PERSIST_EVENTS  = RESERVED_PERSIST_EVENTS;
+	public static final int PERSIST_STATE   = RESERVED_PERSIST_STATE;
+	public static final int RECOVER  	   = RESERVED_RECOVER;
 	
 	public PersistenceServiceActor(String name, PersistenceImpl impl) {
 		super(name);

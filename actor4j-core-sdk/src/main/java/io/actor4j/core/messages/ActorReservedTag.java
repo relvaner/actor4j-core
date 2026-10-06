@@ -36,10 +36,14 @@ public final class ActorReservedTag {
 	public static final int RESERVED_POD_REQUEST_METHOD_RANGE_START = RESERVED_OFFSET_MIN+1000;
 	public static final int RESERVED_POD_REQUEST_METHOD_RANGE_END   = RESERVED_OFFSET_MIN+1500;
 	
-	public static final int RESERVED_UP    	   = reservedTag(RESERVED_OFFSET_MAX); // HEALTH_CHECK_SUCCESS
+	public static final int RESERVED_UP    	  = reservedTag(RESERVED_OFFSET_MAX); // HEALTH_CHECK_SUCCESS
 	public static final int RESERVED_TIMEOUT   = reservedTag(RESERVED_OFFSET_MAX-1);
 	
 	public static final int RESERVED_UNHANDLED = reservedTag(RESERVED_OFFSET_MAX-2);
+	
+	public static final int RESERVED_PERSIST_EVENTS = reservedTag(RESERVED_OFFSET_MAX-3);
+	public static final int RESERVED_PERSIST_STATE  = reservedTag(RESERVED_OFFSET_MAX-4);
+	public static final int RESERVED_RECOVER        = reservedTag(RESERVED_OFFSET_MAX-5);
 
 	public static final int RESERVED_SERVICE_DISCOVERY_PUBLISH_SERVICE   = reservedTag(RESERVED_OFFSET_MAX-100);
 	public static final int RESERVED_SERVICE_DISCOVERY_UNPUBLISH_SERVICE = reservedTag(RESERVED_OFFSET_MAX-101);
