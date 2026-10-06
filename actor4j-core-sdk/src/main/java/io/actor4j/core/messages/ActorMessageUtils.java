@@ -36,6 +36,7 @@ public final class ActorMessageUtils {
 
 	static {
 		SUPPORTED_TYPES = ConcurrentHashMap.newKeySet();
+
 		Collections.addAll(SUPPORTED_TYPES,
 			Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
 			Character.class, String.class, Boolean.class, Object.class, UUID.class 
