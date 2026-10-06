@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.utils.DeepCopyable;
-import io.actor4j.core.utils.Shareable;
 
 public record DefaultActorMessage<T>(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) implements ActorMessage<T> {
 	public DefaultActorMessage {
@@ -113,7 +112,7 @@ public record DefaultActorMessage<T>(T value, int tag, ActorId source, ActorId d
 	@Override
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
+			if (ActorMessageUtils.isShareable(value))
 				return this;
 			else if (value instanceof DeepCopyable)
 				return ActorMessage.create(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, protocol, domain);
@@ -130,7 +129,7 @@ public record DefaultActorMessage<T>(T value, int tag, ActorId source, ActorId d
 	@Override
 	public ActorMessage<T> copy(ActorId dest) {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
+			if (ActorMessageUtils.isShareable(value))
 				return !ActorMessageUtils.equals(this.dest, dest) ? ActorMessage.create(value, tag, source, dest, interaction, protocol, domain) : this;
 			else if (value instanceof DeepCopyable)
 				return ActorMessage.create(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, protocol, domain);

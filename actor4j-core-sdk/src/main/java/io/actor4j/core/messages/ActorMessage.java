@@ -17,6 +17,7 @@ package io.actor4j.core.messages;
 
 import static io.actor4j.core.messages.ActorReservedTag.*;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import io.actor4j.core.id.ActorId;
@@ -24,7 +25,7 @@ import io.actor4j.core.json.JsonArray;
 import io.actor4j.core.json.JsonObject;
 
 public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
-	public static final UUID NO_REPLY = UUID.randomUUID();
+	public static final UUID NO_REPLY = new UUID(1, 1);
 	
 	public static final int UNHANDLED = RESERVED_UNHANDLED; 
 
@@ -96,6 +97,13 @@ public interface ActorMessage<T> extends Comparable<ActorMessage<T>> {
 	
 	public default int compareTo(ActorMessage<T> message) {
 		return Integer.compare(tag(), message.tag()); // tag - message.tag
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> Optional<ActorMessage<T>> asType(ActorMessage<?> message, Class<T> expectedValueType) {
+		return message!=null && expectedValueType.isInstance(message.value()) 
+			? Optional.of((ActorMessage<T>)message) 
+			: Optional.empty();
 	}
 	
 	public static <T> ActorMessage<T> create(T value, int tag, ActorId source, ActorId dest, UUID interaction, String protocol, String domain) {

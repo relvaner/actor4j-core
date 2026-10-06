@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.utils.DeepCopyable;
-import io.actor4j.core.utils.Shareable;
 
 public record DefaultPodActorMessage<T, U, P>(T value, int tag, ActorId source, ActorId dest, UUID interaction, U user, P params, String protocol, String domain)  implements PodActorMessage<T, U, P> {
 	public DefaultPodActorMessage {
@@ -109,7 +108,7 @@ public record DefaultPodActorMessage<T, U, P>(T value, int tag, ActorId source, 
 	@Override
 	public ActorMessage<T> copy() {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
+			if (ActorMessageUtils.isShareable(value))
 				return this;
 			else if (value instanceof DeepCopyable)
 				return new DefaultPodActorMessage<T, U, P>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, params, protocol, domain);
@@ -126,7 +125,7 @@ public record DefaultPodActorMessage<T, U, P>(T value, int tag, ActorId source, 
 	@Override
 	public ActorMessage<T> copy(ActorId dest) {
 		if (value!=null) { 
-			if (ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable)
+			if (ActorMessageUtils.isShareable(value))
 				return !ActorMessageUtils.equals(this.dest, dest) ? new DefaultPodActorMessage<T, U, P>(value, tag, source, dest, interaction, user, params, protocol, domain) : this;
 			else if (value instanceof DeepCopyable)
 				return new DefaultPodActorMessage<T, U, P>(((DeepCopyable<T>)value).deepCopy(), tag, source, dest, interaction, user, params, protocol, domain);
