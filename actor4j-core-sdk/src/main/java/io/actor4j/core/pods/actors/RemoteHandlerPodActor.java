@@ -46,28 +46,23 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 		if (message.interaction()!=null) {
 			remoteMessage = remoteMap.get(message.interaction());
 			if (remoteMessage==null)
-				requestReply = requestMap.keySet().contains(message.interaction());
+				requestReply = requestMap.containsKey(message.interaction());
 		}
 			
-		if (remoteMessage!=null || message.value() instanceof RemotePodMessage) {
-			if (remoteMessage!=null) {
-				remoteMap.remove(message.interaction());
-				internal_callback(message, remoteMessage);
-			}
-			else {
-				UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
-				
-				if (((RemotePodMessage)message.value()).remotePodMessageDTO().reply()) {
-					remoteMap.put(interaction, (RemotePodMessage)message.value()); 
-					handle((RemotePodMessage)message.value(), interaction);
-				}
-				else
-					handle((RemotePodMessage)message.value(), interaction);
-			}
-		}
-		else if (requestReply && message.value() instanceof RemotePodMessage) {
+		if (requestReply && message.value() instanceof RemotePodMessage) {
 			requestMap.remove(message.interaction());
 			handle((RemotePodMessage)message.value(), message.interaction());
+		}
+		else if (remoteMessage!=null) {
+			remoteMap.remove(message.interaction());
+			internal_callback(message, remoteMessage);
+		}
+		else if (message.value() instanceof RemotePodMessage) {
+			UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
+			
+			if (((RemotePodMessage)message.value()).remotePodMessageDTO().reply())
+				remoteMap.put(interaction, (RemotePodMessage)message.value()); 
+			handle((RemotePodMessage)message.value(), interaction);
 		}
 		else
 			super.receive(message);

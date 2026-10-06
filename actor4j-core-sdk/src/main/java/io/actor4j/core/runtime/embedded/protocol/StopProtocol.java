@@ -30,9 +30,10 @@ public class StopProtocol {
 	}
 	
 	public void postStop() {
+		String label = actorLabel(cell.getActor());
 		if (cell.host() instanceof EmbeddedHostActor h)
 			h.removeEmbeddedChild(cell.getId());
-		systemLogger().log(INFO, String.format("[LIFECYCLE] embedded actor (%s) stopped", actorLabel(cell.getActor())));
+		systemLogger().log(INFO, String.format("[LIFECYCLE] embedded actor (%s) stopped", label));
 	}
 
 	public void apply() {

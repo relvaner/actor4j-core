@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.immutable;
 
-import java.util.Collections;
 import java.util.Set;
 
 public class ImmutableSet<T> implements ImmutableCollection<Set<T>> {
@@ -24,13 +23,13 @@ public class ImmutableSet<T> implements ImmutableCollection<Set<T>> {
 	public ImmutableSet() {
 		super();
 		
-		this.set = Collections.emptySet();
+		this.set = Set.of();
 	}
 	
 	public ImmutableSet(Set<T> set) {
 		super();
 		
-		this.set = Collections.unmodifiableSet(set);
+		this.set = Set.copyOf(set);
 	}
 
 	@Override

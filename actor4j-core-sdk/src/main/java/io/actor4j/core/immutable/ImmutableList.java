@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.immutable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ImmutableList<T> implements ImmutableCollection<List<T>> {
@@ -24,13 +23,13 @@ public class ImmutableList<T> implements ImmutableCollection<List<T>> {
 	public ImmutableList() {
 		super();
 		
-		this.list = Collections.emptyList();
+		this.list = List.of();
 	}
 	
 	public ImmutableList(List<T> list) {
 		super();
 		
-		this.list = Collections.unmodifiableList(list);
+		this.list = List.copyOf(list);
 	}
 
 	@Override

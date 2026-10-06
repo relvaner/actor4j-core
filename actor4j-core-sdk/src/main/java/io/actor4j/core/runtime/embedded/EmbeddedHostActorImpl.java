@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.runtime.embedded;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
@@ -246,7 +247,7 @@ public class EmbeddedHostActorImpl {
 	}
 
 	public void postStop() {
-		for (InternalEmbeddedActorCell embeddedActorCell : router.values())
+		for (InternalEmbeddedActorCell embeddedActorCell : new ArrayList<>(router.values()))
 			embeddedActorCell.stop();
 	}
 }

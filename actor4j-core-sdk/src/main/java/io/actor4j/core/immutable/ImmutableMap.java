@@ -15,7 +15,6 @@
  */
 package io.actor4j.core.immutable;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class ImmutableMap<K, V> implements ImmutableCollection<Map<K, V>> {
@@ -24,13 +23,13 @@ public class ImmutableMap<K, V> implements ImmutableCollection<Map<K, V>> {
 	public ImmutableMap() {
 		super();
 		
-		this.map = Collections.emptyMap();
+		this.map = Map.of();
 	}
 	
 	public ImmutableMap(Map<K, V> map) {
 		super();
 		
-		this.map = Collections.unmodifiableMap(map);
+		this.map = Map.copyOf(map);
 	}
 
 	@Override

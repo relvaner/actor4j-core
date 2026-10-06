@@ -158,7 +158,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		Iterator<Entry<K, Pair<V>>> iterator = map.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<K, Pair<V>> entry = iterator.next();
-			if (currentTime-entry.getValue().timestamp/1_000_000>duration) {
+			if ((currentTime-entry.getValue().timestamp)/1_000_000>duration) {
 				lru.remove(entry.getKey());
 				iterator.remove();
 			}

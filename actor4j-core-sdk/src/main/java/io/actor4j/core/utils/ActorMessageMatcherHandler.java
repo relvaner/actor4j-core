@@ -68,24 +68,24 @@ public class ActorMessageMatcherHandler {
 	public Optional<ActorId> source(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
-		return message!=null ? Optional.of(message.source()) : Optional.empty();
+		return message!=null ? Optional.ofNullable(message.source()) : Optional.empty();
 	}
 	
 	public Optional<ActorId> dest(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
-		return message!=null ? Optional.of(message.dest()) : Optional.empty();
+		return message!=null ? Optional.ofNullable(message.dest()) : Optional.empty();
 	}
 	
 	public Optional<String> protocol(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
-		return message!=null ? Optional.of(message.protocol()) : Optional.empty();
+		return message!=null ? Optional.ofNullable(message.protocol()) : Optional.empty();
 	}
 	
 	public Optional<String> domain(UUID interaction) {
 		ActorMessage<?> message = origin(interaction);
 
-		return message!=null ? Optional.of(message.domain()) : Optional.empty();
+		return message!=null ? Optional.ofNullable(message.domain()) : Optional.empty();
 	}
 }
