@@ -17,7 +17,6 @@ package io.actor4j.core.immutable;
 
 import io.actor4j.core.messages.ActorMessageUtils;
 import io.actor4j.core.utils.DeepCopyable;
-import io.actor4j.core.utils.Shareable;
 
 public class ImmutableObject<T> implements ImmutableCollection<T> {
 	protected final T value;
@@ -26,7 +25,7 @@ public class ImmutableObject<T> implements ImmutableCollection<T> {
 		super();
 		
 		if (value!=null)
-			if (!(ActorMessageUtils.isSupportedType(value.getClass()) || value instanceof Record || value instanceof Shareable || value instanceof DeepCopyable || value instanceof Exception))
+			if (!(ActorMessageUtils.isShareable(value) || value instanceof DeepCopyable || value instanceof Exception))
 				throw new IllegalArgumentException();
 		
 		this.value = value;
