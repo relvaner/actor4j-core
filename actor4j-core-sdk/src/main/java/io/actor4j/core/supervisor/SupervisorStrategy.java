@@ -15,35 +15,39 @@
  */
 package io.actor4j.core.supervisor;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class SupervisorStrategy {
 	protected int retries;
 	protected final int maxRetries;
-	protected final long withinTimeRange;
+	protected final long withinTimeRangeNanos;
 	
 	protected long startTime;
 	protected long stopTime;
+	protected boolean started;
 	
 	public SupervisorStrategy(int maxRetries, long withinTimeRange) {
 		this.maxRetries = maxRetries;
-		this.withinTimeRange = withinTimeRange;
+		this.withinTimeRangeNanos = TimeUnit.MILLISECONDS.toNanos(withinTimeRange);
 	}
 	
 	protected boolean isInTimeRange() {
-		return (stopTime-startTime) <= withinTimeRange;
+		return (stopTime-startTime) <= withinTimeRangeNanos;
 	}
 	
 	protected void reset() {
 		retries   = 1;
 		
-		startTime = System.currentTimeMillis();
+		startTime = System.nanoTime();
 		stopTime  = startTime;
+		started   = true;
 	}
 	
 	public SupervisorStrategyDirective handle(Exception e) {
-		if (startTime==0)
+		if (!started)
 			reset();
 		else
-			stopTime  = System.currentTimeMillis();
+			stopTime  = System.nanoTime();
 		
 		if (isInTimeRange()) {
 			if (maxRetries>0 && retries>maxRetries)
