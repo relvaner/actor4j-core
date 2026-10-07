@@ -360,7 +360,8 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void unbecome() {
-		behaviourStack.pop();
+		if (!behaviourStack.isEmpty())
+			behaviourStack.pop();
 	}
 	
 	@Override
