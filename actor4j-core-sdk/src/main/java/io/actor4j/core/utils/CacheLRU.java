@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2017, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,29 @@
  */
 package io.actor4j.core.utils;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CacheLRU<K, V> implements Cache<K, V> {
 	protected final Map<K, V> map;
-	protected final Deque<K> lru;
 	
 	protected final int size;
 	
 	public CacheLRU(int size) {
-		map = new HashMap<>(size);
-		lru = new ArrayDeque<>(size);
-		
 		this.size = size;
+		
+		map = new LinkedHashMap<>(16, 0.75f, true) {
+			@Override
+			protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+				return size()>CacheLRU.this.size;
+			}
+		};
 	}
 	
 	public Map<K, V> getMap() {
 		return map;
-	}
-
-	public Deque<K> getLru() {
-		return lru;
 	}
 	
 	public int size() {
@@ -54,42 +51,24 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 
 	@Override
 	public V get(K key) {
-		V result = map.get(key);
-		
-		if (result!=null) {
-			lru.remove(key);
-			lru.addLast(key);
-		}
-		
-		return result;
+		return map.get(key);
 	}
 	
 	@Override
 	public Map<K, V> get(List<K> keys) {
-		return map.entrySet()
-			.stream()
-			.filter(entry -> keys.contains(entry.getKey()))
-			.peek(entry -> {
-				lru.remove(entry.getKey());
-				lru.addLast(entry.getKey());
-			})
-			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+		Map<K, V> result = new HashMap<>();
+		for (K key : keys) {
+			V value = map.get(key);
+			if (value!=null)
+				result.put(key, value);
+		}
+		
+		return result;
 	}
 	
 	@Override
 	public V put(K key, V value) {
-		V result = map.put(key, value);
-		
-		if (result==null) {
-			resize();
-			lru.addLast(key);
-		}
-		else {
-			lru.remove(key);
-			lru.addLast(key);
-		}
-		
-		return result;
+		return map.put(key, value);
 	}
 	
 	@Override
@@ -115,7 +94,6 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	@Override
 	public void remove(K key) {
 		map.remove(key);
-		lru.remove(key);
 	}
 	
 	@Override
@@ -126,14 +104,6 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 	@Override
 	public void clear() {
 		map.clear();
-		lru.clear();
-	}
-	
-	protected void resize() {
-		if (map.size()>size) {
-			map.remove(lru.getFirst());
-			lru.removeFirst();
-		}
 	}
 	
 	@Override
@@ -148,6 +118,6 @@ public class CacheLRU<K, V> implements Cache<K, V> {
 
 	@Override
 	public String toString() {
-		return "CacheLRU [map=" + map + ", lru=" + lru + ", size=" + size + "]";
+		return "CacheLRU [map=" + map  + ", size=" + size + "]";
 	}
 }

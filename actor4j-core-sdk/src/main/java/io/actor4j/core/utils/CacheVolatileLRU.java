@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,12 @@
  */
 package io.actor4j.core.utils;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	protected static class Pair<V> {
@@ -36,23 +34,22 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	protected final Map<K, Pair<V>> map;
-	protected final Deque<K> lru;
 	
 	protected final int size;
 	
 	public CacheVolatileLRU(int size) {
-		map = new HashMap<>(size);
-		lru = new ArrayDeque<>(size);
-		
 		this.size = size;
+		
+		map = new LinkedHashMap<>(16, 0.75f, true) {
+			@Override
+			protected boolean removeEldestEntry(Map.Entry<K, Pair<V>> eldest) {
+				return size()>CacheVolatileLRU.this.size;
+			}
+		};
 	}
 		
 	public Map<K, Pair<V>> getMap() {
 		return map;
-	}
-	
-	public Deque<K> getLru() {
-		return lru;
 	}
 	
 	@Override
@@ -66,9 +63,7 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		
 		Pair<V> pair = map.get(key);
 		if (pair!=null) {
-			lru.remove(key);
 			pair.timestamp = System.nanoTime();
-			lru.addLast(key);
 			result = pair.value;
 		}
 		
@@ -77,15 +72,14 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	
 	@Override
 	public Map<K, V> get(List<K> keys) {
-		return map.entrySet()
-			.stream()
-			.filter(entry -> keys.contains(entry.getKey()))
-			.peek(entry -> {
-				lru.remove(entry.getKey());
-				entry.getValue().timestamp = System.nanoTime();
-				lru.addLast(entry.getKey());
-			})
-			.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().value));
+		Map<K, V> result = new HashMap<>();
+		for (K key : keys) {
+			V value = get(key);
+			if (value!=null)
+				result.put(key, value);
+		}
+		
+		return result;
 	}
 	
 	@Override
@@ -94,15 +88,8 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		
 		long timestamp = System.nanoTime();
 		Pair<V> pair = map.put(key, new Pair<V>(value, timestamp));
-		if (pair==null) {
-			resize();
-			lru.addLast(key);
-		}
-		else {
-			lru.remove(key);
-			lru.addLast(key);
+		if (pair!=null)
 			result = pair.value;
-		}
 		
 		return result;
 	}
@@ -129,7 +116,6 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	
 	@Override
 	public void remove(K key) {
-		lru.remove(key);
 		map.remove(key);
 	}
 	
@@ -141,14 +127,6 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	@Override
 	public void clear() {
 		map.clear();
-		lru.clear();
-	}
-	
-	protected void resize() {
-		if (map.size()>size) {
-			map.remove(lru.getFirst());
-			lru.removeFirst();
-		}
 	}
 	
 	@Override
@@ -158,10 +136,8 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 		Iterator<Entry<K, Pair<V>>> iterator = map.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry<K, Pair<V>> entry = iterator.next();
-			if ((currentTime-entry.getValue().timestamp)/1_000_000>duration) {
-				lru.remove(entry.getKey());
+			if ((currentTime-entry.getValue().timestamp)/1_000_000>duration)
 				iterator.remove();
-			}
 		}
 	}
 	
@@ -172,6 +148,6 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 
 	@Override
 	public String toString() {
-		return "CacheVolatileLRU [map=" + map + ", lru=" + lru + ", size=" + size + "]";
+		return "CacheVolatileLRU [map=" + map  + ", size=" + size + "]";
 	}
 }

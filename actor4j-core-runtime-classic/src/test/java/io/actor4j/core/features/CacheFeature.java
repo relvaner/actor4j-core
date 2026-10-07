@@ -50,11 +50,11 @@ public class CacheFeature {
 			assertEquals(data[i][1], cache.get(data[i][0]));
 		
 		assertTrue(cache.getMap().size()==5);
-		assertTrue(cache.getLru().size()==5);
+		assertTrue(cache.getMap().keySet().size()==5);
 		cache.put(data[5][0], data[5][1]);
 		cache.put(data[6][0], data[6][1]);
 		assertTrue(cache.getMap().size()==5);
-		assertTrue(cache.getLru().size()==5);
+		assertTrue(cache.getMap().keySet().size()==5);
 		
 		int i=2;
 		for (String key : cache.getMap().keySet()) {
@@ -64,7 +64,7 @@ public class CacheFeature {
 		cache.get(data[5][0]);
 		cache.get(data[4][0]);
 		
-		Iterator<String> iterator = cache.getLru().iterator();
+		Iterator<String> iterator = cache.getMap().keySet().iterator();
 		assertEquals(data[2][0], iterator.next());
 		assertEquals(data[3][0], iterator.next());
 		assertEquals(data[6][0], iterator.next());
@@ -73,7 +73,7 @@ public class CacheFeature {
 		/*
 		String nextToLast = null;
 		String last = null;
-		Iterator<String> iterator = cache.getLru().iterator();
+		Iterator<String> iterator = cache.getMap().keySet().iterator();
 		while (iterator.hasNext()) {
 			nextToLast = last;
 			last = iterator.next();
@@ -107,11 +107,11 @@ public class CacheFeature {
 			assertEquals(data[i][1], cache.get(data[i][0]));
 		
 		assertTrue(cache.getMap().size()==5);
-		assertTrue(cache.getLru().size()==5);
+		assertTrue(cache.getMap().keySet().size()==5);
 		cache.put(data[5][0], data[5][1]);
 		cache.put(data[6][0], data[6][1]);
 		assertTrue(cache.getMap().size()==5);
-		assertTrue(cache.getLru().size()==5);
+		assertTrue(cache.getMap().keySet().size()==5);
 		
 		int i=2;
 		for (String key : cache.getMap().keySet()) {
@@ -121,7 +121,7 @@ public class CacheFeature {
 		cache.get(data[5][0]);
 		cache.get(data[4][0]);
 
-		Iterator<String> iterator = cache.getLru().iterator();
+		Iterator<String> iterator = cache.getMap().keySet().iterator();
 		assertEquals(data[2][0], iterator.next());
 		assertEquals(data[3][0], iterator.next());
 		assertEquals(data[6][0], iterator.next());
