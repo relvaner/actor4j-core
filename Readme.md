@@ -16,15 +16,28 @@ See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) 
 
 ### Installation
 
-Add **one** runtime (the SDK is included transitively):
+**Developing actors or a library?** Depend only on the SDK. Your code stays runtime-independent:
 
 ```xml
 <dependency>
     <groupId>io.actor4j</groupId>
-    <artifactId>actor4j-core-runtime</artifactId>
+    <artifactId>actor4j-core-sdk</artifactId>
     <version>2.4.0-beta.3</version>
 </dependency>
 ```
+
+**Running an application?** Add the runtime of your choice (it includes the SDK transitively):
+
+```xml
+<dependency>
+    <groupId>io.actor4j</groupId>
+    <artifactId>actor4j-core-runtime</artifactId> <!-- or -classic, -loom -->
+    <version>2.4.0-beta.3</version>
+</dependency>
+```
+
+Actors written against the SDK run unchanged on every runtime, so you can develop first and choose
+(or switch) the runtime later, based on your workload.
 
 or a SNAPSHOT with JitPack.io:
 
