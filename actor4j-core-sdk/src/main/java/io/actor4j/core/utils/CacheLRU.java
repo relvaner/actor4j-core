@@ -22,7 +22,6 @@ import java.util.Map;
 
 public class CacheLRU<K, V> implements Cache<K, V> {
 	protected final Map<K, V> map;
-	
 	protected final int size;
 	
 	public CacheLRU(int size) {

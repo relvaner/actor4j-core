@@ -34,7 +34,6 @@ public class CacheVolatileLRU<K, V> implements Cache<K, V>  {
 	}
 	
 	protected final Map<K, Pair<V>> map;
-	
 	protected final int size;
 	
 	public CacheVolatileLRU(int size) {
