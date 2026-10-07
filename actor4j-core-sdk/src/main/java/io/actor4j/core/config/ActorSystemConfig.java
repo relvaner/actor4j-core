@@ -434,7 +434,7 @@ public class ActorSystemConfig {
 		}
 
 		public Builder<T> sleepMode(long sleepTime) {
-			this.sleepTime = sleepTime;
+			this.sleepTime = requireNonNegative(sleepTime, "sleepTime");
 			threadMode = ActorThreadMode.SLEEP;
 
 			return this;
