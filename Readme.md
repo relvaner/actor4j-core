@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/relvaner/actor4j-core.svg?branch=master)](https://travis-ci.org/relvaner/actor4j-core)
-[![Coverage Status](https://coveralls.io/repos/github/relvaner/actor4j-core/badge.svg?branch=master)](https://coveralls.io/github/relvaner/actor4j-core?branch=master)
+[![Maven Central](https://img.shields.io/maven-central/v/io.actor4j/actor4j-core-runtime?include_prereleases)](https://central.sonatype.com/namespace/io.actor4j)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 ## Actor4j - Core ##
 
