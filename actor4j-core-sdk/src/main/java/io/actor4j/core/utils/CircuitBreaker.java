@@ -17,6 +17,8 @@ package io.actor4j.core.utils;
 
 import static io.actor4j.core.utils.CircuitBreaker.CircuitBreakerState.*;
 
+import java.util.concurrent.TimeUnit;
+
 // @See: https://martinfowler.com/bliki/CircuitBreaker.html
 public class CircuitBreaker {
 	public enum CircuitBreakerState {
@@ -29,16 +31,18 @@ public class CircuitBreaker {
 	
 	protected final int maxFailures;
 	protected final long resetTimeout;
+	protected final long resetTimeoutNanos;
 	
 	protected int failureCount;
 	protected long lastFailureTime;
-	
+	protected boolean trialCallPending;
 	
 	public CircuitBreaker(int maxFailures, long resetTimeout) {
 		super();
 		
 		this.maxFailures = maxFailures;
 		this.resetTimeout = resetTimeout;
+		this.resetTimeoutNanos = TimeUnit.MILLISECONDS.toNanos(resetTimeout);
 		
 		failureCount = 0;
 		lastFailureTime = 0;
@@ -64,8 +68,7 @@ public class CircuitBreaker {
 	
 	public CircuitBreakerState updateAndGetState() {
 		if (failureCount >= maxFailures) {
-			long currentTime = System.currentTimeMillis();
-			if (currentTime - lastFailureTime >= resetTimeout)
+			if (System.nanoTime() - lastFailureTime >= resetTimeoutNanos)
 				state = HALF_OPEN;
 			else
 				state = OPEN;
@@ -77,18 +80,28 @@ public class CircuitBreaker {
 	}
 
 	public boolean isCallable() {
+		boolean result = false;
+		
 		state = updateAndGetState();
-
-		return (state==CLOSED || state==HALF_OPEN);
+		if (state==CLOSED)
+			result = true;
+		else if (state==HALF_OPEN && !trialCallPending) {
+			trialCallPending = true;
+			result = true;
+		}
+		
+		return result;
 	}
 	
 	public void success() {
 		failureCount = 0;
 		lastFailureTime = 0;
+		trialCallPending = false;
 	}
     
 	public void failure() {
 		failureCount++;
-		lastFailureTime = System.currentTimeMillis();
+		lastFailureTime = System.nanoTime();
+		trialCallPending = false;
 	}
 }
