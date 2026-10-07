@@ -32,7 +32,7 @@ import io.actor4j.core.runtime.InternalPseudoActorCell;
 public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	protected PseudoActor actor;
 
-	public ConcurrentPseudoActor() {
+	protected ConcurrentPseudoActor() {
 		super();
 	}
 
@@ -96,7 +96,7 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	public boolean run() {
 		boolean result = false;
 		
-		for (int j=0; poll(getOuterQueue()) && j<actor.getCell().getSystem().getConfig().bufferQueueSize(); j++)
+		for (int j=0; j<actor.getCell().getSystem().getConfig().bufferQueueSize() && poll(getOuterQueue()); j++)
 			result = true;
 		
 		return result;
