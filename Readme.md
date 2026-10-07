@@ -41,6 +41,8 @@ Actors written against the SDK run unchanged on every runtime, so you can develo
 
 #### Snapshots (JitPack)
 
+The latest development version from `master` is available via JitPack:
+
 ```xml
 <repositories>
 	<repository>
