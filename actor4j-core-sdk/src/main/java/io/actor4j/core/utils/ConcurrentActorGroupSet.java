@@ -17,11 +17,9 @@ package io.actor4j.core.utils;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import io.actor4j.core.id.ActorId;
 
@@ -41,24 +39,15 @@ public class ConcurrentActorGroupSet implements ActorGroup {
 	public ConcurrentActorGroupSet(Collection<ActorId> c) {
 		super();
 
-		Map<ActorId, Boolean> map = new ConcurrentHashMap<>((Map<ActorId, Boolean>)c.stream().collect(Collectors.toMap(v -> v, v -> false)));
-		set = map.keySet();
-		id = UUID.randomUUID();
-	}
-
-	public ConcurrentActorGroupSet(int initialCapacity, float loadFactor) {
-		super();
-
-		Map<ActorId, Boolean> map = new ConcurrentHashMap<>(initialCapacity, loadFactor);
-		set = map.keySet();
+		set = ConcurrentHashMap.newKeySet(c.size());
+		set.addAll(c);
 		id = UUID.randomUUID();
 	}
 
 	public ConcurrentActorGroupSet(int initialCapacity) {
 		super();
 
-		Map<ActorId, Boolean> map = new ConcurrentHashMap<>(initialCapacity);
-		set = map.keySet();
+		set = ConcurrentHashMap.newKeySet(initialCapacity);
 		id = UUID.randomUUID();
 	}
 
