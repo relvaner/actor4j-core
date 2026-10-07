@@ -39,7 +39,7 @@ See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) 
 Actors written against the SDK run unchanged on every runtime, so you can develop first and choose
 (or switch) the runtime later, based on your workload.
 
-or a SNAPSHOT with JitPack.io:
+#### Snapshots (JitPack)
 
 ```xml
 <repositories>
