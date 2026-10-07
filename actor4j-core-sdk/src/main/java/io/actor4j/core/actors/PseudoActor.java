@@ -47,13 +47,13 @@ public abstract class PseudoActor extends Actor implements PseudoActorRef {
 	@Deprecated
 	@Override
 	public ActorId addChild(ActorFactory factory) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 	
 	@Deprecated
 	@Override
 	public List<ActorId> addChild(ActorFactory factory, int instances) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
