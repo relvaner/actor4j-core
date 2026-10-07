@@ -16,10 +16,9 @@
 package io.actor4j.core.messages;
 
 import java.util.Collections;
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import io.actor4j.core.utils.Shareable;
 
@@ -30,12 +29,13 @@ public final class ActorMessageUtils {
 		return SUPPORTED_TYPES.contains(type);
 	}
 	
+	// @See Objects.equals
 	public static <T> boolean equals(T a, T b) {	
-		return Objects.equals(a, b);
+		return (a == b) || (a != null && a.equals(b));
 	}
 
 	static {
-		SUPPORTED_TYPES = ConcurrentHashMap.newKeySet();
+		SUPPORTED_TYPES = new HashSet<>();
 
 		Collections.addAll(SUPPORTED_TYPES,
 			Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class,
@@ -46,8 +46,8 @@ public final class ActorMessageUtils {
 	public static boolean isShareable(Object value) {
 		return value==null
 			|| isSupportedType(value.getClass())
-			|| value instanceof Enum
 			|| value instanceof Record
-			|| value instanceof Shareable;
+			|| value instanceof Shareable
+			|| value instanceof Enum;
 	}
 }
