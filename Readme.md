@@ -61,7 +61,8 @@ system.send(ActorMessage.create("World", 0, system.SYSTEM_ID(), greeter));
 ```
 
 ### Learn more
-- [Documentation](https://actor4j.io/documentation/) · [Specification](https://github.com/relvaner/actor4j-spec)
+- [Documentation](https://actor4j.io/documentation/)
+- [Specification](https://github.com/relvaner/actor4j-spec)
 - [Publications](https://actor4j.io/introduction/#publications)
 
 Last updated: October 7, 2026
