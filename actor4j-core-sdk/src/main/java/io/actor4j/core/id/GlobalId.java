@@ -18,7 +18,7 @@ package io.actor4j.core.id;
 import java.util.UUID;
 
 public record GlobalId(ActorId localId, UUID globalId) implements ActorId {
-	public static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
+	public static final UUID UUID_ZERO = new UUID(0, 0);
 	
 	public GlobalId(UUID globalId) {
 		this(null, globalId);
