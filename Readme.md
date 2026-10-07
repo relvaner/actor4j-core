@@ -3,46 +3,28 @@
 
 ## Actor4j - Core ##
 
-For more information on `Actor4j`, see the following more complete [documentation](https://actor4j.io/documentation/) on `actor4j.io`.
+Lightweight actor model runtime for Java 21+. No external dependencies, GraalVM native-image ready.
+**One API, three runtimes**: choose the execution model that fits your workload, without changing your code.
 
-## Status of Development ##
+| Runtime | Artifact | Best for |
+|---|---|---|
+| Thread-bound (default) | `actor4j-core-runtime` | actors that can be grouped, high intra-thread messaging |
+| Classic | `actor4j-core-runtime-classic` | heavy coordination between many actors (work-stealing) |
+| Loom | `actor4j-core-runtime-loom` | I/O-bound actors (virtual threads) |
 
-Most of the `Actor4j - Core` library (`v2.x`) has no external dependencies (except runtime-extended) and is also compilable as a native image with GraalVM. The minimum requirement is currently Java 21. Within the branch `java-8`, you find an older Java 8 version. `ActorMessage` is encapsulated as a Java `Record`. The `Actor4j - Core` library is now separated into `sdk` and `runtime` to provide more runtimes. A [specification](https://github.com/relvaner/actor4j-spec) exists for the core part of Actor4j (default runtime). New research publication forthcoming - Fall 2025!
+See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) for the evaluation.
 
-## Installation ##
+### Installation
 
-The current version is `2.4`, and it is still under further development. In the future, new versions and other libraries will be available as a Maven dependency. The entire documentation is now related to version `2.4.x`. Please note that the documentation is currently incomplete and does not yet fully reflect all the features implemented.
-
-Currently, you can add the following Maven dependencies to your pom.xml file (using your preffered runtime):
+Add **one** runtime (the SDK is included transitively):
 
 ```xml
-<!-- SDK -->
 <dependency>
-	<groupId>io.actor4j</groupId>
-	<artifactId>actor4j-core-sdk</artifactId>
-	<version><!-- REPLACE WITH LATEST RELEASE --></version>
+    <groupId>io.actor4j</groupId>
+    <artifactId>actor4j-core-runtime</artifactId>
+    <version>2.4.0-beta.3</version>
 </dependency>
-
-<!-- DEFAULT RUNTIME (thread-bounded message queue) -->
-<dependency>
-	<groupId>io.actor4j</groupId>
-	<artifactId>actor4j-core-runtime</artifactId>
-	<version><!-- REPLACE WITH LATEST RELEASE --></version>
-</dependency>
-
-<!-- CLASSIC RUNTIME (actor-bounded message queue) -->
-<dependency>
-	<groupId>io.actor4j</groupId>
-	<artifactId>actor4j-core-runtime-classic</artifactId>
-	<version><!-- REPLACE WITH LATEST RELEASE --></version>
-</dependency>
-
-<!-- LOOM RUNTIME (actor-bounded message queue, using virtual threads) -->
-<dependency>
-	<groupId>io.actor4j</groupId>
-	<artifactId>actor4j-core-runtime-loom</artifactId>
-	<version><!-- REPLACE WITH LATEST RELEASE --></version>
-</dependency>
+```
 
 or a SNAPSHOT with JitPack.io:
 
@@ -62,5 +44,24 @@ or a SNAPSHOT with JitPack.io:
 	</dependency>
 </dependencies>
 ```
+### Hello World
 
-Last updated: August 13, 2025
+```java
+ActorSystem system = ActorSystem.create(ActorRuntime.factory());
+
+ActorId greeter = system.addActor(() -> new Actor() {
+    @Override
+    public void receive(ActorMessage<?> message) {
+        System.out.println("Hello, " + message.value() + "!");
+    }
+});
+
+system.start();
+system.send(ActorMessage.create("World", 0, system.SYSTEM_ID(), greeter));
+```
+
+### Learn more
+- [Documentation](https://actor4j.io/documentation/) · [Specification](https://github.com/relvaner/actor4j-spec)
+- [Publications](https://actor4j.io/introduction/#publications)
+
+Last updated: October 7, 2026
