@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.actors;
 
+import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Predicate;
 
@@ -94,7 +95,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source().equals(source))
+				if (Objects.equals(message.source(), source))
 					result = action.test(message);
 				return result;
 			}

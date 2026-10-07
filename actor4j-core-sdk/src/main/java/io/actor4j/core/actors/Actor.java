@@ -16,6 +16,7 @@
 package io.actor4j.core.actors;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
@@ -155,7 +156,7 @@ public abstract class Actor implements ActorRef {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.source().equals(source)) {
+				if (Objects.equals(message.source(), source)) {
 					action.accept(message);
 				}
 			}
@@ -185,7 +186,7 @@ public abstract class Actor implements ActorRef {
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.source().equals(source) && message.tag()==tag) {
+				if (Objects.equals(message.source(), source) && message.tag()==tag) {
 					action.accept(message);
 				}
 			}
@@ -212,11 +213,12 @@ public abstract class Actor implements ActorRef {
 	}
 	
 	public void await(final Predicate<ActorMessage<?>> predicate, final BiConsumer<ActorMessage<?>, Boolean> action, long timeout, TimeUnit unit, boolean replace) {
-		ScheduledFuture<?> scheduledFuture = getSystem().globalTimer().scheduleOnce(ActorMessage.create(null, TIMEOUT, self(), null), self(), timeout, unit);
+		UUID timeoutId = UUID.randomUUID();
+		ScheduledFuture<?> scheduledFuture = getSystem().globalTimer().scheduleOnce(ActorMessage.create(null, TIMEOUT, self(), null, timeoutId), self(), timeout, unit);
 		become(new Consumer<ActorMessage<?>>() {
 			@Override
 			public void accept(ActorMessage<?> message) {
-				if (message.tag()==TIMEOUT)
+				if (message.tag()==TIMEOUT && timeoutId.equals(message.interaction()))
 					action.accept(null, true);
 				else if (predicate.test(message)) {
 					scheduledFuture.cancel(true);
