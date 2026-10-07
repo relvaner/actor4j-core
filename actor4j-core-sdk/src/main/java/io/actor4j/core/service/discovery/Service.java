@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.UUID;
 
 public record Service(UUID id, String name, UUID address, String alias, String path, List<String> topics, String version, String description) {
+	public Service {
+		topics = topics!=null ? List.copyOf(topics) : null;
+	}
+	
 	public Service(String name, UUID address, String alias, String path, List<String> topics, String version, String description) {
 		this(UUID.randomUUID(), name, address, alias, path, topics, version, description);
 	}
