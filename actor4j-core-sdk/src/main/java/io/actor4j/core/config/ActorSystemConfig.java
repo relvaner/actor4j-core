@@ -377,13 +377,13 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> queueSize(int queueSize) {
-			this.queueSize = queueSize;
+			this.queueSize = requirePositive(queueSize, "queueSize");
 
 			return this;
 		}
 
 		public Builder<T> bufferQueueSize(int bufferQueueSize) {
-			this.bufferQueueSize = bufferQueueSize;
+			this.bufferQueueSize = requirePositive(bufferQueueSize, "bufferQueueSize");
 
 			return this;
 		}
@@ -398,20 +398,20 @@ public class ActorSystemConfig {
 		}
 
 		public Builder<T> parallelismFactor(int parallelismFactor) {
-			this.parallelismFactor = parallelismFactor;
+			this.parallelismFactor = requirePositive(parallelismFactor, "parallelismFactor");
 
 			return this;
 		}
 		
 		public Builder<T> throughput(int throughput) {
-			this.throughput = throughput;
+			this.throughput = requirePositive(throughput, "throughput");
 			calculateHighLoad();
 
 			return this;
 		}
 		
 		public Builder<T> maxSpins(int maxSpins) {
-			this.maxSpins = maxSpins;
+			this.maxSpins = requireNonNegative(maxSpins, "maxSpins");
 			calculateHighLoad();
 
 			return this;
@@ -453,13 +453,13 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> maxResourceThreads(int maxResourceThreads) {
-			this.maxResourceThreads = maxResourceThreads;
+			this.maxResourceThreads = requirePositive(maxResourceThreads, "maxResourceThreads");
 
 			return this;
 		}
 		
 		public Builder<T> awaitTerminationTimeout(long awaitTerminationTimeout) {
-			this.awaitTerminationTimeout = awaitTerminationTimeout;
+			this.awaitTerminationTimeout = requireNonNegative(awaitTerminationTimeout, "awaitTerminationTimeout");
 			
 			return this;
 		}
@@ -471,14 +471,14 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> withinTimeRange(long withinTimeRange) {
-			this.withinTimeRange = withinTimeRange;
+			this.withinTimeRange = requireNonNegative(withinTimeRange, "withinTimeRange");
 
 			return this;
 		}
 		
 		public Builder<T> persistenceMode(PersistenceDriver persistenceDriver) {
 			this.persistenceDriver = persistenceDriver;
-			this.persistenceMode = true;
+			this.persistenceMode = persistenceDriver!=null;
 
 			return this;
 		}
@@ -502,7 +502,7 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> maxProcessingTimeSamples(int maxProcessingTimeSamples) {
-			this.maxProcessingTimeSamples = maxProcessingTimeSamples;
+			this.maxProcessingTimeSamples = requirePositive(maxProcessingTimeSamples, "maxProcessingTimeSamples");
 			
 			return this;
 		}
@@ -526,13 +526,13 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> horizontalPodAutoscalerSyncTime(long horizontalPodAutoscalerSyncTime) {
-			this.horizontalPodAutoscalerSyncTime = horizontalPodAutoscalerSyncTime;
+			this.horizontalPodAutoscalerSyncTime = requirePositive(horizontalPodAutoscalerSyncTime, "horizontalPodAutoscalerSyncTime");
 			
 			return this;
 		}
 
 		public Builder<T> horizontalPodAutoscalerMeasurementTime(long horizontalPodAutoscalerMeasurementTime) {
-			this.horizontalPodAutoscalerMeasurementTime = horizontalPodAutoscalerMeasurementTime;
+			this.horizontalPodAutoscalerMeasurementTime = requirePositive(horizontalPodAutoscalerMeasurementTime, "horizontalPodAutoscalerMeasurementTime");
 			
 			return this;
 		}
@@ -562,13 +562,13 @@ public class ActorSystemConfig {
 		}
 		
 		public Builder<T> watchdogSyncTime(long watchdogSyncTime) {
-			this.watchdogSyncTime = watchdogSyncTime;
+			this.watchdogSyncTime = requirePositive(watchdogSyncTime, "watchdogSyncTime");
 			
 			return this;
 		}
 		
 		public Builder<T> watchdogTimeout(long watchdogTimeout) {
-			this.watchdogTimeout = watchdogTimeout;
+			this.watchdogTimeout = requirePositive(watchdogTimeout, "watchdogTimeout");
 			
 			return this;
 		}
@@ -664,5 +664,29 @@ public class ActorSystemConfig {
 			return (T) podHost.getInstance();
 		else
 			return null;
+	}
+	
+	protected static int requirePositive(int value, String name) {
+		if (value<=0)
+			throw new IllegalArgumentException(String.format("%s must be > 0: %d", name, value));
+		return value;
+	}
+	
+	protected static long requirePositive(long value, String name) {
+		if (value<=0)
+			throw new IllegalArgumentException(String.format("%s must be > 0: %d", name, value));
+		return value;
+	}
+	
+	protected static int requireNonNegative(int value, String name) {
+		if (value<0)
+			throw new IllegalArgumentException(String.format("%s must be >= 0: %d", name, value));
+		return value;
+	}
+
+	protected static long requireNonNegative(long value, String name) {
+		if (value<0)
+			throw new IllegalArgumentException(String.format("%s must be >= 0: %d", name, value));
+		return value;
 	}
 }
