@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2025, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,23 +23,25 @@ public interface ActorId extends Redirect, Shareable {
 	public ActorId localId();
 	public UUID globalId();
 	
-	public static ActorId none() {
-		return new ActorId() {
-			@Override
-			public ActorId localId() {
-				return null;
-			}
+	public static final ActorId NONE = new ActorId() {
+		@Override
+		public ActorId localId() {
+			return null;
+		}
 
-			@Override
-			public UUID globalId() {
-				return null;
-			}
-			
-			@Override
-			public ActorId redirectId() {
-				return null;
-			}
-		};
+		@Override
+		public UUID globalId() {
+			return null;
+		}
+		
+		@Override
+		public ActorId redirectId() {
+			return null;
+		}
+	};
+	
+	public static ActorId none() {
+		return NONE;
 	}
 	
 	public static ActorId of(UUID globalId) {
@@ -47,6 +49,6 @@ public interface ActorId extends Redirect, Shareable {
 	}
 	
 	public static ActorId ofRedirect(ActorId dest) {
-		return Redirect.of(dest);
+		return RedirectId.of(dest);
 	}
 }
