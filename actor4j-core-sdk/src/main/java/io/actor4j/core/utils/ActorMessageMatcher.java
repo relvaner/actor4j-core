@@ -224,14 +224,8 @@ public class ActorMessageMatcher {
 			new Predicate<ActorMessage<?>>(){
 				@Override
 				public boolean test(ActorMessage<?> message) {
-					boolean result = false;
-					if (message.value()!=null) {
-						result = message.value().getClass().equals(clazz);
-						if (predicate!=null)
-							result = result && predicate.test(message);
-					}
-				
-					return result;
+					return clazz.isInstance(message.value()) 
+						&& (predicate==null || predicate.test(message));
 				}
 			},
 			action);
