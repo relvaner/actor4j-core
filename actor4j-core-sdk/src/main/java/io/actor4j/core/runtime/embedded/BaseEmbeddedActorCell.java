@@ -143,7 +143,8 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	
 	@Override
 	public void unbecome() {
-		behaviourStack.pop();
+		if (!behaviourStack.isEmpty())
+			behaviourStack.pop();
 	}
 	
 	@Override
@@ -153,7 +154,8 @@ public class BaseEmbeddedActorCell implements InternalEmbeddedActorCell {
 	
 	@Override
 	public void fireActiveBehaviour(ActorMessage<?> message, Predicate<Integer> condition) {
-		if (condition.test(behaviourStack.size()))
+		int size = behaviourStack.size();
+		if (size>0 && condition.test(size))
 			behaviourStack.peek().test(message);
 	}
 	
