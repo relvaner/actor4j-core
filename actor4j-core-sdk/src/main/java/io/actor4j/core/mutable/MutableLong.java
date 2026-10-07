@@ -40,31 +40,41 @@ public class MutableLong implements MutableNumber<Long> {
 	}
 
 	@Override
-	public Long add(Long delta) {
+	public Long addAndGet(Long delta) {
 		return value += delta;
 	}
 	
-	public long add(long delta) {
+	public long addAndGet(long delta) {
 		return value += delta;
 	}
 
 	@Override
-	public Long sub(Long delta) {
+	public Long subtractAndGet(Long delta) {
 		return value -= delta;
 	}
 	
-	public long sub(long delta) {
+	public long subtractAndGet(long delta) {
 		return value -= delta;
 	}
 	
 	@Override
-	public Long inc() {
+	public Long getAndIncrement() {
 		return value++;
 	}
 
 	@Override
-	public Long dec() {
+	public Long getAndDecrement() {
 		return value--;
+	}
+	
+	@Override
+	public Long incrementAndGet() {
+		return ++value;
+	}
+	
+	@Override
+	public Long decrementAndGet() {
+		return --value;
 	}
 
 	@Override

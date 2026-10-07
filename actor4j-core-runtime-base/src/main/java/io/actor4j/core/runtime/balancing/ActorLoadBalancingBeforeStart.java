@@ -70,7 +70,7 @@ public class ActorLoadBalancingBeforeStart {
 				}
 				if (buffer.remove(cell.getId()))
 					cell.setThreadId(threadId);
-				j.inc();
+				j.getAndIncrement();
 				if (j.get()==executionUnitList.size())
 					j.set(0);
 				
@@ -86,7 +86,7 @@ public class ActorLoadBalancingBeforeStart {
 				if (threadId==null) {
 					threadId = executionUnitList.get(i.get());
 					groupsMap.put(((ActorGroupMember)actor).getGroupId(), threadId);
-					i.inc();
+					i.getAndIncrement();
 					if (i.get()==executionUnitList.size())
 						i.set(0);
 				}
@@ -102,7 +102,7 @@ public class ActorLoadBalancingBeforeStart {
 		i.set(0);
 		for (ActorId id : buffer) {
 			((InternalActorCell)id).setThreadId(executionUnitList.get(i.get()));
-			i.inc();
+			i.getAndIncrement();
 			if (i.get()==executionUnitList.size())
 				i.set(0);
 		}

@@ -16,21 +16,11 @@
 package io.actor4j.core.mutable;
 
 public interface MutableNumber<T extends Number> extends Mutable<T>, Comparable<MutableNumber<T>> {
-	public T add(T delta);
-	public T sub(T delta);
+	public T addAndGet(T delta);
+	public T subtractAndGet(T delta);
 
-	public T inc();
-	public T dec();
-	
-	public default T subtract(T delta) {
-		return sub(delta);
-	}
-	
-	public default T increment() {
-		return inc();
-	}
-	
-	public default T decrement() {
-		return dec();
-	}
+	public T getAndIncrement();
+	public T getAndDecrement();
+	public T incrementAndGet();
+	public T decrementAndGet();
 }

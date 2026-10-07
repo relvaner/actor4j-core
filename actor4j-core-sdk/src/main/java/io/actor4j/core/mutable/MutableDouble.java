@@ -40,31 +40,41 @@ public class MutableDouble implements MutableNumber<Double> {
 	}
 
 	@Override
-	public Double add(Double delta) {
+	public Double addAndGet(Double delta) {
 		return value += delta;
 	}
 	
-	public double add(double delta) {
+	public double addAndGet(double delta) {
 		return value += delta;
 	}
 
 	@Override
-	public Double sub(Double delta) {
+	public Double subtractAndGet(Double delta) {
 		return value -= delta;
 	}
 	
-	public double sub(double delta) {
+	public double susubtractAndGet(double delta) {
 		return value -= delta;
 	}
 	
 	@Override
-	public Double inc() {
+	public Double getAndIncrement() {
 		return value++;
 	}
 
 	@Override
-	public Double dec() {
+	public Double getAndDecrement() {
 		return value--;
+	}
+	
+	@Override
+	public Double incrementAndGet() {
+		return ++value;
+	}
+	
+	@Override
+	public Double decrementAndGet() {
+		return --value;
 	}
 
 	@Override

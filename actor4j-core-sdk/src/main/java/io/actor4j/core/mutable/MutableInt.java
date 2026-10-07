@@ -40,31 +40,41 @@ public class MutableInt implements MutableNumber<Integer> {
 	}
 
 	@Override
-	public Integer add(Integer delta) {
+	public Integer addAndGet(Integer delta) {
 		return value += delta;
 	}
 
-	public int add(int delta) {
+	public int addAndGet(int delta) {
 		return value += delta;
 	}
 	
 	@Override
-	public Integer sub(Integer delta) {
+	public Integer subtractAndGet(Integer delta) {
 		return value -= delta;
 	}
 	
-	public int sub(int delta) {
+	public int subtractAndGet(int delta) {
 		return value -= delta;
 	}
 	
 	@Override
-	public Integer inc() {
+	public Integer getAndIncrement() {
 		return value++;
 	}
 
 	@Override
-	public Integer dec() {
+	public Integer getAndDecrement() {
 		return value--;
+	}
+	
+	@Override
+	public Integer incrementAndGet() {
+		return ++value;
+	}
+	
+	@Override
+	public Integer decrementAndGet() {
+		return --value;
 	}
 
 	@Override
