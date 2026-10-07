@@ -48,7 +48,6 @@ public abstract class ActorWithCache<K, V> extends Actor {
 		super(name);
 		
 		this.cacheSize = cacheSize;
-		cache = createCache(cacheSize);
 	}
 	
 	public ActorWithCache(int cacheSize) {
@@ -56,6 +55,14 @@ public abstract class ActorWithCache<K, V> extends Actor {
 	}
 	
 	public abstract Cache<K, V> createCache(int cacheSize);
+	
+	/**
+	 * Creates the cache. Subclasses overriding preStart() must call super.preStart().
+	 */
+	@Override
+	public void preStart() {
+		cache = createCache(cacheSize);
+	}
 	
 	@Override
 	public void receive(ActorMessage<?> message) {
