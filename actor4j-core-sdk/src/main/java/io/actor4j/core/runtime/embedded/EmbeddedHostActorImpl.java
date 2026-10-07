@@ -220,7 +220,7 @@ public class EmbeddedHostActorImpl {
 				InternalEmbeddedActorCell embeddedActorCell = router.get(message.dest());
 				if (embeddedActorCell!=null)
 					faultToleranceMethod(message, embeddedActorCell);
-				else if (message.dest().equals(self()) && callbackHost!=null)
+				else if (self().equals(message.dest()) && callbackHost!=null)
 					callbackHost.accept(message);
 			}
 		}
