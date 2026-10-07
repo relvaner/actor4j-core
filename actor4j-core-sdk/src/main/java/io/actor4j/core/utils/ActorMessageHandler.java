@@ -75,7 +75,7 @@ public class ActorMessageHandler<T> {
 		BiConsumer<T, ActorMessage<?>> handler = handlerMap.get(message.interaction());
 		if (handler!=null) {
 			if (message.value()!=null) {
-				if (message.value().getClass().equals(clazz)) {
+				if (clazz.isInstance(message.value())) {
 					if (predicate!=null)
 						result = predicate.test(message);
 					if (result) {

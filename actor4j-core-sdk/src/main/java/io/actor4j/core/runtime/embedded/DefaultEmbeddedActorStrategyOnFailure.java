@@ -19,6 +19,8 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.supervisor.SupervisorStrategyDirective.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
+import java.util.ArrayList;
+
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.runtime.InternalActorCell;
 import io.actor4j.core.supervisor.OneForAllSupervisorStrategy;
@@ -50,12 +52,12 @@ public class DefaultEmbeddedActorStrategyOnFailure implements EmbeddedActorStrat
 	}
 	
 	protected void oneForAll_directive_restart(InternalEmbeddedActorCell cell, Exception reason) {
-		for (InternalEmbeddedActorCell embeddedActorCell : hostImpl.getRouter().values())
+		for (InternalEmbeddedActorCell embeddedActorCell : new ArrayList<>(hostImpl.getRouter().values()))
 			embeddedActorCell.preRestart(reason);
 	}
 	
 	protected void oneForAll_directive_stop(InternalEmbeddedActorCell cell) {
-		for (InternalEmbeddedActorCell embeddedActorCell : hostImpl.getRouter().values())
+		for (InternalEmbeddedActorCell embeddedActorCell : new ArrayList<>(hostImpl.getRouter().values()))
 			embeddedActorCell.stop();
 	}
 	

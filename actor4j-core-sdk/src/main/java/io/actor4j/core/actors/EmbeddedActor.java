@@ -127,7 +127,7 @@ public abstract class EmbeddedActor implements EmbeddedActorRef {
 			@Override
 			public boolean test(ActorMessage<?> message) {
 				boolean result = false;
-				if (message.source().equals(source) && message.tag()==tag)
+				if (Objects.equals(message.source(), source) && message.tag()==tag)
 					result = action.test(message);
 				return result;
 			}
