@@ -18,17 +18,15 @@ package io.actor4j.core.pods.actors;
 import java.util.Map;
 import java.util.UUID;
 
-import io.actor4j.core.function.TriConsumer;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.Shard;
 import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.runtime.config.InternalServerProxy;
 import io.actor4j.core.runtime.pods.PodReplicationTuple;
 
 // One-Way
 public abstract class ShardProxyPodActor extends PodChildActor implements Shard {
-	public static TriConsumer<ActorMessage<?>, String, String> internal_server_proxy;
-	
 	protected String alias;
 	protected int shardCount;
 	
@@ -48,8 +46,9 @@ public abstract class ShardProxyPodActor extends PodChildActor implements Shard 
 
 	@Override
 	public void receive(ActorMessage<?> message) {
-		if (internal_server_proxy!=null)
-			internal_server_proxy.accept(message, context.domain(), shardId(message, shardCount));
+		InternalServerProxy internalServerProxy = ((InternalActorSystem)getSystem()).getRuntimeConfig().internalServerProxy();
+		if (internalServerProxy!=null)
+			internalServerProxy.accept(message, context.domain(), shardId(message, shardCount));
 		else
 			forward(message, getShardAlias(shardId(message, shardCount)));
 	}

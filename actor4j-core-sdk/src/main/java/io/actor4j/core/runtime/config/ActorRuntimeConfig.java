@@ -18,6 +18,7 @@ package io.actor4j.core.runtime.config;
 public class ActorRuntimeConfig {
 	private final InternalServerCallback internalServerCallback;
 	private final InternalServerRequest internalServerRequest;
+	private final InternalServerProxy internalServerProxy;
 	
 	public InternalServerCallback internalServerCallback() {
 		return internalServerCallback;
@@ -27,21 +28,28 @@ public class ActorRuntimeConfig {
 		return internalServerRequest;
 	}
 	
+	public InternalServerProxy internalServerProxy() {
+		return internalServerProxy;
+	}
+	
 	public static abstract class Builder<T extends ActorRuntimeConfig> {
 		protected InternalServerCallback internalServerCallback;
 		protected InternalServerRequest internalServerRequest;
+		protected InternalServerProxy internalServerProxy;
 		
 		public Builder() {
 			super();
 			
 			internalServerCallback = null;
 			internalServerRequest  = null;
+			internalServerProxy = null;
 		}
 		
 		public Builder(T config) {
 			super();
 			this.internalServerCallback = config.internalServerCallback();
 			this.internalServerRequest = config.internalServerRequest();
+			this.internalServerProxy = config.internalServerProxy();
 		}
 		
 		public Builder<T> internalServerCallback(InternalServerCallback internalServerCallback) {
@@ -56,6 +64,12 @@ public class ActorRuntimeConfig {
 			return this;
 		}
 		
+		public Builder<T> internalServerProxy(InternalServerProxy internalServerProxy) {
+			this.internalServerProxy = internalServerProxy;
+			
+			return this;
+		}
+		
 		public abstract T build();
 	}
 	
@@ -63,6 +77,7 @@ public class ActorRuntimeConfig {
 		super();
 		this.internalServerCallback = builder.internalServerCallback;
 		this.internalServerRequest = builder.internalServerRequest;
+		this.internalServerProxy = builder.internalServerProxy;
 	}
 	
 	public static ActorRuntimeConfig create() {
