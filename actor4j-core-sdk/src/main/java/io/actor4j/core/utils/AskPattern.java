@@ -60,7 +60,11 @@ public final class AskPattern {
 		boolean exception = false;
 		try {
 			result = future.get();
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			e.printStackTrace();
+			exception = true;
+		} catch (ExecutionException e) {
 			e.printStackTrace();
 			exception = true;
 		}
@@ -82,7 +86,12 @@ public final class AskPattern {
 		boolean exception = false;
 		try {
 			result = future.get(timeout, unit);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			e.printStackTrace();
+			exception = true;
+		} catch (ExecutionException | TimeoutException e) {
 			e.printStackTrace();
 			exception = true;
 		}
