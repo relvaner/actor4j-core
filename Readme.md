@@ -8,7 +8,7 @@ Lightweight actor model runtime for Java 21+. No external dependencies (except r
 
 | Runtime | Artifact | Message queues | Best for |
 |---|---|---|---|
-| Default | `actor4j-core-runtime` | thread-bound | communicating actors on the same thread |
+| Default | `actor4j-core-runtime` | thread-bound | communicating actors grouped on the same thread |
 | Classic | `actor4j-core-runtime-classic` | one per actor, work-stealing thread pool | any actor distribution |
 | Loom | `actor4j-core-runtime-loom` | one per actor, on virtual threads | blocking I/O |
 
