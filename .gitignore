@@ -107,3 +107,5 @@ nb-configuration.xml
 *.pmd
 
 *.flattened-pom.xml
+
+settings.xml
