@@ -66,7 +66,8 @@ public class ResourceActorCell extends BaseActorCell {
 		
 		if (stateful) {
 			// Spinlock
-			while (!lock.compareAndSet(false, true));
+			while (!lock.compareAndSet(false, true))
+				Thread.onSpinWait();
 			try {
 				result = (status==false) ? status=true : false;
 			
@@ -119,7 +120,8 @@ public class ResourceActorCell extends BaseActorCell {
 					}
 					
 					// Spinlock
-					while (!lock.compareAndSet(false, true));
+					while (!lock.compareAndSet(false, true))
+						Thread.onSpinWait();
 					try {
 						if (queue.peek()==null) {
 							status = false;
