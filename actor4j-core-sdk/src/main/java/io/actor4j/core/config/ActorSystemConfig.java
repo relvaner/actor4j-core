@@ -41,6 +41,7 @@ public class ActorSystemConfig {
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
 	
+	private final int maxThreadRetries;
 	private final int maxResourceThreads;
 	
 	private final long awaitTerminationTimeout;
@@ -123,6 +124,10 @@ public class ActorSystemConfig {
 	
 	public long sleepTime() {
 		return sleepTime;
+	}
+
+	public int maxThreadRetries() {
+		return maxThreadRetries;
 	}
 	
 	public int maxResourceThreads() {
@@ -231,6 +236,7 @@ public class ActorSystemConfig {
 		protected ActorThreadMode threadMode;
 		protected long sleepTime;
 		
+		protected int maxThreadRetries;
 		protected int maxResourceThreads;
 		
 		protected long awaitTerminationTimeout;
@@ -287,6 +293,7 @@ public class ActorSystemConfig {
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			
+			maxThreadRetries = 3;
 			maxResourceThreads = 200;
 			
 			awaitTerminationTimeout = 2_000;
@@ -331,6 +338,7 @@ public class ActorSystemConfig {
 			this.highLoad = config.highLoad();
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
+			this.maxThreadRetries =  config.maxThreadRetries();
 			this.maxResourceThreads = config.maxResourceThreads();
 			this.awaitTerminationTimeout = config.awaitTerminationTimeout();
 			this.maxRetries = config.maxRetries();
@@ -448,6 +456,12 @@ public class ActorSystemConfig {
 		
 		public Builder<T> hybridMode() {
 			threadMode = ActorThreadMode.HYBRID;
+
+			return this;
+		}
+		
+		public Builder<T> maxThreadRetries(int maxThreadRetries) {
+			this.maxThreadRetries = requirePositive(maxThreadRetries, "maxThreadRetries");
 
 			return this;
 		}
@@ -596,6 +610,7 @@ public class ActorSystemConfig {
 		this.highLoad = builder.highLoad;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
+		this.maxThreadRetries = builder.maxThreadRetries;
 		this.maxResourceThreads = builder.maxResourceThreads;
 		this.awaitTerminationTimeout = builder.awaitTerminationTimeout;
 		this.maxRetries = builder.maxRetries;

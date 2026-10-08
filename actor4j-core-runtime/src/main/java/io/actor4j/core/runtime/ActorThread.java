@@ -139,7 +139,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 	@Override
 	public void run() {
 		int retries = 0;
-		final int maxRetries = system.getConfig().maxRetries(); // TODO
+		final int maxRetries = system.getConfig().maxThreadRetries();
 		
 		while (!isInterrupted() && retries<maxRetries) { // stays operational in case of an error up to maxRetries
 			final int retries_ = retries;
