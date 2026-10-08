@@ -88,6 +88,10 @@ public class EmbeddedHostActorImpl {
 		return container;
 	}
 
+	public EmbeddedActorStrategyOnFailure getActorStrategyOnFailure() {
+		return actorStrategyOnFailure;
+	}
+
 	public ActorEmbeddedRouter<ActorId> getRouter() {
 		return router;
 	}

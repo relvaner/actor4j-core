@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.runtime.embedded;
 
+import io.actor4j.core.supervisor.SupervisorStrategyDirective;
+
 public interface EmbeddedActorStrategyOnFailure {
-	public void handle(InternalEmbeddedActorCell cell, Exception e);
+	public SupervisorStrategyDirective handle(InternalEmbeddedActorCell cell, Exception e);
 }

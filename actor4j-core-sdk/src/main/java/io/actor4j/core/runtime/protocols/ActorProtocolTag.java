@@ -22,14 +22,15 @@ public final class ActorProtocolTag {
 	public static final int INTERNAL_KILL                    = -4;
 	public static final int INTERNAL_HEALTH_CHECK            = -5;
 	public static final int INTERNAL_RECOVER                 = -6;
+	public static final int INTERNAL_ESCALATE                = -7;
 	
-	public static final int INTERNAL_PERSISTENCE_RECOVER     = -7;
-	public static final int INTERNAL_PERSISTENCE_SUCCESS     = -8;
-	public static final int INTERNAL_PERSISTENCE_FAILURE     = -9;
+	public static final int INTERNAL_PERSISTENCE_RECOVER     = -8;
+	public static final int INTERNAL_PERSISTENCE_SUCCESS     = -9;
+	public static final int INTERNAL_PERSISTENCE_FAILURE     = -10;
 	
-	public static final int INTERNAL_ACTIVATE                = -10;
-	public static final int INTERNAL_DEACTIVATE          	 = -11;
+	public static final int INTERNAL_ACTIVATE                = -11;
+	public static final int INTERNAL_DEACTIVATE          	= -12;
 	
-	public static final int INTERNAL_STOP_USER_SPACE     	 = -12;
-	public static final int INTERNAL_STOP_USER_SPACE_SUCCESS = -13;
+	public static final int INTERNAL_STOP_USER_SPACE     	= -13;
+	public static final int INTERNAL_STOP_USER_SPACE_SUCCESS = -14;
 }

@@ -62,7 +62,7 @@ public class DefaultEmbeddedActorStrategyOnFailure implements EmbeddedActorStrat
 	}
 	
 	@Override
-	public void handle(InternalEmbeddedActorCell cell, Exception e) {
+	public SupervisorStrategyDirective handle(InternalEmbeddedActorCell cell, Exception e) {
 		if (cell.getParentSupervisorStrategy()==null)	
 			cell.setParentSupervisorStrategy(((InternalActorCell)((Actor)hostImpl.getHost()).getCell()).supervisorStrategy());
 		
@@ -85,5 +85,7 @@ public class DefaultEmbeddedActorStrategyOnFailure implements EmbeddedActorStrat
 			else if (directive==STOP)
 				oneForAll_directive_stop(cell);
 		}
+		
+		return directive;
 	}
 }

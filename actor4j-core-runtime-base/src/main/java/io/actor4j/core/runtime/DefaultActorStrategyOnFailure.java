@@ -95,11 +95,12 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 		SupervisorStrategy supervisorStrategy = cell.getParentSupervisorStrategy();
 		SupervisorStrategyDirective directive = supervisorStrategy.handle(e);
 		
-		while (directive==ESCALATE && !parent.isRoot()) {
-			parent = (InternalActorCell)parent.getParent();
-			supervisorStrategy = parent.supervisorStrategy();
-			cell.setParentSupervisorStrategy(supervisorStrategy);
-			directive = supervisorStrategy.handle(e);
+		if (directive==ESCALATE) {
+			if (!parent.isRoot()) {
+				system.sendAsDirective(ActorMessage.create(e, INTERNAL_ESCALATE, cell.getId(), parent.getId()));
+				return;
+			}
+			directive = STOP;
 		}
 		
 		if (supervisorStrategy instanceof OneForOneSupervisorStrategy) { 

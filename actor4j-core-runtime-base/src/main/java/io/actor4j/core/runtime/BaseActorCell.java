@@ -306,6 +306,8 @@ public class BaseActorCell implements InternalActorCell {
 				else
 					preRestart(null);
 			}
+			else if (message.tag()==INTERNAL_ESCALATE)
+				system.getStrategyOnFailure().handle(this, (Exception)message.value());
 			else if (message.tag()==INTERNAL_STOP)
 				stop();
 			else if (message.tag()==INTERNAL_KILL) 
