@@ -3,7 +3,7 @@
 
 ## Actor4j - Core ##
 
-Lightweight actor model runtimes for Java 21+. No external dependencies (except runtime-extended), GraalVM native-image ready.
+Lightweight actor model framework for Java 21+. No external dependencies (except runtime-extended), GraalVM native-image ready.
 **One API, three runtimes**: choose the execution model that fits your workload, without changing your code.
 
 | Runtime | Artifact | Message queues | Best for |
