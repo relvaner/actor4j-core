@@ -123,7 +123,7 @@ public class BaseActorCell implements InternalActorCell {
 	
 	public void cleanUp() {
 //		actor = null;
-		globalId.set(null);
+		unexpose();
 		factory = null;
 
 		threadId = -1;
@@ -199,6 +199,13 @@ public class BaseActorCell implements InternalActorCell {
 			globalId.set(uuid);
 		}
 		system.getExposedCells().put(uuid, this);
+	}
+	
+	@Override
+	public void unexpose() {
+		UUID uuid = globalId.get();
+		if (uuid!=null)
+			system.getExposedCells().remove(uuid, this);
 	}
 	
 	@Override
@@ -451,7 +458,7 @@ public class BaseActorCell implements InternalActorCell {
 	@Override
 	public void unhandled(ActorMessage<?> message) {
 		if (system.getConfig().debugUnhandled()) {
-			Actor sourceActor = ((InternalActorCell)message.source()).getActor();
+			Actor sourceActor = message.source() instanceof InternalActorCell c ? c.getActor() : null;
 			if (sourceActor!=null)
 				systemLogger().log(WARN,
 					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from source (%s)",

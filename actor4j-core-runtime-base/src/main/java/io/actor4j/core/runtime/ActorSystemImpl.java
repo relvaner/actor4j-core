@@ -89,9 +89,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected final AtomicReference<CountDownLatch> countDownLatch;
 	protected final AtomicInteger countDownLatchPark;
 
-	protected /*quasi final*/ ActorId ZERO_ID;
-	protected final ActorId ALIAS_ID = ZERO_ID;
-	
+	protected /*quasi final*/ ActorId ZERO_ID; // Intended for dead letters
 	protected /*quasi final*/ ActorId USER_ID;
 	protected /*quasi final*/ ActorId SYSTEM_ID;
 	protected /*quasi final*/ ActorId UNKNOWN_ID;
@@ -146,7 +144,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorId ALIAS_ID() {
-		return ALIAS_ID;
+		// Destination for messages to unresolvable aliases (currently ZERO_ID, intended for dead letters)
+		return ZERO_ID;
 	}
 	
 	@Override

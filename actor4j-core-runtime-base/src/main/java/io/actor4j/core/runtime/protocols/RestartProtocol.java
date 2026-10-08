@@ -44,6 +44,7 @@ public final class RestartProtocol {
 	protected static void postRestart(final InternalActorCell cell, final Exception reason) {
 		cell.postStop();
 		try {
+			cell.unbecomeAll(); // drop behaviours of the old instance (incl. the restart behaviour)
 			Actor newActor = (Actor)cell.getFactory().create();
 			newActor.setCell(cell);
 			cell.setActor(newActor);
@@ -86,7 +87,6 @@ public final class RestartProtocol {
 								postStop(cell);
 							else {
 								postRestart(cell, reason);
-								cell.unbecome();
 								cell.setActiveDirectiveBehaviour(false);
 							}
 						}

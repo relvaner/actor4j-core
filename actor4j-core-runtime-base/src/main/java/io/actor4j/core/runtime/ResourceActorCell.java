@@ -81,26 +81,41 @@ public class ResourceActorCell extends BaseActorCell {
 		
 		return result;
 	}
+	
+	protected void handleFailure(Exception e) {
+		system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.RESOURCE_ACTOR, getId());
+		system.getStrategyOnFailure().handle(this, e);
+	}
+	
+	protected void faultToleranceMethod(ActorMessage<?> message) {
+		try {
+			internal_receive(message);
+		}
+		catch(Exception e) {
+			handleFailure(e);
+		}	
+	}
 
 	public void run(ActorMessage<?> message) {
 		try {
 			before();
 			
 			if (!bulk)
-				internal_receive(message);
+				faultToleranceMethod(message);
 			
 			if (stateful) {
 				while (true) {
 					if (!bulk) {
 						while ((message=queue.poll())!=null)
-							internal_receive(message);
+							faultToleranceMethod(message);
 					}
 					else {
 						List<ActorMessage<?>> bulkList = new LinkedList<>();
-						bulkList.add(message);
+						if (message!=null) // only the first pass holds the triggering message, later passes see the null left by queue.poll()
+							bulkList.add(message);
 						while ((message=queue.poll())!=null)
 							bulkList.add(message);
-						internal_receive(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID(), getId()));
+						faultToleranceMethod(ActorMessage.create(new ImmutableList<>(bulkList), 0, system.SYSTEM_ID(), getId()));
 					}
 					
 					// Spinlock
@@ -120,17 +135,26 @@ public class ResourceActorCell extends BaseActorCell {
 			after();
 		}
 		catch(Exception e) {
-			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.RESOURCE_ACTOR, getId());
-			system.getStrategyOnFailure().handle(this, e);
+			handleFailure(e);
 		}	
 	}
 	
 	public void before() {
-		((ResourceActor)actor).before();
+		try {
+			((ResourceActor)actor).before();
+		}
+		catch(Exception e) {
+			handleFailure(e);
+		}	
 	}
 	
 	public void after() {
-		((ResourceActor)actor).after();
+		try {
+			((ResourceActor)actor).after();
+		}
+		catch(Exception e) {
+			handleFailure(e);
+		}
 	}
 	
 	@Deprecated
