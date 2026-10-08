@@ -3,14 +3,14 @@
 
 ## Actor4j - Core ##
 
-Lightweight actor model runtime for Java 21+. No external dependencies, GraalVM native-image ready.
+Lightweight actor model framework for Java 21+: one SDK, three runtimes (default, classic, loom). No external dependencies (except runtime-extended), GraalVM native-image ready.
 **One API, three runtimes**: choose the execution model that fits your workload, without changing your code.
 
-| Runtime | Artifact | Best for |
-|---|---|---|
-| Thread-bound (default) | `actor4j-core-runtime` | actors that can be grouped, high intra-thread messaging |
-| Classic | `actor4j-core-runtime-classic` | heavy coordination between many actors (work-stealing) |
-| Loom | `actor4j-core-runtime-loom` | I/O-bound actors (virtual threads) |
+| Runtime | Artifact | Message queues | Best for |
+|---|---|---|---|
+| Default | `actor4j-core-runtime` | thread-bound | communicating actors grouped on the same thread |
+| Classic | `actor4j-core-runtime-classic` | one per actor, work-stealing thread pool | any actor distribution |
+| Loom | `actor4j-core-runtime-loom` | one per actor, on virtual threads | blocking I/O |
 
 See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) for the evaluation.
 
