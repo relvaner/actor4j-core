@@ -18,14 +18,14 @@ package io.actor4j.core.runtime;
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -514,17 +514,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	public void setPodDomain(ActorId id, String domain) {
-		if (id!=null && domain!=null && !domain.isEmpty()) {
-			Queue<ActorId> queue = null;
-			if ((queue=podDomains.get(domain))==null) {
-				queue = new ConcurrentLinkedQueue<>();
-				queue.add(id);
-				podDomains.put(domain, queue);
-			}	
-			else {
-				queue.add(id);
-			}
-		}
+		if (id!=null && domain!=null && !domain.isEmpty())
+			podDomains.computeIfAbsent(domain, k -> new ConcurrentLinkedQueue<>()).add(id);
 	}
 	
 	@Override
@@ -599,22 +590,28 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public void removeActor(ActorId id) {
 		InternalActorCell cell = (InternalActorCell)id;
 		if (cell.getType()==ActorCell.DEFAULT_ACTOR_CELL) {
-			if (cell.isPod())
+			if (cell.isPod()) {
 				podCells.remove(id);
+				
+				String domain = ((InternalPodActorCell)cell).getContext().domain();
+				if (domain!=null)
+					podDomains.computeIfPresent(domain, (k, queue) -> {
+						queue.remove(id);
+						return queue.isEmpty() ? null : queue;
+					});
+			}
 		}
 		else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL)
 			resourceCells.remove(id);
 		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL)
 			pseudoCells.remove(id);
 		
-		String alias = null;
-		if ((alias=hasAliases.get(id))!=null) {
-			hasAliases.remove(id);
-			Queue<ActorId> queue = aliases.get(alias);
-			queue.remove(id);
-			if (queue.isEmpty())
-				aliases.remove(alias);
-		}
+		String alias = hasAliases.remove(id);
+		if (alias!=null)
+			aliases.computeIfPresent(alias, (k, queue) -> {
+				queue.remove(id);
+				return queue.isEmpty() ? null : queue; // null removes the entry
+			});
 	}
 
 	@Override
@@ -639,17 +636,13 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public ActorSystemImpl setAlias(ActorId id, String alias) {
 		if (id!=null && alias!=null && !alias.isEmpty()) {
-			Queue<ActorId> queue = null;
-			if ((queue=aliases.get(alias))==null) {
-				queue = new ConcurrentLinkedQueue<>();
+			aliases.compute(alias, (k, queue) -> {
+				if (queue==null)
+					queue = new ConcurrentLinkedQueue<>();
 				queue.add(id);
-				aliases.put(alias, queue);
-				hasAliases.put(id, alias);
-			}	
-			else {
-				queue.add(id);
-				hasAliases.put(id, alias);
-			}
+				return queue;
+			});
+			hasAliases.put(id, alias);
 		}
 		
 		return this;
@@ -683,21 +676,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public String getAliasFromActor(ActorId id) {
-		String result = null;
-		
-		Iterator<Entry<String, Queue<ActorId>>> iteratorAliases = aliases.entrySet().iterator();
-		outer: while (iteratorAliases.hasNext()) {
-			Entry<String, Queue<ActorId>> entry = iteratorAliases.next();
-			Iterator<ActorId> iteratorQueue = entry.getValue().iterator();
-			while (iteratorQueue.hasNext()) {
-				if (id==iteratorQueue.next()) {
-					result = entry.getKey();
-					break outer;
-				}
-			}
-		}
-			
-		return result;
+		return id!=null ? hasAliases.get(id) : null;
 	}
 	
 	@Override
@@ -708,17 +687,17 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			if (id==USER_ID)
 				result = "/";
 			else {
-				StringBuffer buffer = new StringBuffer();
+				StringBuilder builder = new StringBuilder();
 				InternalActorCell cell = (InternalActorCell)id;
 				if (cell.getActor()!=null)
-					buffer.append("/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
+					builder.append("/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
 				ActorId parent = null;
 				while ((parent=cell.getParent())!=null && parent!=USER_ID) {
 					cell = (InternalActorCell)parent;
-					buffer.insert(0, "/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
+					builder.insert(0, "/" + (cell.getActor().getName()!=null ? cell.getActor().getName():cell.getActor().getId().toString()));
 				}
 				
-				result = buffer.toString();
+				result = builder.toString();
 			}
 		}
 		
@@ -934,7 +913,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public boolean internal_iterateCell(InternalActorCell root, Function<InternalActorCell, Boolean> action) {
 		boolean result = false;
 		
-		Stack<InternalActorCell> stack = new Stack<>();
+		Deque<InternalActorCell> stack = new ArrayDeque<>();
 		stack.push(root);
 		
 		while (!stack.isEmpty()) {
