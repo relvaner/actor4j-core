@@ -64,6 +64,8 @@ public class AllFeaturesTest {
 	public static void beforeClass() {
 		systemLogger().setLevel(ERROR);
 		logger().setLevel(ERROR);
+		
+		System.out.println("### runtime() = " + runtime());
 	}
 	
 	public static String runtime() {
