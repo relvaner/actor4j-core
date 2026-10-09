@@ -212,6 +212,6 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 
 	@Override
 	public void unsafe_post(ActorMessage<?> message, ActorId source, String alias) {
-		// TODO Auto-generated method stub
+		post(message, source, alias); // no thread affinity: fall back to regular posting
 	}
 }
