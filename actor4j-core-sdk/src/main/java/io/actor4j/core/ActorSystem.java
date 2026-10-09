@@ -18,6 +18,7 @@ package io.actor4j.core;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
@@ -72,6 +73,7 @@ public interface ActorSystem {
 	public ActorSystem sendViaPath(ActorMessage<?> message, String path);
 	public ActorSystem sendViaAlias(ActorMessage<?> message, String alias);
 	public ActorSystem sendWhenActive(ActorMessage<?> message);
+	public ActorSystem sendWhenActive(ActorMessage<?> message, long timeout, TimeUnit unit);
 	public ActorSystem sendViaGlobalId(ActorMessage<?> message, UUID globalId);
 	public ActorSystem broadcast(ActorMessage<?> message, ActorGroup group);
 	

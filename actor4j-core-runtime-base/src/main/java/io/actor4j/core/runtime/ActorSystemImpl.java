@@ -16,6 +16,8 @@
 package io.actor4j.core.runtime;
 
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
+import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
 import java.io.File;
 import java.util.ArrayDeque;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
@@ -844,11 +847,17 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorSystemImpl sendWhenActive(ActorMessage<?> message) {
+		return sendWhenActive(message, 10, TimeUnit.SECONDS);
+	}
+	
+	@Override
+	public ActorSystemImpl sendWhenActive(ActorMessage<?> message, long timeout, TimeUnit unit) {
 		if (executorService.isStarted() && messagingEnabled.get() && message!=null && message.dest()!=null)  {
 			InternalActorCell cell = (InternalActorCell)message.dest();
 			if (cell.isActive())
 				messageDispatcher.postOuter(message);
-			else
+			else {
+				long deadline = System.nanoTime() + unit.toNanos(timeout);
 				((ActorTimerExecutorService)executorService.globalTimer()).schedule(new Runnable() {
 					@Override
 					public void run() {
@@ -856,8 +865,13 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 							messageDispatcher.postOuter(message);
 							throw new RuntimeException("Task canceled"); // cancel
 						}
+						else if (System.nanoTime()>deadline) {
+							systemLogger().log(ERROR, String.format("[sendWhenActive] Actor (%s) not active within timeout, message dropped", actorLabel(cell.getActor())));
+							throw new CancellationException();
+						}
 					}
 				}, 25, 25, TimeUnit.MILLISECONDS);
+			}
 		}
 		
 		return this;
