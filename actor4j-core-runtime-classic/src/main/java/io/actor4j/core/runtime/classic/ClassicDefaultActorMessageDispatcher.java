@@ -61,15 +61,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<ActorId> destinations = system.getActorsFromAlias(alias);
-
-			dest = null;
-			if (!destinations.isEmpty()) {
-				if (destinations.size()==1)
-					dest = destinations.get(0);
-				else
-					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			}
+			dest = system.internal_resolveAlias(alias);
 			if (dest==null)
 				dest = system.ALIAS_ID();
 		}

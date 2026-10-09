@@ -18,7 +18,6 @@ package io.actor4j.core.runtime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -77,20 +76,9 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
 		if (alias!=null) {
-			List<ActorId> destinations = system.getActorsFromAlias(alias);
-
-			ActorId dest = null;
-			if (!destinations.isEmpty()) {
-				if (destinations.size()==1)
-					dest = destinations.get(0);
-				else {
-					Random random = new Random();
-					dest = destinations.get(random.nextInt(destinations.size()));
-				}
-			}
-			message = message.shallowCopy((dest!=null) ? dest : system.ZERO_ID());
+			ActorId dest = system.internal_resolveAlias(alias);
+			message = message.shallowCopy(dest!=null ? dest : system.ALIAS_ID());
 		}
-		
 		system.send(message);
 	}
 	

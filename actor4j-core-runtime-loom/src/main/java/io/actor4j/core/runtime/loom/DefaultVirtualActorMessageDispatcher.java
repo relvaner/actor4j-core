@@ -19,8 +19,6 @@ import static io.actor4j.core.logging.ActorLogger.WARN;
 import static io.actor4j.core.logging.ActorLogger.systemLogger;
 import static io.actor4j.core.utils.ActorUtils.*;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
@@ -63,15 +61,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 		ActorId dest = message.dest();
 		
 		if (alias!=null) {
-			List<ActorId> destinations = system.getActorsFromAlias(alias);
-
-			dest = null;
-			if (!destinations.isEmpty()) {
-				if (destinations.size()==1)
-					dest = destinations.get(0);
-				else
-					dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			}
+			dest = system.internal_resolveAlias(alias);
 			if (dest==null)
 				dest = system.ALIAS_ID();
 		}

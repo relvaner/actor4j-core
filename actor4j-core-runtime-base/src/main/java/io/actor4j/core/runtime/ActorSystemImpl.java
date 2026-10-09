@@ -22,7 +22,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -36,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 import io.actor4j.core.ActorCell;
@@ -82,6 +83,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected final AtomicBoolean shutdownHookTriggered;
 	
 	protected final Queue<ActorMessage<?>> bufferQueue;
+	protected final Lock bufferQueueLock;
 	protected final ActorExecutorService executorService;
 	
 	protected final ActorStrategyOnFailure strategyOnFailure;
@@ -122,6 +124,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		shutdownHookTriggered = new AtomicBoolean();
 		
 		bufferQueue = createLockFreeLinkedQueue();
+		bufferQueueLock = new ReentrantLock();
 		executorService = createActorExecutorService();
 		
 		strategyOnFailure = new DefaultActorStrategyOnFailure(this);
@@ -665,11 +668,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public List<ActorId> getActorsFromAlias(String alias) {
-		List<ActorId> result = new LinkedList<>();
+		List<ActorId> result = new ArrayList<>();
 		
 		Queue<ActorId> queue = aliases.get(alias);
 		if (queue!=null)
-			queue.forEach((id) -> result.add(id));
+			result.addAll(queue);
 		
 		return result;
 	}
@@ -737,12 +740,27 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		return (result!=null) ? result.getId() : null;
 	}
+
+	@Override
+	public boolean bufferIfNotMessagingEnabled(ActorMessage<?> message, ActorId dest) {
+		if (messagingEnabled.get())
+			return false;
+		
+		bufferQueueLock.lock();
+		try {
+			if (messagingEnabled.get())
+				return false;
+			bufferQueue.offer(dest!=null ? message.copy(dest) : message.copy());
+			return true;
+		}
+		finally {
+			bufferQueueLock.unlock();
+		}
+	}
 	
 	@Override
 	public ActorSystemImpl send(ActorMessage<?> message) {
-		if (!messagingEnabled.get()) 
-			bufferQueue.offer(message.copy());
-		else
+		if (!bufferIfNotMessagingEnabled(message, null))
 			messageDispatcher.postOuter(message);
 		
 		return this;
@@ -750,9 +768,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorSystemImpl send(ActorMessage<?> message, ActorId dest) {
-		if (!messagingEnabled.get()) 
-			bufferQueue.offer(message.copy(dest));
-		else
+		if (!bufferIfNotMessagingEnabled(message, dest))
 			messageDispatcher.postOuter(message.shallowCopy(dest));
 		
 		return this;
@@ -768,42 +784,38 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	}
 	
 	@Override
-	public ActorSystemImpl sendViaAlias(ActorMessage<?> message, String alias) {
-		List<ActorId> destinations = getActorsFromAlias(alias);
+	public ActorId internal_resolveAlias(String alias) {
+		ActorId result = null;
 		
-		if (!destinations.isEmpty()) {
-			ActorId dest = null;
-			
-			if (destinations.size()==1)
-				dest = destinations.get(0);
-			else 
-				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			if (dest!=null)
-				send(message.shallowCopy(dest));
+		if (alias!=null) {
+			List<ActorId> destinations = getActorsFromAlias(alias);
+			if (!destinations.isEmpty()) {
+				if (destinations.size()==1)
+					result = destinations.get(0);
+				else
+					result = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
+			}
 		}
+		
+		return result;
+	}
+	
+	@Override
+	public ActorSystemImpl sendViaAlias(ActorMessage<?> message, String alias) {
+		ActorId dest = internal_resolveAlias(alias);
+		if (dest!=null)
+			send(message.shallowCopy(dest));
 		
 		return this;
 	}
 	
 	@Override
 	public boolean sendViaAliasAsServer(ActorMessage<?> message, String alias) {
-		boolean result = false;
+		ActorId dest = internal_resolveAlias(alias);
+		if (dest!=null)
+			sendAsServer(message.shallowCopy(dest));
 		
-		List<ActorId> destinations = getActorsFromAlias(alias);
-		if (!destinations.isEmpty()) {
-			ActorId dest = null;
-			
-			if (destinations.size()==1)
-				dest = destinations.get(0);
-			else 
-				dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-			if (dest!=null) {
-				sendAsServer(message.shallowCopy(dest));
-				result = true;
-			}
-		}
-		
-		return result;
+		return dest!=null;
 	}
 	
 	@Override
@@ -841,16 +853,12 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		if (message.dest().localId()==null && message.dest().globalId()!=null) {
 			ActorId dest = exposedCells.get(message.dest().globalId());
 			if (dest!=null) {
-				if (!messagingEnabled.get()) 
-					bufferQueue.offer(message.copy(dest));
-				else
+				if (!bufferIfNotMessagingEnabled(message, dest))
 					messageDispatcher.postServer(message.shallowCopy(dest));
 			}
 		}
 		else {
-			if (!messagingEnabled.get()) 
-				bufferQueue.offer(message.copy());
-			else
+			if (!bufferIfNotMessagingEnabled(message, null))
 				messageDispatcher.postServer(message);
 		}
 	}
@@ -863,11 +871,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public ActorSystemImpl broadcast(ActorMessage<?> message, ActorGroup group) {
-		if (!messagingEnabled.get())
-			for (ActorId id : group)
-				bufferQueue.offer(message.copy(id));
-		else
-			for (ActorId id : group)
+		for (ActorId id : group)
+			if (!bufferIfNotMessagingEnabled(message, id))
 				messageDispatcher.postOuter(message.shallowCopy(id));
 		
 		return this;
@@ -954,11 +959,17 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					internal_iterateCell((InternalActorCell)USER_ID, preStart);
 					internal_iterateCell((InternalActorCell)SYSTEM_ID, preStart);
 					
-					messagingEnabled.set(true);
-					
-					ActorMessage<?> message = null;
-					while ((message=bufferQueue.poll())!=null)
-						messageDispatcher.postOuter(message);
+					bufferQueueLock.lock();
+					try {
+						ActorMessage<?> message = null;
+						while ((message=bufferQueue.poll())!=null)
+							messageDispatcher.postOuter(message);
+						
+						messagingEnabled.set(true);
+					}
+					finally {
+						bufferQueueLock.unlock();
+					}
 					
 					if (onStartup!=null)
 						onStartup.run();

@@ -61,9 +61,12 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public Map<String, Queue<ActorId>> getPodDomains();
 	public Map<String, Queue<ActorId>> getAliases();
 	
+	public ActorId internal_resolveAlias(String alias);
+	
 	public AtomicBoolean getMessagingEnabled();
 	public ActorMessageDispatcher getMessageDispatcher();
 	public Queue<ActorMessage<?>> getBufferQueue();
+	public boolean bufferIfNotMessagingEnabled(ActorMessage<?> message, ActorId dest);
 	
 	public ActorExecutorService getExecutorService();
 	public ActorStrategyOnFailure getStrategyOnFailure();

@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -380,38 +379,26 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void send(ActorMessage<?> message) {
-		if (system.getMessagingEnabled().get())
-			system.getMessageDispatcher().post(message, getId());
-		else
-			system.getBufferQueue().offer(message.copy());
+		if (!system.bufferIfNotMessagingEnabled(message, null))
+			system.getMessageDispatcher().post(message, getId());;
 	}
 
 	@Override
 	public void send(ActorMessage<?> message, ActorId dest) {
-		if (system.getMessagingEnabled().get())
+		if (!system.bufferIfNotMessagingEnabled(message, dest))
 			system.getMessageDispatcher().post(message.shallowCopy(dest), getId());
-		else
-			system.getBufferQueue().offer(message.copy(dest));
 	}
 	
 	@Override
 	public void send(ActorMessage<?> message, String alias) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().post(message, getId(), alias);
-		else {
-			if (alias!=null) {
-				List<ActorId> destinations = system.getActorsFromAlias(alias);
-
-				ActorId dest = null;
-				if (!destinations.isEmpty()) {
-					if (destinations.size()==1)
-						dest = destinations.get(0);
-					else
-						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-				}
-				dest = (dest!=null) ? dest : system.ALIAS_ID();
-				system.getBufferQueue().offer(message.copy(dest));
-			}
+		else if (alias!=null) {
+			ActorId dest = system.internal_resolveAlias(alias);
+			if (dest==null)
+				dest = system.ALIAS_ID();
+			if (!system.bufferIfNotMessagingEnabled(message, dest))
+				system.getMessageDispatcher().post(message, getId(), alias);
 		}
 	}
 	
@@ -424,30 +411,20 @@ public class BaseActorCell implements InternalActorCell {
 	
 	@Override
 	public void unsafe_send(ActorMessage<?> message) {
-		if (system.getMessagingEnabled().get())
+		if (!system.bufferIfNotMessagingEnabled(message, null))
 			system.getMessageDispatcher().unsafe_post(message, getId());
-		else
-			system.getBufferQueue().offer(message.copy());
 	}
 	
 	@Override
 	public void unsafe_send(ActorMessage<?> message, String alias) {
 		if (system.getMessagingEnabled().get())
 			system.getMessageDispatcher().unsafe_post(message, getId(), alias);
-		else {
-			if (alias!=null) {
-				List<ActorId> destinations = system.getActorsFromAlias(alias);
-
-				ActorId dest = null;
-				if (!destinations.isEmpty()) {
-					if (destinations.size()==1)
-						dest = destinations.get(0);
-					else
-						dest = destinations.get(ThreadLocalRandom.current().nextInt(destinations.size()));
-				}
-				dest = (dest!=null) ? dest : system.ALIAS_ID();
-				system.getBufferQueue().offer(message.copy(dest));
-			}
+		else if (alias!=null) {
+			ActorId dest = system.internal_resolveAlias(alias);
+			if (dest==null)
+				dest = system.ALIAS_ID();
+			if (!system.bufferIfNotMessagingEnabled(message, dest))
+				system.getMessageDispatcher().unsafe_post(message, getId(), alias);
 		}
 	}
 	
