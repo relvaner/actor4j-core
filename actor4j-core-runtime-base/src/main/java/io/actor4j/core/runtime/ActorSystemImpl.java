@@ -609,12 +609,10 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL)
 			pseudoCells.remove(id);
 		
+		
 		String alias = hasAliases.remove(id);
 		if (alias!=null)
-			aliases.computeIfPresent(alias, (k, queue) -> {
-				queue.remove(id);
-				return queue.isEmpty() ? null : queue; // null removes the entry
-			});
+			removeAlias(id, alias);
 	}
 
 	@Override
@@ -636,16 +634,28 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		return exposedCells.get(globalId);
 	}
 	
+	protected void removeAlias(ActorId id, String alias) {
+		aliases.computeIfPresent(alias, (k, queue) -> {
+			queue.remove(id);
+			return queue.isEmpty() ? null : queue; // null removes the entry
+		});
+	}
+	
 	@Override
 	public ActorSystemImpl setAlias(ActorId id, String alias) {
 		if (id!=null && alias!=null && !alias.isEmpty()) {
-			aliases.compute(alias, (k, queue) -> {
-				if (queue==null)
-					queue = new ConcurrentLinkedQueue<>();
-				queue.add(id);
-				return queue;
-			});
-			hasAliases.put(id, alias);
+			String oldAlias = hasAliases.get(id);
+			if (!alias.equals(oldAlias)) {
+				aliases.compute(alias, (k, queue) -> {
+					if (queue==null)
+						queue = new ConcurrentLinkedQueue<>();
+					queue.add(id);
+					return queue;
+				});
+				hasAliases.put(id, alias);
+				if (oldAlias!=null)
+					removeAlias(id, oldAlias);
+			}
 		}
 		
 		return this;
