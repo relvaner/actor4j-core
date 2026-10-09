@@ -518,7 +518,12 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	public void setPodDomain(ActorId id, String domain) {
 		if (id!=null && domain!=null && !domain.isEmpty())
-			podDomains.computeIfAbsent(domain, k -> new ConcurrentLinkedQueue<>()).add(id);
+			podDomains.compute(domain, (k, queue) -> {
+				if (queue==null)
+					queue = new ConcurrentLinkedQueue<>();
+				queue.add(id);
+				return queue;
+			});
 	}
 	
 	@Override
