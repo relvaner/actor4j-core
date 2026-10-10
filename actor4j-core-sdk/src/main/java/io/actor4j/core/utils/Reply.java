@@ -15,18 +15,37 @@
  */
 package io.actor4j.core.utils;
 
-public record Reply(Object value, int tag) {
-	private static final Reply NONE = new Reply(null, -1);
+import java.util.UUID;
+
+public record Reply(Object value, int tag, UUID interaction) {
+	private static final Reply NONE    = Reply.of(null, -1, null);
+	private static final Reply PENDING = Reply.of(null, -2, null);
+	
+	public static Reply of(Object value, int tag, UUID interaction) {
+		return new Reply(value, tag, interaction);
+	}
 	
 	public static Reply of(Object value, int tag) {
-		return new Reply(value, tag);
+		return new Reply(value, tag, null);
 	}
 	
 	public static Reply none() {
 		return NONE;
 	}
 	
+	public static Reply pending() {
+		return PENDING;
+	}
+	
 	public boolean isNone() {
-        return tag < 0;
+        return tag == NONE.tag;
     }
+	
+	public boolean isPending() {
+        return tag == PENDING.tag;
+    }
+	
+	public boolean isDone() {
+		return tag >= 0;
+	}
 }
