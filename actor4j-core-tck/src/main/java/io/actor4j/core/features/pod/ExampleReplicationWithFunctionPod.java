@@ -17,6 +17,8 @@ package io.actor4j.core.features.pod;
 
 import static io.actor4j.core.logging.ActorLogger.*;
 
+import java.util.UUID;
+
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -29,7 +31,7 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 	public PodFunction createFunction(ActorRef host, PodContext context) {
 			return new PodFunction(host, context) {
 				@Override
-				public Reply handle(ActorMessage<?> message) {
+				public Reply handle(ActorMessage<?> message, UUID interaction) {
 					logger().log(DEBUG, message.value().toString());
 					
 					/*
@@ -37,7 +39,7 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 							message.value(), 
 							context.getDomain(),
 							context.isPrimaryReplica())
-							, 42, message.source(), message.interaction());
+							, 42, message.source(), interaction);
 					return null;
 					*/
 					

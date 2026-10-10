@@ -15,6 +15,8 @@
  */
 package io.actor4j.core.pods.functions;
 
+import java.util.UUID;
+
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
@@ -30,5 +32,5 @@ public abstract class PodFunction {
 		this.context = context;
 	}
 	
-	public abstract Reply handle(ActorMessage<?> message);
+	public abstract Reply handle(ActorMessage<?> message, UUID interaction);
 }

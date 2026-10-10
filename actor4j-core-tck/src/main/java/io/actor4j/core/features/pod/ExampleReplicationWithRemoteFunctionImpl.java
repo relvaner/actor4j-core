@@ -39,20 +39,20 @@ public class ExampleReplicationWithRemoteFunctionImpl {
 		handlerMap = new HashMap<>();
 	}
 
-	public Reply handle(ActorMessage<?> message) {
+	public Reply handle(ActorMessage<?> message, UUID interaction) {
 		Reply result = null;
 		
-		BiFunction<Object, Integer, Reply> handler = handlerMap.get(message.interaction());
+		BiFunction<Object, Integer, Reply> handler = handlerMap.get(interaction);
 		if (handler!=null && message.value()!=null && message.value() instanceof String) {
 			result = handler.apply(message.value(), message.tag());
-			handlerMap.remove(message.interaction());
+			handlerMap.remove(interaction);
 		}
 		else {
 			result = Reply.pending();
-			handlerMap.put(message.interaction(), (value, tag) -> {
-				return Reply.of(value, tag, message.interaction());
+			handlerMap.put(interaction, (value, tag) -> {
+				return Reply.of(value, tag, interaction);
 			});
-			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", message.interaction(), null, context.domain());
+			host.tell(message.value(), message.tag(), "ExampleReplicationWithFunctionPod", interaction, null, context.domain());
 		}
 			
 		return result;
