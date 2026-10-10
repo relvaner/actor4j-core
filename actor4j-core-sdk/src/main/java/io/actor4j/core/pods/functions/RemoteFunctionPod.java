@@ -25,9 +25,9 @@ import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.pods.functions.PodFunction.Reply;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.InternalServerCallback;
+import io.actor4j.core.utils.Reply;
 
 @Deprecated
 public abstract class RemoteFunctionPod extends ActorPod {

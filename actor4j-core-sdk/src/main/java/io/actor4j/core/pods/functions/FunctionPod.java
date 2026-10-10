@@ -20,7 +20,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.pods.functions.PodFunction.Reply;
+import io.actor4j.core.utils.Reply;
 
 public abstract class FunctionPod extends ActorPod {
 	@Override

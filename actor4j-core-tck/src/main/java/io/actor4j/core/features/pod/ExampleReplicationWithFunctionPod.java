@@ -22,6 +22,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.functions.FunctionPod;
 import io.actor4j.core.pods.functions.PodFunction;
+import io.actor4j.core.utils.Reply;
 
 public class ExampleReplicationWithFunctionPod extends FunctionPod {
 	@Override

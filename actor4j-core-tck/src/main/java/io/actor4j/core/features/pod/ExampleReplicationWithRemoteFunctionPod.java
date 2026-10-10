@@ -23,6 +23,7 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.functions.PodRemoteFunction;
 import io.actor4j.core.pods.functions.RemoteFunctionPod;
+import io.actor4j.core.utils.Reply;
 
 public class ExampleReplicationWithRemoteFunctionPod extends RemoteFunctionPod {
 	@Override
