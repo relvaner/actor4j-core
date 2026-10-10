@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.utils.Reply;
 
-@Deprecated
 public abstract class PodRemoteFunction extends PodFunction{
 	public PodRemoteFunction(ActorRef host, PodContext context) {
 		super(host, context);

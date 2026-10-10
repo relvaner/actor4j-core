@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 package io.actor4j.core.pods.functions;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
@@ -22,14 +26,20 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.utils.Reply;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+import static io.actor4j.core.utils.ActorUtils.actorLabel;
+
 public abstract class FunctionPod extends ActorPod {
 	@Override
 	public PodActor create() {
 		return new PodActor() {
+			protected Map<UUID, ActorMessage<?>> pendingHandler;
 			protected PodFunction podFunction;
 			
 			@Override
 			public void preStart() {
+				pendingHandler = new HashMap<>();
+				
 				if (getContext().isShard())
 					setAlias(domain()+getContext().shardId());
 				else
@@ -41,8 +51,20 @@ public abstract class FunctionPod extends ActorPod {
 			@Override
 			public void receive(ActorMessage<?> message) {
 				Reply result = podFunction.handle(message);
-				if (result!=null && result.tag()>=0)
-					internal_callback(this, message, result);
+				
+				if (result!=null) {
+					if (result.isDone()) {
+						ActorMessage<?> originMessage = result.interaction()!=null ? pendingHandler.remove(result.interaction()) : null;
+							
+						internal_callback(this, originMessage!=null ? originMessage : message, result);
+					}
+					else if (result.isPending()) {
+						if (message.interaction()!=null)
+							pendingHandler.putIfAbsent(message.interaction(), message);
+						else
+							systemLogger().log(ERROR, String.format("Pending reply without interaction from actor (%s)", actorLabel(this)));
+					}
+				}
 			}
 
 			@Override

@@ -38,14 +38,14 @@ public record Reply(Object value, int tag, UUID interaction) {
 	}
 	
 	public boolean isNone() {
-        return tag == NONE.tag;
+        return tag==NONE.tag;
     }
 	
 	public boolean isPending() {
-        return tag == PENDING.tag;
+        return tag==PENDING.tag;
     }
 	
 	public boolean isDone() {
-		return tag >= 0;
+		return tag>=0;
 	}
 }
