@@ -18,8 +18,11 @@ package io.actor4j.core.utils;
 import java.util.UUID;
 
 public record Reply(Object value, int tag, UUID interaction) {
-	private static final Reply NONE    = Reply.of(null, -1, null);
-	private static final Reply PENDING = Reply.of(null, -2, null);
+	public static final int PENDING = -1;
+	public static final int NONE = -2;
+	
+	private static final Reply REPLY_PENDING = Reply.of(null, PENDING, null);
+	private static final Reply REPLY_NONE    = Reply.of(null, NONE, null);
 	
 	public static Reply of(Object value, int tag, UUID interaction) {
 		return new Reply(value, tag, interaction);
@@ -29,20 +32,20 @@ public record Reply(Object value, int tag, UUID interaction) {
 		return new Reply(value, tag, null);
 	}
 	
-	public static Reply none() {
-		return NONE;
-	}
-	
 	public static Reply pending() {
-		return PENDING;
+		return REPLY_PENDING;
 	}
 	
-	public boolean isNone() {
-        return tag==NONE.tag;
-    }
+	public static Reply none() {
+		return REPLY_NONE;
+	}
 	
 	public boolean isPending() {
-        return tag==PENDING.tag;
+        return tag==PENDING;
+    }
+	
+	public boolean isNone() {
+        return tag==NONE;
     }
 	
 	public boolean isDone() {
