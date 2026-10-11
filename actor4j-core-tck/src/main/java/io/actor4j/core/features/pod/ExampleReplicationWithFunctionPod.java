@@ -31,7 +31,7 @@ public class ExampleReplicationWithFunctionPod extends FunctionPod {
 	public PodFunction createFunction(ActorRef host, PodContext context) {
 			return new PodFunction(host, context) {
 				@Override
-				public Reply handle(ActorMessage<?> message, UUID interaction) {
+				public Reply handle(ActorMessage<?> message, UUID interaction, boolean replyAllowed) {
 					logger().log(DEBUG, message.value().toString());
 					
 					/*

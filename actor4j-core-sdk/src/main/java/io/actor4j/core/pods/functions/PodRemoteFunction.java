@@ -27,5 +27,6 @@ public abstract class PodRemoteFunction extends PodFunction{
 		super(host, context);
 	}
 	
-	public abstract Reply handle(RemotePodMessage remoteMessage, UUID interaction);
+	/** @param replyExpected true if the remote client awaits a reply (remotePodMessageDTO().reply()) */
+	public abstract Reply handle(RemotePodMessage remoteMessage, UUID interaction, boolean replyExpected);
 }

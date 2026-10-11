@@ -32,5 +32,6 @@ public abstract class PodFunction {
 		this.context = context;
 	}
 	
-	public abstract Reply handle(ActorMessage<?> message, UUID interaction);
+	/** @param replyAllowed false if the sender declined a reply (NO_REPLY), otherwise a reply is permitted */
+	public abstract Reply handle(ActorMessage<?> message, UUID interaction, boolean replyAllowed);
 }

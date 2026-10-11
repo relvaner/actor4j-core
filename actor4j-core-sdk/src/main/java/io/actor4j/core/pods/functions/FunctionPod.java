@@ -15,28 +15,22 @@
  */
 package io.actor4j.core.pods.functions;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.ActorPod;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.actors.PodActor;
-import io.actor4j.core.utils.Reply;
+import io.actor4j.core.pods.functions.utils.FunctionPodProxyHandler;
 
 public abstract class FunctionPod extends ActorPod {
 	@Override
 	public PodActor create() {
 		return new PodActor() {
-			protected Map<UUID, ActorMessage<?>> pendingHandler;
+			protected FunctionPodProxyHandler proxy;
 			protected PodFunction podFunction;
 			
 			@Override
 			public void preStart() {
-				pendingHandler = new HashMap<>();
-				
 				if (getContext().isShard())
 					setAlias(domain()+getContext().shardId());
 				else
@@ -47,30 +41,15 @@ public abstract class FunctionPod extends ActorPod {
 			
 			@Override
 			public void receive(ActorMessage<?> message) {
-				UUID interaction = message.interaction()!=null ? message.interaction() : UUID.randomUUID();
-				
-				Reply result = podFunction.handle(message, interaction);
-				
-				if (result!=null) {
-					if (result.isDone()) {
-						ActorMessage<?> originMessage = result.interaction()!=null ? pendingHandler.remove(result.interaction()) : null;
-							
-						internal_callback(this, originMessage!=null ? originMessage : message, result);
-					}
-					else if (result.isPending())
-						pendingHandler.putIfAbsent(interaction, message);
-				}
+				proxy.apply(message);
 			}
 
 			@Override
 			public void register() {
 				podFunction = createFunction(this, getContext());
+				proxy = new FunctionPodProxyHandler(this, podFunction);
 			}
 		};
-	}
-	
-	protected void internal_callback(ActorRef host, ActorMessage<?> message, Reply result) {
-		host.tell(result.value(), result.tag(), message.source(), message.interaction(), message.protocol(), message.domain());
 	}
 
 	public abstract PodFunction createFunction(ActorRef host, PodContext context);
