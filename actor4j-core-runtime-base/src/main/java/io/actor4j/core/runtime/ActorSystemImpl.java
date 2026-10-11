@@ -863,10 +863,10 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					public void run() {
 						if (cell.isActive()) {
 							messageDispatcher.postOuter(message);
-							throw new RuntimeException("Task canceled"); // cancel
+							throw new CancellationException("Task canceled");
 						}
 						else if (System.nanoTime()>deadline) {
-							systemLogger().log(ERROR, String.format("[sendWhenActive] Actor (%s) not active within timeout, message dropped", actorLabel(cell.getActor())));
+							systemLogger().log(ERROR, String.format("Actor (%s) not active within timeout, message dropped", actorLabel(cell.getActor())));
 							throw new CancellationException();
 						}
 					}
