@@ -15,14 +15,11 @@
  */
 package io.actor4j.core.pods.functions;
 
-import java.util.UUID;
-
 import io.actor4j.core.actors.ActorRef;
-import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodContext;
-import io.actor4j.core.utils.Reply;
+import io.actor4j.core.pods.functions.utils.PodFunctionHandler;
 
-public abstract class PodFunction {
+public abstract class PodFunction implements PodFunctionHandler {
 	protected final ActorRef host;
 	protected final PodContext context;
 	
@@ -31,7 +28,4 @@ public abstract class PodFunction {
 		this.host = host;
 		this.context = context;
 	}
-	
-	/** @param replyAllowed false if the sender declined a reply (NO_REPLY), otherwise a reply is permitted */
-	public abstract Reply handle(ActorMessage<?> message, UUID interaction, boolean replyAllowed);
 }

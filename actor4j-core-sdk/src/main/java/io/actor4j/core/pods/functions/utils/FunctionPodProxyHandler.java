@@ -21,19 +21,18 @@ import java.util.UUID;
 
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.pods.functions.PodFunction;
 import io.actor4j.core.utils.Reply;
 
 public class FunctionPodProxyHandler {
 	protected final ActorRef host;
-	protected final PodFunction podFunction;
+	protected final PodFunctionHandler functionHandler;
 	
 	protected final Map<UUID, ActorMessage<?>> pendingHandler;
 
-	public FunctionPodProxyHandler(ActorRef host, PodFunction podFunction) {
+	public FunctionPodProxyHandler(ActorRef host, PodFunctionHandler functionHandler) {
 		super();
 		this.host = host;
-		this.podFunction = podFunction;
+		this.functionHandler = functionHandler;
 		
 		this.pendingHandler = new HashMap<>();
 	}
@@ -55,7 +54,7 @@ public class FunctionPodProxyHandler {
 	public void apply(ActorMessage<?> message) {
 		UUID interaction = message.interaction()!=null && !ActorMessage.NO_REPLY.equals(message.interaction()) ? message.interaction() : UUID.randomUUID();
 		
-		Reply result = podFunction.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+		Reply result = functionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
 		handleReply(message, result, interaction);
 	}
 	

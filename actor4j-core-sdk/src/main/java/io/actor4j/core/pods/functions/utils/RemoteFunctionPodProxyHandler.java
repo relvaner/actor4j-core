@@ -22,7 +22,6 @@ import java.util.UUID;
 import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.RemotePodMessage;
-import io.actor4j.core.pods.functions.PodRemoteFunction;
 import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.InternalServerCallback;
@@ -30,14 +29,14 @@ import io.actor4j.core.utils.Reply;
 
 public class RemoteFunctionPodProxyHandler {
 	protected final ActorRef host;
-	protected final PodRemoteFunction podRemoteFunction;
+	protected final PodRemoteFunctionHandler remoteFunctionHandler;
 	
 	protected final Map<UUID, ActorMessage<?>> pendingHandler;
 
-	public RemoteFunctionPodProxyHandler(ActorRef host, PodRemoteFunction podRemoteFunction) {
+	public RemoteFunctionPodProxyHandler(ActorRef host, PodRemoteFunctionHandler remoteFunctionHandler) {
 		super();
 		this.host = host;
-		this.podRemoteFunction = podRemoteFunction;
+		this.remoteFunctionHandler = remoteFunctionHandler;
 		
 		this.pendingHandler = new HashMap<>();
 	}
@@ -71,9 +70,9 @@ public class RemoteFunctionPodProxyHandler {
 
 		UUID interaction = message.interaction()!=null && !ActorMessage.NO_REPLY.equals(message.interaction()) ? message.interaction() : UUID.randomUUID();
 		if (message.value() instanceof RemotePodMessage remoteMessage)
-			result = podRemoteFunction.handle(remoteMessage, interaction, remoteMessage.remotePodMessageDTO().reply());
+			result = remoteFunctionHandler.handle(remoteMessage, interaction, remoteMessage.remotePodMessageDTO().reply());
 		else
-			result = podRemoteFunction.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+			result = remoteFunctionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
 		handleReply(message, result, interaction);
 	}
 	
