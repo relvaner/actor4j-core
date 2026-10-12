@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import io.actor4j.core.runtime.AbstractActorExecutionUnitPool;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
+import io.actor4j.core.runtime.classic.utils.ClassicForkJoinPool;
 import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
 import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
@@ -47,13 +48,13 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 		metricsMap = new ConcurrentHashMap<>();
 		
 		int poolSize = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		executorService = new ForkJoinPool(poolSize,new ForkJoinWorkerThreadFactory() {
-			@Override
-			public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
-				return new ClassicForkJoinWorkerThread(pool, metricsMap);
-			}
-			
-		}, null, false);
+		executorService = new ClassicForkJoinPool(poolSize,
+			new ForkJoinWorkerThreadFactory() {
+				@Override
+				public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
+					return new ClassicForkJoinWorkerThread(pool, metricsMap);
+				}
+			});
 		
 		actorRunnable = new DefaultActorRunnable(system);
 	}
@@ -80,6 +81,12 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 				if (Thread.currentThread() instanceof ClassicForkJoinWorkerThread) {
 					ForkJoinTask<?> task = ForkJoinTask.adapt(() -> actorRunnable.run(cell));
 					task.fork();
+					
+					if (((ForkJoinPool)executorService).hasQueuedSubmissions()) {
+						ForkJoinTask<?> submission = ((ClassicForkJoinPool)executorService).pollSubmission();
+						if (submission!=null)
+							submission.fork();
+					}
 				}
 				else
 					executorService.submit(() -> actorRunnable.run(cell));
