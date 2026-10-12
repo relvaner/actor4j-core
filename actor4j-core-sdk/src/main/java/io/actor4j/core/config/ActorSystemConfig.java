@@ -324,7 +324,7 @@ public class ActorSystemConfig {
 			watchdogTimeout = 2_000;
 		}
 		
-		public Builder(T config) {
+		public Builder(ActorSystemConfig config) {
 			super();
 			this.name = config.name();
 			this.debugUnhandled = config.debugUnhandled();

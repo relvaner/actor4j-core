@@ -37,6 +37,12 @@ public class XActorSystemConfig extends ActorSystemConfig {
 			this.unbounded = config.unbounded();
 		}
 		
+		public Builder(ActorSystemConfig config) {
+			super(config);
+			
+			this.unbounded = config instanceof XActorSystemConfig xconfig ? xconfig.unbounded() : true;
+		}
+		
 		public Builder<T> unbounded(boolean unbounded) {
 			this.unbounded = unbounded;
 			
@@ -64,6 +70,15 @@ public class XActorSystemConfig extends ActorSystemConfig {
 	}
 	
 	public static Builder<?> builder(XActorSystemConfig config) {
+		return new Builder<XActorSystemConfig>(config) {
+			@Override
+			public XActorSystemConfig build() {
+				return new XActorSystemConfig(this);
+			}
+		};
+	}
+	
+	public static Builder<?> builder(ActorSystemConfig config) {
 		return new Builder<XActorSystemConfig>(config) {
 			@Override
 			public XActorSystemConfig build() {

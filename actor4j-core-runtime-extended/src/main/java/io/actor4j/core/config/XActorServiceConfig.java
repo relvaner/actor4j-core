@@ -26,6 +26,11 @@ public class XActorServiceConfig extends XActorSystemConfig {
 			super(config);
 			serverMode();
 		}
+		
+		public Builder(ActorSystemConfig config) {
+			super(config);
+			serverMode();
+		}
 	}
 
 	public XActorServiceConfig(Builder<?> builder) {
@@ -46,6 +51,15 @@ public class XActorServiceConfig extends XActorSystemConfig {
 	}
 	
 	public static Builder<?> builder(XActorServiceConfig config) {
+		return new Builder<XActorServiceConfig>(config) {
+			@Override
+			public XActorServiceConfig build() {
+				return new XActorServiceConfig(this);
+			}
+		};
+	}
+	
+	public static Builder<?> builder(ActorSystemConfig config) {
 		return new Builder<XActorServiceConfig>(config) {
 			@Override
 			public XActorServiceConfig build() {

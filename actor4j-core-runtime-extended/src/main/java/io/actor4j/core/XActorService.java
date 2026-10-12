@@ -19,19 +19,18 @@ import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
 import io.actor4j.core.messages.ActorMessage;
-import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
 public interface XActorService extends XActorSystem {
 	public static XActorService create() {
-		return create(XActorSystemConfig.builder().build());
+		return create(XActorServiceConfig.builder().build());
 	}
 	
 	public static XActorService create(String name) {
-		return create(XActorSystemConfig.builder().name(name).build());
+		return create(XActorServiceConfig.builder().name(name).build());
 	}
 	
-	public static XActorService create(XActorSystemConfig config) {
-		return new XDefaultActorSystemImpl(config);
+	public static XActorService create(ActorSystemConfig  config) {
+		return (XActorService)XActorServiceRuntime.create(config);
 	}
 	
 	@Deprecated

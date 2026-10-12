@@ -16,7 +16,6 @@
 package io.actor4j.core;
 
 import io.actor4j.core.config.ActorSystemConfig;
-import io.actor4j.core.config.XActorServiceConfig;
 
 public class ActorServiceRuntime {
 	public static ActorSystemFactory factory() {
@@ -32,7 +31,6 @@ public class ActorServiceRuntime {
 	}
 	
 	public static ActorService create(ActorSystemConfig config) {
-		return XActorServiceRuntime.create(config instanceof XActorServiceConfig ? 
-			(XActorServiceConfig)config : (XActorServiceConfig) XActorServiceConfig.builder(config).build());
+		return XActorServiceRuntime.create(config);
 	}
 }

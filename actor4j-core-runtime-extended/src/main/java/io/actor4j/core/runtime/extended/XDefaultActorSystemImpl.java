@@ -15,10 +15,6 @@
  */
 package io.actor4j.core.runtime.extended;
 
-import java.util.Queue;
-
-import org.jctools.queues.MpscArrayQueue;
-
 import io.actor4j.core.XActorService;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
@@ -39,11 +35,6 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		
 		setActorThread(config.unbounded());
-	}
-	
-	@Override
-	public <T> Queue<T> createLockFreeLinkedQueue() {
-		return new MpscArrayQueue<>(64);
 	}
 	
 	@Override

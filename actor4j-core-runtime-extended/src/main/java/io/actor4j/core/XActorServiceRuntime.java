@@ -15,12 +15,13 @@
  */
 package io.actor4j.core;
 
+import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.runtime.extended.XDefaultActorSystemImpl;
 
 public class XActorServiceRuntime {
 	public static ActorSystemFactory factory() {
-		return (c) -> new XDefaultActorSystemImpl((XActorServiceConfig)c);
+		return (c) -> new XDefaultActorSystemImpl(c instanceof XActorServiceConfig xconfig ? xconfig : (XActorServiceConfig)XActorServiceConfig.builder(c).build());
 	}
 	
 	public static ActorService create() {
@@ -31,7 +32,7 @@ public class XActorServiceRuntime {
 		return create(XActorServiceConfig.builder().name(name).build());
 	}
 	
-	public static ActorService create(XActorServiceConfig config) {
+	public static ActorService create(ActorSystemConfig config) {
 		return (ActorService)factory().apply(config!=null ? config : XActorServiceConfig.create());
 	}
 }
