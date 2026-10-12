@@ -172,6 +172,7 @@
     	<module>actor4j-core-runtime-extended</module>
     	<module>actor4j-core-runtime-classic</module>
     	<module>actor4j-core-runtime-loom</module>
+    	<module>actor4j-core-runtime-hybrid</module>
     	<module>actor4j-core-tck</module>
     </modules>
 </project>
