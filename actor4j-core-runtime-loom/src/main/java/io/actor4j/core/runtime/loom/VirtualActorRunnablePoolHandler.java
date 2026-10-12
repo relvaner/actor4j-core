@@ -51,7 +51,9 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 					virtualActorRunnable.directiveQueue().offer(message.copy());
 				else
 					virtualActorRunnable.outerQueue().offer(message.copy());
-				virtualActorRunnable.newMessage(virtualActorRunnablePool.virtualThreads.get(message.dest()));
+				// Resource actors belong to a different pool; using virtualActorRunnable.thread directly.
+				// Original: virtualActorResourceRunnablePool.virtualThreads.get(message.dest())
+				virtualActorRunnable.newMessage(virtualActorRunnable.thread/*virtualActorRunnablePool.virtualThreads.get(message.dest())*/);
 			}
 		}
 		
@@ -71,7 +73,9 @@ public abstract class VirtualActorRunnablePoolHandler implements ActorExecutionU
 					virtualActorRunnable.directiveQueue().offer(message.copy(dest));
 				else
 					virtualActorRunnable.outerQueue().offer(message.copy(dest));
-				virtualActorRunnable.newMessage(virtualActorRunnablePool.virtualThreads.get(dest));
+				// Resource actors belong to a different pool; using virtualActorRunnable.thread directly.
+				// Original: virtualActorResourceRunnablePool.virtualThreads.get(message.dest())
+				virtualActorRunnable.newMessage(virtualActorRunnable.thread/*virtualActorRunnablePool.virtualThreads.get(dest)*/);
 			}
 		}
 		

@@ -17,13 +17,13 @@ package io.actor4j.core.runtime.loom;
 
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,6 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	protected final VirtualActorRunnablePoolHandler virtualActorRunnablePoolHandler;
 	
 	protected final AtomicBoolean started;
-	protected final AtomicReference<CountDownLatch> terminationCountDownLatch;
 	
 	protected final int parallelism;
 
@@ -56,7 +55,6 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 		
 		virtualThreads = new ConcurrentHashMap<>();
 		started = new AtomicBoolean(false);
-		terminationCountDownLatch = new AtomicReference<>();
 		
 		parallelism = (Runtime.getRuntime().availableProcessors()+1) & ~1; // ensures parallelism is a power of 2
 		for (int i=0; i<parallelism; i++)
@@ -106,8 +104,6 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	@Override
 	public void shutdown(Runnable onTermination, boolean await) {
 		if (virtualThreads.size()>0) {
-			terminationCountDownLatch.set(new CountDownLatch(virtualThreads.size()));
-			
 			for (Thread t : virtualThreads.values())
 				t.interrupt();
 			
@@ -115,18 +111,17 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 				Thread waitOnTermination = new Thread(new Runnable() {
 					@Override
 					public void run() {
+						long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(system.getConfig().awaitTerminationTimeout());
 						try {
-							terminationCountDownLatch.get().await();
-						} catch (InterruptedException e1) {
-							e1.printStackTrace();
+							for (Thread t : virtualThreads.values()) {
+								long remaining = deadline - System.nanoTime();
+								if (remaining>0)
+									t.join(Duration.ofNanos(remaining));
+							}
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
 						}
 						
-//						try {
-//							Thread.sleep(100);
-//						} catch (InterruptedException e) {
-//							Thread.currentThread().interrupt();
-//						}
-
 						if (onTermination!=null)
 							onTermination.run();
 						
@@ -158,8 +153,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	}
 
 	public void onTermination() {
-		if (terminationCountDownLatch.get()!=null)
-			terminationCountDownLatch.get().countDown();
+		// empty
 	}
 	
 	public void registerCell(InternalActorCell cell) {

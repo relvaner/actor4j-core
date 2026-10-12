@@ -36,6 +36,8 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 
 	protected final Runnable onTermination;
 	protected final AtomicBoolean terminated;
+
+	protected volatile Thread thread;
 	
 	public VirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
 		super();
@@ -64,7 +66,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getStrategyOnFailure().handle(cell, e);
-		}	
+		}
 	}
 	
 	public abstract void onRun();
@@ -99,6 +101,8 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 			else
 				faultToleranceMethod(message);
 		}
+		else
+			faultToleranceMethod(message);
 		
 		if (system.getConfig().trackRequestRatePerActor().get())
 			cell.getRequestRate().incrementAndGet();
@@ -106,12 +110,17 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 	
 	@Override
 	public void run() {
+		thread = Thread.currentThread();
+		
 		FaultTolerance.runAndCatchThrowable(system.getExecutorService().getFaultToleranceManager(), new FaultToleranceMethod() {
 			@Override
 			public void run(Object faultToleranceId) {
-				onRun();
-				
-				onTermination.run();
+				try {
+					onRun();
+				}
+				finally {
+					onTermination.run();
+				}
 			}
 			
 			@Override
