@@ -119,7 +119,8 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 					onRun();
 				}
 				finally {
-					onTermination.run();
+					if (onTermination!=null)
+						onTermination.run();
 				}
 			}
 			

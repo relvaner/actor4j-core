@@ -152,12 +152,8 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 		return virtualActorRunnablePoolHandler;
 	}
 
-	public void onTermination() {
-		// empty
-	}
-	
 	public void registerCell(InternalActorCell cell) {
-		VirtualActorRunnable virtualActorRunnable = virtualActorRunnablePoolHandler.registerCell(cell, this::onTermination);
+		VirtualActorRunnable virtualActorRunnable = virtualActorRunnablePoolHandler.registerCell(cell, null);
 		Thread t = Thread.ofVirtual().name(actorLabel(cell.getActor())).unstarted(virtualActorRunnable);
 		virtualThreads.put(virtualActorRunnable.id(), t);
 		if (started.get())
