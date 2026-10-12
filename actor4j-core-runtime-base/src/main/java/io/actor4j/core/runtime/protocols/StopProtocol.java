@@ -19,9 +19,9 @@ import static io.actor4j.core.logging.ActorLogger.*;
 import static io.actor4j.core.runtime.protocols.ActorProtocolTag.*;
 import static io.actor4j.core.utils.ActorUtils.actorLabel;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import io.actor4j.core.id.ActorId;
@@ -40,7 +40,7 @@ public final class StopProtocol {
 	}
 	
 	public static void apply(final InternalActorCell cell) {
-		final List<ActorId> waitForChildren =new ArrayList<>(cell.getChildren().size());
+		final Set<ActorId> waitForChildren = new HashSet<>();
 
 		Iterator<ActorId> iterator = cell.getChildren().iterator();
 		while (iterator.hasNext()) {
