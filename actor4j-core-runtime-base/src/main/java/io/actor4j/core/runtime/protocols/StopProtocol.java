@@ -34,9 +34,9 @@ public final class StopProtocol {
 		cell.postStop();
 		cell.internal_stop();
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
-			systemPrintLog(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+			systemPrintLog(INFO, () -> String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 		else
-			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+			systemLogger().log(INFO, () -> String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	public static void apply(final InternalActorCell cell) {

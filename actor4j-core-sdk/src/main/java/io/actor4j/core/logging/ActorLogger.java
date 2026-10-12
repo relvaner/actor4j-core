@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.logging;
 
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,8 +57,14 @@ public class ActorLogger {
 	public static void showSimpleClassName(boolean enabled) {
 		LoggerFactory.simpleClassName = enabled;
 	}
-	
+
 	public static void systemPrintLog(Level level, String msg) {
-		LoggerFactory.printLog(level, msg, system_logger.getName());
+		if (system_logger.isLoggable(level))
+			LoggerFactory.printLog(level, msg, system_logger.getName());
+	}
+	
+	public static void systemPrintLog(Level level, Supplier<String> msgSupplier) {
+		if (system_logger.isLoggable(level))
+			LoggerFactory.printLog(level, msgSupplier.get(), system_logger.getName());
 	}
 }

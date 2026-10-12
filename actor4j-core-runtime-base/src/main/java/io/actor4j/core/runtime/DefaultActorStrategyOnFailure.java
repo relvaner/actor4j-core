@@ -37,7 +37,10 @@ public class DefaultActorStrategyOnFailure implements ActorStrategyOnFailure {
 	}
 	
 	protected void oneForOne_directive_resume(InternalActorCell cell) {
-		systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.getActor())));
+		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
+			systemPrintLog(INFO, () -> String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.getActor())));
+		else
+			systemLogger().log(INFO, () -> String.format("[LIFECYCLE] actor (%s) resumed", actorLabel(cell.getActor())));
 	}
 	
 	protected void oneForOne_directive_restart(InternalActorCell cell, Exception reason) {

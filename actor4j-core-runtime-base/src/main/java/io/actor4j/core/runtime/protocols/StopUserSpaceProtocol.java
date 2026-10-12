@@ -36,9 +36,9 @@ public final class StopUserSpaceProtocol {
 		cell.postStop();
 		cell.internal_stop();
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
-			systemPrintLog(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+			systemPrintLog(INFO, () -> String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 		else
-			systemLogger().log(INFO, String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
+			systemLogger().log(INFO, () -> String.format("[LIFECYCLE] actor (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	protected static void postUserSpaceStop(final InternalActorCell cell) {
@@ -48,9 +48,9 @@ public final class StopUserSpaceProtocol {
 			((InternalActorSystem)cell.getSystem()).sendAsDirective(ActorMessage.create(null, INTERNAL_STOP_USER_SPACE_SUCCESS, cell.getId(), dest));
 		}
 		if (((InternalActorSystem)cell.getSystem()).isShutdownHookTriggered())
-			systemPrintLog(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
+			systemPrintLog(INFO, () -> String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
 		else
-			systemLogger().log(INFO, String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
+			systemLogger().log(INFO, () -> String.format("[LIFECYCLE] actors within (%s) stopped", actorLabel(cell.getActor())));
 	}
 	
 	public static void apply(final InternalActorCell cell) {

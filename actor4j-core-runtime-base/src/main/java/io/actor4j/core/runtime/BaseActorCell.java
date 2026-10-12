@@ -439,12 +439,12 @@ public class BaseActorCell implements InternalActorCell {
 		if (system.getConfig().debugUnhandled()) {
 			Actor sourceActor = message.source() instanceof InternalActorCell c ? c.getActor() : null;
 			if (sourceActor!=null)
-				systemLogger().log(WARN,
+				systemLogger().log(WARN, () ->
 					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from source (%s)",
 						actorLabel(actor), message.toString(), actorLabel(sourceActor)
 					));
 			else
-				systemLogger().log(WARN,
+				systemLogger().log(WARN, () ->
 					String.format("[UNHANDLED] actor (%s) - Unhandled message (%s) from unavaible source (???)",
 						actorLabel(actor), message.toString()
 					));
