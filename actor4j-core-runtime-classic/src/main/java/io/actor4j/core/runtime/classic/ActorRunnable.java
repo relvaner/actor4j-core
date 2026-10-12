@@ -101,9 +101,6 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 				metrics(cell);
 			else
 				onRun(cell);
-			cell.isScheduled().set(false);
-	
-			((ActorMessageDispatcherCallback)system.getMessageDispatcher()).dispatchFromThread(cell);
 		}
 		catch(Throwable t) {
 			t.printStackTrace();
@@ -112,7 +109,9 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			throwable = t;
 		}
 		finally {
-			// empty
+			cell.isScheduled().set(false);
+			
+			((ActorMessageDispatcherCallback)system.getMessageDispatcher()).dispatchFromThread(cell);
 		}
 		
 		if (error)
