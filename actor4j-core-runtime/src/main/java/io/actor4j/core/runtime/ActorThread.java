@@ -96,6 +96,8 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 			else
 				faultToleranceMethod(message, cell);
 		}
+		else
+			faultToleranceMethod(message, cell);
 		
 		if (system.getConfig().trackRequestRatePerActor().get())
 			cell.getRequestRate().getAndIncrement();
@@ -147,9 +149,6 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 				@Override
 				public void run(Object faultToleranceId) {
 					onRun();
-					
-					if (onTermination!=null)
-						onTermination.run();
 				}
 				
 				@Override
@@ -172,6 +171,9 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 			
 			retries++;
 		}
+		
+		if (onTermination!=null)
+			onTermination.run(); 
 	}
 	
 	public AtomicLong getCounter() {

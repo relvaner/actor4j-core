@@ -85,6 +85,8 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			else
 				onRun(cell);
 		}
+		else
+			onRun(cell);
 		
 		if (system.getConfig().trackRequestRatePerActor().get())
 			cell.getRequestRate().incrementAndGet();
