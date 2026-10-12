@@ -23,15 +23,15 @@ public class XActorServiceRuntime {
 		return (c) -> new XDefaultActorSystemImpl((XActorServiceConfig)c);
 	}
 	
-	public static ActorSystem create() {
+	public static ActorService create() {
 		return create(XActorServiceConfig.create());
 	}
 	
-	public static ActorSystem create(String name) {
+	public static ActorService create(String name) {
 		return create(XActorServiceConfig.builder().name(name).build());
 	}
 	
-	public static ActorSystem create(XActorServiceConfig config) {
-		return factory().apply(config);
+	public static ActorService create(XActorServiceConfig config) {
+		return (ActorService)factory().apply(config!=null ? config : XActorServiceConfig.create());
 	}
 }
