@@ -49,8 +49,15 @@ public abstract class HandlerPodActor extends PodChildActor {
 		};
 	}
 	
+	public boolean isExposed() {
+		return true;
+	}
+	
 	@Override
 	public void preStart() {
+		if (isExposed())
+			expose();
+		
 		if (context.isShard())
 			setAlias(alias+context.shardId(), false);
 		else
