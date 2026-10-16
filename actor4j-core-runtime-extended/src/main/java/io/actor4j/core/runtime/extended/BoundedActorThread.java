@@ -17,15 +17,19 @@ package io.actor4j.core.runtime.extended;
 
 import java.util.ArrayDeque;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.LongAdder;
 
-import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.jctools.queues.MpscArrayQueue;
 import org.jctools.queues.MpscLinkedQueue;
 
+import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.DefaultActorThread;
 import io.actor4j.core.runtime.InternalActorSystem;
+import io.actor4j.core.utils.BoundedArrayDeque;
 
 public class BoundedActorThread extends DefaultActorThread {
+	protected final LongAdder droppedMessages = new LongAdder();
+	
 	public BoundedActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
 	}
@@ -41,6 +45,33 @@ public class BoundedActorThread extends DefaultActorThread {
 		outerQueueL2   = new MpscArrayQueue<>(system.getConfig().queueSize()); /* bounded */
 		outerQueueL1   = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
-		innerQueue     = new CircularFifoQueue<>(system.getConfig().queueSize()); /* bounded */
+		innerQueue     = new BoundedArrayDeque<>(system.getConfig().queueSize()); /* bounded, Drop-Newest */
+//		innerQueue     = new CircularFifoQueue<>(system.getConfig().queueSize()); /* bounded, Drop-Oldest */
+	}
+
+	@Override
+	public void innerQueue(ActorMessage<?> message) {
+		if (!innerQueue.offer(message))
+			droppedMessages.increment();
+		
+//		if (((CircularFifoQueue<?>)innerQueue).isAtFullCapacity())
+//			droppedMessages.increment();
+//		innerQueue.offer(message);
+	}
+
+	@Override
+	public void outerQueue(ActorMessage<?> message) {
+		if (!outerQueueL2.offer(message))
+			droppedMessages.increment();
+	}
+
+	@Override
+	public void serverQueue(ActorMessage<?> message) {
+		if (!serverQueueL2.offer(message))
+			droppedMessages.increment();
+	}
+
+	public long getDroppedMessages() {
+		return droppedMessages.sum();
 	}
 }
