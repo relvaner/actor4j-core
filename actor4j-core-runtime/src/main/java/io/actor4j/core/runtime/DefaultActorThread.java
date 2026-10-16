@@ -41,8 +41,6 @@ public abstract class DefaultActorThread extends ActorThread {
 	final int bufferQueueSize;
 	
 	final int maxSpins;
-	final int highLoad;
-	
 	final long maxSleepTime;
 	
 	protected volatile long busySince;   // 0 = idle
@@ -59,7 +57,6 @@ public abstract class DefaultActorThread extends ActorThread {
 		bufferQueueSize  = system.getConfig().bufferQueueSize();
 		
 		maxSpins         = system.getConfig().maxSpins();
-		highLoad         = system.getConfig().highLoad();
 		maxSleepTime     = system.getConfig().sleepTime();
 		
 		parked = new AtomicBoolean(false);

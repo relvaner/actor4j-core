@@ -37,7 +37,6 @@ public class ActorSystemConfig {
 
 	private final int throughput;
 	private final int maxSpins;
-	private final int highLoad;
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
 	
@@ -112,10 +111,6 @@ public class ActorSystemConfig {
 	
 	public int maxSpins() {
 		return maxSpins;
-	}
-	
-	public int highLoad() {
-		return highLoad;
 	}
 	
 	public ActorThreadMode threadMode() {
@@ -232,7 +227,6 @@ public class ActorSystemConfig {
 
 		protected int throughput;
 		protected int maxSpins;
-		protected int highLoad;
 		protected ActorThreadMode threadMode;
 		protected long sleepTime;
 		
@@ -289,7 +283,6 @@ public class ActorSystemConfig {
 			
 			throughput = 100;
 			maxSpins = 100_000;
-			calculateHighLoad();
 			threadMode = ActorThreadMode.PARK;
 			sleepTime = 25;
 			
@@ -335,7 +328,6 @@ public class ActorSystemConfig {
 			this.parallelismFactor = config.parallelismFactor();
 			this.throughput = config.throughput();
 			this.maxSpins = config.maxSpins();
-			this.highLoad = config.highLoad();
 			this.threadMode = config.threadMode();
 			this.sleepTime = config.sleepTime();
 			this.maxThreadRetries =  config.maxThreadRetries();
@@ -413,20 +405,14 @@ public class ActorSystemConfig {
 		
 		public Builder<T> throughput(int throughput) {
 			this.throughput = requirePositive(throughput, "throughput");
-			calculateHighLoad();
 
 			return this;
 		}
 		
 		public Builder<T> maxSpins(int maxSpins) {
 			this.maxSpins = requireNonNegative(maxSpins, "maxSpins");
-			calculateHighLoad();
 
 			return this;
-		}
-		
-		protected void calculateHighLoad() {
-			highLoad = maxSpins / throughput;
 		}
 
 		public Builder<T> parkMode() {
@@ -607,7 +593,6 @@ public class ActorSystemConfig {
 		this.parallelismFactor = builder.parallelismFactor;
 		this.throughput = builder.throughput;
 		this.maxSpins = builder.maxSpins;
-		this.highLoad = builder.highLoad;
 		this.threadMode = builder.threadMode;
 		this.sleepTime = builder.sleepTime;
 		this.maxThreadRetries = builder.maxThreadRetries;
