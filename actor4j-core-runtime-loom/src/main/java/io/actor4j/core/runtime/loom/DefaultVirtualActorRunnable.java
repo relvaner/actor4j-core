@@ -62,15 +62,20 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 		
 		totalProcessed = hasNextDirective + hasNextOuter;
 		if (totalProcessed==0) {
-//			parked.set(true);
-			if (!outerQueue().isEmpty() || !directiveQueue().isEmpty()) {
-//				parked.set(false);
-				return 0;
+			if (outerQueue().isEmpty() && directiveQueue().isEmpty()) {
+				LockSupport.park(Thread.currentThread());
+				if (Thread.interrupted())
+					Thread.currentThread().interrupt();
 			}
-			LockSupport.park(Thread.currentThread());
-//			parked.set(false);
-			if (Thread.interrupted())
-				   Thread.currentThread().interrupt();
+////		parked.set(true);
+//			if (!outerQueue().isEmpty() || !directiveQueue().isEmpty()) {
+////			parked.set(false);
+//				return 0;
+//			}
+//			LockSupport.park(Thread.currentThread());
+////		parked.set(false);
+//			if (Thread.interrupted())
+//				   Thread.currentThread().interrupt();
 		}
 		else {
 			if (system.getConfig().counterEnabled().get())
