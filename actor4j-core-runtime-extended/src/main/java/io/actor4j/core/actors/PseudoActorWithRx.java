@@ -37,7 +37,7 @@ public abstract class PseudoActorWithRx extends PseudoActor {
 		boolean hasNextOuter = ((InternalPseudoActorCell)cell).getOuterQueueL1().peek()!=null;
 		if (!hasNextOuter && ((InternalPseudoActorCell)cell).getOuterQueueL2().peek()!=null) {
 			ActorMessage<?> message = null;
-			for (int j=0; (message=((InternalPseudoActorCell)cell).getOuterQueueL2().poll())!=null && j<((InternalPseudoActorCell)cell).getSystem().getConfig().bufferQueueSize(); j++)
+			for (int j=0; j<((InternalPseudoActorCell)cell).getSystem().getConfig().bufferQueueSize() && (message=((InternalPseudoActorCell)cell).getOuterQueueL2().poll())!=null; j++)
 				((InternalPseudoActorCell)cell).getOuterQueueL1().offer(message);
 		}
 		
