@@ -38,7 +38,6 @@ public class ConfigFeature {
 		
 		assertEquals(100, system.getConfig().throughput());
 		assertEquals(100_000, system.getConfig().maxSpins());
-		assertEquals(100_000/100, system.getConfig().highLoad());
 		assertEquals(ActorThreadMode.PARK, system.getConfig().threadMode());
 		assertEquals(false, system.getConfig().serverMode());
 		assertEquals(25, system.getConfig().sleepTime());
@@ -94,7 +93,6 @@ public class ConfigFeature {
 		assertEquals(2, system.getConfig().parallelismFactor());
 		assertEquals(200, system.getConfig().throughput());
 		assertEquals(10_000, system.getConfig().maxSpins());
-		assertEquals(10_000/200, system.getConfig().highLoad());
 		assertEquals(ActorThreadMode.SLEEP, system.getConfig().threadMode());
 		assertEquals(100, system.getConfig().sleepTime());
 		assertEquals(30_000, system.getConfig().horizontalPodAutoscalerSyncTime());

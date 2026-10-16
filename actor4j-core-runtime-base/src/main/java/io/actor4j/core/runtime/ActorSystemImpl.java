@@ -565,6 +565,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		return queue!=null && queue.stream().anyMatch(id -> ((PodActorCell)id).getContext().primaryReplica());
 	}
 	
+	@Override
+	public void updateReplicaLimits(String domain, int minReplica, int maxReplica) {
+		podReplicationController.updateReplicaLimits(domain, minReplica, maxReplica);
+	}
+	
 	public boolean updateActors(String alias, ActorFactory factory) {
 		return updateActors(alias, factory, 1);
 	}
