@@ -33,15 +33,15 @@ public abstract class DefaultActorThread extends ActorThread {
 	protected final Object blocker = new Object();
 	protected final AtomicBoolean parked;
 	
-	final ActorThreadMode threadMode;
-	final boolean serverMode;
+	protected  final ActorThreadMode threadMode;
+	protected  final boolean serverMode;
 	
-	final int maxThroughput;
-	final int queueSize;
-	final int bufferQueueSize;
+	protected final int maxThroughput;
+	protected final int queueSize;
+	protected final int bufferQueueSize;
 	
-	final int maxSpins;
-	final long maxSleepTime;
+	protected final int maxSpins;
+	protected final long maxSleepTime;
 	
 	protected volatile long busySince;   // 0 = idle
 	protected volatile long busyNanos;   // written only by this thread
