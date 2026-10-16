@@ -45,6 +45,9 @@ public abstract class DefaultActorThread extends ActorThread {
 	
 	final long maxSleepTime;
 	
+	protected volatile long busySince;   // 0 = idle
+	protected volatile long busyNanos;   // written only by this thread
+	
 	public DefaultActorThread(ThreadGroup group, String name, InternalActorSystem system) {
 		super(group, name, system);
 		
@@ -93,6 +96,12 @@ public abstract class DefaultActorThread extends ActorThread {
 	}
 	
 	@Override
+	public long getBusyNanos() {
+		long since = busySince;
+		return busyNanos + (since!=0 ? System.nanoTime()-since : 0);
+	}
+	
+	@Override
 	public void onRun() {
 		boolean hasNextDirective;
 		boolean hasNextPriority;
@@ -100,7 +109,7 @@ public abstract class DefaultActorThread extends ActorThread {
 		int hasNextOuter;
 		int hasNextInner;
 		int spins = 0;
-		int loads = 0;
+//		int loads = 0;
 		int processed;
 		long startTime;
 		
@@ -146,10 +155,14 @@ public abstract class DefaultActorThread extends ActorThread {
 			
 			processed = hasNextInner + hasNextOuter + hasNextServer;
 			if (processed==0 && !hasNextPriority && !hasNextDirective) {
-				if (spins>highLoad) {
-					loads = 0;
-					threadLoad.set(false);
+				if (busySince!=0) {
+					busyNanos += System.nanoTime()-busySince;
+					busySince = 0;
 				}
+//				if (spins>highLoad) {
+//					loads = 0;
+//					threadLoad.set(false);
+//				}
 				spins++;
 				if (spins>maxSpins) {
 					spins = 0;
@@ -183,10 +196,12 @@ public abstract class DefaultActorThread extends ActorThread {
 			else {
 				spins = 0;
 				stopLoopMetrics(startTime, processed);
-				if (loads>highLoad)
-					threadLoad.set(true);
-				else
-					loads++;
+				if (busySince==0)
+					busySince = System.nanoTime();
+//				if (loads>highLoad)
+//					threadLoad.set(true);
+//				else
+//					loads++;
 			}
 		}		
 	}

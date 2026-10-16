@@ -61,4 +61,8 @@ public interface ActorExecutionUnit extends Runnable {
 		
 		return result;
 	}
+	
+	public default long getBusyNanos() {
+		return -1; // not supported
+	}
 }
