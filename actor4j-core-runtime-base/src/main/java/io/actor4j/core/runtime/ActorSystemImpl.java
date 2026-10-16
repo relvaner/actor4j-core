@@ -329,6 +329,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			this.runtimeConfig = runtimeConfig;
 			if (runtimeConfig.podReplicationControllerFactory()!=null)
 				podReplicationController = runtimeConfig.podReplicationControllerFactory().apply(this);
+			if (runtimeConfig.podReplicationControllerRunnableFactory()!=null)
+				podReplicationControllerRunnableFactory = runtimeConfig.podReplicationControllerRunnableFactory();
 			result = true;
 		}
 		
