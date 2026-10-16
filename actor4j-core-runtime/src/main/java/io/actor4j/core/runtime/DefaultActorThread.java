@@ -101,6 +101,8 @@ public abstract class DefaultActorThread extends ActorThread {
 		int hasNextInner;
 		int spins = 0;
 		int loads = 0;
+		int processed;
+		long startTime;
 		
 		while (!isInterrupted()) {
 			hasNextDirective = false;
@@ -108,6 +110,9 @@ public abstract class DefaultActorThread extends ActorThread {
 			hasNextServer    = 0;
 			hasNextOuter     = 0;
 			hasNextInner     = 0;
+			processed        = 0;
+			
+			startTime = startLoopMetrics();
 			
 			while (poll(directiveQueue)) 
 				hasNextDirective=true;
@@ -139,7 +144,8 @@ public abstract class DefaultActorThread extends ActorThread {
 			
 			for (; hasNextInner<maxThroughput && poll(innerQueue); hasNextInner++);
 			
-			if (hasNextInner==0 && hasNextOuter==0 && hasNextServer==0 && !hasNextPriority && !hasNextDirective) {
+			processed = hasNextInner + hasNextOuter + hasNextServer;
+			if (processed==0 && !hasNextPriority && !hasNextDirective) {
 				if (spins>highLoad) {
 					loads = 0;
 					threadLoad.set(false);
@@ -176,6 +182,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			}
 			else {
 				spins = 0;
+				stopLoopMetrics(startTime, processed);
 				if (loads>highLoad)
 					threadLoad.set(true);
 				else

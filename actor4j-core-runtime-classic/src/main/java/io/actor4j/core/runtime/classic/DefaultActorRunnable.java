@@ -22,23 +22,26 @@ public class DefaultActorRunnable extends ActorRunnable {
 	public DefaultActorRunnable(InternalActorSystem system) {
 		super(system);
 	}
-
+	
 	@Override
-	public void onRun(ClassicInternalActorCell cell) {
-		int hasDirective = 0;
+	public int onRunForMetrics(ClassicInternalActorCell cell) {
+		int hasNextDirective = 0;
 		int hasNextOuter = 0;
 
 		ActorMessage<?> msg = null;
-		for (; (msg=cell.directiveQueue().poll())!=null; hasDirective++) 
+		for (; (msg=cell.directiveQueue().poll())!=null; hasNextDirective++) 
 			faultToleranceMethod(msg, cell);
 		
 		for (; hasNextOuter<system.getConfig().throughput() && (msg=cell.outerQueue().poll())!=null; hasNextOuter++)
 			faultToleranceMethod(msg, cell);
 		
-		for (; (msg=cell.directiveQueue().poll())!=null; hasDirective++) 
+		for (; (msg=cell.directiveQueue().poll())!=null; hasNextDirective++) 
 			faultToleranceMethod(msg, cell);
 
-		if (system.getConfig().counterEnabled().get())
-			getMetrics().counter.addAndGet(hasDirective+hasNextOuter);
+		int totalProcessed = hasNextDirective + hasNextOuter;
+		if (totalProcessed>0  && system.getConfig().counterEnabled().get())
+			getMetrics().counter.addAndGet(totalProcessed);
+		
+		return totalProcessed;
 	}
 }

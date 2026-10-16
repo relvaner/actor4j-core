@@ -31,6 +31,10 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	
 //	protected final AtomicBoolean parked;
 	
+	protected int hasNextDirective;
+	protected int hasNextOuter;
+	protected int totalProcessed;
+	
 	public DefaultVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
 		super(system, cell, onTermination);
 
@@ -39,48 +43,50 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 		
 //		parked = new AtomicBoolean(false);
 	}
-	
-	protected void onPoll(ActorMessage<?> message) {
-		if (system.getConfig().metricsEnabled().get())
-			metrics(message);
-		else
-			faultToleranceMethod(message);
-	}
 
 	@Override
-	public void onRun() {
-		int hasNextDirective;
-		int hasNextOuter;
+	public int processMessagesForMetrics() {
+		hasNextDirective = 0;
+		hasNextOuter = 0;
+		totalProcessed = 0;
 		
-		while ( !(Thread.interrupted() || terminated.get()) ) {
-			hasNextDirective = 0;
-			hasNextOuter = 0;
-			
-			ActorMessage<?> msg = null;
-			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
-				onPoll(msg);
-			
-			for (; hasNextOuter<system.getConfig().throughput() && (msg=outerQueue().poll())!=null; hasNextOuter++)
-				onPoll(msg);
-			
-//			for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
-//				onPoll(msg);
-			
-			if (hasNextOuter==0 && hasNextDirective==0) {
-//				parked.set(true);
-				if (!outerQueue().isEmpty() || !directiveQueue().isEmpty()) {
-//					parked.set(false);
-					continue;
-				}
-				LockSupport.park(Thread.currentThread());
+		ActorMessage<?> msg = null;
+		for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
+			faultToleranceMethod(msg);
+		
+		for (; hasNextOuter<system.getConfig().throughput() && (msg=outerQueue().poll())!=null; hasNextOuter++)
+			faultToleranceMethod(msg);
+		
+//		for (; (msg=directiveQueue().poll())!=null; hasNextDirective++)
+//			onPoll(msg);
+		
+		totalProcessed = hasNextDirective + hasNextOuter;
+		if (totalProcessed==0) {
+//			parked.set(true);
+			if (!outerQueue().isEmpty() || !directiveQueue().isEmpty()) {
 //				parked.set(false);
-				if (Thread.interrupted())
-					   Thread.currentThread().interrupt();
+				return 0;
 			}
-			else {
-				if (system.getConfig().counterEnabled().get())
-					getMetrics().counter.addAndGet(hasNextDirective+hasNextOuter);
-			}
+			LockSupport.park(Thread.currentThread());
+//			parked.set(false);
+			if (Thread.interrupted())
+				   Thread.currentThread().interrupt();
+		}
+		else {
+			if (system.getConfig().counterEnabled().get())
+				getMetrics().counter.addAndGet(totalProcessed);
+		}
+		
+		return totalProcessed;
+	}
+	
+	@Override
+	public void onRun() {
+		while ( !(Thread.interrupted() || terminated.get()) ) {
+			if (system.getConfig().metricsEnabled().get())
+				metrics();
+			else
+				processMessages();
 		}
 	}
 	

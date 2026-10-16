@@ -77,8 +77,9 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 		return ((InternalVirtualActorExecutorService)system.getExecutorService()).getVirtualActorRunnablePool().getMetrics();
 	}
 	
-	public void metrics(ActorMessage<?> message) {
+	public void metrics() {
 		VirtualActorRunnableMetrics metrics = getMetrics();
+		int totalProcessed = 0;
 		
 		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
 			boolean euPTEnabled = metrics.processingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
@@ -86,27 +87,33 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 			
 			if (euPTEnabled || cellsPTEnabled) {
 				long startTime = System.nanoTime();
-				faultToleranceMethod(message);
+				totalProcessed = processMessagesForMetrics();
 				long stopTime = System.nanoTime();
 
-				if (euPTEnabled && system.getConfig().processingTimeEnabled().get()) {
-					metrics.processingTimeSamples.offer(stopTime-startTime);
+				if (totalProcessed>0 && euPTEnabled && system.getConfig().processingTimeEnabled().get()) {
+					metrics.processingTimeSamples.offer((stopTime-startTime) / totalProcessed);
 					metrics.processingTimeSampleCount.incrementAndGet();
 				}
-				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
-					cell.getProcessingTimeSamples().offer(stopTime-startTime);
+				if (totalProcessed>0 && cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
+					cell.getProcessingTimeSamples().offer((stopTime-startTime) / totalProcessed);
 					metrics.cellsProcessingTimeSampleCount.incrementAndGet();
 				}
 			}
 			else
-				faultToleranceMethod(message);
+				totalProcessed = processMessagesForMetrics();
 		}
 		else
-			faultToleranceMethod(message);
+			totalProcessed = processMessagesForMetrics();
 		
-		if (system.getConfig().trackRequestRatePerActor().get())
-			cell.getRequestRate().incrementAndGet();
+		if (totalProcessed>0 && system.getConfig().trackRequestRatePerActor().get())
+			cell.getRequestRate().addAndGet(totalProcessed);
 	}
+	
+	public void processMessages() {
+		processMessagesForMetrics();
+	}
+	
+	public abstract int processMessagesForMetrics();
 	
 	@Override
 	public void run() {

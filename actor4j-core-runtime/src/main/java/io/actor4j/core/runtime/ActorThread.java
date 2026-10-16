@@ -74,27 +74,31 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 		}	
 	}
 	
+	protected long startLoopMetrics() {
+		long result = 0;
+		
+		if (system.getConfig().metricsEnabled().get() && system.getConfig().processingTimeEnabled().get()
+			&& threadProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples()/*threadPTEnabled*/)
+			result = System.nanoTime();
+		
+		return result;
+	}
+
+	protected void stopLoopMetrics(long startTime, int processed) {
+		if (startTime>0 && processed>0) {
+			threadProcessingTimeSamples.offer((System.nanoTime()-startTime)/processed);
+			threadProcessingTimeSampleCount.incrementAndGet();
+		}
+	}
+	
 	protected void metrics(ActorMessage<?> message, InternalActorCell cell) {
-		if (system.getConfig().processingTimeEnabled().get() || system.getConfig().trackProcessingTimePerActor().get()) {
-			boolean threadPTEnabled = threadProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-			boolean cellsPTEnabled = cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples();
-			
-			if (threadPTEnabled || cellsPTEnabled) {
-				long startTime = System.nanoTime();
-				faultToleranceMethod(message, cell);
-				long stopTime = System.nanoTime();
-				
-				if (threadPTEnabled && system.getConfig().processingTimeEnabled().get()) {
-					threadProcessingTimeSamples.offer(stopTime-startTime);
-					threadProcessingTimeSampleCount.incrementAndGet();
-				}
-				if (cellsPTEnabled && system.getConfig().trackProcessingTimePerActor().get()) {
-					cell.getProcessingTimeSamples().offer(stopTime-startTime);
-					cellsProcessingTimeSampleCount.incrementAndGet();
-				}
-			}
-			else
-				faultToleranceMethod(message, cell);
+		if (system.getConfig().trackProcessingTimePerActor().get() && cellsProcessingTimeSampleCount.get()<system.getConfig().maxProcessingTimeSamples()/*cellsPTEnabled*/) {
+			long startTime = System.nanoTime();
+			faultToleranceMethod(message, cell);
+			long stopTime = System.nanoTime();
+
+			cell.getProcessingTimeSamples().offer(stopTime-startTime);
+			cellsProcessingTimeSampleCount.incrementAndGet();
 		}
 		else
 			faultToleranceMethod(message, cell);
