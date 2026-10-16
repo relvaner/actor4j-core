@@ -17,6 +17,8 @@ package io.actor4j.core.runtime.pods;
 
 import java.util.List;
 
+//shardCount==1: currentReplicaCount is used, shard lists are null
+//shardCount>1:  shard lists are used (secondary replicas per shard), currentReplicaCount is 0
 public record PodSystemConfiguration(List<String> primaryShardIds, List<String> secondaryShardIds,
 	List<Integer> secondaryShardCounts, int currentShardCount, int currentReplicaCount) {
 }

@@ -15,10 +15,14 @@
  */
 package io.actor4j.core.runtime.config;
 
+import io.actor4j.core.runtime.PodReplicationControllerFactory;
+
 public class ActorRuntimeConfig {
 	private final InternalServerCallback internalServerCallback;
 	private final InternalServerRequest internalServerRequest;
 	private final InternalServerProxy internalServerProxy;
+	
+	private final PodReplicationControllerFactory podReplicationControllerFactory;
 	
 	public InternalServerCallback internalServerCallback() {
 		return internalServerCallback;
@@ -32,10 +36,16 @@ public class ActorRuntimeConfig {
 		return internalServerProxy;
 	}
 	
+	public PodReplicationControllerFactory podReplicationControllerFactory() {
+		return podReplicationControllerFactory;
+	}
+	
 	public static abstract class Builder<T extends ActorRuntimeConfig> {
 		protected InternalServerCallback internalServerCallback;
 		protected InternalServerRequest internalServerRequest;
 		protected InternalServerProxy internalServerProxy;
+		
+		protected PodReplicationControllerFactory podReplicationControllerFactory;
 		
 		public Builder() {
 			super();
@@ -43,6 +53,8 @@ public class ActorRuntimeConfig {
 			internalServerCallback = null;
 			internalServerRequest  = null;
 			internalServerProxy = null;
+			
+			podReplicationControllerFactory = null;
 		}
 		
 		public Builder(T config) {
@@ -50,6 +62,8 @@ public class ActorRuntimeConfig {
 			this.internalServerCallback = config.internalServerCallback();
 			this.internalServerRequest = config.internalServerRequest();
 			this.internalServerProxy = config.internalServerProxy();
+			
+			this.podReplicationControllerFactory = config.podReplicationControllerFactory();
 		}
 		
 		public Builder<T> internalServerCallback(InternalServerCallback internalServerCallback) {
@@ -70,6 +84,12 @@ public class ActorRuntimeConfig {
 			return this;
 		}
 		
+		public Builder<T> podReplicationControllerFactory(PodReplicationControllerFactory podReplicationControllerFactory) {
+			this.podReplicationControllerFactory = podReplicationControllerFactory;
+			
+			return this;
+		}
+		
 		public abstract T build();
 	}
 	
@@ -78,6 +98,8 @@ public class ActorRuntimeConfig {
 		this.internalServerCallback = builder.internalServerCallback;
 		this.internalServerRequest = builder.internalServerRequest;
 		this.internalServerProxy = builder.internalServerProxy;
+		
+		this.podReplicationControllerFactory = builder.podReplicationControllerFactory;
 	}
 	
 	public static ActorRuntimeConfig create() {

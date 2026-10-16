@@ -18,6 +18,11 @@ package io.actor4j.core.pods;
 public record PodConfiguration(String domain, String className, int shardCount, int minReplica, int maxReplica,
 		String versionNumber) {
 	
+	public PodConfiguration {
+		if (shardCount<1 || minReplica<1 || maxReplica<minReplica)
+			throw new IllegalArgumentException(String.format("Invalid pod configuration (shardCount=%d, minReplica=%d, maxReplica=%d)", shardCount, minReplica, maxReplica));
+	}
+	
 	public PodConfiguration(String domain, String className) {
 		this(domain, className, 1, 1, null);
 	}

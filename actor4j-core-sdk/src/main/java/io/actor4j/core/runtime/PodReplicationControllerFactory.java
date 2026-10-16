@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2020, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,9 @@
  */
 package io.actor4j.core.runtime;
 
-import static io.actor4j.core.logging.ActorLogger.*;
+import java.util.function.Function;
 
-public class DefaultPodReplicationControllerRunnable extends PodReplicationControllerRunnable {
-	public DefaultPodReplicationControllerRunnable(InternalActorSystem system) {
-		super(system);
-	}
+import io.actor4j.core.runtime.pods.PodReplicationController;
 
-	@Override
-	public void onRun() {
-		horizontalPodAutoscaler();
-	}
-	
-	public void horizontalPodAutoscaler() {
-		systemLogger().log(DEBUG, String.format("[REPLICATION][AUTOSCALER] sync"));
-	}
+public interface PodReplicationControllerFactory extends Function<InternalActorSystem, PodReplicationController>{
 }

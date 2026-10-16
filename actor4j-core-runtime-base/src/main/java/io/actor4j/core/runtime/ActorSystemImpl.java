@@ -54,7 +54,7 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.runtime.config.ActorRuntimeConfig;
-import io.actor4j.core.runtime.pods.DefaultPodReplicationController;
+import io.actor4j.core.runtime.pods.LocalPodReplicationController;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
@@ -109,8 +109,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			this.config = ActorSystemConfig.create();
 		
 //		container = DefaultDIContainer.create();
-		podReplicationController = new DefaultPodReplicationController(this);
-		podReplicationControllerRunnableFactory = (system) -> new DefaultPodReplicationControllerRunnable(system);
+		podReplicationController = new LocalPodReplicationController(this);
+		podReplicationControllerRunnableFactory = (system) -> new LocalPodReplicationControllerRunnable(system);
 		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);
 		
 		pseudoActorCellFactory = (system, actor, blocking) -> new PseudoActorCell(system, actor, blocking);
@@ -327,6 +327,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		if (!executorService.isStarted() && runtimeConfig!=null) {
 			this.runtimeConfig = runtimeConfig;
+			if (runtimeConfig.podReplicationControllerFactory()!=null)
+				podReplicationController = runtimeConfig.podReplicationControllerFactory().apply(this);
 			result = true;
 		}
 		
@@ -558,10 +560,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	public boolean primaryPodDeployed(String domain) {
 		Queue<ActorId> queue = podDomains.get(domain);
 		
-		return queue.stream().filter(id -> {
-				PodActorCell cell = (PodActorCell)id;
-				return cell.getContext().primaryReplica();
-			}).findFirst().isPresent();
+		return queue!=null && queue.stream().anyMatch(id -> ((PodActorCell)id).getContext().primaryReplica());
 	}
 	
 	public boolean updateActors(String alias, ActorFactory factory) {
