@@ -112,7 +112,9 @@ public abstract class DefaultActorThread extends ActorThread {
 //		int loads = 0;
 		int processed;
 		long startTime;
+		long iterationStart;
 		
+		busySince = 0;
 		while (!isInterrupted()) {
 			hasNextDirective = false;
 			hasNextPriority  = false;
@@ -122,6 +124,7 @@ public abstract class DefaultActorThread extends ActorThread {
 			processed        = 0;
 			
 			startTime = startLoopMetrics();
+			iterationStart = busySince==0 ? System.nanoTime() : 0;
 			
 			while (poll(directiveQueue)) 
 				hasNextDirective=true;
@@ -197,7 +200,7 @@ public abstract class DefaultActorThread extends ActorThread {
 				spins = 0;
 				stopLoopMetrics(startTime, processed);
 				if (busySince==0)
-					busySince = System.nanoTime();
+					busySince = iterationStart;
 //				if (loads>highLoad)
 //					threadLoad.set(true);
 //				else
