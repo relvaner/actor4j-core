@@ -16,12 +16,32 @@
 package io.actor4j.core.runtime.classic;
 
 import io.actor4j.core.runtime.ActorExecutorServiceImpl;
+import io.actor4j.core.runtime.InternalActorCell;
+
+import java.util.function.Function;
+
 import io.actor4j.core.runtime.ActorExecutionUnitPool;
 import io.actor4j.core.runtime.InternalActorRuntimeSystem;
 
 public class ClassicDefaultActorExecutorService extends ActorExecutorServiceImpl<ActorRunnable> implements ClassicInternalActorExecutorService {
 	public ClassicDefaultActorExecutorService(InternalActorRuntimeSystem system) {
 		super(system);
+	}
+	
+	@Override
+	protected void beforeExecutionUnitPool() {
+		// queues of cells created before start (afterwards: ClassicActorCell constructor)
+		Function<InternalActorCell, Boolean> configQueues = (cell) -> {
+			if (cell instanceof ClassicActorCell classicCell)
+				classicCell.configQueues();
+			
+			return false;
+		};
+		system.internal_iterateCell((InternalActorCell)system.ZERO_ID(), configQueues);
+		system.internal_iterateCell((InternalActorCell)system.UNKNOWN_ID(), configQueues);
+		system.internal_iterateCell((InternalActorCell)system.SYSTEM_ID(), configQueues);
+		system.internal_iterateCell((InternalActorCell)system.USER_ID(), configQueues);
+		system.internal_iterateCell((InternalActorCell)system.PSEUDO_ID(), configQueues);
 	}
 	
 	@Override

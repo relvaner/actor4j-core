@@ -213,6 +213,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 			watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		}
 		
+		beforeExecutionUnitPool(); // e.g. configure cells created before start
 		executionUnitPool = createExecutionUnitPool();
 		
 		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
@@ -251,6 +252,10 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+	}
+	
+	protected void beforeExecutionUnitPool() {
+		// empty
 	}
 	
 	public abstract ActorExecutionUnitPool<U> createExecutionUnitPool();

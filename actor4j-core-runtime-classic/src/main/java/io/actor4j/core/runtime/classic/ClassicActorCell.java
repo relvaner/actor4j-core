@@ -16,7 +16,6 @@
 package io.actor4j.core.runtime.classic;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.actor4j.core.actors.Actor;
@@ -25,18 +24,23 @@ import io.actor4j.core.runtime.BaseActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
 public class ClassicActorCell extends BaseActorCell implements ClassicInternalActorCell {
-	protected final Queue<ActorMessage<?>> directiveQueue;
-	protected final Queue<ActorMessage<?>> outerQueue;
+	protected /*quasi final*/ Queue<ActorMessage<?>> directiveQueue;
+	protected /*quasi final*/ Queue<ActorMessage<?>> outerQueue;
 	
 	protected final AtomicBoolean isScheduled;
 	
 	public ClassicActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
 		
-		directiveQueue = new ConcurrentLinkedQueue<>();
-		outerQueue = new ConcurrentLinkedQueue<>();
+		if (system.getExecutorService().isStarted())
+			configQueues();
 		
 		isScheduled = new AtomicBoolean(false);
+	}
+	
+	public void configQueues() {
+		directiveQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
+		outerQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
 	}
 
 	@Override
