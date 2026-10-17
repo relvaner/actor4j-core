@@ -44,7 +44,7 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.persistence.ActorPersistenceDTO;
 import io.actor4j.core.runtime.annotations.concurrent.ThreadLocalAccess;
 import io.actor4j.core.runtime.annotations.concurrent.ThreadSafeAccess;
-import io.actor4j.core.runtime.di.FactoryInjector;
+import io.actor4j.core.runtime.factory.Factory;
 import io.actor4j.core.runtime.persistence.actor.PersistenceServiceActor;
 import io.actor4j.core.runtime.protocols.RecoverProtocol;
 import io.actor4j.core.runtime.protocols.RestartProtocol;
@@ -68,7 +68,7 @@ public class BaseActorCell implements InternalActorCell {
 	@ThreadSafeAccess
 	protected final AtomicReference<UUID> globalId; // Optionally generated when exposed!
 	@ThreadSafeAccess(reason = "Injected along with the creation of the actor cell") @ThreadLocalAccess
-	protected /*quasi final*/ FactoryInjector<?> factory;
+	protected /*quasi final*/ Factory<?> factory;
 	@ThreadSafeAccess(reason = "Initialized at the registration of the actor cell")
 	protected long threadId;
 	@ThreadSafeAccess(reason = "Initialized along with the creation o the actor cell")
@@ -161,12 +161,12 @@ public class BaseActorCell implements InternalActorCell {
 	}
 
 	@Override
-	public FactoryInjector<?> getFactory() {
+	public Factory<?> getFactory() {
 		return factory;
 	}
 
 	@Override
-	public void setFactory(FactoryInjector<?> factory) {
+	public void setFactory(Factory<?> factory) {
 		this.factory = factory;
 	}
 

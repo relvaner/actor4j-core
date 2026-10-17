@@ -34,7 +34,7 @@ public class RestartProtocol {
 		if (cell.host() instanceof EmbeddedHostActor h) {
 			cell.postStop();
 			try {
-				EmbeddedActor newEmbeddedActor = (EmbeddedActor)h.underlyingImpl().getContainer().getInstance(cell.getId());
+				EmbeddedActor newEmbeddedActor = (EmbeddedActor)h.underlyingImpl().getRegistry().create(cell.getId());
 				newEmbeddedActor.setCell(cell);
 				cell.setActor(newEmbeddedActor);
 				cell.postRestart(reason);

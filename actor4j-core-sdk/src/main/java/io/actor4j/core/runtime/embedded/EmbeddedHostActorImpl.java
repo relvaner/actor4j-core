@@ -30,14 +30,14 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.ActorSystemError;
 import io.actor4j.core.runtime.InternalActorSystem;
-import io.actor4j.core.runtime.di.DIContainer;
-import io.actor4j.core.runtime.di.DefaultDIContainer;
+import io.actor4j.core.runtime.factory.DefaultFactoryRegistry;
+import io.actor4j.core.runtime.factory.FactoryRegistry;
 import io.actor4j.core.utils.EmbeddedActorFactory;
 
 public class EmbeddedHostActorImpl {
 	protected final ActorRef host;
 	
-	protected final DIContainer<ActorId> container;
+	protected final FactoryRegistry<ActorId> registry;
 	protected final EmbeddedActorStrategyOnFailure actorStrategyOnFailure;
 	
 	protected final ActorEmbeddedRouter<ActorId> router;     // ActorId  -> InternalEmbeddedActorCell
@@ -63,7 +63,7 @@ public class EmbeddedHostActorImpl {
 		
 		this.host = host;
 		
-		container = DefaultDIContainer.create();
+		registry = DefaultFactoryRegistry.create();
 		actorStrategyOnFailure = new DefaultEmbeddedActorStrategyOnFailure(this);
 		
 		this.redirectEnabled = redirectEnabled;
@@ -84,8 +84,8 @@ public class EmbeddedHostActorImpl {
 		return host;
 	}
 
-	public DIContainer<ActorId> getContainer() {
-		return container;
+	public FactoryRegistry<ActorId> getRegistry() {
+		return registry;
 	}
 
 	public EmbeddedActorStrategyOnFailure getActorStrategyOnFailure() {
@@ -130,7 +130,7 @@ public class EmbeddedHostActorImpl {
 	
 	public ActorId addEmbeddedChild(EmbeddedActorFactory factory, UUID globalId) {
 		InternalEmbeddedActorCell embeddedActorCell = createEmbeddedActorCell(factory.create(), globalId);
-		container.register(embeddedActorCell.getId(), factory);
+		registry.register(embeddedActorCell.getId(), factory);
 		
 		router.put(embeddedActorCell.getId(), embeddedActorCell);
 		handlerRouter.put(globalId, embeddedActorCell);
@@ -162,7 +162,7 @@ public class EmbeddedHostActorImpl {
 			if (redirectEnabled)
 				host.getSystem().removeRedirection(id);
 
-			container.unregister(id);
+			registry.unregister(id);
 			embeddedActorCell.getActor().setCell(null);
 		}
 	}

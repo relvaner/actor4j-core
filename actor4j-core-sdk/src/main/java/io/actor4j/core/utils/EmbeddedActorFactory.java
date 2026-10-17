@@ -16,7 +16,7 @@
 package io.actor4j.core.utils;
 
 import io.actor4j.core.actors.EmbeddedActor;
-import io.actor4j.core.runtime.di.FactoryInjector;
+import io.actor4j.core.runtime.factory.Factory;
 
-public interface EmbeddedActorFactory extends FactoryInjector<EmbeddedActor> {
+public interface EmbeddedActorFactory extends Factory<EmbeddedActor> {
 }

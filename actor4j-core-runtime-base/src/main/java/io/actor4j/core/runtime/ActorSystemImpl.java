@@ -65,8 +65,7 @@ import io.actor4j.core.utils.PodActorFactory;
 public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	protected /*Changeable only before starting*/ ActorRuntimeConfig runtimeConfig;
-	
-//	protected /*quasi final*/ DIContainer<ActorId> container; // Currently not used! @See ActorCell
+
 	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
 	protected /*quasi final*/ WatchdogRunnableFactory watchdogRunnableFactory;
@@ -107,8 +106,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			this.config = config;
 		else
 			this.config = ActorSystemConfig.create();
-		
-//		container = DefaultDIContainer.create();
+
 		podReplicationController = new LocalPodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new LocalPodReplicationControllerRunnable(system);
 		watchdogRunnableFactory = (system, actors) -> new DefaultWatchdogRunnable(system, actors);

@@ -32,7 +32,7 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.InternalPodActorCell;
-import io.actor4j.core.runtime.di.DefaultDIContainer;
+import io.actor4j.core.runtime.factory.DefaultFactoryRegistry;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorGroupSet;
 
@@ -42,7 +42,7 @@ import static io.actor4j.core.logging.ActorLogger.*;
 public class LocalPodReplicationController implements PodReplicationController {
 	protected final InternalActorSystem system;
 	
-	protected final DefaultDIContainer<String> container;
+	protected final DefaultFactoryRegistry<String> registry;
 	protected final Map<String, PodReplicationTuple> podReplicationMap;
 	
 	protected final Function<String, Boolean> hasPrimaryReplica;
@@ -53,7 +53,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 		super();
 		this.system = system;
 		
-		container = new DefaultDIContainer<>();
+		registry = new DefaultFactoryRegistry<>();
 		podReplicationMap = new ConcurrentHashMap<>();
 		
 		hasPrimaryReplica = (domain) -> system.primaryPodDeployed(domain);
@@ -84,7 +84,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 			PodSystemConfiguration podSystemConfiguration = scalingAlgorithm(podConfiguration);
 			podReplicationMap.put(podConfiguration.domain(), new PodReplicationTuple(podConfiguration, podSystemConfiguration));
 			if (podSystemConfiguration!=null) {
-				container.register(podConfiguration.domain(), factory);
+				registry.register(podConfiguration.domain(), factory);
 				PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system, hasPrimaryReplica);
 			}
 		}
@@ -191,7 +191,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 			}
 			system.getPodDomains().remove(domain);
 			podReplicationMap.remove(domain);
-			container.unregister(domain);
+			registry.unregister(domain);
 		}
 		finally {
 			lock.unlock();
@@ -318,7 +318,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 								null, null, null, 1, podReplicationTuple.podSystemConfiguration().currentReplicaCount()+allowed);
 						podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
 						
-						PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, null, system, hasPrimaryReplica);
+						PodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, null, system, hasPrimaryReplica);
 					}
 					if (allowed<instances)
 						systemLogger().log(WARN, String.format("[REPLICATION] Domain '%s': limited to maxReplica (%d)", domain, podReplicationTuple.podConfiguration().maxReplica()));
@@ -340,7 +340,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 								0);
 						podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
 						
-						PodDeployment.increasePods((PodFactory)container.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, shardId, system, hasPrimaryReplica);
+						PodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, shardId, system, hasPrimaryReplica);
 					}
 					if (allowed<instances)
 						systemLogger().log(WARN, String.format("[REPLICATION] Shard (%s, %s): limited to maxReplica (%d)", domain, shardId, podReplicationTuple.podConfiguration().maxReplica()));

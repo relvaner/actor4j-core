@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.di;
+package io.actor4j.core.runtime.factory;
 
-public interface DIContainer<K> {
-	public void register(K key, FactoryInjector<?> factoryInjector);
-	public Object getInstance(K key) throws Exception;
-	public void unregister(K key);
+@FunctionalInterface
+public interface Factory<T> {
+	public T create();
 }

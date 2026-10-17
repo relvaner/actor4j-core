@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.di;
+package io.actor4j.core.runtime.factory;
 
-public interface FactoryInjector<T> {
-	public T create();
+public interface FactoryRegistry<K> {
+	public Factory<?> getFactory(K key);
+	public void register(K key, Factory<?> factory);
+	public void unregister(K key);
+	public Object create(K key);
 }

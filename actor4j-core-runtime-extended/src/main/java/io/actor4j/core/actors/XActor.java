@@ -23,29 +23,4 @@ public abstract class XActor extends Actor {
 	public XActor(String name) {
 		super(name);
 	}
-	
-//	public ActorId addChild(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-//		InternalActorCell cell = ((InternalActorRuntimeSystem)getSystem()).generateCell(clazz);
-//		if (((InternalActorRuntimeSystem)getSystem()).getContainer() instanceof DefaultDIContainer)
-//			((DefaultDIContainer<ActorId>)((InternalActorRuntimeSystem)getSystem()).getContainer()).registerConstructorInjector(cell.getId(), clazz, args);
-//		else
-//			throw new ActorInitializationException();
-//		try {
-//			Actor child = (Actor)((InternalActorRuntimeSystem)getSystem()).getContainer().getInstance(cell.getId());
-//			cell.setActor(child);
-//		} catch (Exception e) {
-//			throw new ActorInitializationException();
-//		}
-//		
-//		return ((InternalActorCell)getCell()).internal_addChild(cell);
-//	}
-	
-//	public List<ActorId> addChild(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-//		List<ActorId> result = new ArrayList<>(instances);
-//		
-//		for (int i=0; i<instances; i++)
-//			result.add(addChild(clazz, args));
-//		
-//		return result;
-//	}
 }

@@ -13,36 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.actor4j.core.runtime.di;
+package io.actor4j.core.runtime.factory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.actor4j.core.runtime.di.DefaultDIContainer;
-
-public class DefaultDIContainer<K> implements DIContainer<K> {
-	protected final Map<K, FactoryInjector<?>> diMap;
+public class DefaultFactoryRegistry<K> implements FactoryRegistry<K> {
+	protected final Map<K, Factory<?>> map;
 	
-	public DefaultDIContainer() {
-		diMap = new ConcurrentHashMap<>();
+	public DefaultFactoryRegistry() {
+		map = new ConcurrentHashMap<>();
 	}
 	
 	@Override
-	public void register(K key, FactoryInjector<?> factoryInjector) {
-		diMap.put(key, factoryInjector);
-	}
-	
-	public FactoryInjector<?> getFactory(K key) {
-		return diMap.get(key);
+	public void register(K key, Factory<?> factory) {
+		map.put(key, factory);
 	}
 	
 	@Override
-	public Object getInstance(K key) throws Exception {
+	public Factory<?> getFactory(K key) {
+		return map.get(key);
+	}
+	
+	@Override
+	public Object create(K key) {
 		Object result = null;
 		
-		FactoryInjector<?> factoryInjector = diMap.get(key);
-		if (factoryInjector!=null) {
-			result = factoryInjector.create();
+		Factory<?> factory = map.get(key);
+		if (factory!=null) {
+			result = factory.create();
 		}
 		
 		return result;
@@ -50,10 +49,10 @@ public class DefaultDIContainer<K> implements DIContainer<K> {
 	
 	@Override
 	public void unregister(K key) {
-		diMap.remove(key);
+		map.remove(key);
 	}
 	
-	public static <K> DIContainer<K> create() {
-		return new DefaultDIContainer<>();
+	public static <K> FactoryRegistry<K> create() {
+		return new DefaultFactoryRegistry<>();
 	}
 }

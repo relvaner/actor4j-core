@@ -15,7 +15,7 @@
  */
 package io.actor4j.core.pods;
 
-import io.actor4j.core.runtime.di.FactoryInjector;
+import io.actor4j.core.runtime.factory.Factory;
 
-public interface PodFactory extends FactoryInjector<Pod> {
+public interface PodFactory extends Factory<Pod> {
 }
