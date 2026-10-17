@@ -29,7 +29,6 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 	public XDefaultActorSystemImpl(XActorSystemConfig config) {
 		super(config!=null ? config : (config=XActorSystemConfig.create()));
 		
-//		container = DefaultDIContainer.create(); // override
 //		podReplicationController = new XPodReplicationController(this); // override
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
@@ -66,30 +65,4 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 //		else 
 			setActorThread(unbounded);
 	}
-	
-//	@Override
-//	public List<ActorId> addActor(int instances, Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-//		List<ActorId> result = new ArrayList<>(instances);
-//		
-//		for (int i=0; i<instances; i++)
-//			result.add(addActor(clazz, args));
-//		
-//		return result;	
-//	}
-//	
-//	@Override
-//	public ActorId addActor(Class<? extends Actor> clazz, Object... args) throws ActorInitializationException {
-//		InternalActorCell cell = generateCell(clazz);
-//		((DefaultDIContainer<ActorId>)container).registerConstructorInjector(cell.getId(), clazz, args);
-//		Actor actor = null;
-//		try {
-//			actor = (Actor)container.getInstance(cell.getId());
-//			cell.setActor(actor);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			executorService.getFaultToleranceManager().notifyErrorHandler(new ActorInitializationException(), ActorSystemError.ACTOR_INITIALIZATION, null);
-//		}
-//		
-//		return (actor!=null) ? user_addCell(cell) : ZERO_ID;
-//	}
 }
