@@ -42,19 +42,6 @@
 			<artifactId>jctools-core</artifactId>
 			<version>4.0.7</version>
 		</dependency>
-		<!--
-        <dependency>
-    		<groupId>org.agrona</groupId>
-    		<artifactId>agrona</artifactId>
-    		<version>1.20.0</version>
-		</dependency>
-		-->
-
-		<dependency>
-			<groupId>io.reactivex.rxjava3</groupId>
-			<artifactId>rxjava</artifactId>
-			<version>3.1.12</version>
-		</dependency>
 
 		<dependency>
 			<groupId>io.actor4j</groupId>
