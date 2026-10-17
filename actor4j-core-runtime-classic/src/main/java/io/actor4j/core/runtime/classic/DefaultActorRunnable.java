@@ -40,7 +40,7 @@ public class DefaultActorRunnable extends ActorRunnable {
 
 		int totalProcessed = hasNextDirective + hasNextOuter;
 		if (totalProcessed>0  && system.getConfig().counterEnabled().get())
-			getMetrics().counter.addAndGet(totalProcessed);
+			getMetrics().counter.add(totalProcessed);
 		
 		return totalProcessed;
 	}

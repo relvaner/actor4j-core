@@ -18,10 +18,10 @@ package io.actor4j.core.runtime.loom;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public final class VirtualActorRunnableMetrics {
-	protected final AtomicLong counter;
+	protected final LongAdder counter;
 //	protected final AtomicBoolean load;
 	
 	protected final AtomicInteger processingTimeSampleCount;
@@ -37,7 +37,7 @@ public final class VirtualActorRunnableMetrics {
 		super();
 
 //		load = new AtomicBoolean(false);
-		counter = new AtomicLong(0);
+		counter = new LongAdder();
 		
 		processingTimeSampleCount = new AtomicInteger(0);
 		processingTimeSamples = new ConcurrentLinkedQueue<>();

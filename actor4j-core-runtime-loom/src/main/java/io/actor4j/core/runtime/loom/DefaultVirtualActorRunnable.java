@@ -79,7 +79,7 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 		}
 		else {
 			if (system.getConfig().counterEnabled().get())
-				getMetrics().counter.addAndGet(totalProcessed);
+				getMetrics().counter.add(totalProcessed);
 		}
 		
 		return totalProcessed;

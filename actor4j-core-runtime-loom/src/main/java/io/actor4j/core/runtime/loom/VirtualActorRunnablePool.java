@@ -171,7 +171,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	public long getCount() {
 		long sum = 0;
 		for (VirtualActorRunnableMetrics metrics : metricsList)
-			sum += metrics.counter.get();
+			sum += metrics.counter.longValue();
 		
 		return sum;
 	}
@@ -180,7 +180,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
 		for (VirtualActorRunnableMetrics metrics : metricsList)
-			list.add(metrics.counter.get());
+			list.add(metrics.counter.longValue());
 		return list;
 	}
 

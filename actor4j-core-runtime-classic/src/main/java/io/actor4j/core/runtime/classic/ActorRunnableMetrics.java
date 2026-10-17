@@ -18,12 +18,12 @@ package io.actor4j.core.runtime.classic;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public final class ActorRunnableMetrics {
 	protected final long threadId;
 	
-	protected final AtomicLong counter;
+	protected final LongAdder counter;
 //	protected final AtomicBoolean load;
 	
 	protected final AtomicInteger processingTimeSampleCount;
@@ -36,7 +36,7 @@ public final class ActorRunnableMetrics {
 		this.threadId = threadId;
 		
 //		load = new AtomicBoolean(false);
-		counter = new AtomicLong(0);
+		counter = new LongAdder();
 		
 		processingTimeSampleCount = new AtomicInteger(0);
 		processingTimeSamples = new ConcurrentLinkedQueue<>();

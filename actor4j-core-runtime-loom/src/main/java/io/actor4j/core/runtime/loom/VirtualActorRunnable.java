@@ -106,7 +106,7 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 			totalProcessed = processMessagesForMetrics();
 		
 		if (totalProcessed>0 && system.getConfig().trackRequestRatePerActor().get())
-			cell.getRequestRate().addAndGet(totalProcessed);
+			cell.getRequestRate().add(totalProcessed);
 	}
 	
 	public void processMessages() {

@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.fault.tolerance.FaultTolerance;
@@ -36,7 +36,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 	
 	protected Runnable onTermination;
 	
-	protected final AtomicLong counter;
+	protected final LongAdder counter;
 	protected final AtomicBoolean threadLoad;
 	
 	protected final AtomicInteger threadProcessingTimeSampleCount;
@@ -51,7 +51,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 		faultToleranceId = UUID.randomUUID();
 		
 		threadLoad = new AtomicBoolean(false);
-		counter = new AtomicLong(0);
+		counter = new LongAdder();
 		
 		threadProcessingTimeSampleCount = new AtomicInteger(0);
 		threadProcessingTimeSamples = new ConcurrentLinkedQueue<>();
@@ -104,7 +104,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 			faultToleranceMethod(message, cell);
 		
 		if (system.getConfig().trackRequestRatePerActor().get())
-			cell.getRequestRate().getAndIncrement();
+			cell.getRequestRate().increment();
 	}
 	
 	protected boolean poll(Queue<ActorMessage<?>> queue) {
@@ -120,7 +120,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 					faultToleranceMethod(message, cell);
 			}
 			if (system.getConfig().counterEnabled().get())
-				counter.getAndIncrement();
+				counter.increment();
 			
 			result = true;
 		} 
@@ -180,7 +180,7 @@ public abstract class ActorThread extends Thread implements ActorExecutionUnit {
 			onTermination.run(); 
 	}
 	
-	public AtomicLong getCounter() {
+	public LongAdder getCounter() {
 		return counter;
 	}
 

@@ -94,7 +94,7 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 			totalProcessed = onRunForMetrics(cell);
 		
 		if (totalProcessed>0 && system.getConfig().trackRequestRatePerActor().get())
-			cell.getRequestRate().addAndGet(totalProcessed);
+			cell.getRequestRate().add(totalProcessed);
 	}
 	
 	public void run(ClassicInternalActorCell cell) {

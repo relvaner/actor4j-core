@@ -16,7 +16,7 @@
 package io.actor4j.core.runtime;
 
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 
 import io.actor4j.core.ActorCell;
@@ -60,6 +60,6 @@ public interface InternalActorCell extends ActorCell {
 	public ActorId internal_addChild(InternalActorCell cell);
 	public void internal_stop();
 	
-	public AtomicLong getRequestRate();
+	public LongAdder getRequestRate();
 	public Queue<Long> getProcessingTimeSamples();
 }

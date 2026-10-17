@@ -135,7 +135,7 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	public long getCount() {
 		long sum = 0;
 		for (ActorRunnableMetrics metrics : getAllMetrics())
-			sum += metrics.counter.get();
+			sum += metrics.counter.longValue();
 		
 		return sum;
 	}
@@ -144,7 +144,7 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	public List<Long> getCounts() {
 		List<Long> list = new ArrayList<>();
 		for (ActorRunnableMetrics metrics : getAllMetricsSorted())
-			list.add(metrics.counter.get());
+			list.add(metrics.counter.longValue());
 		return list;
 	}
 	

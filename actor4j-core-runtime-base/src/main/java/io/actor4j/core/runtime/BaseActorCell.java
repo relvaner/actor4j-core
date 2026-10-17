@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 
 import io.actor4j.core.ActorCell;
@@ -89,7 +89,7 @@ public class BaseActorCell implements InternalActorCell {
 	protected final Queue<PersistenceTuple> persistenceTuples;
 	
 	@ThreadSafeAccess
-	protected final AtomicLong requestRate;
+	protected final LongAdder requestRate;
 	@ThreadSafeAccess
 	protected final Queue<Long> processingTimeSamples;
 	
@@ -116,7 +116,7 @@ public class BaseActorCell implements InternalActorCell {
 		
 		persistenceTuples = new LinkedList<>();
 		
-		requestRate = new AtomicLong(0);
+		requestRate = new LongAdder();
 		processingTimeSamples = system.createLockFreeLinkedQueue();
 	}
 	
@@ -139,7 +139,7 @@ public class BaseActorCell implements InternalActorCell {
 
 		persistenceTuples.clear();
 
-		requestRate.set(0);
+		requestRate.reset();
 		processingTimeSamples.clear();
 
 		parentSupervisorStrategy = null;
@@ -612,7 +612,7 @@ public class BaseActorCell implements InternalActorCell {
 	}
 
 	@Override
-	public AtomicLong getRequestRate() {
+	public LongAdder getRequestRate() {
 		return requestRate;
 	}
 

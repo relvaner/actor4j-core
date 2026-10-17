@@ -34,7 +34,7 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 				t.faultToleranceMethod(message, cell);
 		}
 		if (system.getConfig().counterEnabled().get())
-			t.counter.getAndIncrement();
+			t.counter.increment();
 	}
 	
 	public boolean unsafe_postInnerOuter(ActorMessage<?> message, ActorId source) {
