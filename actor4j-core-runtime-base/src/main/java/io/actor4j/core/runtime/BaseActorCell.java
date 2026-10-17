@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.LongAdder;
@@ -106,18 +107,18 @@ public class BaseActorCell implements InternalActorCell {
 		
 		threadId = -1;
 		
-		children = system.createLockFreeLinkedQueue();
+		children = new ConcurrentLinkedQueue<>();
 		
 		active = new AtomicBoolean(true);
 		
 		behaviourStack = new ArrayDeque<>();
 		
-		deathWatcher =  system.createLockFreeLinkedQueue();
+		deathWatcher = new ConcurrentLinkedQueue<>();
 		
 		persistenceTuples = new LinkedList<>();
 		
 		requestRate = new LongAdder();
-		processingTimeSamples = system.createLockFreeLinkedQueue();
+		processingTimeSamples = new ConcurrentLinkedQueue<>();
 	}
 	
 	public void cleanUp() {

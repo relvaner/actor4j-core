@@ -54,6 +54,8 @@ import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.runtime.config.ActorRuntimeConfig;
+import io.actor4j.core.runtime.factory.DefaultMessageQueueFactory;
+import io.actor4j.core.runtime.factory.MessageQueueFactory;
 import io.actor4j.core.runtime.pods.LocalPodReplicationController;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
@@ -65,6 +67,7 @@ import io.actor4j.core.utils.PodActorFactory;
 public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	protected /*Changeable only before starting*/ ActorSystemConfig config;
 	protected /*Changeable only before starting*/ ActorRuntimeConfig runtimeConfig;
+	protected /*Changeable only before starting*/ MessageQueueFactory messageQueueFactory;
 
 	protected /*quasi final*/ PodReplicationController podReplicationController;
 	protected /*quasi final*/ PodReplicationControllerRunnableFactory podReplicationControllerRunnableFactory;
@@ -106,6 +109,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			this.config = config;
 		else
 			this.config = ActorSystemConfig.create();
+		
+		messageQueueFactory = new DefaultMessageQueueFactory();
 
 		podReplicationController = new LocalPodReplicationController(this);
 		podReplicationControllerRunnableFactory = (system) -> new LocalPodReplicationControllerRunnable(system);
@@ -124,7 +129,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		messagingEnabled = new AtomicBoolean();
 		shutdownHookTriggered = new AtomicBoolean();
 		
-		bufferQueue = createLockFreeLinkedQueue();
+		bufferQueue = new ConcurrentLinkedQueue<>();
 		bufferQueueLock = new ReentrantLock();
 		executorService = createActorExecutorService();
 		
@@ -134,11 +139,6 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		countDownLatchPark = new AtomicInteger();
 		
 		resetCells();
-	}
-	
-	@Override
-	public <T> Queue<T> createLockFreeLinkedQueue() {
-		return new ConcurrentLinkedQueue<>();
 	}
 	
 	@Override
@@ -329,6 +329,23 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 				podReplicationController = runtimeConfig.podReplicationControllerFactory().apply(this);
 			if (runtimeConfig.podReplicationControllerRunnableFactory()!=null)
 				podReplicationControllerRunnableFactory = runtimeConfig.podReplicationControllerRunnableFactory();
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public MessageQueueFactory getMessageQueueFactory() {
+		return messageQueueFactory;
+	}
+	
+	@Override
+	public boolean setMessageQueueFactory(MessageQueueFactory messageQueueFactory) {
+		boolean result = false;
+		
+		if (!executorService.isStarted() && messageQueueFactory!=null) {
+			this.messageQueueFactory = messageQueueFactory;
 			result = true;
 		}
 		

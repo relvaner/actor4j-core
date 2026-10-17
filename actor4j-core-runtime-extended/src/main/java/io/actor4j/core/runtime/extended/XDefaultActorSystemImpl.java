@@ -18,6 +18,7 @@ package io.actor4j.core.runtime.extended;
 import io.actor4j.core.XActorService;
 import io.actor4j.core.config.XActorServiceConfig;
 import io.actor4j.core.config.XActorSystemConfig;
+import io.actor4j.core.jctools.JCToolsMessageQueueFactory;
 import io.actor4j.core.runtime.DefaultActorMessageDispatcher;
 import io.actor4j.core.runtime.DefaultActorSystemImpl;
 
@@ -28,6 +29,8 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 
 	public XDefaultActorSystemImpl(XActorSystemConfig config) {
 		super(config!=null ? config : (config=XActorSystemConfig.create()));
+		
+		messageQueueFactory = new JCToolsMessageQueueFactory();
 		
 //		podReplicationController = new XPodReplicationController(this); // override
 		

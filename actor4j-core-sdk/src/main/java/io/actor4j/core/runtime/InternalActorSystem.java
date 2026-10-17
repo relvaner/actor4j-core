@@ -29,11 +29,11 @@ import io.actor4j.core.actors.Actor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.config.ActorRuntimeConfig;
+import io.actor4j.core.runtime.factory.MessageQueueFactory;
 import io.actor4j.core.runtime.pods.PodReplicationController;
 import io.actor4j.core.utils.ActorFactory;
 
 public interface InternalActorSystem extends ActorService, ActorPodService {
-	public <T> Queue<T> createLockFreeLinkedQueue();
 	public ActorSystemFactory factory();
 
 	public boolean isEmpty();
@@ -46,6 +46,9 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	
 	public ActorRuntimeConfig getRuntimeConfig();
 	public boolean setRuntimeConfig(ActorRuntimeConfig runtimeConfig);
+	
+	public MessageQueueFactory getMessageQueueFactory();
+	public boolean setMessageQueueFactory(MessageQueueFactory factory);
 
 	public PodReplicationController getPodReplicationController();
 	public PodReplicationControllerRunnableFactory getPodReplicationControllerRunnableFactory();

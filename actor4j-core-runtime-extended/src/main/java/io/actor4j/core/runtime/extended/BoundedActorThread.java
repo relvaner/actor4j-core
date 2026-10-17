@@ -19,9 +19,6 @@ import java.util.ArrayDeque;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.LongAdder;
 
-import org.jctools.queues.MpscArrayQueue;
-import org.jctools.queues.MpscLinkedQueue;
-
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.DefaultActorThread;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -36,13 +33,13 @@ public class BoundedActorThread extends DefaultActorThread {
 
 	@Override
 	public void configQueues() {
-		directiveQueue = new MpscLinkedQueue<>(); /* unbounded */
+		directiveQueue = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		priorityQueue  = new PriorityBlockingQueue<>(system.getConfig().queueSize()); /* unbounded */
 		
-		serverQueueL2  = new MpscArrayQueue<>(system.getConfig().queueSize()); /* bounded */
+		serverQueueL2  = system.getMessageQueueFactory().createMpscArrayQueue(system.getConfig().queueSize()); /* bounded */
 		serverQueueL1  = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
-		outerQueueL2   = new MpscArrayQueue<>(system.getConfig().queueSize()); /* bounded */
+		outerQueueL2   = system.getMessageQueueFactory().createMpscArrayQueue(system.getConfig().queueSize()); /* bounded */
 		outerQueueL1   = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
 		innerQueue     = new BoundedArrayDeque<>(system.getConfig().queueSize()); /* bounded, Drop-Newest */

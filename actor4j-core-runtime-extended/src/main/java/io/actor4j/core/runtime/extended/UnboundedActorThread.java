@@ -19,8 +19,6 @@ import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import org.jctools.queues.MpscLinkedQueue;
-
 import io.actor4j.core.runtime.DefaultActorThread;
 import io.actor4j.core.runtime.InternalActorSystem;
 
@@ -31,13 +29,13 @@ public class UnboundedActorThread extends DefaultActorThread {
 
 	@Override
 	public void configQueues() {
-		directiveQueue = new MpscLinkedQueue<>(); /* unbounded */
+		directiveQueue = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		priorityQueue  = new PriorityBlockingQueue<>(system.getConfig().queueSize()); /* unbounded */
 		
-		serverQueueL2  = new MpscLinkedQueue<>(); /* unbounded */
+		serverQueueL2  = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		serverQueueL1  = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
-		outerQueueL2   = new MpscLinkedQueue<>(); /* unbounded */
+		outerQueueL2   = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		outerQueueL1   = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
 		innerQueue     = new LinkedList<>(); /* unbounded */

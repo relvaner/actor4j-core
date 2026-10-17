@@ -38,9 +38,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jctools</groupId>
-			<artifactId>jctools-core</artifactId>
-			<version>4.0.7</version>
+			<groupId>io.actor4j</groupId>
+			<artifactId>actor4j-core-jctools</artifactId>
+			<version>${revision}</version>
 		</dependency>
 
 		<dependency>

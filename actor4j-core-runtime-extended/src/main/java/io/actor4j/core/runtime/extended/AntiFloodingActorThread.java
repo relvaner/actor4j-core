@@ -20,9 +20,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import org.jctools.queues.MpscArrayQueue;
-import org.jctools.queues.MpscLinkedQueue;
-
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.extended.utils.AntiFloodingHandler;
@@ -44,19 +41,19 @@ public abstract class AntiFloodingActorThread extends XDefaultActorThread {
 
 	@Override
 	public void configQueues() {
-		directiveQueue = new MpscLinkedQueue<>(); /* unbounded */
+		directiveQueue = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		priorityQueue  = new PriorityBlockingQueue<>(system.getConfig().queueSize()); /* unbounded */
 		
-		serverQueueL2  = new MpscArrayQueue<>(system.getConfig().queueSize()); /* bounded by afHandlerServerQueue */
+		serverQueueL2  = system.getMessageQueueFactory().createMpscArrayQueue(system.getConfig().queueSize()); /* bounded by afHandlerServerQueue */
 		serverQueueL1  = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
-		outerQueueL2   = new MpscArrayQueue<>(system.getConfig().queueSize()); /* bounded by afHandlerOuterQueue */
+		outerQueueL2   = system.getMessageQueueFactory().createMpscArrayQueue(system.getConfig().queueSize()); /* bounded by afHandlerOuterQueue */
 		outerQueueL1   = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* unbounded */
 		
 		innerQueue = new ArrayDeque<>(system.getConfig().bufferQueueSize()); /* bounded by afHandlerInnerQueue */
 		
-		serverQueueFallback = new MpscLinkedQueue<>(); /* unbounded */
-		outerQueueFallback  = new MpscLinkedQueue<>(); /* unbounded */
+		serverQueueFallback = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
+		outerQueueFallback  = system.getMessageQueueFactory().createMpscLinkedQueue(); /* unbounded */
 		innerQueueFallback  = new LinkedList<>(); /* unbounded */
 		
 		overloadThreshold = (int)(system.getConfig().queueSize()*0.8);

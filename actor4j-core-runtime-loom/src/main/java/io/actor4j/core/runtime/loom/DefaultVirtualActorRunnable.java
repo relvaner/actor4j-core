@@ -16,7 +16,6 @@
 package io.actor4j.core.runtime.loom;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -38,8 +37,8 @@ public class DefaultVirtualActorRunnable extends VirtualActorRunnable {
 	public DefaultVirtualActorRunnable(InternalActorSystem system, InternalActorCell cell, Runnable onTermination) {
 		super(system, cell, onTermination);
 
-		directiveQueue = new ConcurrentLinkedQueue<>();
-		outerQueue = new ConcurrentLinkedQueue<>();
+		directiveQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
+		outerQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
 		
 //		parked = new AtomicBoolean(false);
 	}
