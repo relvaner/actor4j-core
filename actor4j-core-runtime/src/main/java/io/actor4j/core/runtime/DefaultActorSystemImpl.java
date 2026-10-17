@@ -64,7 +64,8 @@ public class DefaultActorSystemImpl extends ActorSystemImpl implements DefaultIn
 	public ActorThreadFactory getActorThreadFactory() {
 		return actorThreadFactory;
 	}
-
+	
+	@Override
 	public void setActorThreadFactory(ActorThreadFactory actorThreadFactory) {
 		this.actorThreadFactory = actorThreadFactory;
 	}

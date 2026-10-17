@@ -17,4 +17,5 @@ package io.actor4j.core.runtime;
 
 public interface DefaultInternalActorRuntimeSystem extends InternalActorRuntimeSystem {
 	public ActorThreadFactory getActorThreadFactory();
+	public void setActorThreadFactory(ActorThreadFactory actorThreadFactory);
 }
