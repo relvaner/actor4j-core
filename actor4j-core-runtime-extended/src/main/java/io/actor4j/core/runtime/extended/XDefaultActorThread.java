@@ -70,6 +70,7 @@ public abstract class XDefaultActorThread extends DefaultActorThread {
 		long startTime;
 		long iterationStart;
 		
+		busySince = 0;
 		while (!isInterrupted()) {
 			hasNextDirective = false;
 			hasNextPriority  = false;

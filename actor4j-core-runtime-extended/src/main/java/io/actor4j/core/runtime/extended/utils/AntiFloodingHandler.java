@@ -17,6 +17,7 @@ package io.actor4j.core.runtime.extended.utils;
 
 import io.actor4j.core.messages.ActorMessage;
 
+//under overload messages of the same sender may overtake each other (fallback queue is drained after L2)
 public interface AntiFloodingHandler {
 	public void handleQueue(ActorMessage<?> message, boolean overloadDetected /*e.g. 80% capacity of exposedQueue reached*/);
 	
