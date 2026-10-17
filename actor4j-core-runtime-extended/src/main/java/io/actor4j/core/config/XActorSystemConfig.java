@@ -15,36 +15,54 @@
  */
 package io.actor4j.core.config;
 
+import io.actor4j.core.runtime.annotations.Reserved;
+
 public class XActorSystemConfig extends ActorSystemConfig {
 	private final boolean unbounded;
+	@Reserved(reason="experimental")
+	private final boolean antiFlooding;
 	
 	public boolean unbounded() {
 		return unbounded;
 	}
 	
+	public boolean antiFlooding() {
+		return antiFlooding;
+	}
+	
 	public static abstract class Builder<T extends XActorSystemConfig> extends ActorSystemConfig.Builder<T> 	{
 		public boolean unbounded;
+		public boolean antiFlooding;
 		
 		public Builder() {
 			super();
 			
 			this.unbounded = true;
+			this.antiFlooding = false;
 		}
 		
 		public Builder(T config) {
 			super(config);
 			
 			this.unbounded = config.unbounded();
+			this.antiFlooding = config.antiFlooding();
 		}
 		
 		public Builder(ActorSystemConfig config) {
 			super(config);
 			
 			this.unbounded = config instanceof XActorSystemConfig xconfig ? xconfig.unbounded() : true;
+			this.antiFlooding = config instanceof XActorSystemConfig xconfig ? xconfig.antiFlooding() : false;
 		}
 		
 		public Builder<T> unbounded(boolean unbounded) {
 			this.unbounded = unbounded;
+			
+			return this;
+		}
+		
+		public Builder<T> antiFlooding(boolean antiFlooding) {
+			this.antiFlooding = antiFlooding;
 			
 			return this;
 		}
@@ -54,6 +72,7 @@ public class XActorSystemConfig extends ActorSystemConfig {
 		super(builder);
 		
 		this.unbounded = builder.unbounded;
+		this.antiFlooding = builder.antiFlooding;
 	}
 	
 	public static XActorSystemConfig create() {

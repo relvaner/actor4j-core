@@ -34,7 +34,7 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 		
 		messageDispatcher = new DefaultActorMessageDispatcher(this);
 		
-		setActorThread(config.unbounded());
+		setActorThread(config.unbounded(), config.antiFlooding());
 	}
 	
 	@Override
@@ -43,7 +43,7 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 		
 		result = super.setConfig(config);
 		if (result)
-			setActorThread(((XActorSystemConfig)config).unbounded());
+			setActorThread(((XActorSystemConfig)config).unbounded(), ((XActorSystemConfig)config).antiFlooding());
 			
 		return result;
 	}
@@ -58,6 +58,13 @@ public class XDefaultActorSystemImpl extends DefaultActorSystemImpl implements X
 			actorThreadFactory = (group, n, system) -> new UnboundedActorThread(group, n, system);
 		else
 			actorThreadFactory = (group, n, system) -> new BoundedActorThread(group, n, system);
+	}
+	
+	public void setActorThread(boolean unbounded, boolean antiFlooding) {
+//		if (antiFlooding)
+//			actorThreadFactory = (group, n, system) -> new AntiFloodingActorThread(group, n, system);
+//		else 
+			setActorThread(unbounded);
 	}
 	
 //	@Override
