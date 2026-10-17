@@ -132,7 +132,7 @@ public class BaseActorCell implements InternalActorCell {
 		redirect = null;
 		children.clear();
 
-		active.set(true);
+		active.set(false); // stopped: remaining messages in the queues are no longer processed
 
 		behaviourStack.clear();
 
