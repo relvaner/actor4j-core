@@ -70,8 +70,8 @@ public class BaseActorCell implements InternalActorCell {
 	protected final AtomicReference<UUID> globalId; // Optionally generated when exposed!
 	@ThreadSafeAccess(reason = "Injected along with the creation of the actor cell") @ThreadLocalAccess
 	protected /*quasi final*/ Factory<?> factory;
-	@ThreadSafeAccess(reason = "Initialized at the registration of the actor cell")
-	protected long threadId;
+	@ThreadSafeAccess(reason = "Initialized at the registration of the actor cell, will be overwritten when actor stops") // See method cleanUp(), volatile necessary for undelivered!
+	protected volatile long threadId;
 	@ThreadSafeAccess(reason = "Initialized along with the creation o the actor cell")
 	protected /*quasi final*/ ActorId parent;
 	@ThreadSafeAccess
