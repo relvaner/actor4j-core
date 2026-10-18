@@ -52,7 +52,11 @@ public abstract class ActorRunnable implements Runnable, ActorExecutionUnit {
 		catch(Exception e) {
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getStrategyOnFailure().handle(cell, e);
-		}	
+		}
+		catch(StackOverflowError | AssertionError e) { // non-fatal errors of the actor code -> supervision, VM errors (e.g. OutOfMemoryError) pass through
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
+			system.getStrategyOnFailure().handle(cell, new RuntimeException(e));
+		}
 	}
 	
 	public void onRun(ClassicInternalActorCell cell) {

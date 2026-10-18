@@ -67,6 +67,10 @@ public abstract class VirtualActorRunnable implements Runnable, ActorExecutionUn
 			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
 			system.getStrategyOnFailure().handle(cell, e);
 		}
+		catch(StackOverflowError | AssertionError e) { // non-fatal errors of the actor code -> supervision, VM errors (e.g. OutOfMemoryError) pass through
+			system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.ACTOR, cell.getId());
+			system.getStrategyOnFailure().handle(cell, new RuntimeException(e));
+		}
 	}
 	
 	public abstract void onRun();
