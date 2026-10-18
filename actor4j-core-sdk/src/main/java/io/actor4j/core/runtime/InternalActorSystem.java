@@ -85,6 +85,7 @@ public interface InternalActorSystem extends ActorService, ActorPodService {
 	public List<ActorId> addSystemActor(ActorFactory factory, int instances);
 	
 	public void removeActor(ActorId id);
+	public void removeAlias(ActorId id);
 	
 	public void sendAsDirective(ActorMessage<?> message);
 	

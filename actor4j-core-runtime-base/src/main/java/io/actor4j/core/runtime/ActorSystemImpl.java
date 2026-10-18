@@ -642,11 +642,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			resourceCells.remove(id);
 		else if (cell.getType()==ActorCell.PSEUDO_ACTOR_CELL)
 			pseudoCells.remove(id);
-		
-		
-		String alias = hasAliases.remove(id);
-		if (alias!=null)
-			removeAlias(id, alias);
+
+		removeAlias(id);
 	}
 
 	@Override
@@ -673,6 +670,15 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 			queue.remove(id);
 			return queue.isEmpty() ? null : queue; // null removes the entry
 		});
+	}
+	
+	@Override
+	public void removeAlias(ActorId id) {
+		if (id!=null) {
+			String alias = hasAliases.remove(id);
+			if (alias!=null)
+				removeAlias(id, alias);
+		}
 	}
 	
 	@Override
