@@ -40,4 +40,6 @@ public interface PodReplicationController {
 	public void decreasePods(String domain, String shardId, int instances);
 	
 	public void updateReplicaLimits(String domain, int minReplica, int maxReplica);
+	
+	public void reset();
 }

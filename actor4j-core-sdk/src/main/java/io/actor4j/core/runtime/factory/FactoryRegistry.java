@@ -20,4 +20,5 @@ public interface FactoryRegistry<K> {
 	public void register(K key, Factory<?> factory);
 	public void unregister(K key);
 	public Object create(K key);
+	public void clear();
 }

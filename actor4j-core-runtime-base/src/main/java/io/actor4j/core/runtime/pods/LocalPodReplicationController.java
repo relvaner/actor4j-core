@@ -58,6 +58,12 @@ public class LocalPodReplicationController implements PodReplicationController {
 		
 		hasPrimaryReplica = (domain) -> system.primaryPodDeployed(domain);
 	}
+	
+	@Override
+	public void reset() {
+		registry.clear();
+		podReplicationMap.clear();
+	}
 
 	@Override
 	public void deployPods(File jarFile, PodConfiguration podConfiguration) {

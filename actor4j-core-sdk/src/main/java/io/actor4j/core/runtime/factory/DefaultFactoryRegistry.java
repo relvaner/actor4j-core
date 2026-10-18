@@ -52,6 +52,11 @@ public class DefaultFactoryRegistry<K> implements FactoryRegistry<K> {
 		map.remove(key);
 	}
 	
+	@Override
+	public void clear() {
+		map.clear();
+	}
+	
 	public static <K> FactoryRegistry<K> create() {
 		return new DefaultFactoryRegistry<>();
 	}

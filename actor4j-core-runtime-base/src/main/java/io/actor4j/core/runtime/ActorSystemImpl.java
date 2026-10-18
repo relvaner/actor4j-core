@@ -179,6 +179,11 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		hasAliases.clear();
 		resourceCells.clear();
 		pseudoCells.clear();
+		exposedCells.clear();
+		podCells.clear();
+		podDomains.clear();
+		if (podReplicationController!=null)
+			podReplicationController.reset();
 		
 		bufferQueue.clear();
 	
@@ -1056,26 +1061,38 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, USER_ID));
 					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, SYSTEM_ID));
 					sendAsDirective(ActorMessage.create(null, INTERNAL_STOP, SYSTEM_ID, UNKNOWN_ID));
+					
+					long timeout = config.awaitTerminationTimeout();
+					boolean stopped = true;
 					if (config.threadMode()==ActorThreadMode.PARK) {
+						long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout);
 						while (countDownLatchPark.get()>0) {
+							if (System.nanoTime()-deadline>=0) {
+								stopped = false;
+								break;
+							}
 							try {
 								Thread.sleep(config.sleepTime());
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt();
+								break;
 							}
 						}
 					}
 					else {
 						try {
-							countDownLatch.get().await();
+							stopped = countDownLatch.get().await(timeout, TimeUnit.MILLISECONDS);
 						} catch (InterruptedException e) {
 							Thread.currentThread().interrupt();
 						}
 					}
+					if (!stopped)
+						systemLogger().log(WARN, String.format("[SHUTDOWN] actors not stopped within %d ms", timeout));
+					
 					messageDispatcher.unregisterCell((InternalActorCell)PSEUDO_ID);
 					removeActor(PSEUDO_ID);
 					
-					executorService.shutdown(await);
+					executorService.shutdown(true); // reset() only after the threads have terminated
 					reset();
 				}
 			});
@@ -1097,7 +1114,22 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	@Override
 	public void shutdown(boolean await) {
-		if (executorService.isStarted())
-			executorService.shutdown(await);
+		if (executorService.isStarted()) {
+			Thread waitOnTermination = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					executorService.shutdown(true); // reset() only after the threads have terminated
+					reset();
+				}
+			});
+			
+			waitOnTermination.start();
+			if (await)
+				try {
+					waitOnTermination.join();
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+		}
 	}
 }
