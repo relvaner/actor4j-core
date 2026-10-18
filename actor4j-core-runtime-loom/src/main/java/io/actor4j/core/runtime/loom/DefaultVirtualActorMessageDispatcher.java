@@ -171,7 +171,7 @@ public class DefaultVirtualActorMessageDispatcher extends ActorMessageDispatcher
 			dispatch(message.shallowCopy(dest), system.UNKNOWN_ID(), false, false);
 			systemLogger().log(WARN,
 				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
-					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source.toString(), dest
+					message.toString(), cell!=null ? actorLabel(cell.getActor()) : String.valueOf(source), dest
 				));
 		}
 	}
