@@ -273,7 +273,8 @@ public class DefaultActorMessageDispatcher extends BaseActorMessageDispatcher {
 		if (system.getConfig().debugUndelivered()) {
 			InternalActorCell cell = (InternalActorCell)source;
 		
-			getThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
+			if (getThreadPoolHandler().isRegisteredCell((InternalActorCell)system.UNKNOWN_ID())) // otherwise endless recursion (postOuter reports undelivered itself)
+				getThreadPoolHandler().postOuter(message.shallowCopy(dest), system.UNKNOWN_ID());
 			systemLogger().log(WARN,
 				String.format("[UNDELIVERED] Message (%s) from source (%s) - Unavailable actor (%s)",
 					message.toString(), cell!=null ? actorLabel(cell.getActor()) : source, dest

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2019, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,24 +32,31 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 				t.metrics(message, cell);
 			else
 				t.faultToleranceMethod(message, cell);
+			
+			if (system.getConfig().counterEnabled().get())
+				t.counter.increment();
 		}
-		if (system.getConfig().counterEnabled().get())
-			t.counter.increment();
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), dest);
 	}
 	
 	public boolean unsafe_postInnerOuter(ActorMessage<?> message, ActorId source) {
 		boolean result = false; 
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread t) {
-			unsafe_call(message.copy(), message.dest(), t);
-			result = true;
+			long id_dest = ((InternalActorCell)message.dest()).getThreadId();
+			if (id_dest>0) {
+				unsafe_call(message.copy(), message.dest(), t);
+				result = true;
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, message.dest());
 		}
 		else {
 			long id_source = ((InternalActorCell)source).getThreadId();
 			long id_dest   = ((InternalActorCell)message.dest()).getThreadId();
 		
 			if (id_dest>0) {
-				
 				Thread currentThread = null;
 				if (id_source>0 && id_source==id_dest
 						&& (currentThread=Thread.currentThread()).threadId()==id_source) {
@@ -74,9 +81,14 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
-			ActorThread t = ((ActorThread)Thread.currentThread());
-			unsafe_call(message.copy(dest), dest, t);
-			result = true;
+			long id_dest = ((InternalActorCell)dest).getThreadId();
+			if (id_dest>0) {
+				ActorThread t = ((ActorThread)Thread.currentThread());
+				unsafe_call(message.copy(dest), dest, t);
+				result = true;
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, dest);
 		}
 		else {
 			long id_source = ((InternalActorCell)source).getThreadId();
@@ -106,10 +118,15 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
-			ActorThread t = ((ActorThread)Thread.currentThread());
-			t.innerQueue(message.copy());
-			t.newMessage();
-			result = true;
+			long id_dest = ((InternalActorCell)message.dest()).getThreadId();
+			if (id_dest>0) {
+				ActorThread t = ((ActorThread)Thread.currentThread());
+				t.innerQueue(message.copy());
+				t.newMessage();
+				result = true;
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, message.dest());
 		}
 		else {
 			long id_source = ((InternalActorCell)source).getThreadId();
@@ -142,10 +159,15 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 		boolean result = false;
 		
 		if (system.getConfig().parallelism()==1 && system.getConfig().parallelismFactor()==1 && Thread.currentThread() instanceof ActorThread) {
-			ActorThread t = ((ActorThread)Thread.currentThread());
-			t.innerQueue(message.copy(dest));
-			t.newMessage();
-			result = true;
+			long id_dest = ((InternalActorCell)dest).getThreadId();
+			if (id_dest>0) {
+				ActorThread t = ((ActorThread)Thread.currentThread());
+				t.innerQueue(message.copy(dest));
+				t.newMessage();
+				result = true;
+			}
+			else
+				system.getMessageDispatcher().undelivered(message, source, dest);
 		}
 		else {
 			long id_source = ((InternalActorCell)source).getThreadId();
@@ -180,6 +202,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			t.outerQueue(message.copy());
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), message.dest());
 		
 		return id_dest>0;
 	}
@@ -191,6 +215,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			t.outerQueue(message.copy(dest));
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), dest);
 		
 		return id_dest>0;
 	}
@@ -202,6 +228,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			t.serverQueue(message.copy());
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), message.dest());
 		
 		return id_dest>0;
 	}
@@ -213,6 +241,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			t.serverQueue(message.copy(dest));
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), dest);
 		
 		return id_dest>0;
 	}
@@ -224,6 +254,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			biconsumer.accept(t, message.copy());
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), message.dest());
 		
 		return id_dest>0;
 	}
@@ -235,6 +267,8 @@ public class ActorThreadPoolHandler extends AbstractActorExecutionUnitPoolHandle
 			biconsumer.accept(t, message.copy(dest));
 			t.newMessage();
 		}
+		else
+			system.getMessageDispatcher().undelivered(message, message.source(), dest);
 		
 		return id_dest>0;
 	}
