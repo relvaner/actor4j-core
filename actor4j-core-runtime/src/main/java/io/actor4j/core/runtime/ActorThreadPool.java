@@ -18,10 +18,13 @@ package io.actor4j.core.runtime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
+
+import static io.actor4j.core.logging.ActorLogger.*;
 
 public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread> {
 	protected final CountDownLatch countDownLatch;
@@ -44,6 +47,7 @@ public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread>
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+				countDownLatch.countDown();
 			}
 		}
 		
@@ -63,9 +67,10 @@ public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread>
 				@Override
 				public void run() {
 					try {
-						countDownLatch.await();
+						if (!countDownLatch.await(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS))
+							systemLogger().log(WARN, String.format("[SHUTDOWN] %d actor thread(s) not terminated within %d ms", countDownLatch.getCount(), system.getConfig().awaitTerminationTimeout()));
 					} catch (InterruptedException e1) {
-						e1.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 					
 //					try {
