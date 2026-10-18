@@ -168,7 +168,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		ActorId destination = dest!=null ? dest : message.dest();
 		
 		ClassicInternalActorCell cell = (ClassicInternalActorCell)destination;
-		if (cell!=null) {
+		if (cell!=null && !cell.isStopped()) {
 			if (directive) {
 				if (dest!=null)
 					cell.directiveQueue().offer(message.copy(dest));
@@ -187,7 +187,7 @@ public class ClassicDefaultActorMessageDispatcher extends BaseActorMessageDispat
 		else if (debugUndelivered)
 			undelivered(message, message.source(), destination);
 		
-		return cell!=null;
+		return cell!=null && !cell.isStopped();
 	}
 	
 	protected void dispatch(ClassicInternalActorCell cell) {

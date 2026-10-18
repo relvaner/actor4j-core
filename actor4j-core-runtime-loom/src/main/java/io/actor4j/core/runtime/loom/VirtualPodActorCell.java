@@ -20,7 +20,7 @@ import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.PodActorCell;
 
 public class VirtualPodActorCell extends PodActorCell implements VirtualInternalActorCell {
-	protected VirtualActorRunnable virtualRunnable;
+	protected volatile VirtualActorRunnable virtualRunnable;
 	
 	public VirtualPodActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);

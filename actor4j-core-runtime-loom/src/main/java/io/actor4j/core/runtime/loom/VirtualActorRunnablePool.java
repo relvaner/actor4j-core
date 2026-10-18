@@ -164,6 +164,7 @@ public class VirtualActorRunnablePool implements ActorExecutionUnitPool<VirtualA
 		VirtualActorRunnable virtualActorRunnable = ((VirtualInternalActorCell)cell.getId()).getVirtualRunnable();
 		assert virtualActorRunnable!=null : "The runnable should be terminated only one times!";
 		virtualActorRunnable.terminate();	
+		((VirtualInternalActorCell)cell.getId()).setVirtualRunnable(null); // further messages -> undelivered
 		virtualThreads.remove(cell.getId());	
 	}
 	

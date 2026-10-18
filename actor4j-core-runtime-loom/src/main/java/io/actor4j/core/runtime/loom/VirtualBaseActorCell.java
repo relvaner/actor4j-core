@@ -20,7 +20,7 @@ import io.actor4j.core.runtime.BaseActorCell;
 import io.actor4j.core.runtime.InternalActorSystem;
 
 public class VirtualBaseActorCell extends BaseActorCell implements VirtualInternalActorCell {
-	protected VirtualActorRunnable virtualRunnable;
+	protected volatile VirtualActorRunnable virtualRunnable;
 	
 	public VirtualBaseActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);

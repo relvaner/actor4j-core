@@ -29,6 +29,8 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	
 	protected final AtomicBoolean isScheduled;
 	
+	protected volatile boolean stopped; // further messages -> undelivered
+	
 	public ClassicActorCell(InternalActorSystem system, Actor actor) {
 		super(system, actor);
 		
@@ -41,6 +43,12 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	public void configQueues() {
 		directiveQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
 		outerQueue = system.getMessageQueueFactory().createMpscLinkedUnpaddedQueue();
+	}
+	
+	@Override
+	public void cleanUp() {
+		super.cleanUp();
+		stopped = true;
 	}
 
 	@Override
@@ -61,5 +69,10 @@ public class ClassicActorCell extends BaseActorCell implements ClassicInternalAc
 	@Override
 	public boolean acquireAsScheduled() {
 		return isScheduled.compareAndSet(false, true);
+	}
+	
+	@Override
+	public boolean isStopped() {
+		return stopped;
 	}
 }

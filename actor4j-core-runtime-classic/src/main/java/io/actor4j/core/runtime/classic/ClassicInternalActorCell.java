@@ -33,4 +33,6 @@ public interface ClassicInternalActorCell extends InternalActorCell {
 	
 	public AtomicBoolean isScheduled();
 	public boolean acquireAsScheduled();
+	
+	public boolean isStopped();
 }
