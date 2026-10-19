@@ -36,6 +36,8 @@ import io.actor4j.core.runtime.classic.utils.ClassicForkJoinPool;
 import io.actor4j.core.runtime.classic.utils.ClassicForkJoinWorkerThread;
 import io.actor4j.core.runtime.utils.ProcessingTimeStatistics;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+
 public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunnable> {
 	protected final ExecutorService executorService;
 
@@ -105,9 +107,10 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 				@Override
 				public void run() {
 					try {
-						executorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+						if (!executorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS))
+							systemLogger().log(WARN, String.format("[SHUTDOWN] actor thread(s) not terminated within %d ms", system.getConfig().awaitTerminationTimeout()));
 					} catch (InterruptedException e1) {
-						e1.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 					
 //					try {

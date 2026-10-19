@@ -248,9 +248,10 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 		resourceExecutorService.shutdownNow();
 		if (await)
 			try {
-				resourceExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
+				if (!resourceExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS))
+					systemLogger().log(WARN, String.format("[SHUTDOWN] resource thread(s) not terminated within %d ms", system.getConfig().awaitTerminationTimeout()));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				Thread.currentThread().interrupt();
 			}
 	}
 	
@@ -316,7 +317,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 				try {
 					watchdogExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 		}
 		if (system.getConfig().horizontalPodAutoscalerEnabled()) {
@@ -325,7 +326,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 				try {
 					podReplicationControllerExecutorService.awaitTermination(system.getConfig().awaitTerminationTimeout(), TimeUnit.MILLISECONDS);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
 				}
 		}
 		
