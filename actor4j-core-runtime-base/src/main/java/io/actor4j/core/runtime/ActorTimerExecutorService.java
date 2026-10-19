@@ -29,6 +29,8 @@ import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroup;
 import io.actor4j.core.utils.ActorTimer;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+
 public class ActorTimerExecutorService implements ActorTimer {
 	protected final InternalActorSystem system;
 	
@@ -81,9 +83,11 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	public ActorTimerExecutorService(InternalActorSystem system, int corePoolSize, String threadName) {
 		super();
-		
 		this.system = system;
-		this.timerExecutorService = new ScheduledThreadPoolExecutor(corePoolSize, new DefaultThreadFactory(threadName));
+		
+		timerExecutorService = new ScheduledThreadPoolExecutor(corePoolSize, new DefaultThreadFactory(threadName));
+		((ScheduledThreadPoolExecutor)timerExecutorService).setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+		((ScheduledThreadPoolExecutor)timerExecutorService).setRemoveOnCancelPolicy(true);
 	}
 	
 	public ActorTimerExecutorService(InternalActorSystem system, int corePoolSize) {
@@ -91,22 +95,22 @@ public class ActorTimerExecutorService implements ActorTimer {
 	}
 		
 	public ScheduledFuture<?> scheduleOnce(Runnable command, long delay, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(command, delay, unit) : CanceledScheduledFuture.create();
+		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(logged(command), delay, unit) : CanceledScheduledFuture.create();
 	}
 	
 	public ScheduledFuture<?> schedule(Runnable command, long initialDelay, long period, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(command, initialDelay, period, unit) : CanceledScheduledFuture.create();
+		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(logged(command), initialDelay, period, unit) : CanceledScheduledFuture.create();
 	}
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorId dest, long delay, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(logged(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				system.send(message.shallowCopy(dest));
 			}
-		}, delay, unit) : CanceledScheduledFuture.create(); 
+		}), delay, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -121,12 +125,12 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final String alias, long delay, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(logged(new Runnable() {
 			@Override
 			public void run() {
 				system.sendViaAlias(supplier.get(), alias);
 			}
-		}, delay, unit) : CanceledScheduledFuture.create();
+		}), delay, unit) : CanceledScheduledFuture.create();
 	}
 	
 	@Override
@@ -141,14 +145,14 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> scheduleOnce(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long delay, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.schedule(logged(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				for (ActorId id : group)
 					system.send(message.shallowCopy(id));
 			}
-		}, delay, unit) : CanceledScheduledFuture.create(); 
+		}), delay, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -163,13 +167,13 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final ActorId dest, long initalDelay, long period, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(logged(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				system.send(message.shallowCopy(dest));
 			}
-		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
+		}), initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -184,12 +188,12 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final String alias, long initalDelay, long period, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(logged(new Runnable() {
 			@Override
 			public void run() {
 				system.sendViaAlias(supplier.get(), alias);
 			}
-		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
+		}), initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -204,14 +208,14 @@ public class ActorTimerExecutorService implements ActorTimer {
 	
 	@Override
 	public ScheduledFuture<?> schedule(final Supplier<ActorMessage<?>> supplier, final ActorGroup group, long initalDelay, long period, TimeUnit unit) {
-		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(new Runnable() {
+		return !timerExecutorService.isShutdown() ? timerExecutorService.scheduleAtFixedRate(logged(new Runnable() {
 			@Override
 			public void run() {
 				ActorMessage<?> message = supplier.get();
 				for (ActorId id : group)
 					system.send(message.shallowCopy(id));
 			}
-		}, initalDelay, period, unit) : CanceledScheduledFuture.create(); 
+		}), initalDelay, period, unit) : CanceledScheduledFuture.create(); 
 	}
 	
 	@Override
@@ -222,6 +226,18 @@ public class ActorTimerExecutorService implements ActorTimer {
 				return message;
 			}
 		}, group, initalDelay, period, unit);
+	}
+	
+	protected Runnable logged(Runnable task) {
+		return () -> {
+			try {
+				task.run();
+			}
+			catch (RuntimeException e) {
+				systemLogger().log(ERROR, String.format("[TIMER] task failed: %s", e));
+				throw e;
+			}
+		};
 	}
 	
 	public void shutdown() {
