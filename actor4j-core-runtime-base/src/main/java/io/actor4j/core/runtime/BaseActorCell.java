@@ -324,13 +324,13 @@ public class BaseActorCell implements InternalActorCell {
 				recover(message);
 			else if (message.tag()==INTERNAL_PERSISTENCE_SUCCESS) {
 				PersistenceTuple tuple = persistenceTuples.poll();
-				if (tuple.onSuccess()!=null)
+				if (tuple!=null && tuple.onSuccess()!=null)
 					for (int i=0; i<tuple.objects().size(); i++)
 						tuple.onSuccess().accept(tuple.objects().get(i));
 			}
 			else if (message.tag()==INTERNAL_PERSISTENCE_FAILURE) {
 				PersistenceTuple tuple = persistenceTuples.poll();
-				if (tuple.onFailure()!=null)
+				if (tuple!=null && tuple.onFailure()!=null)
 					tuple.onFailure().accept((Exception)message.value());
 			}
 			else if (message.tag()==INTERNAL_STOP_USER_SPACE && hasUserId()) {
