@@ -49,6 +49,7 @@ import io.actor4j.core.config.ActorServiceConfig;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.mutable.MutableBoolean;
 import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
@@ -95,6 +96,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	
 	protected final AtomicReference<CountDownLatch> countDownLatch;
 	protected final AtomicInteger countDownLatchPark;
+	protected final AtomicBoolean shuttingDown;
 
 	protected /*quasi final*/ ActorId ZERO_ID; // Intended for dead letters
 	protected /*quasi final*/ ActorId USER_ID;
@@ -137,6 +139,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		
 		countDownLatch = new AtomicReference<>();
 		countDownLatchPark = new AtomicInteger();
+		shuttingDown = new AtomicBoolean();
 		
 		resetCells();
 	}
@@ -188,6 +191,8 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 		bufferQueue.clear();
 	
 		resetCells();
+		
+		shuttingDown.set(false);
 	}
 	
 	@Override
@@ -631,11 +636,17 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 				podCells.remove(id);
 				
 				String domain = ((InternalPodActorCell)cell).getContext().domain();
-				if (domain!=null)
+				if (domain!=null) {
+					MutableBoolean unplanned = new MutableBoolean(false);
 					podDomains.computeIfPresent(domain, (k, queue) -> {
-						queue.remove(id);
+						unplanned.set(queue.remove(id));
 						return queue.isEmpty() ? null : queue;
 					});
+					if (unplanned.isTrue() && !shuttingDown.get() && podReplicationController!=null) {
+						PodContext context = ((InternalPodActorCell)cell).getContext();
+						podReplicationController.podStopped(domain, context.shardId(), context.primaryReplica());
+					}
+				}
 			}
 		}
 		else if (cell.getType()==ActorCell.RESOURCE_ACTOR_CELL)
@@ -1061,6 +1072,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public void shutdownWithActors(final boolean await) {
 		if (executorService.isStarted()) {
+			shuttingDown.set(true);
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -1121,6 +1133,7 @@ public abstract class ActorSystemImpl implements InternalActorRuntimeSystem {
 	@Override
 	public void shutdown(boolean await) {
 		if (executorService.isStarted()) {
+			shuttingDown.set(true);
 			Thread waitOnTermination = new Thread(new Runnable() {
 				@Override
 				public void run() {

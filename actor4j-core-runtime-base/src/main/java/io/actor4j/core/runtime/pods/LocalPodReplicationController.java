@@ -60,6 +60,12 @@ public class LocalPodReplicationController implements PodReplicationController {
 	}
 	
 	@Override
+	public Map<String, PodReplicationTuple> getPodReplicationMap() {
+		return podReplicationMap;
+	}
+
+	
+	@Override
 	public void reset() {
 		registry.clear();
 		podReplicationMap.clear();
@@ -295,11 +301,6 @@ public class LocalPodReplicationController implements PodReplicationController {
 		
 		return result;
 	}
-	
-	@Override
-	public Map<String, PodReplicationTuple> getPodReplicationMap() {
-		return podReplicationMap;
-	}
 
 	@Override
 	public void increasePods(String domain, String shardId) {
@@ -374,6 +375,47 @@ public class LocalPodReplicationController implements PodReplicationController {
 					systemLogger().log(ERROR, String.format("[REPLICATION] Domain '%s'cannot be undeployed (not implemented)", domain));
 				else 
 					undeployPod(domain, shardId, instances);
+			}
+		}
+		finally {
+			lock.unlock();
+		}
+	}
+	
+	@Override
+	public void podStopped(String domain, String shardId, boolean primaryReplica) {
+		lock.lock();
+		try {
+			PodReplicationTuple podReplicationTuple = podReplicationMap.get(domain);
+			
+			if (podReplicationTuple!=null) {
+				if (podReplicationTuple.podConfiguration().shardCount()==1) {
+					if (primaryReplica)
+						systemLogger().log(WARN, String.format("[REPLICATION] Domain '%s': primary replica stopped", domain));
+					else
+						systemLogger().log(WARN, String.format("[REPLICATION] Domain '%s': pod stopped unexpectedly", domain));
+					
+					PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+							null, null, null, 1, podReplicationTuple.podSystemConfiguration().currentReplicaCount()-1);
+					podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
+				}
+				else if (primaryReplica)
+					systemLogger().log(WARN, String.format("[REPLICATION] Shard (%s, %s): primary replica stopped", domain, shardId));
+				else if (shardId!=null && podReplicationTuple.podSystemConfiguration().secondaryShardIds().contains(shardId)) {
+					systemLogger().log(WARN, String.format("[REPLICATION] Shard (%s, %s): secondary pod stopped unexpectedly", domain, shardId));
+					
+					int index = Integer.parseInt(shardId);
+					List<Integer> secondaryShardCounts = new ArrayList<>(podReplicationTuple.podSystemConfiguration().secondaryShardCounts());
+					secondaryShardCounts.set(index, secondaryShardCounts.get(index)-1);
+					
+					PodSystemConfiguration podSystemConfiguration = new PodSystemConfiguration(
+							podReplicationTuple.podSystemConfiguration().primaryShardIds(), 
+							podReplicationTuple.podSystemConfiguration().secondaryShardIds(), 
+							secondaryShardCounts, 
+							podReplicationTuple.podSystemConfiguration().currentShardCount(), 
+							0);
+					podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
+				}
 			}
 		}
 		finally {

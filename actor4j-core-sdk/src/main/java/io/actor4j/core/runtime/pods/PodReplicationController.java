@@ -23,6 +23,7 @@ import io.actor4j.core.pods.PodFactory;
 
 public interface PodReplicationController {
 	public Map<String, PodReplicationTuple> getPodReplicationMap();
+	public void reset();
 	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration);
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
@@ -41,5 +42,5 @@ public interface PodReplicationController {
 	
 	public void updateReplicaLimits(String domain, int minReplica, int maxReplica);
 	
-	public void reset();
+	public void podStopped(String domain, String shardId, boolean primaryReplica);
 }
