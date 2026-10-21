@@ -118,6 +118,11 @@ public abstract class ConcurrentPseudoActor implements PseudoActorRef {
 	}
 	
 	@Override
+	public ActorMessage<?> peek() {
+		return getOuterQueue().peek();
+	}
+	
+	@Override
 	public Stream<ActorMessage<?>> stream() {
 		return getOuterQueue().stream();
 	}

@@ -72,6 +72,11 @@ public abstract class PseudoActor extends Actor implements PseudoActorRef {
 	}
 	
 	@Override
+	public ActorMessage<?> peek() {
+		return ((InternalPseudoActorCell)cell).peek();
+	}
+	
+	@Override
 	public Stream<ActorMessage<?>> stream() {
 		return ((InternalPseudoActorCell)cell).stream();
 	}

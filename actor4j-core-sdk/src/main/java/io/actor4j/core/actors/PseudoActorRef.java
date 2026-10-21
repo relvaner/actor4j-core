@@ -32,6 +32,7 @@ public interface PseudoActorRef {
 	public boolean run();
 	public boolean runAll();
 	public boolean runOnce();
+	public ActorMessage<?> peek();
 	public Stream<ActorMessage<?>> stream();
 	
 	public ActorMessage<?> await();

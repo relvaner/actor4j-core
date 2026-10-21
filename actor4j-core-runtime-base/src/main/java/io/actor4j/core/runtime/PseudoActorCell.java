@@ -145,6 +145,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return result;
 	}
 	
+	@Override
 	public boolean run() {
 		boolean result = false;
 		
@@ -160,6 +161,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return result;
 	}
 	
+	@Override
 	public boolean runAll() {
 		boolean result = false;
 		
@@ -175,6 +177,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return result;
 	}
 	
+	@Override
 	public boolean runOnce() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
@@ -184,7 +187,17 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		}
 		return poll(outerQueueL1);
 	}
+	
+	@Override
+	public ActorMessage<?> peek() {
+		ActorMessage<?> result = outerQueueL1.peek();
+		if (result==null)
+			result = outerQueueL2.peek();
 		
+		return result;
+	}
+		
+	@Override
 	public Stream<ActorMessage<?>> stream() {
 		boolean hasNextOuter = outerQueueL1.peek()!=null;
 		if (!hasNextOuter && outerQueueL2.peek()!=null) {
@@ -196,6 +209,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return outerQueueL1.stream();
 	}
 	
+	@Override
 	public ActorMessage<?> await() {
 		ActorMessage<?> result = null;
 		
@@ -209,6 +223,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return result;
 	}
 	
+	@Override
 	public ActorMessage<?> await(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		ActorMessage<?> result = null;
 		
@@ -222,6 +237,7 @@ public class PseudoActorCell extends BaseActorCell implements InternalPseudoActo
 		return result;
 	}
 	
+	@Override
 	public <T> T await(Predicate<ActorMessage<?>> predicate, Function<ActorMessage<?>, T> action, long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
 		T result = null;
 		
