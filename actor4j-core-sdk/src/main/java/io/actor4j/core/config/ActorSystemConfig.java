@@ -39,9 +39,10 @@ public class ActorSystemConfig {
 	private final int maxSpins;
 	private final ActorThreadMode threadMode;
 	private final long sleepTime;
-	
+
 	private final int maxThreadRetries;
 	private final int maxResourceThreads;
+	private final int timerThreads;
 	
 	private final long awaitTerminationTimeout;
 	
@@ -127,6 +128,10 @@ public class ActorSystemConfig {
 	
 	public int maxResourceThreads() {
 		return maxResourceThreads;
+	}
+	
+	public int timerThreads() {
+		return timerThreads;
 	}
 	
 	public long awaitTerminationTimeout() {
@@ -232,6 +237,7 @@ public class ActorSystemConfig {
 		
 		protected int maxThreadRetries;
 		protected int maxResourceThreads;
+		protected int timerThreads;
 		
 		protected long awaitTerminationTimeout;
 		
@@ -332,6 +338,7 @@ public class ActorSystemConfig {
 			this.sleepTime = config.sleepTime();
 			this.maxThreadRetries =  config.maxThreadRetries();
 			this.maxResourceThreads = config.maxResourceThreads();
+			this.timerThreads = config.timerThreads();
 			this.awaitTerminationTimeout = config.awaitTerminationTimeout();
 			this.maxRetries = config.maxRetries();
 			this.withinTimeRange = config.withinTimeRange();
@@ -454,6 +461,12 @@ public class ActorSystemConfig {
 		
 		public Builder<T> maxResourceThreads(int maxResourceThreads) {
 			this.maxResourceThreads = requirePositive(maxResourceThreads, "maxResourceThreads");
+
+			return this;
+		}
+		
+		public Builder<T> timerThreads(int timerThreads) {
+			this.timerThreads = requirePositive(timerThreads, "timerThreads");
 
 			return this;
 		}
@@ -597,6 +610,7 @@ public class ActorSystemConfig {
 		this.sleepTime = builder.sleepTime;
 		this.maxThreadRetries = builder.maxThreadRetries;
 		this.maxResourceThreads = builder.maxResourceThreads;
+		this.timerThreads = builder.timerThreads>0 ? builder.timerThreads : Math.max(1, builder.parallelism/4);
 		this.awaitTerminationTimeout = builder.awaitTerminationTimeout;
 		this.maxRetries = builder.maxRetries;
 		this.withinTimeRange = builder.withinTimeRange;

@@ -29,7 +29,7 @@ public class DefaultVirtualActorExecutorService extends ActorExecutorServiceImpl
 	}
 	
 	@Override
-	public void createActorResourcePool(int poolSize) {
+	public void createActorResourcePool() {
 		virtualActorResourceRunnablePool = new VirtualActorRunnablePool(system, (pool) -> new DefaultVirtualActorRunnablePoolHandler(system, pool), true);
 	}
 	

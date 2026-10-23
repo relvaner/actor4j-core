@@ -185,13 +185,11 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	public void start(Runnable onStartup, Runnable onTermination) {
 //		if (system.isEmpty())
 //			return;
-		
-		int poolSize = Runtime.getRuntime().availableProcessors();
-		
+
 		globalTimerExecutorService = new ActorTimerExecutorService(system, 1, "actor4j-global-timer-thread");
-		timerExecutorService = new ActorTimerExecutorService(system, poolSize);
+		timerExecutorService = new ActorTimerExecutorService(system, system.getConfig().timerThreads());
 		
-		createActorResourcePool(poolSize);
+		createActorResourcePool();
 		
 		if (system.getConfig().persistenceMode()) {
 			persistenceService = new ActorPersistenceServiceImpl(system, system.getConfig().parallelism(), system.getConfig().parallelismFactor(), system.getConfig().persistenceDriver());
@@ -240,8 +238,10 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 			watchdogExecutorService.scheduleAtFixedRate(watchdogRunnable, system.getConfig().watchdogSyncTime(), system.getConfig().watchdogSyncTime(), TimeUnit.MILLISECONDS);
 	}
 	
-	public void createActorResourcePool(int poolSize) {
-		resourceExecutorService = new ThreadPoolExecutor(poolSize, system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+	public void createActorResourcePool() {
+		resourceExecutorService = new ThreadPoolExecutor(system.getConfig().maxResourceThreads(), 
+	 		system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+		((ThreadPoolExecutor)resourceExecutorService).allowCoreThreadTimeOut(true);	 	
 	}
 	
 	public void shutdownActorResourcePool(boolean await) {
