@@ -83,6 +83,22 @@ public class ResourceActorCell extends BaseActorCell {
 		return result;
 	}
 	
+	// the run for the message passed by beforeRun will never come (rejected by the executor): release the cell,
+	// otherwise every further message only goes into the queue
+	public void rejected() {
+		if (stateful) {
+			// Spinlock
+			while (!lock.compareAndSet(false, true))
+				Thread.onSpinWait();
+			try {
+				status = false;
+			}
+			finally {
+				lock.set(false);
+			}
+		}
+	}	
+	
 	protected void handleFailure(Exception e) {
 		system.getExecutorService().getFaultToleranceManager().notifyErrorHandler(e, ActorSystemError.RESOURCE_ACTOR, getId());
 		system.getStrategyOnFailure().handle(this, e);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * Copyright (c) 2015-2026, David A. Bauer. All rights reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -239,8 +238,8 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	}
 	
 	public void createActorResourcePool() {
-		resourceExecutorService = new ThreadPoolExecutor(system.getConfig().maxResourceThreads(), 
-	 		system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(), new DefaultThreadFactory("actor4j-resource-thread"));
+		resourceExecutorService = new ActorResourceThreadPool(Math.min(system.getConfig().parallelism(), system.getConfig().maxResourceThreads()), 
+	 		system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new DefaultThreadFactory("actor4j-resource-thread"));
 		((ThreadPoolExecutor)resourceExecutorService).allowCoreThreadTimeOut(true);	 	
 	}
 	
@@ -304,6 +303,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 					});
 				}
 				catch (RejectedExecutionException e) {
+					cell.rejected();
 					faultToleranceManager.notifyErrorHandler(e, ActorSystemError.EXECUTER_RESOURCE, cell.getId());
 				}
 		}
