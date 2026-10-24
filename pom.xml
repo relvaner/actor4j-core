@@ -13,19 +13,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  	<modelVersion>4.0.0</modelVersion>
-  	
-  	<groupId>io.actor4j</groupId>
-  	<artifactId>actor4j-core</artifactId>
-  	<version>${revision}</version>
-  	<packaging>pom</packaging>
-  	
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>io.actor4j</groupId>
+	<artifactId>actor4j-core</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
+
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Actor4j is an actor-oriented Java framework.</description>
 	<url>https://github.com/relvaner/actor4j-core</url>
 	<inceptionYear>2015</inceptionYear>
-	
+
 	<licenses>
 		<license>
 			<name>The Apache License, Version 2.0</name>
@@ -33,147 +35,151 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<developers>
 		<developer>
 			<name>David A. Bauer</name>
 			<email>relvaner.github@gmail.com</email>
 		</developer>
 	</developers>
-	
+
 	<scm>
 		<connection>scm:git:https://github.com/relvaner/actor4j-core.git</connection>
 		<developerConnection>scm:git:git@github.com:relvaner/actor4j-core.git</developerConnection>
 		<url>https://github.com/relvaner/actor4j-core/</url>
 	</scm>
-	
+
 	<properties>
 		<revision>2.4.0</revision>
-		<junit.version>5.14.3</junit.version>
+		<junit.version>5.14.4</junit.version>
 		<maven.compiler.source>21</maven.compiler.source>
-  		<maven.compiler.target>21</maven.compiler.target>
+		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-    
-    <build>
+
+	<build>
 		<plugins>
-    		<plugin>
-      			<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-source-plugin</artifactId>
-      			<version>3.3.1</version>
-      			<executions>
-        			<execution>
-          				<id>attach-sources</id>
-          				<goals>
-            				<goal>jar-no-fork</goal>
-          				</goals>
-        			</execution>
-      			</executions>
-    		</plugin>
-    		<plugin>
-      			<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-javadoc-plugin</artifactId>
-      			<version>3.11.2</version>
-      			<executions>
-        			<execution>
-          				<id>attach-javadocs</id>
-          				<goals>
-            				<goal>jar</goal>
-          				</goals>
-        			</execution>
-      			</executions>
-    		</plugin>
-    		
-    		<plugin>
-       			<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-assembly-plugin</artifactId>
-        		<version>3.7.1</version>
-        		<configuration>
-        			<descriptorRefs>
-            			<descriptorRef>jar-with-dependencies</descriptorRef>
-          			</descriptorRefs>
-              		<finalName>${project.artifactId}-${project.version}</finalName>
-              		<appendAssemblyId>false</appendAssemblyId>
-              		<archive>
-            			<manifestEntries>
-                			<Automatic-Module-Name>io.actor4j.core</Automatic-Module-Name>
-            			</manifestEntries>
-        			</archive>
-            	</configuration>
-        		<executions>
-          			<execution>
-            			<id>make-assembly</id>
-            			<phase>package</phase>
-            			<goals>
-              				<goal>single</goal>
-            			</goals>
-          			</execution>
-        		</executions>
-    		</plugin>
-    		
-    		<plugin>
-      			<groupId>org.codehaus.mojo</groupId>
-      			<artifactId>flatten-maven-plugin</artifactId>
-      			<version>1.7.0</version>
-      			<configuration>
-      				<flattenMode>resolveCiFriendliesOnly</flattenMode>
-        			<updatePomFile>true</updatePomFile>
-      			</configuration>
-      			<executions>
-        			<execution>
-          				<id>flatten</id>
-          				<phase>verify</phase>
-          				<goals>
-            				<goal>flatten</goal>
-          				</goals>
-        			</execution>
-      			</executions>
-    		</plugin>
-    		<plugin>
-      			<groupId>org.apache.maven.plugins</groupId>
-      			<artifactId>maven-gpg-plugin</artifactId>
-      			<version>3.2.7</version>
-      			<configuration>
-    				<skip>true</skip>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.11.2</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.7.0</version>
+				<configuration>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+					<updatePomFile>true</updatePomFile>
 				</configuration>
-      			<executions>
-        			<execution>
-          				<id>sign-artifacts</id>
-          				<phase>verify</phase>
-          				<goals>
-            				<goal>sign</goal>
-          				</goals>
-        			</execution>
-      			</executions>
-    		</plugin>
-    		
-    		<plugin>
-          		<groupId>org.sonatype.central</groupId>
-          		<artifactId>central-publishing-maven-plugin</artifactId>
-          		<version>0.7.0</version>
-          		<extensions>true</extensions>
-          		<configuration>
-            		<publishingServerId>central</publishingServerId>
-          		</configuration>
-        	</plugin>
-        	
-        	<plugin>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.7</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.7.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.6</version>
-		</plugin>
-    	</plugins>
-    </build>
-    
-    <modules>
-	    	<module>actor4j-core-sdk</module>
-	    	<module>actor4j-core-jctools</module>
-	    	<module>actor4j-core-runtime-base</module>
-	    	<module>actor4j-core-runtime</module>
-	    	<module>actor4j-core-runtime-extended</module>
-	    	<module>actor4j-core-runtime-classic</module>
-	    	<module>actor4j-core-runtime-loom</module>
-	    	<module>actor4j-core-runtime-hybrid</module>
-	    	<module>actor4j-core-tck</module>
-    </modules>
+			</plugin>
+		</plugins>
+	</build>
+
+	<modules>
+		<module>actor4j-core-sdk</module>
+		<module>actor4j-core-jctools</module>
+		<module>actor4j-core-runtime-base</module>
+		<module>actor4j-core-runtime</module>
+		<module>actor4j-core-runtime-extended</module>
+		<module>actor4j-core-runtime-classic</module>
+		<module>actor4j-core-runtime-loom</module>
+		<module>actor4j-core-runtime-hybrid</module>
+		<module>actor4j-core-tck</module>
+	</modules>
+
+	<profiles>
+		<profile>
+			<id>fatjar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>3.7.1</version>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<finalName>${project.artifactId}-${project.version}</finalName>
+							<appendAssemblyId>true</appendAssemblyId>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
