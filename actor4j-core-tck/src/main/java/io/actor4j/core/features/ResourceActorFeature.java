@@ -29,11 +29,11 @@ import io.actor4j.core.messages.ActorMessage;
 public class ResourceActorFeature {
 	protected static class StatelessResourceActor extends ResourceActor {
 		public StatelessResourceActor() {
-			super();
+			super(false);
 		}
 
 		public StatelessResourceActor(String name) {
-			super(name);
+			super(name, false);
 		}
 
 		@Override

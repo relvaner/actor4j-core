@@ -43,6 +43,7 @@ public class ActorSystemConfig {
 	private final int maxThreadRetries;
 	private final int maxResourceThreads;
 	private final int timerThreads;
+	private final boolean virtualResourceThreads;
 	
 	private final long awaitTerminationTimeout;
 	
@@ -132,6 +133,10 @@ public class ActorSystemConfig {
 	
 	public int timerThreads() {
 		return timerThreads;
+	}
+	
+	public boolean virtualResourceThreads() {
+		return virtualResourceThreads;
 	}
 	
 	public long awaitTerminationTimeout() {
@@ -238,6 +243,7 @@ public class ActorSystemConfig {
 		protected int maxThreadRetries;
 		protected int maxResourceThreads;
 		protected int timerThreads;
+		protected boolean virtualResourceThreads;
 		
 		protected long awaitTerminationTimeout;
 		
@@ -339,6 +345,7 @@ public class ActorSystemConfig {
 			this.maxThreadRetries =  config.maxThreadRetries();
 			this.maxResourceThreads = config.maxResourceThreads();
 			this.timerThreads = config.timerThreads();
+			this.virtualResourceThreads = config.virtualResourceThreads();
 			this.awaitTerminationTimeout = config.awaitTerminationTimeout();
 			this.maxRetries = config.maxRetries();
 			this.withinTimeRange = config.withinTimeRange();
@@ -467,6 +474,13 @@ public class ActorSystemConfig {
 		
 		public Builder<T> timerThreads(int timerThreads) {
 			this.timerThreads = requirePositive(timerThreads, "timerThreads");
+
+			return this;
+		}
+		
+		// resource actors on virtual threads (one per task), maxResourceThreads limits how many run at once
+		public Builder<T> virtualResourceThreads(boolean virtualResourceThreads) {
+			this.virtualResourceThreads = virtualResourceThreads;
 
 			return this;
 		}
@@ -611,6 +625,7 @@ public class ActorSystemConfig {
 		this.maxThreadRetries = builder.maxThreadRetries;
 		this.maxResourceThreads = builder.maxResourceThreads;
 		this.timerThreads = builder.timerThreads>0 ? builder.timerThreads : Math.max(1, builder.parallelism/4);
+		this.virtualResourceThreads = builder.virtualResourceThreads;
 		this.awaitTerminationTimeout = builder.awaitTerminationTimeout;
 		this.maxRetries = builder.maxRetries;
 		this.withinTimeRange = builder.withinTimeRange;

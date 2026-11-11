@@ -23,9 +23,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,6 +60,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	protected /*quasi final*/ ActorTimerExecutorService globalTimerExecutorService;
 	protected /*quasi final*/ ActorTimerExecutorService timerExecutorService;
 	protected /*quasi final*/ ExecutorService resourceExecutorService;
+	protected /*quasi final*/ Semaphore resourcePermits; // virtual resource threads only: limits concurrent resource tasks
 	
 	protected /*quasi final*/ ActorPersistenceService persistenceService;
 	
@@ -238,9 +241,17 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 	}
 	
 	public void createActorResourcePool() {
-		resourceExecutorService = new ActorResourceThreadPool(Math.min(system.getConfig().parallelism(), system.getConfig().maxResourceThreads()), 
-	 		system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new DefaultThreadFactory("actor4j-resource-thread"));
-		((ThreadPoolExecutor)resourceExecutorService).allowCoreThreadTimeOut(true);	 	
+		if (system.getConfig().virtualResourceThreads()) {
+			// virtual threads are not pooled: one per task
+			resourceExecutorService = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("actor4j-resource-vthread-", 0).factory());
+			resourcePermits = new Semaphore(system.getConfig().maxResourceThreads());
+		}
+		else {
+			resourcePermits = null;
+			resourceExecutorService = new ActorResourceThreadPool(Math.min(system.getConfig().parallelism(), system.getConfig().maxResourceThreads()),
+		 		system.getConfig().maxResourceThreads(), 1, TimeUnit.MINUTES, new DefaultThreadFactory("actor4j-resource-thread"));
+			((ThreadPoolExecutor)resourceExecutorService).allowCoreThreadTimeOut(true);
+		}
 	}
 	
 	public void shutdownActorResourcePool(boolean await) {
@@ -293,12 +304,18 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 					resourceExecutorService.submit(new Runnable() {
 						@Override
 						public void run() {
+							if (resourcePermits!=null)
+								resourcePermits.acquireUninterruptibly();
 							try {
 								cell.run(message);
 							}
 							catch(Throwable t) {
 								t.printStackTrace();
-							}	
+							}
+							finally {
+								if (resourcePermits!=null)
+									resourcePermits.release();
+							}
 						}
 					});
 				}
