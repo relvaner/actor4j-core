@@ -17,6 +17,9 @@ package io.actor4j.core.features;
 
 import org.junit.runners.Suite;
 import io.actor4j.core.ActorSystemFactory;
+import io.actor4j.core.features.regression.RegressionRuntimeFeature;
+import io.actor4j.core.features.regression.RegressionSdkFeature;
+
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
@@ -34,7 +37,6 @@ import static io.actor4j.core.logging.ActorLogger.*;
 	HandlerFeature.class,
 	FaultToleranceFeature.class,
 	WatchdogFeature.class,
-	/*UnhandledFeature.class,*/
 	
 	EmbeddedActorFeature.class,
 	EmbeddedActorLifeCycleFeature.class,
@@ -56,8 +58,11 @@ import static io.actor4j.core.logging.ActorLogger.*;
 	OptionalFeature.class,
 	
 	PodFeature.class,
-	
-	UnsafeFeature.class
+
+	UnsafeFeature.class,
+
+	RegressionSdkFeature.class,
+	RegressionRuntimeFeature.class
 })
 public class AllFeaturesTest {
 	@BeforeClass
@@ -72,9 +77,10 @@ public class AllFeaturesTest {
 		return System.getProperty("actor4j.runtime", "default");
 	}
 
+	// actor4j.runtime.factory: class with a static factory() (default: the ActorRuntime of the runtime module)
 	public static ActorSystemFactory factory() {
 		try {
-			return (ActorSystemFactory) Class.forName("io.actor4j.core.ActorRuntime")
+			return (ActorSystemFactory) Class.forName(System.getProperty("actor4j.runtime.factory", "io.actor4j.core.ActorRuntime"))
 				.getMethod("factory")
 				.invoke(null);
 		} catch (ReflectiveOperationException e) {
