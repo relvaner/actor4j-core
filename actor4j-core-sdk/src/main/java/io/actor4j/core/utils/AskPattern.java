@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import io.actor4j.core.ActorSystem;
-import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.actors.StatefulResourceActor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.runtime.InternalActorSystem;
@@ -35,14 +35,14 @@ import io.actor4j.core.runtime.InternalActorSystem;
  * askAsync never blocks; ask blocks and must not be used inside an actor.
  */
 public final class AskPattern {
-	private static final class AskPatternResourceActor extends ResourceActor {
+	private static final class AskPatternResourceActor extends StatefulResourceActor {
 		private final CompletableFuture<ActorMessage<?>> future;
 		private final Duration timeout;
 		private final UUID timeoutId;
 		private ScheduledFuture<?> scheduledTimeout;
 
 		public AskPatternResourceActor(CompletableFuture<ActorMessage<?>> future, Duration timeout) {
-			super(null, true, false);
+			super();
 			this.future = future;
 			this.timeout = timeout;
 			this.timeoutId = UUID.randomUUID();

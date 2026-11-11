@@ -16,9 +16,9 @@
 package io.actor4j.core.actors;
 
 /*
- * stateful (default): messages are processed one after another (like an actor), may keep state, become, persist.
+ * stateful (default): messages are processed one after another (like an actor), may keep state, become; see StatefulResourceActor.
  * stateless: the same instance may run on several threads at once and in any order (default
- * and classic runtime; loom runs it sequentially): no fields, no become, no persistence.
+ * and classic runtime; loom runs it sequentially): no fields, no become, no persistence; see StatelessResourceActor.
  * For parallel I/O prefer several stateful resource actors (e.g. a group behind one alias).
  */
 public abstract class ResourceActor extends Actor {
@@ -33,14 +33,17 @@ public abstract class ResourceActor extends Actor {
 		this(name, true, false);
 	}
 	
+	@Deprecated // use StatefulResourceActor or StatelessResourceActor
 	public ResourceActor(boolean stateful) {
 		this(null, stateful, false);
 	}
 	
+	@Deprecated // use StatefulResourceActor or StatelessResourceActor
 	public ResourceActor(String name, boolean stateful) {
 		this(name, stateful, false);
 	}
 	
+	@Deprecated // use StatefulResourceActor or StatelessResourceActor
 	public ResourceActor(String name, boolean stateful, boolean bulk) {
 		super(name);
 		this.stateful = stateful;

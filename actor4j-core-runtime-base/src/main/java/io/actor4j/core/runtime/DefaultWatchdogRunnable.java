@@ -29,7 +29,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
-import io.actor4j.core.actors.ResourceActor;
+import io.actor4j.core.actors.StatefulResourceActor;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.immutable.ImmutableList;
 import io.actor4j.core.messages.ActorMessage;
@@ -48,7 +48,7 @@ public class DefaultWatchdogRunnable extends WatchdogRunnable {
 		
 		downCount = new AtomicInteger(0);
 		
-		mediator = system.addSystemActor(() -> new ResourceActor("watchdog-controller", true, false) {
+		mediator = system.addSystemActor(() -> new StatefulResourceActor("watchdog-controller") {
 			List<CompletableFuture<Void>> futures;
 			
 			@SuppressWarnings("unchecked")
