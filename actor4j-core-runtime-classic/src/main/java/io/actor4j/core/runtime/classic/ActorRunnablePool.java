@@ -45,11 +45,15 @@ public class ActorRunnablePool extends AbstractActorExecutionUnitPool<ActorRunna
 	protected final ConcurrentHashMap<Long, ActorRunnableMetrics> metricsMap; // threadId -> ActorRunnableMetrics
 	
 	public ActorRunnablePool(InternalActorRuntimeSystem system) {
+		this(system, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+	}
+	
+	// poolSize: e.g. a smaller pool next to the thread pool of the default runtime (hybrid runtime)
+	public ActorRunnablePool(InternalActorRuntimeSystem system, int poolSize) {
 		super(system, null);
 		
 		metricsMap = new ConcurrentHashMap<>();
 		
-		int poolSize = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
 		executorService = new ClassicForkJoinPool(poolSize,
 			new ForkJoinWorkerThreadFactory() {
 				@Override

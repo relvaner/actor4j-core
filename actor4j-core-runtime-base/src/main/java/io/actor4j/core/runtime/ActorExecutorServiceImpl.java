@@ -209,7 +209,7 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 				public void receive(ActorMessage<?> message) {
 					// empty
 				}
-			}, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+			}, watchedExecutionUnits());
 			watchdogRunnable = system.getWatchdogRunnableFactory().apply(system, watchdogActors);
 		}
 		
@@ -263,6 +263,11 @@ public abstract class ActorExecutorServiceImpl<U extends ActorExecutionUnit> imp
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
+	}
+	
+	// number of execution units the watchdog watches (one watchdog actor each)
+	protected int watchedExecutionUnits() {
+		return system.getConfig().parallelism()*system.getConfig().parallelismFactor();
 	}
 	
 	protected void beforeExecutionUnitPool() {

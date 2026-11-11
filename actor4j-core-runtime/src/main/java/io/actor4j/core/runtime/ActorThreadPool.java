@@ -30,11 +30,16 @@ public class ActorThreadPool extends AbstractActorExecutionUnitPool<ActorThread>
 	protected final CountDownLatch countDownLatch;
 	
 	public ActorThreadPool(DefaultInternalActorRuntimeSystem system) {
+		this(system, system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+	}
+	
+	// threads: e.g. fewer threads next to the shared pool of the hybrid runtime
+	public ActorThreadPool(DefaultInternalActorRuntimeSystem system, int threads) {
 		super(system, new ActorThreadPoolHandler(system));
 		
-		countDownLatch = new CountDownLatch(system.getConfig().parallelism()*system.getConfig().parallelismFactor());
+		countDownLatch = new CountDownLatch(threads);
 		DefaultActorThreadFactory defaultActorThreadFactory = new DefaultActorThreadFactory(system.getConfig().name());
-		for (int i=0; i<system.getConfig().parallelism()*system.getConfig().parallelismFactor(); i++) {
+		for (int i=0; i<threads; i++) {
 			try {
 				ActorThread t = defaultActorThreadFactory.newThread(system);
 				t.onTermination = new Runnable() {

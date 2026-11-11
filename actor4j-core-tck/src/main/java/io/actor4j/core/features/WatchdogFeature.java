@@ -79,7 +79,7 @@ public class WatchdogFeature {
 
 	@Test(timeout=5000)
 	public void test_health_check_failed() {
-		assumeTrue("watchdog only enabled in default runtime", "default".equals(AllFeaturesTest.runtime()));
+		assumeTrue("watchdog only enabled in default and hybrid runtime", "default".equals(AllFeaturesTest.runtime()) || "hybrid".equals(AllFeaturesTest.runtime()));
 		
 		CountDownLatch testDone = new CountDownLatch(1);
 		AtomicLong threadId = new AtomicLong();
