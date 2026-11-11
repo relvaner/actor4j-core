@@ -61,7 +61,7 @@ public class ConfigFeature {
 		assertEquals(2_000, system.getConfig().horizontalPodAutoscalerMeasurementTime());
 		assertEquals(null, system.getConfig().podDatabase());
 		
-		assertEquals("default".equals(AllFeaturesTest.runtime()) || "hybrid".equals(AllFeaturesTest.runtime()), system.getConfig().watchdogEnabled());
+		assertEquals("default".equals(AllFeaturesTest.runtime()), system.getConfig().watchdogEnabled());
 		assertEquals(5_000, system.getConfig().watchdogSyncTime());
 		assertEquals(2_000, system.getConfig().watchdogTimeout());
 	}

@@ -53,21 +53,15 @@ public class HybridActorExecutorService extends DefaultActorExecutorService impl
 		system.internal_iterateCell((InternalActorCell)system.USER_ID(), configQueues);
 	}
 
-	// threads of the shared pool, taken from parallelism*parallelismFactor (at least one thread for each pool)
+	// see HybridActorSystemConfig
 	public int pooledThreads() {
-		int total = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		int configured = system.getConfig() instanceof HybridActorSystemConfig hconfig ? hconfig.pooledParallelism() : 0;
-		int pooled = configured>0 ? configured : total/2;
-		
-		return Math.max(1, Math.min(pooled, total-1));
+		return HybridActorSystemConfig.pooledThreads(system.getConfig());
 	}
 	
 	public int threadBoundThreads() {
-		int total = system.getConfig().parallelism()*system.getConfig().parallelismFactor();
-		
-		return Math.max(1, total-pooledThreads());
+		return HybridActorSystemConfig.threadBoundThreads(system.getConfig());
 	}
-	
+
 	@Override
 	protected int watchedExecutionUnits() {
 		return threadBoundThreads(); // the shared pool is not watched

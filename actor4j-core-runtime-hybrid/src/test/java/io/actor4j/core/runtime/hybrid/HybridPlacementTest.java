@@ -148,11 +148,67 @@ public class HybridPlacementTest {
 	
 	@Test(timeout=10_000)
 	public void test_pooled_parallelism() throws InterruptedException {
-		assertThreads(ActorSystemConfig.builder().parallelism(8), 4, 4);                       // automatic: half
-		assertThreads(HybridActorSystemConfig.builder().pooledParallelism(2).parallelism(8), 2, 6);
-		assertThreads(ActorSystemConfig.builder().parallelism(4).parallelismFactor(2), 4, 4);  // from parallelism*factor
-		assertThreads(HybridActorSystemConfig.builder().pooledParallelism(20).parallelism(8), 7, 1); // at least one thread-bound
-		assertThreads(ActorSystemConfig.builder().parallelism(1), 1, 1);                       // at least one for each pool
-		assertThreads(HybridActorSystemConfig.builder(HybridActorSystemConfig.builder().pooledParallelism(3).build()).parallelism(8), 3, 5); // copied config keeps it
+		// thread-bound: threadBoundParallelism, else parallelism*factor; pooled in addition: pooledParallelism, else max(2, bound/2)
+		assertThreads(ActorSystemConfig.builder().parallelism(32), 16, 32);
+		assertThreads(ActorSystemConfig.builder().parallelism(8), 4, 8);
+		assertThreads(ActorSystemConfig.builder().parallelism(1), 2, 1);
+		assertThreads(ActorSystemConfig.builder().parallelism(4).parallelismFactor(2), 4, 8);      // from parallelism*factor
+		assertThreads(HybridActorSystemConfig.builder().pooledParallelism(3).parallelism(8), 3, 8);
+		assertThreads(HybridActorSystemConfig.builder().threadBoundParallelism(6).parallelism(8), 3, 6);
+		assertThreads(HybridActorSystemConfig.builder().threadBoundParallelism(6).pooledParallelism(5).parallelism(8), 5, 6);
+		assertThreads(HybridActorSystemConfig.builder(HybridActorSystemConfig.builder().pooledParallelism(5).build()).parallelism(8), 5, 8); // copied config keeps it
+		int half = Math.max(1, Runtime.getRuntime().availableProcessors()/2);
+		assertThreads(HybridActorSystemConfig.builder(), Math.max(2, half/2), half);               // hybrid default: half of the cores thread-bound
+	}
+
+	@Test(timeout=10_000)
+	public void test_placement_from_config() throws InterruptedException {
+		// actors chosen by name, without PooledActor in their code
+		ActorSystem system = HybridActorRuntime.create(HybridActorSystemConfig.builder()
+			.pooledPlacement(actor -> actor.getName()!=null && actor.getName().startsWith("coordinator-")).build());
+		CountDownLatch done = new CountDownLatch(1);
+
+		ActorId bound = system.addActor(() -> new Actor("device") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				tell(null, 1, message.source());
+			}
+		});
+		ActorId pooled = system.addActor(() -> new Actor("coordinator-1") {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				if (message.tag()==0)
+					tell(null, 0, bound);
+				else
+					done.countDown();
+			}
+		});
+
+		assertTrue(pooled instanceof ClassicActorCell);
+		assertFalse(bound instanceof ClassicActorCell);
+
+		system.start();
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), pooled));
+		assertTrue(done.await(5, TimeUnit.SECONDS));
+
+		system.shutdownWithActors(true);
+	}
+
+	@Test(timeout=10_000)
+	public void test_root_cells_stay_thread_bound() throws InterruptedException {
+		// even a placement that matches every actor must not pool the root cells (also after shutdown and restart)
+		ActorSystem system = HybridActorRuntime.create(HybridActorSystemConfig.builder().pooledPlacement(actor -> true).build());
+		for (int round=0; round<2; round++) {
+			InternalActorSystem internal = (InternalActorSystem)system;
+			for (ActorId root : new ActorId[] {internal.ZERO_ID(), internal.USER_ID(), internal.SYSTEM_ID(), internal.UNKNOWN_ID(), internal.PSEUDO_ID()})
+				assertFalse(root instanceof ClassicActorCell);
+			assertTrue(system.addActor(() -> new Actor() {
+				@Override
+				public void receive(ActorMessage<?> message) {
+				}
+			}) instanceof ClassicActorCell);
+			system.start();
+			system.shutdownWithActors(true);
+		}
 	}
 }

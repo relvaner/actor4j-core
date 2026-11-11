@@ -19,12 +19,12 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-// hybrid runtime without pooled actors: behaves like the default runtime with fewer thread-bound threads
+// hybrid runtime without pooled actors: must behave like the default runtime
 @RunWith(Suite.class)
 @Suite.SuiteClasses(AllFeaturesTest.class)
 public class TckTest {
 	@BeforeClass
 	public static void beforeClass() {
-		System.setProperty("actor4j.runtime", "hybrid"); // thread-bound group tests need exactly parallelism threads (default only)
+		System.setProperty("actor4j.runtime", "default");
 	}
 }

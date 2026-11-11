@@ -19,10 +19,10 @@ import java.util.function.Predicate;
 
 import io.actor4j.core.ActorSystemFactory;
 import io.actor4j.core.actors.Actor;
-import io.actor4j.core.actors.ActorDistributedGroupMember;
-import io.actor4j.core.actors.ActorGroupMember;
-import io.actor4j.core.actors.PooledActor;
+import io.actor4j.core.actors.ResourceActor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.config.HybridActorSystemConfig;
+import io.actor4j.core.pods.actors.PodActor;
 import io.actor4j.core.runtime.ActorExecutorService;
 import io.actor4j.core.runtime.DefaultActorSystemImpl;
 import io.actor4j.core.runtime.InternalActorCell;
@@ -31,59 +31,41 @@ import io.actor4j.core.runtime.classic.ClassicPodActorCell;
 
 /*
  * Hybrid runtime: actors are bound to threads like in the default runtime, actors chosen by the placement
- * (default: PooledActor) run in the shared pool of the classic runtime. Root cells stay thread-bound.
+ * (HybridActorSystemConfig.pooledPlacement, default: PooledActor) run in the shared pool of the classic runtime.
+ * Root cells stay thread-bound (see generateCell).
  */
 public class HybridActorSystemImpl extends DefaultActorSystemImpl {
-	public static final Predicate<Actor> POOLED_MARKER = (actor) -> actor instanceof PooledActor;
-	// all actors except members of thread-bound groups (e.g. watchdog actors)
-	public static final Predicate<Actor> POOLED_ALL = (actor) -> !(actor instanceof ActorGroupMember || actor instanceof ActorDistributedGroupMember);
-
+	protected final Predicate<Actor> explicitPooled; // overrides the placement of the config
 	protected /*quasi final*/ Predicate<Actor> pooled;
-	protected boolean creatingRootCells;
 
 	public HybridActorSystemImpl() {
 		this(null);
 	}
 
 	public HybridActorSystemImpl(ActorSystemConfig config) {
-		this(config, POOLED_MARKER);
+		this(config, null);
 	}
 
+	// pooled: placement, null = HybridActorSystemConfig.pooledPlacement (default POOLED_MARKER)
 	public HybridActorSystemImpl(ActorSystemConfig config, Predicate<Actor> pooled) {
 		super(config);
 
-		this.pooled = pooled;
+		this.explicitPooled = pooled;
+		this.pooled = pooled!=null ? pooled : HybridActorSystemConfig.pooledPlacement(getConfig());
 		messageDispatcher = new HybridActorMessageDispatcher(this);
 	}
 
 	@Override
 	public ActorSystemFactory factory() {
-		return (config) -> new HybridActorSystemImpl(config, pooled);
+		return (config) -> new HybridActorSystemImpl(config, explicitPooled);
 	}
 
-	protected boolean isPooled(Actor actor) {
-		return !creatingRootCells && pooled!=null && actor!=null && pooled.test(actor);
-	}
-
+	// only actors added by the user pass here (addActor, addChild); root cells are created directly and stay thread-bound
 	@Override
-	protected void resetCells() {
-		creatingRootCells = true;
-		try {
-			super.resetCells();
-		}
-		finally {
-			creatingRootCells = false;
-		}
-	}
-
-	@Override
-	protected InternalActorCell createActorCell(Actor actor) {
-		return isPooled(actor) ? new ClassicActorCell(this, actor) : super.createActorCell(actor);
-	}
-
-	@Override
-	protected InternalActorCell createPodActorCell(Actor actor) {
-		return isPooled(actor) ? new ClassicPodActorCell(this, actor) : super.createPodActorCell(actor);
+	public InternalActorCell generateCell(Actor actor) {
+		if (!(actor instanceof ResourceActor) && pooled!=null && pooled.test(actor))
+			return actor instanceof PodActor ? new ClassicPodActorCell(this, actor) : new ClassicActorCell(this, actor);
+		return super.generateCell(actor);
 	}
 
 	@Override

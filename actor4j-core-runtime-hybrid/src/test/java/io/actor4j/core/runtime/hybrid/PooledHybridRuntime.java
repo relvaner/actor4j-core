@@ -22,6 +22,6 @@ import io.actor4j.core.config.HybridActorSystemConfig;
 // (it only watches the thread-bound workers)
 public class PooledHybridRuntime {
 	public static ActorSystemFactory factory() {
-		return (c) -> new HybridActorSystemImpl(HybridActorSystemConfig.builder(c).watchdogEnabled(false).build(), HybridActorSystemImpl.POOLED_ALL);
+		return (c) -> new HybridActorSystemImpl(HybridActorSystemConfig.builder(c).pooledPlacement(HybridActorSystemConfig.POOLED_ALL).watchdogEnabled(false).build());
 	}
 }
