@@ -27,11 +27,11 @@ public class TckPooledTest {
 	@BeforeClass
 	public static void beforeClass() {
 		System.setProperty("actor4j.runtime", "hybrid-pooled"); // like classic: watchdog off, thread-bound group tests skipped
-		System.setProperty("actor4j.hybrid.placement", "pooled");
+		System.setProperty("actor4j.runtime.factory", "io.actor4j.core.runtime.hybrid.PooledHybridRuntime");
 	}
 
 	@AfterClass
 	public static void afterClass() {
-		System.clearProperty("actor4j.hybrid.placement");
+		System.clearProperty("actor4j.runtime.factory");
 	}
 }

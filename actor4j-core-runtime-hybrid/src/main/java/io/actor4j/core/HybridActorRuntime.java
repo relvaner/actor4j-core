@@ -20,11 +20,7 @@ import io.actor4j.core.config.HybridActorSystemConfig;
 import io.actor4j.core.runtime.hybrid.HybridActorSystemImpl;
 
 public class HybridActorRuntime {
-	// actor4j.hybrid.placement: marker (default, PooledActor) or pooled (all actors except thread-bound groups;
-	// watchdog off like in the classic runtime, it only watches the thread-bound workers)
 	public static ActorSystemFactory factory() {
-		if ("pooled".equals(System.getProperty("actor4j.hybrid.placement", "marker")))
-			return (c) -> new HybridActorSystemImpl(HybridActorSystemConfig.builder(c).watchdogEnabled(false).build(), HybridActorSystemImpl.POOLED_ALL);
 		return (c) -> new HybridActorSystemImpl(c);
 	}
 

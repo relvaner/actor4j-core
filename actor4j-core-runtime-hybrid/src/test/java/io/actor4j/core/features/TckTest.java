@@ -26,6 +26,5 @@ public class TckTest {
 	@BeforeClass
 	public static void beforeClass() {
 		System.setProperty("actor4j.runtime", "hybrid"); // thread-bound group tests need exactly parallelism threads (default only)
-		System.setProperty("actor4j.hybrid.placement", "marker");
 	}
 }
