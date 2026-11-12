@@ -8,6 +8,7 @@
 		<version>${revision}</version>
 	</parent>
 	<artifactId>actor4j-core-jctools</artifactId>
+	<packaging>jar</packaging>
 	
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Actor4j is an actor-oriented Java framework.</description>

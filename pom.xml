@@ -50,7 +50,7 @@
 	</scm>
 
 	<properties>
-		<revision>2.4.0</revision>
+		<revision>2.5.0</revision>
 		<junit.version>5.14.4</junit.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
@@ -129,6 +129,9 @@
 				<extensions>true</extensions>
 				<configuration>
 					<publishingServerId>central</publishingServerId>
+					<excludeArtifacts>
+						<artifact>actor4j-core-tck</artifact>
+					</excludeArtifacts>
 				</configuration>
 			</plugin>
 
