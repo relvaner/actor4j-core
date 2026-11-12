@@ -30,6 +30,10 @@ import io.actor4j.core.ActorService;
 import io.actor4j.core.ActorSystem;
 import io.actor4j.core.actors.Actor;
 import io.actor4j.core.config.ActorSystemConfig;
+import io.actor4j.core.features.pod.ExampleDefaultActorPod;
+import io.actor4j.core.features.pod.ExampleDefaultRemoteActorPod;
+import io.actor4j.core.features.pod.ExampleDefaultRemoteShardActorPod;
+import io.actor4j.core.features.pod.ExampleDefaultShardActorPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithActorPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequest;
@@ -39,6 +43,7 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.id.GlobalId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.utils.PodRequestMethod;
@@ -582,5 +587,102 @@ public class PodFeature {
 			e.printStackTrace();
 		}
 		system.shutdownWithActors(true);
-	}	
+	}
+
+	// value with negative hash code ("actor4j".hashCode() == -1161623701, % 3 == -1): shard id must stay in 0..n-1
+	protected static final String NEGATIVE_HASH = "actor4j";
+
+	protected void assertHello(PodFactory factory, PodConfiguration podConfiguration, String value) {
+		CountDownLatch testDone = new CountDownLatch(1);
+
+		system.deployPods(factory, podConfiguration);
+		ActorId client = system.addActor(() -> new Actor(){
+			@Override
+			public void receive(ActorMessage<?> message) {
+				assertEquals(42, message.tag());
+				assertTrue(message.valueAsString().startsWith("Hello "+value+"!"));
+				testDone.countDown();
+			}
+		});
+		system.start();
+		system.sendViaAlias(ActorMessage.create(value, 0, client, null), podConfiguration.domain());
+
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		system.shutdownWithActors(true);
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleDefaultActorPod() {
+		assertHello(() -> new ExampleDefaultActorPod(), 
+			new PodConfiguration("ExampleDefaultActorPod", ExampleDefaultActorPod.class.getName(), 1, 1), "Test");
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleDefaultShardActorPod() {
+		assertHello(() -> new ExampleDefaultShardActorPod(), 
+			new PodConfiguration("ExampleDefaultShardActorPod", ExampleDefaultShardActorPod.class.getName(), 3, 1, 1), NEGATIVE_HASH);
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleShardingWithActorPod_negative_hash() {
+		assertHello(() -> new ExampleShardingWithActorPod(), 
+			new PodConfiguration("ExampleShardingWithActorPod", ExampleShardingWithActorPod.class.getName(), 3, 1, 1), NEGATIVE_HASH);
+	}
+
+	// request from outside (RemotePodMessage), the answer goes back via InternalServerCallback
+	protected void assertRemoteHello(PodFactory factory, PodConfiguration podConfiguration, String value) {
+		CountDownLatch testDone = new CountDownLatch(1);
+
+		system.deployPods(factory, podConfiguration);
+		ActorId client = system.addActor(() -> new Actor(){
+			@Override
+			public void preStart() {
+				expose();
+			}
+
+			@Override
+			public void receive(ActorMessage<?> message) {
+				assertEquals(42, message.tag());
+				assertTrue(message.valueAsString().startsWith("Hello "+value+"!"));
+				testDone.countDown();
+			}
+		});
+
+		InternalServerCallback internalServerCallback = (replyAddress, result, tag)
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
+		((InternalActorSystem)system).setRuntimeConfig(ActorRuntimeConfig.builder().internalServerCallback(internalServerCallback).build());
+		system.start();
+
+		RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO(value, 0, podConfiguration.domain(), true), client.globalId().toString(), null);
+		system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), podConfiguration.domain());
+
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		system.shutdownWithActors(true);
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleDefaultRemoteActorPod() {
+		assertHello(() -> new ExampleDefaultRemoteActorPod(), 
+			new PodConfiguration("ExampleDefaultRemoteActorPod", ExampleDefaultRemoteActorPod.class.getName(), 1, 1), "Test");
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleDefaultRemoteActorPod_remote() {
+		assertRemoteHello(() -> new ExampleDefaultRemoteActorPod(), 
+			new PodConfiguration("ExampleDefaultRemoteActorPod", ExampleDefaultRemoteActorPod.class.getName(), 1, 1), "Test");
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleDefaultRemoteShardActorPod_remote() {
+		assertRemoteHello(() -> new ExampleDefaultRemoteShardActorPod(), 
+			new PodConfiguration("ExampleDefaultRemoteShardActorPod", ExampleDefaultRemoteShardActorPod.class.getName(), 3, 1, 1), NEGATIVE_HASH);
+	}
 }

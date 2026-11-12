@@ -33,7 +33,7 @@ public class ExampleShardingWithActorPod extends ActorPod {
 				@Override
 				public String shardId(ActorMessage<?> message, int totalShardCount) {
 					int hashCode = String.valueOf(message.value()).hashCode();
-					return String.valueOf(hashCode%totalShardCount);
+					return String.valueOf(Math.floorMod(hashCode, totalShardCount)); // shard ids 0..n-1, also for negative hash codes
 				}
 			}, 
 			(groupId, context) -> new HandlerPodActor(domain(), groupId, context) {
