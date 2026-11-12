@@ -23,7 +23,7 @@ See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) 
 <dependency>
     <groupId>io.actor4j</groupId>
     <artifactId>actor4j-core-sdk</artifactId>
-    <version>2.4.0-beta.3</version>
+    <version>2.5.0-beta.1</version>
 </dependency>
 ```
 
@@ -33,7 +33,7 @@ See *Multi-Runtime Actor Model Implementation and Benchmarks* (IEEE IECON 2025) 
 <dependency>
     <groupId>io.actor4j</groupId>
     <artifactId>actor4j-core-runtime</artifactId> <!-- or -classic, -loom, -hybrid -->
-    <version>2.4.0-beta.3</version>
+    <version>2.5.0-beta.1</version>
 </dependency>
 ```
 
