@@ -52,6 +52,7 @@
 	<properties>
 		<revision>2.5.0</revision>
 		<junit.version>5.14.4</junit.version>
+		<gpg.skip>true</gpg.skip> <!-- release: -Dgpg.skip=false -->
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -108,9 +109,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>3.2.7</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
