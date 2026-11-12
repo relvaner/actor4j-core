@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jctools.queues.MpscArrayQueue;
 import org.jctools.queues.MpscLinkedQueue;
 
+// AI-generated.
 // Queue benchmark: N producers -> 1 consumer (JCTools vs. JDK).
 // Not a unit test (no *Test name), run manually: without arguments the whole matrix is executed,
 // each configuration in its own JVM (no JIT profile pollution by other queue types).

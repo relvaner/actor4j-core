@@ -42,6 +42,7 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.ActorGroupSet;
 
+// AI-generated.
 // Runtime benchmark: default vs. classic vs. hybrid (rings thread-bound, fib pooled).
 // Not a unit test (no *Test name), run manually: without arguments the whole matrix is executed,
 // each configuration in its own JVM (no JIT profile pollution by other runtimes).

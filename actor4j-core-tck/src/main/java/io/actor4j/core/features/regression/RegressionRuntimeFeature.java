@@ -63,6 +63,7 @@ import io.actor4j.core.utils.DeepCopyable;
 
 /**
  * Regression tests for fixes in actor4j-core-runtime-base and the runtimes (review 2026-10).
+ * AI-maintained.
  */
 public class RegressionRuntimeFeature {
 	protected ActorSystem system;

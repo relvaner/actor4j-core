@@ -44,6 +44,7 @@ import io.actor4j.core.utils.EmbeddedActorFactory;
 /**
  * Regression tests for fixes in actor4j-core-sdk (review 2026-10).
  * These tests do not need a running actor system.
+ * AI-maintained.
  */
 public class RegressionSdkFeature {
 	protected static EmbeddedHostActor createHost() {
