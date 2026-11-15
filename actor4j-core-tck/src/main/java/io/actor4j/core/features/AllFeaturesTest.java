@@ -32,6 +32,7 @@ import static io.actor4j.core.logging.ActorLogger.*;
 	ActorFeature.class,
 	LifeCycleFeature.class,
 	BehaviourFeature.class,
+	BehaviourFunctionalFeature.class,
 	AwaitFeature.class,
 	MatcherFeature.class,
 	HandlerFeature.class,
