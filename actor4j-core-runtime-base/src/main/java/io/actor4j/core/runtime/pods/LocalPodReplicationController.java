@@ -97,7 +97,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 			podReplicationMap.put(podConfiguration.domain(), new PodReplicationTuple(podConfiguration, podSystemConfiguration));
 			if (podSystemConfiguration!=null) {
 				registry.register(podConfiguration.domain(), factory);
-				PodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system, hasPrimaryReplica);
+				LocalPodDeployment.deployPods(factory, podConfiguration, podSystemConfiguration, system, hasPrimaryReplica);
 			}
 		}
 		finally {
@@ -325,7 +325,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 								null, null, null, 1, podReplicationTuple.podSystemConfiguration().currentReplicaCount()+allowed);
 						podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
 						
-						PodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, null, system, hasPrimaryReplica);
+						LocalPodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, null, system, hasPrimaryReplica);
 					}
 					if (allowed<instances)
 						systemLogger().log(WARN, String.format("[REPLICATION] Domain '%s': limited to maxReplica (%d)", domain, podReplicationTuple.podConfiguration().maxReplica()));
@@ -347,7 +347,7 @@ public class LocalPodReplicationController implements PodReplicationController {
 								0);
 						podReplicationMap.put(domain, new PodReplicationTuple(podReplicationTuple.podConfiguration(), podSystemConfiguration, podReplicationTuple.jarFileName()));
 						
-						PodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, shardId, system, hasPrimaryReplica);
+						LocalPodDeployment.increasePods((PodFactory)registry.getFactory(domain), podReplicationTuple.podConfiguration(), podSystemConfiguration, allowed, shardId, system, hasPrimaryReplica);
 					}
 					if (allowed<instances)
 						systemLogger().log(WARN, String.format("[REPLICATION] Shard (%s, %s): limited to maxReplica (%d)", domain, shardId, podReplicationTuple.podConfiguration().maxReplica()));

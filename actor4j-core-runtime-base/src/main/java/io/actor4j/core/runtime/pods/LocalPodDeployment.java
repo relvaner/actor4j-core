@@ -27,7 +27,7 @@ import io.actor4j.core.pods.PodConfiguration;
 import io.actor4j.core.pods.PodContext;
 import io.actor4j.core.pods.PodFactory;
 
-public class PodDeployment {
+public class LocalPodDeployment {
 	public static void deployPods(PodFactory factory, PodConfiguration podConfiguration, PodSystemConfiguration podSystemConfiguration, ActorPodService service, Function<String, Boolean> hasPrimaryReplica) {
 		systemLogger().log(INFO, String.format("[REPLICATION] Domain '%s' deploying", podConfiguration.domain()));
 		

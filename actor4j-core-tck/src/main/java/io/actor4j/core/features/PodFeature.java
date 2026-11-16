@@ -43,6 +43,7 @@ import io.actor4j.core.id.ActorId;
 import io.actor4j.core.id.GlobalId;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodDeployment;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
@@ -684,5 +685,74 @@ public class PodFeature {
 	public void test_factory_ExampleDefaultRemoteShardActorPod_remote() {
 		assertRemoteHello(() -> new ExampleDefaultRemoteShardActorPod(), 
 			new PodConfiguration("ExampleDefaultRemoteShardActorPod", ExampleDefaultRemoteShardActorPod.class.getName(), 3, 1, 1), NEGATIVE_HASH);
+	}
+
+	// PodDeployment: domain and class name come from the pod (probe object), not from the user
+	@Test(timeout=5000)
+	public void test_deployPods_with_PodDeployment() {
+		CountDownLatch testDone = new CountDownLatch(1);
+
+		system.deployPods(() -> new ExampleDefaultActorPod(), new PodDeployment(3, 3));
+		ActorId client = system.addActor(() -> new Actor(){
+			@Override
+			public void receive(ActorMessage<?> message) {
+				assertEquals(42, message.tag());
+				assertTrue(message.valueAsString().startsWith("Hello Test!"));
+				testDone.countDown();
+			}
+		});
+		ActorId starter = system.addActor(() -> new Actor() {
+			@Override
+			public void receive(ActorMessage<?> message) {
+				// three replicas, the probe object is not registered
+				assertEquals(3, ((InternalActorSystem)system).getActorsFromAlias("ExampleDefaultActorPod").size());
+				system.sendViaAlias(ActorMessage.create("Test", 0, client, null), "ExampleDefaultActorPod");
+			}
+		});
+		system.start();
+		system.send(ActorMessage.create(null, 0, system.SYSTEM_ID(), starter));
+
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		PodConfiguration podConfiguration = ((InternalActorSystem)system).getPodReplicationController().getPodReplicationMap()
+			.get("ExampleDefaultActorPod").podConfiguration();
+		system.shutdownWithActors(true);
+
+		assertEquals("ExampleDefaultActorPod", podConfiguration.domain());
+		assertEquals(ExampleDefaultActorPod.class.getName(), podConfiguration.className());
+		assertEquals(new PodDeployment(3, 3), podConfiguration.deployment());
+	}
+
+	@Test(timeout=5000)
+	public void test_deployPods_with_default_deployment() {
+		system.deployPods(() -> new ExampleDefaultActorPod());
+		system.start();
+		PodConfiguration podConfiguration = ((InternalActorSystem)system).getPodReplicationController().getPodReplicationMap()
+			.get("ExampleDefaultActorPod").podConfiguration();
+		system.shutdownWithActors(true);
+
+		assertEquals(new PodDeployment(1, 1, 1, null), podConfiguration.deployment());
+	}
+
+	@Test
+	public void test_PodConfiguration_and_PodDeployment() {
+		PodDeployment deployment = new PodDeployment(2, 1, 3, "1.0");
+		PodConfiguration podConfiguration = new PodConfiguration("domain", "className", deployment);
+
+		assertEquals("domain", podConfiguration.domain());
+		assertEquals("className", podConfiguration.className());
+		assertEquals(2, podConfiguration.shardCount());
+		assertEquals(1, podConfiguration.minReplica());
+		assertEquals(3, podConfiguration.maxReplica());
+		assertEquals("1.0", podConfiguration.versionNumber());
+		assertEquals(deployment, podConfiguration.deployment());
+		assertEquals(new PodDeployment(1, 1, 1, null), new PodDeployment());
+
+		assertThrows(IllegalArgumentException.class, () -> new PodDeployment(0, 1, 1));		// shardCount < 1
+		assertThrows(IllegalArgumentException.class, () -> new PodDeployment(3, 2));		// maxReplica < minReplica
+		assertThrows(IllegalArgumentException.class, () -> new PodConfiguration("domain", "className", 0, 1));
 	}
 }

@@ -19,8 +19,15 @@ public record PodConfiguration(String domain, String className, int shardCount, 
 		String versionNumber) {
 	
 	public PodConfiguration {
-		if (shardCount<1 || minReplica<1 || maxReplica<minReplica)
-			throw new IllegalArgumentException(String.format("Invalid pod configuration (shardCount=%d, minReplica=%d, maxReplica=%d)", shardCount, minReplica, maxReplica));
+		PodDeployment.validate(shardCount, minReplica, maxReplica);
+	}
+
+	public PodConfiguration(String domain, String className, PodDeployment deployment) {
+		this(domain, className, deployment.shardCount(), deployment.minReplica(), deployment.maxReplica(), deployment.versionNumber());
+	}
+
+	public PodDeployment deployment() {
+		return new PodDeployment(shardCount, minReplica, maxReplica, versionNumber);
 	}
 	
 	public PodConfiguration(String domain, String className) {

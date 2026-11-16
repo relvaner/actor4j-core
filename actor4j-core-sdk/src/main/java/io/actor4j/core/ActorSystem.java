@@ -23,7 +23,9 @@ import java.util.concurrent.TimeUnit;
 import io.actor4j.core.config.ActorSystemConfig;
 import io.actor4j.core.id.ActorId;
 import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.pods.Pod;
 import io.actor4j.core.pods.PodConfiguration;
+import io.actor4j.core.pods.PodDeployment;
 import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.utils.ActorFactory;
 import io.actor4j.core.utils.ActorGroup;
@@ -57,6 +59,17 @@ public interface ActorSystem {
 	
 	public void deployPods(File jarFile, PodConfiguration podConfiguration);
 	public void deployPods(PodFactory factory, PodConfiguration podConfiguration);
+
+	// domain and class name from a probe object of the factory (only read, not registered)
+	public default void deployPods(PodFactory factory, PodDeployment deployment) {
+		Pod probe = factory.create();
+		deployPods(factory, new PodConfiguration(probe.domain(), probe.getClass().getName(), deployment));
+	}
+
+	// one shard, one replica
+	public default void deployPods(PodFactory factory) {
+		deployPods(factory, new PodDeployment());
+	}
 	public void undeployPods(String domain);
 	public void updateReplicaLimits(String domain, int minReplica, int maxReplica);
 
