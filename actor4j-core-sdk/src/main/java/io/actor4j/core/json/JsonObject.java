@@ -26,7 +26,7 @@ public interface JsonObject extends Shareable {
 	public static JsonObject create() {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonObject() : null; 
+		return service!=null ? service.createJsonObject() : null;
 	}
 	
 	public static JsonObject empty() {
@@ -36,13 +36,13 @@ public interface JsonObject extends Shareable {
 	public static JsonObject create(Object obj) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonObject(obj) : null; 
+		return service!=null ? service.createJsonObject(obj) : null;
 	}
 	
 	public static JsonObject create(String json) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonObject(json) : null; 
+		return service!=null ? service.createJsonObject(json) : null;
 	}
 	
 	public static String mapFrom(Object obj) {
@@ -51,6 +51,11 @@ public interface JsonObject extends Shareable {
 		return result!=null ? result.encode() : null;
 	}
 	
+	// JsonObject -> DTO or record (ObjectMapper), invalid content -> IllegalArgumentException
+	public default <T> T mapTo(Class<T> type) {
+		return ObjectMapper.required().mapTo(encode(), type);
+	}
+
 	public Object getValue(String key);
 	public String getString(String key);
 	public Integer getInteger(String key);

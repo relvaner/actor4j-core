@@ -22,8 +22,17 @@ import io.actor4j.core.utils.GenericType;
 public interface ObjectMapper {
 	public static ObjectMapper create() {
 		ObjectMapperService service = ServiceLoader.findFirst(ObjectMapperService.class);
-		
-		return service!=null ? service.create() : null; 
+
+		return service!=null ? service.create() : null;
+	}
+
+	// like create, but fails if no implementation with an ObjectMapper is present (e.g. actor4j-dataformat-json-jackson)
+	public static ObjectMapper required() {
+		ObjectMapper result = create();
+		if (result==null)
+			throw new IllegalStateException("no ObjectMapper found, add an implementation like actor4j-dataformat-json-jackson");
+
+		return result;
 	}
 	
 	public String mapFrom(Object obj);

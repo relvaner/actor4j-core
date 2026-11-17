@@ -15,6 +15,7 @@
  */
 package io.actor4j.core.json;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.actor4j.core.json.api.JsonFactoryService;
@@ -25,7 +26,7 @@ public interface JsonArray extends Shareable, Iterable<Object> {
 	public static JsonArray create() {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonArray() : null; 
+		return service!=null ? service.createJsonArray() : null;
 	}
 	
 	public static JsonArray empty() {
@@ -35,19 +36,19 @@ public interface JsonArray extends Shareable, Iterable<Object> {
 	public static JsonArray create(Object obj) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonArray(obj) : null; 
+		return service!=null ? service.createJsonArray(obj) : null;
 	}
 	
 	public static JsonArray create(List<?> list) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonArray(list) : null; 
+		return service!=null ? service.createJsonArray(list) : null;
 	}
 	
 	public static JsonArray create(String json) {
 		JsonFactoryService service = ServiceLoader.findFirst(JsonFactoryService.class);
 		
-		return service!=null ? service.createJsonArray(json) : null; 
+		return service!=null ? service.createJsonArray(json) : null;
 	}
 	
 	public static String mapFrom(List<?> list) {
@@ -56,6 +57,29 @@ public interface JsonArray extends Shareable, Iterable<Object> {
 		return result!=null ? result.encode() : null;
 	}
 	
+	// JsonArray -> list: objects as DTOs or records (ObjectMapper), other values converted if needed (via their JSON), null stays null
+	@SuppressWarnings("unchecked")
+	public default <T> List<T> mapTo(Class<T> type) {
+		ObjectMapper mapper = null;
+		List<T> result = new ArrayList<>(size());
+		for (Object value : this) {
+			if (value==null || type.isInstance(value))
+				result.add((T)value);
+			else {
+				if (mapper==null)
+					mapper = ObjectMapper.required();
+				if (value instanceof JsonObject obj)
+					result.add(mapper.mapTo(obj.encode(), type));
+				else if (value instanceof JsonArray arr)
+					result.add(mapper.mapTo(arr.encode(), type));
+				else
+					result.add(mapper.mapTo(mapper.mapFrom(value), type)); // e.g. number -> Long, String -> enum
+			}
+		}
+
+		return result;
+	}
+
 	public Object getValue(int pos);
 	public String getString(int pos);
 	public Integer getInteger(int pos);
