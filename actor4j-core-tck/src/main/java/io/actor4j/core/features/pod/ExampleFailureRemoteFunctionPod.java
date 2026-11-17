@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2015-2021, David A. Bauer. All rights reserved.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.actor4j.core.features.pod;
+
+import java.util.UUID;
+
+import io.actor4j.core.actors.ActorRef;
+import io.actor4j.core.messages.ActorMessage;
+import io.actor4j.core.pods.PodContext;
+import io.actor4j.core.pods.RemotePodMessage;
+import io.actor4j.core.pods.functions.PodRemoteFunction;
+import io.actor4j.core.pods.functions.RemoteFunctionPod;
+import io.actor4j.core.pods.utils.PodStatus;
+import io.actor4j.core.utils.Reply;
+
+// "fail" gives a deliberate failure, "throw" an exception in handle
+public class ExampleFailureRemoteFunctionPod extends RemoteFunctionPod {
+	@Override
+	public PodRemoteFunction createFunction(ActorRef host, PodContext context) {
+		return new PodRemoteFunction(host, context) {
+			@Override
+			public Reply handle(ActorMessage<?> message, UUID interaction, boolean replyAllowed) {
+				return handle(message.value());
+			}
+
+			@Override
+			public Reply handle(RemotePodMessage remoteMessage, UUID interaction, boolean replyExpected) {
+				return handle(remoteMessage.remotePodMessageDTO().payload());
+			}
+
+			protected Reply handle(Object payload) {
+				if ("fail".equals(payload))
+					return Reply.failure("Invalid request", PodStatus.BAD_REQUEST);
+				else if ("throw".equals(payload))
+					throw new IllegalStateException("Function failed");
+
+				return Reply.of("OK", PodStatus.OK);
+			}
+		};
+	}
+
+	@Override
+	public String domain() {
+		return "ExampleFailureRemoteFunctionPod";
+	}
+}

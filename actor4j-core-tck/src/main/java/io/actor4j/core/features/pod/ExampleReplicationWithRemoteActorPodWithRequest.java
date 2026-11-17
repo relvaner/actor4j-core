@@ -46,7 +46,7 @@ public class ExampleReplicationWithRemoteActorPodWithRequest extends ActorPod {
 				@Override
 				public void handle(RemotePodMessage remoteMessage, UUID interaction) {
 					if (remoteMessage.isRequest()) {
-						ActorId dest = (ActorId)remoteMessage.replyAddress();
+						ActorId dest = (ActorId)remoteMessage.replyTo();
 						tell(remoteMessage.remotePodMessageDTO().payload(), 42, dest, interaction, "", "");
 					}
 				}

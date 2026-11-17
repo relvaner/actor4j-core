@@ -23,6 +23,8 @@ import io.actor4j.core.actors.ActorRef;
 import io.actor4j.core.messages.ActorMessage;
 import io.actor4j.core.utils.Reply;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+
 public class FunctionPodProxyHandler {
 	protected final ActorRef host;
 	protected final PodFunctionHandler functionHandler;
@@ -39,7 +41,10 @@ public class FunctionPodProxyHandler {
 
 	protected void handleReply(ActorMessage<?> message, Reply result, UUID interaction) {
 		if (result!=null) {
-			if (result.isDone()) {
+			if (result.isDone() || result.isFailure()) {
+				if (result.isFailure())
+					result = handleFailure(result);
+
 				ActorMessage<?> originalMessage = result.interaction()!=null ? pendingHandler.remove(result.interaction()) : null;
 				ActorMessage<?> callbackMessage = originalMessage!=null ? originalMessage : message;
 					
@@ -54,10 +59,21 @@ public class FunctionPodProxyHandler {
 	public void apply(ActorMessage<?> message) {
 		UUID interaction = message.interaction()!=null && !ActorMessage.NO_REPLY.equals(message.interaction()) ? message.interaction() : UUID.randomUUID();
 		
-		Reply result = functionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+		Reply result = null;
+		try {
+			result = functionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+		}
+		catch (RuntimeException e) {
+			systemLogger().log(ERROR, String.format("[FUNCTION] handle failed: %s", e));
+			result = Reply.failure(e, interaction);
+		}
 		handleReply(message, result, interaction);
 	}
 	
+	protected Reply handleFailure(Reply result) {
+		return PodFailures.unwrap(result, false);
+	}
+
 	protected void callback(ActorRef host, ActorMessage<?> message, Reply result) {
 		host.tell(result.value(), result.tag(), message.source(), message.interaction(), message.protocol(), message.domain());
 	}

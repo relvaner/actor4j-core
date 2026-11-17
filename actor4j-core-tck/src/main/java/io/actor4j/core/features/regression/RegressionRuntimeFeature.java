@@ -782,8 +782,8 @@ public class RegressionRuntimeFeature {
 				testDone.countDown();
 			}
 		});
-		InternalServerCallback internalServerCallback = (replyAddress, result, replyTag)
-			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, replyTag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
+		InternalServerCallback internalServerCallback = (replyTo, result, replyTag)
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, replyTag, system.SYSTEM_ID(), GlobalId.of((String)replyTo)));
 		((InternalActorSystem)system).setRuntimeConfig(ActorRuntimeConfig.builder().internalServerCallback(internalServerCallback).build());
 		system.start();
 

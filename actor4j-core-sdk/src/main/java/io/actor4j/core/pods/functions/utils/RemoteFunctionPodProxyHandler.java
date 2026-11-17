@@ -27,6 +27,8 @@ import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.InternalServerCallback;
 import io.actor4j.core.utils.Reply;
 
+import static io.actor4j.core.logging.ActorLogger.*;
+
 public class RemoteFunctionPodProxyHandler {
 	protected final ActorRef host;
 	protected final PodRemoteFunctionHandler remoteFunctionHandler;
@@ -52,13 +54,15 @@ public class RemoteFunctionPodProxyHandler {
 				if (remoteMessage.remotePodMessageDTO().reply()) {
 					if (result.isDone())
 						callback(host, remoteMessage, result);
+					else if (result.isFailure())
+						callback(host, remoteMessage, handleFailure(result, true));
 					else
 						callback(host, remoteMessage, handleRejectedReply(result));
 				}
 			}
-			else if (result.isDone()) {
+			else if (result.isDone() || result.isFailure()) {
 				if (!ActorMessage.NO_REPLY.equals(callbackMessage.interaction()))
-					callback(host, callbackMessage, result);
+					callback(host, callbackMessage, result.isFailure() ? handleFailure(result, false) : result);
 			}
 		}
 		else // result.isPending()
@@ -69,10 +73,16 @@ public class RemoteFunctionPodProxyHandler {
 		Reply result = null;
 
 		UUID interaction = message.interaction()!=null && !ActorMessage.NO_REPLY.equals(message.interaction()) ? message.interaction() : UUID.randomUUID();
-		if (message.value() instanceof RemotePodMessage remoteMessage)
-			result = remoteFunctionHandler.handle(remoteMessage, interaction, remoteMessage.remotePodMessageDTO().reply());
-		else
-			result = remoteFunctionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+		try {
+			if (message.value() instanceof RemotePodMessage remoteMessage)
+				result = remoteFunctionHandler.handle(remoteMessage, interaction, remoteMessage.remotePodMessageDTO().reply());
+			else
+				result = remoteFunctionHandler.handle(message, interaction, !ActorMessage.NO_REPLY.equals(message.interaction()));
+		}
+		catch (RuntimeException e) {
+			systemLogger().log(ERROR, String.format("[FUNCTION] handle failed: %s", e));
+			result = Reply.failure(e, interaction);
+		}
 		handleReply(message, result, interaction);
 	}
 	
@@ -84,9 +94,13 @@ public class RemoteFunctionPodProxyHandler {
 		InternalServerCallback internalServerCallback = ((InternalActorSystem)host.getSystem()).getRuntimeConfig().internalServerCallback();
 		
 		if (remoteMessage.remotePodMessageDTO().reply() && internalServerCallback!=null)
-			internalServerCallback.accept(remoteMessage.replyAddress(), result.value(), result.tag());
+			internalServerCallback.accept(remoteMessage.replyTo(), result.value(), result.tag());
 	}
 	
+	protected Reply handleFailure(Reply result, boolean remote) {
+		return PodFailures.unwrap(result, remote);
+	}
+
 	protected Reply handleRejectedReply(Reply result) {
 		return Reply.of(result.value(), PodStatus.CONFLICT);
 	}

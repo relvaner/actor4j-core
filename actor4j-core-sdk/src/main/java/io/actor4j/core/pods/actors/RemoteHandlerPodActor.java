@@ -73,7 +73,7 @@ public abstract class RemoteHandlerPodActor extends HandlerPodActor {
 		
 		Object result = callback(message, remoteMessage);
 		if (remoteMessage.remotePodMessageDTO().reply() && internalServerCallback!=null)
-			internalServerCallback.accept(remoteMessage.replyAddress(), result, message.tag());
+			internalServerCallback.accept(remoteMessage.replyTo(), result, message.tag());
 	}
 
 	public abstract void handle(RemotePodMessage remoteMessage, UUID interaction);

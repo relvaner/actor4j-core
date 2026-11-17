@@ -19,17 +19,42 @@ import java.util.UUID;
 
 public record Reply(Object value, int tag, UUID interaction) {
 	public static final int PENDING = -1;
-	public static final int NONE = -2;
+	public static final int NONE    = -2;
+	public static final int FAILURE = -3;
 	
 	private static final Reply REPLY_PENDING = Reply.of(null, PENDING, null);
 	private static final Reply REPLY_NONE    = Reply.of(null, NONE, null);
+	
+	public record Failure(Object value, int tag) {
+		public static final int UNSPECIFIED = 0; // e.g. mapped to PodStatus.INTERNAL_SERVER_ERROR
+	}
 	
 	public static Reply of(Object value, int tag, UUID interaction) {
 		return new Reply(value, tag, interaction);
 	}
 	
 	public static Reply of(Object value, int tag) {
-		return new Reply(value, tag, null);
+		return of(value, tag, null);
+	}
+	
+	public static Reply failure(Object value, int tag, UUID interaction) {
+		return new Reply(new Failure(value, tag), FAILURE, interaction);
+	}
+	
+	public static Reply failure(Object value, int tag) {
+		return failure(value, tag, null);
+	}
+	
+	public static Reply failure(Throwable t, int tag, UUID interaction) {
+		return new Reply(new Failure(t, tag), FAILURE, interaction);
+	}
+	
+	public static Reply failure(Throwable t, UUID interaction) {
+		return failure(t, Failure.UNSPECIFIED, interaction);
+	}
+	
+	public static Reply failure(Throwable t) {
+		return failure(t, Failure.UNSPECIFIED, null);
 	}
 	
 	public static Reply pending() {
@@ -46,6 +71,10 @@ public record Reply(Object value, int tag, UUID interaction) {
 	
 	public boolean isNone() {
         return tag==NONE;
+    }
+	
+	public boolean isFailure() {
+        return tag==FAILURE;
     }
 	
 	public boolean isDone() {

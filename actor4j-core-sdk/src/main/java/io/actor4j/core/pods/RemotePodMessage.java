@@ -16,8 +16,14 @@
 
 package io.actor4j.core.pods;
 
-public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyAddress, Object user, boolean isRequest) {
-	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyAddress, Object user) {
-		this(remotePodMessageDTO, replyAddress, user, false);
+// replyTo: where the answer goes, depends on the host
+public record RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyTo, Object user, boolean isRequest) {
+	public RemotePodMessage(RemotePodMessageDTO remotePodMessageDTO, Object replyTo, Object user) {
+		this(remotePodMessageDTO, replyTo, user, false);
+	}
+
+	@Deprecated // use replyTo()
+	public Object replyAddress() {
+		return replyTo;
 	}
 }

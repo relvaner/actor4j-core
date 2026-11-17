@@ -19,8 +19,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
 import org.junit.Before;
@@ -34,6 +36,8 @@ import io.actor4j.core.features.pod.ExampleDefaultActorPod;
 import io.actor4j.core.features.pod.ExampleDefaultRemoteActorPod;
 import io.actor4j.core.features.pod.ExampleDefaultRemoteShardActorPod;
 import io.actor4j.core.features.pod.ExampleDefaultShardActorPod;
+import io.actor4j.core.features.pod.ExampleFailureFunctionPod;
+import io.actor4j.core.features.pod.ExampleFailureRemoteFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithActorPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithFunctionPod;
 import io.actor4j.core.features.pod.ExampleReplicationWithRemoteActorPodWithRequest;
@@ -48,6 +52,7 @@ import io.actor4j.core.pods.PodFactory;
 import io.actor4j.core.pods.RemotePodMessage;
 import io.actor4j.core.pods.RemotePodMessageDTO;
 import io.actor4j.core.pods.utils.PodRequestMethod;
+import io.actor4j.core.pods.utils.PodStatus;
 import io.actor4j.core.runtime.InternalActorSystem;
 import io.actor4j.core.runtime.config.ActorRuntimeConfig;
 import io.actor4j.core.runtime.config.InternalServerCallback;
@@ -394,8 +399,8 @@ public class PodFeature {
 			}
 		});
 		
-		InternalServerCallback internalServerCallback = (replyAddress, result, tag)
-			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
+		InternalServerCallback internalServerCallback = (replyTo, result, tag)
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyTo)));
 		ActorRuntimeConfig runtimeConfig = ActorRuntimeConfig.builder()
 			.internalServerCallback(internalServerCallback)
 			.build();
@@ -414,6 +419,86 @@ public class PodFeature {
 		system.shutdownWithActors(true);
 	}
 	
+	@Test(timeout=5000)
+	public void test_factory_ExampleFailureFunctionPod() {
+		CountDownLatch testDone = new CountDownLatch(3);
+		Map<Object, Integer> tags = new ConcurrentHashMap<>();
+
+		system.deployPods(
+				() -> new ExampleFailureFunctionPod(),
+				new PodConfiguration("ExampleFailureFunctionPod", ExampleFailureFunctionPod.class.getName(), 1, 1));
+		ActorId client = system.addActor(() -> new Actor(){
+			@Override
+			public void receive(ActorMessage<?> message) {
+				logger().log(DEBUG, String.format("client received a message ('%s', %d) from ExampleFailureFunctionPod", message.value(), message.tag()));
+				// locally the Throwable stays the value
+				tags.put(message.value() instanceof IllegalStateException e ? e.getMessage() : message.value(), message.tag());
+				testDone.countDown();
+			}
+		});
+		system.start();
+
+		system.sendViaAlias(ActorMessage.create("ok", 0, client, null), "ExampleFailureFunctionPod");
+		system.sendViaAlias(ActorMessage.create("fail", 0, client, null), "ExampleFailureFunctionPod");
+		system.sendViaAlias(ActorMessage.create("throw", 0, client, null), "ExampleFailureFunctionPod");
+
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		system.shutdownWithActors(true);
+
+		assertEquals(Integer.valueOf(PodStatus.OK), tags.get("OK"));
+		assertEquals(Integer.valueOf(PodStatus.BAD_REQUEST), tags.get("Invalid request"));
+		assertEquals(Integer.valueOf(PodStatus.INTERNAL_SERVER_ERROR), tags.get("Function failed"));
+	}
+
+	@Test(timeout=5000)
+	public void test_factory_ExampleFailureRemoteFunctionPod() {
+		CountDownLatch testDone = new CountDownLatch(3);
+		Map<Object, Integer> tags = new ConcurrentHashMap<>();
+
+		system.deployPods(
+				() -> new ExampleFailureRemoteFunctionPod(),
+				new PodConfiguration("ExampleFailureRemoteFunctionPod", ExampleFailureRemoteFunctionPod.class.getName(), 1, 1));
+		ActorId client = system.addActor(() -> new Actor(){
+			@Override
+			public void preStart() {
+				expose();
+			}
+
+			@Override
+			public void receive(ActorMessage<?> message) {
+				logger().log(DEBUG, String.format("client received a message ('%s', %d) from ExampleFailureRemoteFunctionPod", message.value(), message.tag()));
+				// remotely only the message of the Throwable is sent
+				tags.put(message.value(), message.tag());
+				testDone.countDown();
+			}
+		});
+
+		InternalServerCallback internalServerCallback = (replyTo, result, tag)
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyTo)));
+		((InternalActorSystem)system).setRuntimeConfig(ActorRuntimeConfig.builder().internalServerCallback(internalServerCallback).build());
+		system.start();
+
+		for (String payload : List.of("ok", "fail", "throw")) {
+			RemotePodMessage remotePodMessage = new RemotePodMessage(new RemotePodMessageDTO(payload, 0, "ExampleFailureRemoteFunctionPod", true), client.globalId().toString(), null);
+			system.sendViaAlias(ActorMessage.create(remotePodMessage, 0, system.SYSTEM_ID(), null), "ExampleFailureRemoteFunctionPod");
+		}
+
+		try {
+			testDone.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		system.shutdownWithActors(true);
+
+		assertEquals(Integer.valueOf(PodStatus.OK), tags.get("OK"));
+		assertEquals(Integer.valueOf(PodStatus.BAD_REQUEST), tags.get("Invalid request"));
+		assertEquals(Integer.valueOf(PodStatus.INTERNAL_SERVER_ERROR), tags.get("Function failed"));
+	}
+
 	//----------------------------------------------------------------------------------------------------------------------------------------------
 	
 	@Test(timeout=5000)
@@ -653,8 +738,8 @@ public class PodFeature {
 			}
 		});
 
-		InternalServerCallback internalServerCallback = (replyAddress, result, tag)
-			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyAddress)));
+		InternalServerCallback internalServerCallback = (replyTo, result, tag)
+			-> ((ActorService)system).sendAsServer(ActorMessage.create(result, tag, system.SYSTEM_ID(), GlobalId.of((String)replyTo)));
 		((InternalActorSystem)system).setRuntimeConfig(ActorRuntimeConfig.builder().internalServerCallback(internalServerCallback).build());
 		system.start();
 
