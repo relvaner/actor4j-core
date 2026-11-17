@@ -20,8 +20,8 @@ import io.actor4j.core.utils.Reply;
 import io.actor4j.core.utils.Reply.Failure;
 
 // unwraps a failure reply into a final reply with the tag of the failure
-public final class PodFailures {
-	private PodFailures() {
+public final class PodFunctionFailures {
+	private PodFunctionFailures() {
 	}
 
 	// remote: a Throwable is not sent over the wire, only its message (or class name)

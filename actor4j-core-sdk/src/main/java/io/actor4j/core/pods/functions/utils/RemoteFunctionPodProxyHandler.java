@@ -98,7 +98,7 @@ public class RemoteFunctionPodProxyHandler {
 	}
 	
 	protected Reply handleFailure(Reply result, boolean remote) {
-		return PodFailures.unwrap(result, remote);
+		return PodFunctionFailures.unwrap(result, remote);
 	}
 
 	protected Reply handleRejectedReply(Reply result) {

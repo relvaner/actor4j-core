@@ -71,7 +71,7 @@ public class FunctionPodProxyHandler {
 	}
 	
 	protected Reply handleFailure(Reply result) {
-		return PodFailures.unwrap(result, false);
+		return PodFunctionFailures.unwrap(result, false);
 	}
 
 	protected void callback(ActorRef host, ActorMessage<?> message, Reply result) {
